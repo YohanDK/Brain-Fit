@@ -2,5 +2,5 @@
 // Ces deux valeurs sont faites pour être publiques : la sécurité vient des règles de la base.
 window.BF_CONFIG={
   supabaseUrl:'https://kmcelzkxnxeqwwpvyycm.supabase.co',
-  supabaseKey:''
+  supabaseKey:'sb_publishable_y7Bnt_xi7saCiOzqZJwUww_2Otq4jGP'
 };

@@ -8,9 +8,10 @@ Le site s'installe sur le téléphone comme une appli. Avec un compte, les progr
 
 | Partie | Où | Rôle |
 |---|---|---|
-| `public/` | Vercel | Le site lui-même (une seule page), installable et utilisable hors ligne. |
+| `public/` | GitHub Pages | Le site lui-même (une seule page), installable et utilisable hors ligne. |
 | `supabase/setup.sql` | Supabase | La table qui garde tes progrès. Chacun ne voit que les siens. |
 | `supabase/functions/coach/` | Supabase | Le coach : il reçoit la demande de la page et appelle Claude avec ta clé API, qui reste secrète. |
+| `.github/workflows/pages.yml` | GitHub | Remet le site en ligne à chaque changement. |
 | `.github/workflows/deploy-coach.yml` | GitHub | Remet le coach à jour sur Supabase à chaque changement. |
 
 Le bilan du dimanche se fait tout seul : à la première ouverture après dimanche 18 h, le coach prépare le bilan de la semaine. Il est à lire dans l'onglet Coach.
@@ -45,10 +46,10 @@ Puis **Actions › Déployer le coach › Run workflow** pour mettre le coach en
 
 Pour changer de modèle (par exemple un modèle moins cher), ajoute dans l'onglet **Variables** une variable `COACH_MODEL` avec l'identifiant du modèle, puis relance le workflow. Par défaut : `claude-opus-5-5`.
 
-### 4. Vercel : l'adresse du site
+### 4. GitHub Pages : l'adresse du site
 
-1. Sur [vercel.com](https://vercel.com), connecte-toi avec GitHub, puis **Add New › Project** et importe ce dépôt. Garde les réglages proposés et clique sur **Deploy**.
-2. Ton site a son adresse (`https://brain-fit-….vercel.app`). Chaque changement du dépôt le met à jour tout seul.
+1. Dans ce dépôt, **Settings › Pages**, à la ligne **Source**, choisis **GitHub Actions**. C'est tout : pas d'autre compte à créer.
+2. Puis **Actions › Publier le site › Run workflow**. Après une minute, le site est en ligne à l'adresse **https://yohandk.github.io/Brain-Fit/**. Chaque changement du dépôt le met à jour tout seul.
 3. Dans Supabase, **Authentication › URL Configuration**, mets cette adresse comme **Site URL** : c'est là que mène le lien de confirmation du compte.
 
 ### 5. Sur ton téléphone
@@ -64,4 +65,4 @@ Pour changer de modèle (par exemple un modèle moins cher), ajoute dans l'ongle
 
 ## Coût
 
-L'hébergement (Vercel, Supabase, GitHub) est gratuit à cette échelle. Le coach est payé à l'usage sur la console Claude : compte quelques centimes par réponse, donc quelques euros à une quinzaine d'euros par mois selon ton usage. Tu peux fixer une limite de dépense mensuelle dans **Settings › Limits** de la console.
+L'hébergement (GitHub Pages, Supabase) est gratuit à cette échelle. Le coach est payé à l'usage sur la console Claude : compte quelques centimes par réponse, donc quelques euros à une quinzaine d'euros par mois selon ton usage. Tu peux fixer une limite de dépense mensuelle dans **Settings › Limits** de la console.

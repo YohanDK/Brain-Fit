@@ -2362,7 +2362,7 @@ const COACH_ERR={not_granted:"Connecte-toi à ton compte (onglet Aujourd'hui) po
 async function askCoach(input,out,opts){
   const s=await sampler();
   out.hidden=false;
-  if(!s){out.className='coachout';out.textContent="Connecte-toi à ton compte (onglet Aujourd'hui) pour parler au coach.";return null;}
+  if(!s){out.className='coachout';out.textContent="Le coach n'est pas encore branché. Tout le reste de Brain Fit fonctionne déjà.";return null;}
   out.className='coachout wait'; out.textContent='Le coach réfléchit…';
   try{
     const {text}=await s(input,Object.assign({onText:({text})=>{out.className='coachout';out.textContent=text;}},opts||{}));
@@ -2396,6 +2396,7 @@ function coachSummary(){
 }
 let chatTurns=[];
 function weeklyBilan(){
+  if(!(window.BF_CONFIG||{}).coach)return;
   const now=new Date(), sun=new Date(now); sun.setHours(18,0,0,0); sun.setDate(sun.getDate()-sun.getDay());
   if(now<sun)sun.setDate(sun.getDate()-7);
   if(state.coach&&state.coach.t>=sun.getTime())return;
@@ -2904,7 +2905,7 @@ probleme(arena){
   intro(arena,"Lis l'énoncé, puis écris ta réponse et surtout ton raisonnement, étape par étape. Méfie-toi de la première réponse qui vient : ces problèmes sont faits pour piéger l'intuition.",gen,()=>go(PROBLEMS[idx],idx));
   gen.addEventListener('click',async()=>{
     const s=await sampler(); gen.disabled=true; gen.textContent='Le coach prépare un problème…';
-    if(!s){gen.textContent="Le coach n'est pas disponible ici";return;}
+    if(!s){gen.textContent="Le coach n'est pas encore branché";return;}
     try{
       const p=await s.json("Crée un problème de raisonnement original en français, résoluble de tête ou sur papier en 3 à 6 minutes, avec une réponse unique et vérifiable. Varie les types : logique, probabilités, piège d'intuition, déduction, raisonnement quantitatif. Évite les classiques trop connus (raquette et balle, nénuphars, Monty Hall). Réponds uniquement en JSON : {\"enonce\": string, \"reponse\": string courte, \"explication\": string de 2 à 4 phrases}.",{cache:false});
       if(p&&p.enonce&&p.reponse)go([String(p.enonce),String(p.reponse),String(p.explication||'')],null);
@@ -2965,7 +2966,7 @@ erreuria(arena){
   intro(arena,"Voici des réponses du style d'une IA : fluides, sûres d'elles. Chacune contient une erreur. Clique sur la phrase fautive. C'est l'entraînement qui manque le plus aux utilisateurs d'IA : relire comme un correcteur, pas comme un lecteur.",gen,()=>go(null));
   gen.addEventListener('click',async()=>{
     const s=await sampler(); gen.disabled=true; gen.textContent='Le coach prépare un piège…';
-    if(!s){gen.textContent="Le coach n'est pas disponible ici";return;}
+    if(!s){gen.textContent="Le coach n'est pas encore branché";return;}
     try{
       const r=await s.json("Écris en français une courte réponse d'assistant IA, convaincante et bien rédigée, à une question de culture générale, de sciences, de logique ou de calcul (choisis un sujet varié). La réponse fait exactement 4 ou 5 phrases. UNE SEULE phrase contient une erreur factuelle, logique ou de calcul, plausible et subtile ; toutes les autres sont strictement exactes. Réponds uniquement en JSON : {\"question\": string, \"phrases\": [string], \"erreur\": index de la phrase fausse à partir de 0, \"explication\": string de 1 à 2 phrases}.",{cache:false});
       if(r&&Array.isArray(r.phrases)&&r.phrases.length>=3&&Number.isInteger(r.erreur)&&r.phrases[r.erreur])go([[String(r.question),r.phrases.map(String),r.erreur,String(r.explication||'')]]);
@@ -3159,7 +3160,7 @@ dictee(arena){
   intro(arena,"Prends une feuille et un stylo, et pose le téléphone à côté de toi. L'appli lit d'abord le texte en entier, puis le dicte groupe par groupe, ponctuation comprise, et le relit à la fin. Ensuite, photographie ta copie pour la correction du coach, ou corrige-toi toi-même.",el('div',{class:'row',style:'justify-content:center'},el('span',{class:'fg2',text:'Niveau'}),seg,gen),()=>{save();go(pickDictee(state.settings.dicteeLvl||2));});
   gen.addEventListener('click',async()=>{
     const s=await sampler(); gen.disabled=true; gen.textContent='Le coach écrit ta dictée…';
-    if(!s){gen.textContent="Le coach n'est pas disponible ici";return;}
+    if(!s){gen.textContent="Le coach n'est pas encore branché";return;}
     const l=state.settings.dicteeLvl||2, weak=weakRules();
     try{
       const r=await s.json(`Écris une dictée originale en français, de niveau ${l} sur 4 (1 : phrases simples, environ 50 mots ; 2 : environ 60 mots ; 3 : environ 75 mots ; 4 : phrases complexes et accords difficiles, environ 90 mots). Un texte vivant et concret, de préférence sur la France, son histoire, ses paysages ou la vie quotidienne. ${weak.length?"Fais travailler en priorité ces règles, qu'il a ratées récemment : "+weak.join(' ; ')+'.':''} Orthographe et grammaire irréprochables, orthographe traditionnelle. Réponds uniquement en JSON : {"titre": string, "texte": string, "pieges": [{"mot": string (exactement tel qu'il apparaît dans le texte), "regle": string (une phrase)}]}, avec 5 à 8 pièges.`,{cache:false});

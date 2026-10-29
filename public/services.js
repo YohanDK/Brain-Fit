@@ -73,7 +73,7 @@
   sample.limits=async()=>({images:true});
 
   window.claude={async use(cap){
-    if(cap==='sample')return sample;
+    if(cap==='sample')return C.coach?sample:null; // sans coach branché, la page le dit simplement
     if(cap==='db'||cap==='user')return (await session())?(cap==='db'?db:user):null;
     return null; // downloads : la page télécharge le fichier directement
   }};

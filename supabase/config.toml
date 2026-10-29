@@ -1,0 +1,6 @@
+# Seule la fonction est déployée depuis ce dépôt ; la table se crée une fois avec supabase/setup.sql.
+project_id = "brain-fit"
+
+[functions.coach]
+# la fonction vérifie elle-même la session et l'e-mail autorisé
+verify_jwt = false

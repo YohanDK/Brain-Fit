@@ -1,0 +1,43 @@
+# Déploie la fonction « coach » sur Supabase à chaque changement, avec ses clés.
+name: Déployer le coach
+
+on:
+  push:
+    branches: [main]
+    paths: ["supabase/**", ".github/workflows/deploy-coach.yml"]
+  workflow_dispatch:
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    env:
+      SUPABASE_ACCESS_TOKEN: ${{ secrets.SUPABASE_ACCESS_TOKEN }}
+      PROJECT_ID: ${{ secrets.SUPABASE_PROJECT_ID }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Vérifier les secrets
+        run: |
+          missing=""
+          [ -n "$SUPABASE_ACCESS_TOKEN" ] || missing="$missing SUPABASE_ACCESS_TOKEN"
+          [ -n "$PROJECT_ID" ] || missing="$missing SUPABASE_PROJECT_ID"
+          if [ -n "$missing" ]; then echo "::error::Secrets manquants :$missing (voir le README)"; exit 1; fi
+
+      - uses: supabase/setup-cli@v1
+        with:
+          version: 2.122.0
+
+      - name: Clés du coach
+        env:
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+          ALLOWED_EMAIL: ${{ secrets.ALLOWED_EMAIL }}
+          COACH_MODEL: ${{ vars.COACH_MODEL }}
+        run: |
+          args=()
+          [ -n "$ANTHROPIC_API_KEY" ] && args+=("ANTHROPIC_API_KEY=$ANTHROPIC_API_KEY")
+          [ -n "$ALLOWED_EMAIL" ] && args+=("ALLOWED_EMAIL=$ALLOWED_EMAIL")
+          [ -n "$COACH_MODEL" ] && args+=("COACH_MODEL=$COACH_MODEL")
+          if [ ${#args[@]} -gt 0 ]; then supabase secrets set --project-ref "$PROJECT_ID" "${args[@]}"; fi
+
+      - name: Déployer la fonction
+        run: supabase functions deploy coach --project-ref "$PROJECT_ID" --use-api --no-verify-jwt

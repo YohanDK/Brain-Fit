@@ -10,7 +10,9 @@ Le site s'installe sur le téléphone comme une appli. Avec un compte, les progr
 |---|---|---|
 | `public/` | GitHub Pages | Le site lui-même (une seule page), installable et utilisable hors ligne. |
 | `supabase/setup.sql` | Supabase | La table qui garde tes progrès. Chacun ne voit que les siens. |
+| `supabase/cercle.sql` | Supabase | Les cercles d'amis et leur classement de la semaine, et l'effacement de ses données. |
 | `supabase/functions/coach/` | Supabase | Le coach : il reçoit la demande de la page et appelle Claude avec ta clé API, qui reste secrète. |
+| `supabase/functions/account/` | Supabase | Efface un compte et toutes ses données, à la demande de son propriétaire. |
 | `.github/workflows/pages.yml` | GitHub | Remet le site en ligne à chaque changement. |
 | `.github/workflows/deploy-coach.yml` | GitHub | Remet le coach à jour sur Supabase à chaque changement. |
 
@@ -21,7 +23,7 @@ Le bilan du dimanche se fait tout seul : à la première ouverture après dimanc
 ### 1. Supabase : le compte et les données
 
 1. Crée un compte sur [supabase.com](https://supabase.com) (« Continue with GitHub » est le plus simple), puis un projet nommé `brain-fit`, région **Paris (eu-west-3)**. Le mot de passe de la base ne te resservira pas.
-2. Dans le projet, ouvre **SQL Editor**, colle tout le contenu de [`supabase/setup.sql`](supabase/setup.sql), puis clique sur **Run**.
+2. Dans le projet, ouvre **SQL Editor**, colle tout le contenu de [`supabase/setup.sql`](supabase/setup.sql), puis clique sur **Run**. Fais de même, dans une nouvelle requête, avec [`supabase/cercle.sql`](supabase/cercle.sql).
 3. Dans **Project Settings › API Keys**, copie l'**URL du projet** et la **clé publique** (`publishable`, ou `anon`). Ces deux valeurs peuvent être partagées sans risque : elles vont dans `public/config.js`.
 4. Note l'**identifiant du projet** : ce sont les lettres de l'adresse, `https://<identifiant>.supabase.co`.
 5. Crée un jeton d'accès sur [supabase.com/dashboard/account/tokens](https://supabase.com/dashboard/account/tokens) (nom : `github`). Garde-le pour l'étape 3.
@@ -56,7 +58,7 @@ Pour changer de modèle (par exemple un modèle moins cher), ajoute dans l'ongle
 
 1. Ouvre l'adresse du site dans Safari (ou Chrome sur Android), puis **Partager › Sur l'écran d'accueil**.
 2. Ouvre Brain Fit depuis l'écran d'accueil et clique sur **Créer mon compte**. Confirme avec le lien reçu par e-mail, puis connecte-toi.
-3. Une fois ton compte créé, dans Supabase, **Authentication › Sign In / Providers**, décoche **Allow new users to sign up** : personne d'autre ne pourra créer de compte.
+3. Pour inviter des amis dans ton cercle, laisse les inscriptions ouvertes : le coach reste réservé à ton adresse (`ALLOWED_EMAIL`), donc à ta clé. Si tu préfères garder Brain Fit pour toi seul, dans Supabase, **Authentication › Sign In / Providers**, décoche **Allow new users to sign up**.
 
 ### 6. Reprendre tes progrès de l'ancienne version
 

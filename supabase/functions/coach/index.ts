@@ -35,12 +35,14 @@ Deno.serve(async (req) => {
   const { data: { user } } = token ? await supabase.auth.getUser(token) : { data: { user: null } };
   if (!user || !ALLOWED.includes((user.email ?? "").toLowerCase())) return fail("not_granted", 403);
 
-  let body: { messages?: Turn[]; images?: Img[]; json?: boolean; tier?: string };
+  let body: { messages?: Turn[]; images?: Img[]; json?: boolean; tier?: string; ping?: boolean };
   try {
     body = await req.json();
   } catch {
     return fail("bad_request", 400);
   }
+  // la page demande seulement si le coach lui est ouvert
+  if (body.ping) return new Response(JSON.stringify({ ok: true }), { headers: { ...cors, "Content-Type": "application/json" } });
   const turns = (Array.isArray(body.messages) ? body.messages : [])
     .filter((m) => (m?.role === "user" || m?.role === "assistant") && typeof m.content === "string" && m.content.trim())
     .slice(-24);

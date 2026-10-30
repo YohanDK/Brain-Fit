@@ -1,4 +1,4 @@
-# Déploie la fonction « coach » sur Supabase à chaque changement, avec ses clés.
+# Déploie les fonctions Supabase (coach, compte) à chaque changement, avec les clés du coach.
 name: Déployer le coach
 
 on:
@@ -39,5 +39,5 @@ jobs:
           [ -n "$COACH_MODEL" ] && args+=("COACH_MODEL=$COACH_MODEL")
           if [ ${#args[@]} -gt 0 ]; then supabase secrets set --project-ref "$PROJECT_ID" "${args[@]}"; fi
 
-      - name: Déployer la fonction
-        run: supabase functions deploy coach --project-ref "$PROJECT_ID" --use-api --no-verify-jwt
+      - name: Déployer les fonctions
+        run: supabase functions deploy coach account --project-ref "$PROJECT_ID" --use-api --no-verify-jwt

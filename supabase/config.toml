@@ -4,3 +4,7 @@ project_id = "brain-fit"
 [functions.coach]
 # la fonction vérifie elle-même la session et l'e-mail autorisé
 verify_jwt = false
+
+[functions.account]
+# la fonction vérifie elle-même la session
+verify_jwt = false

@@ -427,6 +427,13 @@ a{color:var(--accent);text-underline-offset:3px}
 .login input{font:inherit;font-size:1rem;padding:10px 12px;border:1px solid var(--line);border-radius:var(--r);background:var(--surface);color:var(--fg)}
 .login .note:empty{display:none}
 .seg.themes{justify-content:flex-start}
+.circle-form input{font:inherit;font-size:1rem;padding:6px 10px;border:1px solid var(--line);border-radius:var(--r);background:var(--surface);color:var(--fg);max-width:200px}
+.ranking{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:4px}
+.ranking li{display:grid;grid-template-columns:2ch 1fr auto auto;gap:12px;align-items:baseline;padding:6px 10px;border-radius:var(--r);background:var(--sunk)}
+.ranking li.me{background:var(--accent-soft);color:var(--accent-deep)}
+.ranking .rk{font-family:var(--f-display);font-weight:700}
+.ranking .xpw{font-weight:700;color:var(--gold-deep)}
+#erase-msg:empty{display:none}
 .reel-city input{font:inherit;font-size:1rem;padding:6px 10px;border:1px solid var(--line);border-radius:var(--r);background:var(--surface);color:var(--fg);max-width:220px}
 .cjl-text{font-size:1.12rem;line-height:1.45;max-width:60ch;text-wrap:pretty}
 .cjl-res{display:flex;flex-wrap:wrap;align-items:baseline;gap:4px 14px}
@@ -784,6 +791,10 @@ q{quotes:"« " " »" "“" "”"}
       <div><h3>Mes thèmes</h3><p class="muted note">Jusqu'à trois. Citations, « Ce jour-là », dictées, sujets d'écriture et coach s'en inspirent.</p></div>
       <div class="seg themes" id="themes-seg" role="group" aria-label="Mes thèmes"></div>
     </div>
+    <div class="panel" id="circle-panel">
+      <div><h3>Mon cercle</h3><p class="muted note">Un classement de la semaine entre proches. Seuls ton pseudo, tes XP de la semaine et ta série sont partagés, et seulement avec les membres de ton cercle.</p></div>
+      <div id="circle-body" style="display:flex;flex-direction:column;gap:10px"></div>
+    </div>
     <div class="panel">
       <div class="row spread">
         <div><h3>Sauvegarde</h3><p class="muted note">Copie tes données pour les garder ou les transférer.</p><span class="sync" id="sync">Progrès enregistrés dans ce navigateur</span></div>
@@ -806,6 +817,17 @@ q{quotes:"« " " »" "“" "”"}
         <textarea id="import-box" style="min-height:120px;font-family:var(--f-mono);font-size:.8rem" placeholder="Colle ici les données copiées depuis Brain Fit ouvert ailleurs." aria-label="Données à fusionner"></textarea>
         <div class="row"><button class="btn" id="import-go">Fusionner avec mes progrès</button><span class="note" id="import-msg"></span></div>
       </div>
+    </div>
+    <div class="panel" id="privacy">
+      <div><h3>Tes données</h3>
+        <p class="fg2" style="max-width:65ch">Avec un compte, Brain Fit garde ton e-mail, tes progrès et tes textes chez Supabase, qui héberge sa base de données. Les autres utilisateurs ne peuvent pas les lire ; techniquement, la personne qui gère ce Brain Fit y a accès. Si tu rejoins un cercle, ses membres voient seulement ton pseudo, tes XP de la semaine et ta série. Quand tu parles au coach, ta demande et le résumé de tes progrès sont envoyés à Claude (Anthropic) pour qu'il réponde. Rien n'est vendu, et il n'y a ni publicité ni mesure d'audience.</p></div>
+      <div class="row"><button class="btn ghost" id="erase" hidden>Effacer mon compte</button></div>
+      <div id="erase-confirm" class="row" hidden>
+        <span class="fg2">Effacer ton compte, tes progrès, tes textes et ta place dans ton cercle ? Ce n'est pas réversible.</span>
+        <button class="btn" id="erase-yes" style="color:var(--bad)">Oui, tout effacer</button>
+        <button class="btn ghost" id="erase-no">Annuler</button>
+      </div>
+      <p class="note" id="erase-msg" role="status"></p>
     </div>
   </section>
 
@@ -1634,7 +1656,7 @@ function persist(){
   try{localStorage.setItem(LS,JSON.stringify(state));}catch(e){}
   if(!ref)return;
   clearTimeout(saveTimer);
-  saveTimer=setTimeout(()=>{const snap=JSON.parse(JSON.stringify(state));saving=saving.then(()=>ref.set(snap)).then(()=>setSync('ok')).catch(()=>setSync('err'));},700);
+  saveTimer=setTimeout(()=>{const snap=JSON.parse(JSON.stringify(state));saving=saving.then(()=>ref.set(snap)).then(()=>{setSync('ok');circlePush().catch(()=>{});}).catch(()=>setSync('err'));},700);
 }
 function setSync(s){$('#sync').textContent=s==='ok'?'Progrès synchronisés avec ton compte':s==='err'?"Synchronisation impossible, progrès gardés dans ce navigateur":'Progrès enregistrés dans ce navigateur';}
 function localOnly(){let ok=false;try{ok=sessionStorage.getItem('brainfit.later')==='1';}catch(e){}$('#syncwarn').hidden=ok;$('#logout').hidden=true;}
@@ -1770,6 +1792,82 @@ function toggleTheme(k){
 }
 $('#themes-ok').addEventListener('click',()=>{state.settings.themesSet=true;save();renderThemes();});
 $('#themes-later').addEventListener('click',()=>{state.settings.themesSet=true;save();renderThemes();});
+/* ---------- cercle d'amis : le classement de la semaine entre proches, sous un pseudo ---------- */
+const sbc=()=>window.bfSupabase;
+let circleData=null, circleSent='', circleBusy=false;
+async function myUserId(){try{const {data}=await sbc().auth.getSession();return data.session?data.session.user.id:null;}catch(e){return null;}}
+function weekXp(){const m=gamiCtx.xp||xpByDay(), wk=weekStart(todayKey());let n=0;for(let i=0;i<7;i++)n+=m[addDays(wk,i)]||0;return n;}
+// envoie ses chiffres de la semaine au cercle, seulement s'ils ont changé
+async function circlePush(force){
+  const c=state.settings.circle, id=ref&&await myUserId(); if(!c||!id||!state.settings.pseudo)return;
+  const row={code:c,user_id:id,pseudo:state.settings.pseudo,week:weekStart(todayKey()),xp:weekXp(),streak:streaks().cur,updated_at:new Date().toISOString()};
+  const key=JSON.stringify([c,row.week,row.xp,row.streak,row.pseudo]); if(key===circleSent&&!force)return;
+  const {error}=await sbc().from('circle_members').upsert(row); if(!error)circleSent=key; return error;
+}
+async function circleLoad(){
+  const c=state.settings.circle; if(!c||!ref){circleData=null;return;}
+  const [m,ci]=await Promise.all([sbc().from('circle_members').select('user_id,pseudo,week,xp,streak').eq('code',c),sbc().from('circles').select('name').eq('code',c).maybeSingle()]);
+  if(m.error)return; const wk=weekStart(todayKey()), me=await myUserId();
+  circleData={name:ci.data?ci.data.name:'',rows:(m.data||[]).map(r=>({...r,xp:String(r.week)===wk?r.xp:0,me:r.user_id===me})).sort((a,b)=>b.xp-a.xp||b.streak-a.streak)};
+}
+const newCode=()=>{const A='ABCDEFGHJKLMNPQRSTUVWXYZ23456789';return Array.from(crypto.getRandomValues(new Uint8Array(6)),b=>A[b%A.length]).join('');};
+async function renderCircle(){
+  const body=$('#circle-body'), c=state.settings.circle;
+  if(!ref){body.replaceChildren(el('p',{class:'note',text:'Connecte-toi pour créer un cercle ou en rejoindre un.'}));return;}
+  if(!c){
+    const msg=el('p',{class:'note',role:'status'});
+    const pseudo=el('input',{type:'text',placeholder:'Ton pseudo',maxlength:'24','aria-label':'Ton pseudo',value:state.settings.pseudo||''});
+    const name=el('input',{type:'text',placeholder:'Nom du cercle',maxlength:'40','aria-label':'Nom du cercle'});
+    const code=el('input',{type:'text',placeholder:'Code reçu',maxlength:'6','aria-label':'Code du cercle',style:'text-transform:uppercase;width:9ch'});
+    const ps=()=>{const v=pseudo.value.trim();if(v.length<2){msg.textContent='Choisis d’abord un pseudo (2 lettres au moins).';pseudo.focus();return null;}state.settings.pseudo=v;return v;};
+    const enter=async k=>{state.settings.circle=k;circleSent='';const err=await circlePush(true);
+      if(err){state.settings.circle=null;msg.textContent=err.code==='23503'?'Ce code ne correspond à aucun cercle. Vérifie-le auprès de la personne qui t’a invité.':'Impossible de rejoindre le cercle. Réessaie dans un instant.';return false;}
+      save();toast('<span>Bienvenue dans ton cercle !</span>');renderCircle();return true;};
+    const create=el('button',{class:'btn primary',text:'Créer un cercle',onclick:async()=>{
+      if(circleBusy||!ps())return; circleBusy=true; msg.textContent='Création…';
+      const k=newCode(); const {error}=await sbc().from('circles').insert({code:k,name:name.value.trim()||'Le cercle de '+state.settings.pseudo});
+      if(error)msg.textContent='Création impossible. As-tu bien préparé la base avec cercle.sql ?'; else await enter(k);
+      circleBusy=false;}});
+    const join=el('button',{class:'btn',text:'Rejoindre',onclick:async()=>{
+      const k=code.value.trim().toUpperCase(); if(circleBusy||!ps())return;
+      if(!/^[A-Z0-9]{6}$/.test(k)){msg.textContent='Le code fait 6 caractères.';return;}
+      circleBusy=true; msg.textContent='…'; await enter(k); circleBusy=false;}});
+    body.replaceChildren(el('div',{class:'row circle-form'},pseudo),el('div',{class:'row circle-form'},name,create),el('div',{class:'row circle-form'},code,join),msg);
+    return;
+  }
+  if(!circleData)body.replaceChildren(el('p',{class:'note',text:'Chargement du classement…'}));
+  await circlePush(); await circleLoad();
+  if(!circleData){body.replaceChildren(el('p',{class:'note',text:'Classement indisponible pour l’instant.'}));return;}
+  const share=`Rejoins mon cercle Brain Fit « ${circleData.name} » : ouvre https://yohandk.github.io/Brain-Fit/, crée ton compte, puis Progrès › Mon cercle, code ${c}.`;
+  const invite=el('button',{class:'btn',text:'Inviter',onclick:async()=>{try{if(navigator.share){await navigator.share({text:share});return;}await navigator.clipboard.writeText(share);toast('<span>Invitation copiée : colle-la dans un message.</span>');}catch(e){}}});
+  const leave=el('button',{class:'btn ghost',text:'Quitter le cercle',onclick:async()=>{
+    if(!leave.dataset.sure){leave.dataset.sure='1';leave.textContent='Vraiment quitter ?';return;}
+    const id=await myUserId(); await sbc().from('circle_members').delete().eq('code',c).eq('user_id',id);
+    state.settings.circle=null; circleData=null; save(); renderCircle();}});
+  body.replaceChildren(
+    el('div',{class:'row spread'},el('span',{},el('b',{text:circleData.name}),document.createTextNode(' · code '),el('b',{text:c})),el('div',{class:'row'},invite,leave)),
+    el('span',{class:'label',text:'Semaine '+isoWeek(todayKey())+' · XP de la semaine'}),
+    el('ol',{class:'ranking'},...circleData.rows.map((r,i)=>el('li',{class:r.me?'me':null},el('span',{class:'rk',text:String(i+1)}),el('span',{text:r.pseudo+(r.me?' (toi)':'')}),el('span',{class:'xpw',text:fmt(r.xp)+' XP'}),el('span',{class:'fg2',text:r.streak+' j'})))),
+    ...(circleData.rows.length<2?[el('p',{class:'note',text:'Tu es seul pour l’instant : invite un proche avec le bouton « Inviter ».'})]:[]));
+}
+// effacer son compte : tout part, côté serveur comme sur cet appareil
+$('#erase').addEventListener('click',()=>{$('#erase-confirm').hidden=false;});
+$('#erase-no').addEventListener('click',()=>{$('#erase-confirm').hidden=true;});
+$('#erase-yes').addEventListener('click',async()=>{
+  const sb=sbc(), msg=$('#erase-msg'); $('#erase-confirm').hidden=true; msg.textContent='Effacement…';
+  let full=false;
+  try{
+    const {data}=await sb.auth.getSession(), s=data.session;
+    const r=await fetch(window.BF_CONFIG.supabaseUrl+'/functions/v1/account',{method:'POST',headers:{Authorization:'Bearer '+s.access_token,apikey:window.BF_CONFIG.supabaseKey}});
+    full=r.ok;
+    if(!full){const id=s.user.id;await sb.from('circle_members').delete().eq('user_id',id);await sb.from('docs').delete().eq('user_id',id);}
+  }catch(e){}
+  try{await sb.auth.signOut();}catch(e){}
+  ref=null; tref=null; state=blank(); texts=[];
+  try{localStorage.removeItem(LS);localStorage.removeItem(LS_T);localStorage.removeItem('brainfit.draft');}catch(e){}
+  renderAll(); localOnly(); setSync('local');
+  msg.textContent=full?'Ton compte et toutes tes données sont effacés.':'Tes progrès, tes textes et ta place dans ton cercle sont effacés. Pour supprimer aussi ton adresse e-mail, demande-le à la personne qui gère ce Brain Fit.';
+});
 function renderCjl(){
   const k=todayKey(), o=cjlEvent(k,cjlOff), [md,y,txt]=o.e, d=(state.days[k]||{}).cjl;
   // la devinette du jour reste résolue après un rechargement
@@ -2180,7 +2278,7 @@ $('#login').addEventListener('submit',async e=>{
 });
 $('#logout').addEventListener('click',async()=>{
   try{await window.bfSupabase.auth.signOut();}catch(e){}
-  ref=null; tref=null; setSync('local'); localOnly(); showTab('aujourdhui'); window.scrollTo(0,0);
+  ref=null; tref=null; circleData=null; $('#erase').hidden=true; setSync('local'); localOnly(); showTab('aujourdhui'); window.scrollTo(0,0);
 });
 $('#reset').addEventListener('click',()=>{$('#reset-confirm').hidden=false;});
 $('#reset-no').addEventListener('click',()=>{$('#reset-confirm').hidden=true;});
@@ -2430,7 +2528,7 @@ function renderScreenChart(){
 }
 let samplerP=null;
 function sampler(){if(!samplerP)samplerP=(window.claude&&window.claude.use?window.claude.use('sample'):Promise.resolve(null)).catch(()=>null);return samplerP;}
-const COACH_ERR={not_granted:"Connecte-toi à ton compte (onglet Aujourd'hui) pour parler au coach.",rate_limited:"Le coach est très sollicité. Réessaie dans une minute.",refused:"Le coach ne peut pas répondre à cette demande. Reformule-la.",network:"Pas de connexion internet : le coach répondra quand tu seras de nouveau en ligne.",cancelled:""};
+const COACH_ERR={signed_out:"Connecte-toi à ton compte (onglet Aujourd'hui) pour parler au coach.",not_granted:"Le coach est réservé au propriétaire de ce Brain Fit : il paie chaque réponse. Tout le reste t'est ouvert.",rate_limited:"Le coach est très sollicité. Réessaie dans une minute.",refused:"Le coach ne peut pas répondre à cette demande. Reformule-la.",network:"Pas de connexion internet : le coach répondra quand tu seras de nouveau en ligne.",cancelled:""};
 // Appelle le coach et affiche sa réponse en direct dans `out`. Renvoie le texte, ou null.
 async function askCoach(input,out,opts){
   const s=await sampler();
@@ -2536,6 +2634,9 @@ $('#reel-city-edit').addEventListener('click',()=>{const f=$('#reel-city-form');
 $('#reel-city-form').addEventListener('submit',e=>{e.preventDefault();state.settings.city=$('#reel-city-in').value.trim().slice(0,60);$('#reel-city-form').hidden=true;save();renderReel();});
 function weeklyBilan(){
   if(!(window.BF_CONFIG||{}).coach)return;
+  sampler().then(s=>s&&s.limits()).then(l=>{if(l)weeklyBilanGo();}).catch(()=>{});
+}
+function weeklyBilanGo(){
   const now=new Date(), sun=new Date(now); sun.setHours(18,0,0,0); sun.setDate(sun.getDate()-sun.getDay());
   if(now<sun)sun.setDate(sun.getDate()-7);
   if(state.coach&&state.coach.t>=sun.getTime())return;
@@ -2683,7 +2784,7 @@ function showTab(t){
   if(!TABS.includes(t))t='aujourdhui';
   $$('.tabs button').forEach(b=>b.setAttribute('aria-selected',String(b.dataset.tab===t)));
   TABS.forEach(x=>$('#v-'+x).hidden=x!==t);
-  if(t==='progres'){renderProgress();renderCarnet();renderXpPanel();renderScreenChart();}
+  if(t==='progres'){renderProgress();renderCarnet();renderXpPanel();renderScreenChart();renderCircle();}
   if(t==='coach'){renderSas();renderCoach();}
   if(location.hash!=='#'+t)try{history.replaceState(null,'','#'+t);}catch(e){}
 }
@@ -3443,7 +3544,8 @@ function renderOrigins(){
 }
 function renderAll(){
   renderThemes();renderQuoteDay();renderCjl();renderFlori();renderGoal();renderProgram();renderScreens();renderToday();renderExGrid();
-  if(!$('#v-progres').hidden){renderProgress();renderCarnet();}
+  if(!$('#v-progres').hidden){renderProgress();renderCarnet();renderCircle();}
+  $('#erase').hidden=!ref;
   if(!$('#v-coach').hidden)renderSas();
 }
 function showGoalProposal(text){

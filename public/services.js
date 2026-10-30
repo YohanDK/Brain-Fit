@@ -32,7 +32,7 @@
 
   // appelle la fonction « coach » et lit sa réponse au fil de l'eau ; \u0000 suivi d'un code signale une erreur en cours de route
   async function call(body,onText){
-    const s=await session(); if(!s)throw fail('not_granted');
+    const s=await session(); if(!s)throw fail('signed_out');
     let r;
     try{
       r=await fetch(C.supabaseUrl+'/functions/v1/coach',{method:'POST',headers:{'Content-Type':'application/json',Authorization:'Bearer '+s.access_token,apikey:C.supabaseKey},body:JSON.stringify(body)});
@@ -70,7 +70,17 @@
     const images=opts.images?await Promise.all(opts.images.map(toBase64)):undefined;
     return parseJSON(await call({messages:toMessages(input),json:true,images,tier:opts.modelTier}));
   };
-  sample.limits=async()=>({images:true});
+  // le coach est-il ouvert à ce compte ? (réponse gardée pour la session)
+  let allowed=null;
+  if(sb)sb.auth.onAuthStateChange(()=>{allowed=null;});
+  sample.limits=async()=>{
+    const s=await session(); if(!s)return null;
+    if(allowed===null){
+      try{const r=await fetch(C.supabaseUrl+'/functions/v1/coach',{method:'POST',headers:{'Content-Type':'application/json',Authorization:'Bearer '+s.access_token,apikey:C.supabaseKey},body:JSON.stringify({ping:true})});allowed=r.ok;}
+      catch(e){return null;}
+    }
+    return allowed?{images:true}:null;
+  };
 
   window.claude={async use(cap){
     if(cap==='sample')return C.coach?sample:null; // sans coach branché, la page le dit simplement

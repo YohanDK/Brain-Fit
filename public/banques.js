@@ -490,5 +490,38 @@ B.rng=seed=>{let s=(Math.imul(seed>>>0,2654435761)^0x9E3779B9)>>>0||1;const f=()
   return {int:(a,b)=>a+Math.floor(f()*(b-a+1)),pick:a=>a[Math.floor(f()*a.length)]};};
 
 
+// Événements saisonniers : une semaine à thème, dix questions, un badge. Chaque question a sa source.
+// options : la bonne réponse est à l'index « bonne ». Format vrai / faux / non prouvé, ou choix multiple.
+const VF=['Vrai','Faux','Non prouvé'];
+B.evenements=[
+  {id:'toussaint-2026',du:'2026-10-31',au:'2026-11-08',titre:'Toussaint et Halloween : le vrai du faux',court:'Semaine de la Toussaint',
+   intro:"Dix affirmations qui circulent chaque automne. Pour chacune : vrai, faux, ou non prouvé (les historiens n'ont pas de quoi trancher). Savoir dire « on ne sait pas », c'est déjà de l'esprit critique.",
+   badge:['Veilleur de la Toussaint','8 sur 10 ou plus au vrai du faux de la Toussaint'],
+   questions:[
+    {id:'ts01',q:"Le mot « Halloween » vient de l'anglais All Hallows' Eve : la veille de la Toussaint.",options:VF,bonne:0,
+     expl:"Hallow veut dire « saint » en vieil anglais. All Hallows' Eve, contracté en Hallowe'en en Écosse, désigne le soir du 31 octobre, veille de la fête de tous les saints.",src:"Oxford English Dictionary, « Hallowe'en »",vu:'2026-10-30'},
+    {id:'ts02',q:"La Toussaint, le 1er novembre, est la fête des morts.",options:VF,bonne:1,
+     expl:"La Toussaint fête tous les saints. La commémoration des fidèles défunts tombe le 2 novembre. On fleurit les tombes dès le 1er surtout parce que ce jour est férié.",src:"Calendrier romain général ; diocèse de Paris, « Origine et sens de la fête du 2 novembre »",vu:'2026-10-30'},
+    {id:'ts03',q:"La journée de prière pour les défunts du 2 novembre a été instituée par saint Odilon, abbé de Cluny, vers l'an 1000.",options:VF,bonne:0,
+     expl:"Vers 998, Odilon la fixe au lendemain de la Toussaint pour tous les monastères clunisiens. L'usage gagne ensuite toute l'Église latine.",src:"Statuts d'Odilon de Cluny (Patrologie latine, t. 142) ; diocèse de Paris",vu:'2026-10-30'},
+    {id:'ts04',q:"La Toussaint a été placée au 1er novembre pour remplacer la fête celtique de Samain.",options:VF,bonne:2,
+     expl:"Frazer l'a soutenu, mais Ronald Hutton note que l'Église d'Irlande fêtait tous les saints le 20 avril, et penche pour une origine anglo-saxonne de la date. Les deux fêtes se sont influencées ; la thèse du remplacement reste une hypothèse.",src:"Hutton, The Stations of the Sun, Oxford University Press, 1996, p. 364",vu:'2026-10-30'},
+    {id:'ts05',q:"En 835, l'Empire franc adopte officiellement le 1er novembre comme date de la Toussaint.",options:VF,bonne:0,
+     expl:"Sous Louis le Pieux. Auparavant, Rome fêtait tous les martyrs le 13 mai, depuis Boniface IV (609).",src:"Hutton, The Stations of the Sun, 1996, p. 364",vu:'2026-10-30'},
+    {id:'ts06',q:"Avant la citrouille, on creusait des navets pour faire des lanternes en Irlande et en Grande-Bretagne.",options:VF,bonne:0,
+     expl:"Navets et betteraves évidés, souvent sculptés de visages grimaçants, sont attestés au XIXe siècle. La citrouille, plus grosse et facile à creuser, s'impose en Amérique du Nord.",src:"Hutton, The Stations of the Sun, 1996, p. 380-382",vu:'2026-10-30'},
+    {id:'ts07',q:"L'expression « trick or treat » (« un bonbon ou un sort ») remonte au Moyen Âge.",options:VF,bonne:1,
+     expl:"Sa plus ancienne trace imprimée connue date de 1927, dans un journal de l'Alberta, au Canada. Les quêtes de porte en porte sont plus anciennes, mais pas la formule.",src:"Archives de la ville d'Edmonton, « Trick or treat » ; Dictionary of Canadianisms (Université de Colombie-Britannique)",vu:'2026-10-30'},
+    {id:'ts08',q:"Fleurir les tombes de chrysanthèmes à la Toussaint est une coutume française depuis le Moyen Âge.",options:VF,bonne:1,
+     expl:"Le chrysanthème devient la fleur des morts après la Grande Guerre : le 11 novembre 1919, Poincaré demande que tous les monuments aux morts soient fleuris, et la fleur de saison s'impose, puis gagne les tombes.",src:"Ville de Paris, « L'étrange histoire du chrysanthème, fleur d'or des cimetières »",vu:'2026-10-30'},
+    {id:'ts09',q:"Le 1er novembre est un jour férié inscrit dans la loi française.",options:VF,bonne:0,
+     expl:"La Toussaint figure dans la liste des fêtes légales, avec le 11 novembre et neuf autres jours.",src:"Code du travail, article L3133-1",vu:'2026-10-30'},
+    {id:'ts10',q:"« Le 1er novembre tombait déjà le jour de Samain, donc la Toussaint n'est qu'une fête païenne déguisée. » Quel est le défaut de ce raisonnement ?",
+     options:["Il juge une fête par son origine supposée","Il tire une règle d'un seul exemple","Il attaque la personne au lieu de l'idée","Aucun : l'argument tient"],bonne:0,
+     expl:"C'est le sophisme génétique : l'origine d'une chose ne dit pas ce qu'elle est devenue. Et ici, la prémisse elle-même n'est pas prouvée (question 4).",src:"Cohen et Nagel, An Introduction to Logic and Scientific Method, 1934 ; Hutton, 1996",vu:'2026-10-30'}
+   ]}
+];
+
+
 root.NEO_BANQUES=B;
 })(typeof window!=='undefined'?window:globalThis);

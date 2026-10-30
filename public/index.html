@@ -360,6 +360,24 @@ table.week td.num{font-family:var(--f-mono)}
 .contest{display:flex;flex-direction:column;gap:8px;align-items:flex-start}
 .btn.small{padding:4px 8px;font-size:.85rem;font-weight:600}
 .lvnote{margin:0}
+/* animations */
+#arena.qin>*:not(.qhead){animation:rise .38s cubic-bezier(.2,.7,.3,1) both}
+#arena.qin>*:nth-child(3){animation-delay:.04s} #arena.qin>*:nth-child(4){animation-delay:.08s} #arena.qin>*:nth-child(5){animation-delay:.12s}
+.options button,.aibubble .sent,.btn{transition:transform .12s ease,background .2s,border-color .2s}
+.options button:active:not([disabled]),.btn:active:not([disabled]){transform:scale(.97)}
+.conf-in{animation:rise .3s ease-out both}
+.pari{animation:pari .5s cubic-bezier(.3,1.6,.5,1) both}
+@keyframes pari{from{transform:scale(.4);opacity:0}to{transform:none;opacity:1}}
+.chart .ln{stroke-dasharray:1;stroke-dashoffset:1;animation:draw .9s ease-out .1s forwards}
+@keyframes draw{to{stroke-dashoffset:0}}
+.chart .dt{opacity:0;animation:fadein .25s ease-out forwards}
+.chart .bar{transform-box:fill-box;transform-origin:bottom;animation:grow .6s cubic-bezier(.2,.8,.3,1) both}
+@keyframes grow{from{transform:scaleY(0)}}
+.chart .val{opacity:0;animation:fadein .3s ease-out forwards}
+@keyframes fadein{to{opacity:1}}
+.laurels{position:fixed;left:50%;top:38%;width:0;height:0;pointer-events:none;z-index:60}
+.laurels i{position:absolute;width:12px;height:26px;margin:-13px -6px;border-radius:100% 0;background:linear-gradient(135deg,var(--gold),var(--gold-deep));box-shadow:0 1px 2px rgba(0,0,0,.15);opacity:0;animation:leaf 1.8s cubic-bezier(.15,.7,.4,1) var(--d) forwards}
+@keyframes leaf{0%{opacity:0;transform:translate(0,0) rotate(0) scale(.4)}12%{opacity:1}100%{opacity:0;transform:translate(var(--x),var(--y)) rotate(var(--r)) scale(1)}}
 .chartcard{margin:0;width:min(520px,100%);display:flex;flex-direction:column;gap:4px;text-align:left}
 .chartcard figcaption{display:flex;flex-direction:column}
 .chart{width:100%;height:auto;font-family:var(--f-body)}
@@ -1046,6 +1064,7 @@ q{quotes:"« " " »" "“" "”"}
       <div class="row"><button class="btn" id="login-open" hidden>Se connecter</button><button class="btn ghost" id="logout" hidden>Se déconnecter</button></div>
       <form class="row reel-city" id="city-form"><label class="note" for="city-in">Ta ville, pour le défi du réel</label><input type="text" id="city-in" placeholder="Ta ville" autocomplete="address-level2"><button class="btn mini">Valider</button></form>
       <div class="row"><span class="note">Couleurs</span><div class="seg" id="theme-seg" role="group" aria-label="Thème"><button data-th="light">Claires</button><button data-th="dark">Sombres</button><button data-th="auto">Comme le téléphone</button></div></div>
+      <div class="row"><span class="note">Sons</span><div class="seg" id="son-seg" role="group" aria-label="Sons"><button data-son="on">Activés</button><button data-son="off">Coupés</button></div></div>
     </div>
     <div class="panel">
       <div><h2>Mes thèmes</h2><p class="muted note">Jusqu'à trois. Citations, « Ce jour-là », dictées, sujets d'écriture et coach s'en inspirent.</p></div>
@@ -3253,8 +3272,8 @@ function chartSVG(g){
   const ticks=(Sc,side)=>{for(let v=Math.ceil(Sc.a/Sc.st-1e-9)*Sc.st;v<=Sc.b+1e-9;v+=Sc.st){const y=Sc.y(v);if(side==='g')o+=`<line x1="${L}" x2="${W-R}" y1="${y}" y2="${y}" class="grid"/>`;o+=`<text x="${side==='g'?L-6:W-R+6}" y="${y+4}" text-anchor="${side==='g'?'end':'start'}" class="${side==='d'?'tk s1':'tk'}">${f(v)}</text>`;}};
   ticks(S1,'g'); if(S2)ticks(S2,'d');
   ser.forEach((x,k)=>{const Sc=x.axe==='d'&&S2?S2:S1;
-    if(g.type==='barres'){const bw=Math.min(56,w/n*.55);x.v.forEach((v,i)=>{const y=Sc.y(Math.min(Sc.b,v)),y0=T+h;o+=`<rect x="${px(i)-bw/2}" y="${y}" width="${bw}" height="${Math.max(0,y0-y)}" class="bar"/><text x="${px(i)}" y="${y-5}" text-anchor="middle" class="val">${f(v)}</text>`;});}
-    else{o+=`<polyline points="${x.v.map((v,i)=>px(i)+','+Sc.y(v)).join(' ')}" class="ln s${k}"/>`;x.v.forEach((v,i)=>{o+=`<circle cx="${px(i)}" cy="${Sc.y(v)}" r="3" class="dt s${k}"/>`;});}
+    if(g.type==='barres'){const bw=Math.min(56,w/n*.55);x.v.forEach((v,i)=>{const y=Sc.y(Math.min(Sc.b,v)),y0=T+h;o+=`<rect x="${px(i)-bw/2}" y="${y}" width="${bw}" height="${Math.max(0,y0-y)}" class="bar" style="animation-delay:${(i*.08).toFixed(2)}s"/><text x="${px(i)}" y="${y-5}" text-anchor="middle" class="val" style="animation-delay:${(.35+i*.08).toFixed(2)}s">${f(v)}</text>`;});}
+    else{o+=`<polyline points="${x.v.map((v,i)=>px(i)+','+Sc.y(v)).join(' ')}" pathLength="1" class="ln s${k}"/>`;x.v.forEach((v,i)=>{o+=`<circle cx="${px(i)}" cy="${Sc.y(v)}" r="3" class="dt s${k}" style="animation-delay:${(.15+.7*i/Math.max(1,x.v.length-1)).toFixed(2)}s"/>`;});}
   });
   o+=`<line x1="${L}" x2="${W-R}" y1="${T+h}" y2="${T+h}" class="axis"/>`;
   // on saute une étiquette qui chevaucherait la précédente
@@ -3282,6 +3301,7 @@ function adaptLevel(ex,score){
   const L=lvl(ex), n=score>=85?Math.min(3,L+1):score<60?Math.max(1,L-1):L;
   if(n===L)return '';
   (state.lvl=state.lvl||{})[ex]=n; persist();
+  if(n>L)setTimeout(()=>{son('niveau');laurels();toast(`<span>Niveau ${n} sur 3 : ${EX[ex].name}<small>Les questions seront un peu plus difficiles.</small></span>`);},900);
   return n>L?` Tu passes au niveau ${n} sur 3.`:` Tu repasses au niveau ${n} sur 3, le temps de consolider.`;
 }
 // « Sûr à combien ? » : la confiance annoncée avant la correction. Le pari suit un score logarithmique :
@@ -3293,6 +3313,7 @@ function askConf(onPick,label){
   const row=el('div',{class:'conf'},el('span',{class:'label',text:label||'Sûr à combien ?'}));
   const seg=el('div',{class:'seg',role:'group','aria-label':'Ta confiance'});
   CONF.forEach(([c,t])=>seg.append(el('button',{text:t,onclick:()=>{[...seg.children].forEach(b=>b.disabled=true);row.remove();onPick(c);}})));
+  row.classList.add('conf-in');
   row.append(seg); return row;
 }
 function logConf(ex,c,ok){
@@ -3351,19 +3372,52 @@ function intro(arena,text,controls,onStart){
   const lv=LVBANK[curEx]?el('p',{class:'note lvnote',text:`Niveau ${lvl(curEx)} sur 3. Il s'ajuste à tes résultats pour que tu réussisses environ 4 fois sur 5 : assez pour avancer, assez dur pour progresser.`}):null;
   arena.replaceChildren(el('p',{class:'fg2',text,style:'max-width:52ch'}),lv,controls||null,el('button',{class:'btn primary',text:'Commencer',onclick:onStart}));
 }
+/* ---------- sons : fabriqués dans le navigateur, sans fichier, donc aussi hors ligne ---------- */
+let AC=null;
+const sonOn=()=>state.settings.son!=='off';
+// une note de cloche : la fondamentale et un partiel aigu qui s'éteignent doucement
+function bell(ac,f,t,{dur=1.1,vol=.11,type='sine'}={}){
+  const g=ac.createGain(); g.connect(ac.destination);
+  g.gain.setValueAtTime(0,t); g.gain.linearRampToValueAtTime(vol,t+.008); g.gain.exponentialRampToValueAtTime(.0005,t+dur);
+  for(const[k,v] of [[1,1],[2.01,.28],[3.98,.08]]){const o=ac.createOscillator(),h=ac.createGain();o.type=type;o.frequency.setValueAtTime(f*k,t);h.gain.value=v;o.connect(h);h.connect(g);o.start(t);o.stop(t+dur+.05);}
+}
+const SONS={
+  juste:(ac,t)=>{bell(ac,659.25,t,{dur:.7,vol:.09});bell(ac,987.77,t+.07,{dur:.9,vol:.08});},
+  faux:(ac,t)=>{const o=ac.createOscillator(),g=ac.createGain();o.type='triangle';o.frequency.setValueAtTime(220,t);o.frequency.exponentialRampToValueAtTime(165,t+.22);g.gain.setValueAtTime(0,t);g.gain.linearRampToValueAtTime(.09,t+.01);g.gain.exponentialRampToValueAtTime(.0005,t+.3);o.connect(g);g.connect(ac.destination);o.start(t);o.stop(t+.32);},
+  clic:(ac,t)=>bell(ac,1318.5,t,{dur:.08,vol:.035}),
+  fin:(ac,t)=>[523.25,659.25,783.99].forEach((f,i)=>bell(ac,f,t+i*.09,{dur:.9,vol:.07})),
+  record:(ac,t)=>[783.99,1046.5,1318.5,1567.98].forEach((f,i)=>bell(ac,f,t+i*.11,{dur:1.4,vol:.08})),
+  niveau:(ac,t)=>[523.25,783.99,1046.5].forEach((f,i)=>bell(ac,f,t+i*.14,{dur:1.2,vol:.09}))
+};
+function son(k){
+  if(!sonOn()||!SONS[k])return;
+  try{AC=AC||new (window.AudioContext||window.webkitAudioContext)();if(AC.state==='suspended')AC.resume();SONS[k](AC,AC.currentTime+.01);}catch(e){}
+}
+// feuilles de laurier dorées pour un record, une séance parfaite ou un niveau gagné
+const reduceMotion=()=>window.matchMedia&&matchMedia('(prefers-reduced-motion: reduce)').matches;
+function laurels(){
+  if(reduceMotion())return;
+  const box=el('div',{class:'laurels','aria-hidden':'true'});
+  for(let i=0;i<22;i++){
+    const a=(Math.random()*140-70)*Math.PI/180, d=120+Math.random()*160;
+    const leaf=el('i',{style:`--x:${Math.round(Math.sin(a)*d)}px;--y:${Math.round(-Math.cos(a)*d*.6+120+Math.random()*80)}px;--r:${Math.round(Math.random()*540-270)}deg;--d:${(Math.random()*.25).toFixed(2)}s`});
+    box.append(leaf);
+  }
+  document.body.append(box); setTimeout(()=>box.remove(),2200);
+}
 /* exercices à questions : barre de progression, verdict animé, série de bonnes réponses */
 let curEx=null, qmarks=[], qcur=0, combo=0;
 const FLAME='<svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2c1 4-3 6-3 10a3 3 0 0 0 6 0c0-1-.5-2-1-3 3 1 5 4 5 7a7 7 0 0 1-14 0c0-6 7-8 7-14z"/></svg>';
 function qprog(i,n){
   if(i===0){qmarks=[];combo=0;}
-  qcur=i; delete $('#arena').dataset.v;
+  qcur=i; const ar=$('#arena'); delete ar.dataset.v; ar.classList.remove('qin'); void ar.offsetWidth; ar.classList.add('qin');
   const bar=el('div',{class:'qbar',role:'progressbar','aria-valuemin':'1','aria-valuemax':String(n),'aria-valuenow':String(i+1),'aria-label':`Question ${i+1} sur ${n}`});
   for(let j=0;j<n;j++)bar.append(el('i',{class:j<i?(qmarks[j]?'ok':'ko'):j===i?'cur':null}));
   const c=el('span',{class:'combo',hidden:combo<2?'':null}); if(combo>=2)c.innerHTML=FLAME+combo+' d’affilée';
   return el('div',{class:'qhead'},bar,el('span',{class:'qcount',text:`${i+1}/${n}`}),c);
 }
 function hit(right){
-  right=!!right; qmarks[qcur]=right; combo=right?combo+1:0;
+  right=!!right; qmarks[qcur]=right; combo=right?combo+1:0; son(right?'juste':'faux');
   const a=$('#arena'); a.dataset.v=right?'ok':'ko';
   const seg=a.querySelector('.qbar i.cur'); if(seg)seg.className=right?'ok':'ko';
   const c=a.querySelector('.combo');
@@ -3389,6 +3443,8 @@ function showResult(arena,score,unit,msg,again,extra){
     msg?el('p',{class:'fg2',text:msg,style:'max-width:50ch'}):null,
     el('div',{class:'row',style:'justify-content:center'},el('button',{class:'btn primary',text:'Recommencer',onclick:again}),el('button',{class:'btn',text:'Retour à la routine',onclick:()=>{stopRun();$('#stage').hidden=true;$('#exgrid').hidden=false;showTab('aujourdhui');}}))].filter(Boolean));
   countUp(sc,score);
+  const rec=fresh&&last.rec, perfect=marks.length>1&&marks.every(Boolean);
+  if(rec||perfect){son('record');laurels();}else son('fin');
 }
 function bestOf(ex){const rs=state.results.filter(r=>r.ex===ex);return rs.length?Math.max(...rs.map(r=>r.s)):null;}
 function recordMsg(ex,s){const b=bestOf(ex);return b===null?'Premier score enregistré. Il servira de point de départ.':s>b?'Nouveau record !':`Ton record est de ${fmt(b)}.`;}
@@ -4202,6 +4258,9 @@ function applyTheme(){
   if(th==='auto')delete document.documentElement.dataset.theme; else document.documentElement.dataset.theme=th;
   $$('#theme-seg button').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.th===th)));
 }
+function renderSon(){$$('#son-seg button').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.son===(sonOn()?'on':'off'))));}
+$$('#son-seg button').forEach(b=>b.addEventListener('click',()=>{state.settings.son=b.dataset.son;save();renderSon();son('juste');}));
+renderSon();
 $$('#theme-seg button').forEach(b=>b.addEventListener('click',()=>{try{localStorage.setItem(LS_TH,b.dataset.th);}catch(e){}applyTheme();}));
 applyTheme();
 function renderOrigins(){

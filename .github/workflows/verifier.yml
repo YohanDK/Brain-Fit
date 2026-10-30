@@ -1,0 +1,18 @@
+# Vérifie les banques d'exercices sur chaque proposition de modification, avant fusion.
+name: Vérifier les exercices
+
+on:
+  pull_request:
+    paths: ["public/banques.js", "tools/**", ".github/workflows/verifier.yml"]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  verifier:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Vérifier les banques d'exercices
+        run: node tools/verifier-banques.js

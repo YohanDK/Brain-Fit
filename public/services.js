@@ -82,6 +82,13 @@
     return allowed?{images:true}:null;
   };
 
+  // « Je conteste » : un signalement par ligne, à relire dans Supabase › Table Editor › signalements
+  window.bfSignaler=async r=>{
+    const s=await session(); if(!s)throw fail('signed_out');
+    const {error}=await sb.from('signalements').insert({exercice:r.ex,question_id:r.id||null,enonce:r.q||null,message:r.m});
+    if(error)throw error;
+  };
+
   window.claude={async use(cap){
     if(cap==='sample')return C.coach?sample:null; // sans coach branché, la page le dit simplement
     if(cap==='db'||cap==='user')return (await session())?(cap==='db'?db:user):null;

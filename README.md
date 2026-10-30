@@ -11,6 +11,9 @@ Le site s'installe sur le téléphone comme une appli. Avec un compte, les progr
 | `public/` | GitHub Pages | Le site lui-même (une seule page), installable et utilisable hors ligne. |
 | `supabase/setup.sql` | Supabase | La table qui garde tes progrès. Chacun ne voit que les siens. |
 | `supabase/cercle.sql` | Supabase | Les cercles d'amis et leur classement de la semaine, et l'effacement de ses données. |
+| `supabase/signalements.sql` | Supabase | Les signalements « Je conteste » envoyés depuis les corrections. |
+| `public/banques.js` | GitHub Pages | Les problèmes, sophismes, erreurs d'IA, estimations et phrases d'orthographe, avec leur niveau et leur source, et les modèles de variantes. |
+| `tools/verifier-banques.js` | GitHub | Vérifie les banques avant chaque publication : une question mal formée ou un calcul faux bloque la mise en ligne. |
 | `supabase/functions/coach/` | Supabase | Le coach : il reçoit la demande de la page et appelle Claude avec ta clé API, qui reste secrète. |
 | `supabase/functions/account/` | Supabase | Efface un compte et toutes ses données, à la demande de son propriétaire. |
 | `.github/workflows/pages.yml` | GitHub | Remet le site en ligne à chaque changement. |
@@ -23,7 +26,7 @@ Le bilan du dimanche se fait tout seul : dès dimanche 18 h, l'appli calcule le 
 ### 1. Supabase : le compte et les données
 
 1. Crée un compte sur [supabase.com](https://supabase.com) (« Continue with GitHub » est le plus simple), puis un projet nommé `brain-fit`, région **Paris (eu-west-3)**. Le mot de passe de la base ne te resservira pas.
-2. Dans le projet, ouvre **SQL Editor**, colle tout le contenu de [`supabase/setup.sql`](supabase/setup.sql), puis clique sur **Run**. Fais de même, dans une nouvelle requête, avec [`supabase/cercle.sql`](supabase/cercle.sql).
+2. Dans le projet, ouvre **SQL Editor**, colle tout le contenu de [`supabase/setup.sql`](supabase/setup.sql), puis clique sur **Run**. Fais de même, dans une nouvelle requête, avec [`supabase/cercle.sql`](supabase/cercle.sql), puis avec [`supabase/signalements.sql`](supabase/signalements.sql).
 3. Dans **Project Settings › API Keys**, copie l'**URL du projet** et la **clé publique** (`publishable`, ou `anon`). Ces deux valeurs peuvent être partagées sans risque : elles vont dans `public/config.js`.
 4. Note l'**identifiant du projet** : ce sont les lettres de l'adresse, `https://<identifiant>.supabase.co`.
 5. Crée un jeton d'accès sur [supabase.com/dashboard/account/tokens](https://supabase.com/dashboard/account/tokens) (nom : `github`). Garde-le pour l'étape 3.
@@ -68,3 +71,9 @@ Pour changer de modèle (par exemple un modèle moins cher), ajoute dans l'ongle
 ## Coût
 
 L'hébergement (GitHub Pages, Supabase) est gratuit à cette échelle. Le coach est payé à l'usage sur la console Claude : compte quelques centimes par réponse, donc quelques euros à une quinzaine d'euros par mois selon ton usage. Tu peux fixer une limite de dépense mensuelle dans **Settings › Limits** de la console.
+
+## Les exercices
+
+Les questions de raisonnement et de langue sont dans [`public/banques.js`](public/banques.js), une par ligne, avec un identifiant, un niveau (1 à 3) et, pour toute nouvelle question, sa source et sa date de vérification. Les règles d'ajout sont en tête du fichier. Avant de publier, `node tools/verifier-banques.js` contrôle la forme de chaque question, les doublons, les mauvaises réponses trop proches de la bonne dans les sophismes, et refait 500 fois le calcul de chaque modèle de variante par une autre méthode. Le site ne se publie pas si la vérification échoue.
+
+Les signalements « Je conteste » arrivent dans **Supabase › Table Editor › signalements**. Une fois une question corrigée ou retirée (`retire:true`, sans l'effacer), coche `traite`.

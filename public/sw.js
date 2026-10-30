@@ -1,6 +1,6 @@
 // Néophyte hors ligne : on prend toujours la version en ligne si possible, sinon la dernière gardée.
-const CACHE='brainfit-v1';
-const SHELL=['./','./config.js','./services.js','./manifest.webmanifest','./icon-192.png'];
+const CACHE='brainfit-v2';
+const SHELL=['./','./config.js','./services.js','./banques.js','./manifest.webmanifest','./icon-192.png'];
 self.addEventListener('install',e=>{self.skipWaiting();e.waitUntil(caches.open(CACHE).then(c=>c.addAll(SHELL)));});
 self.addEventListener('activate',e=>e.waitUntil(caches.keys().then(ks=>Promise.all(ks.filter(k=>k!==CACHE).map(k=>caches.delete(k)))).then(()=>self.clients.claim())));
 self.addEventListener('fetch',e=>{

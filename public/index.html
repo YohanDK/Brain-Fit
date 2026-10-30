@@ -140,7 +140,8 @@ section.view{display:flex;flex-direction:column;gap:20px}
 
 /* stage */
 .stage{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:20px;display:flex;flex-direction:column;gap:16px;min-height:340px}
-.stage-head{display:flex;justify-content:space-between;align-items:flex-start;gap:10px;flex-wrap:wrap}
+.stage-head{display:flex;justify-content:space-between;align-items:flex-start;gap:10px}
+.stage-head>div:first-child{min-width:0}
 .arena{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:18px;text-align:center;padding:10px 0}
 .timer{font-family:var(--f-mono);font-size:1rem;font-weight:700;color:var(--fg2);background:var(--sunk);padding:4px 10px;border-radius:7px}
 .problem{font-family:var(--f-mono);font-size:clamp(2rem,8vw,3.2rem);font-weight:700;letter-spacing:.02em}
@@ -267,6 +268,53 @@ table.week td.num{font-family:var(--f-mono)}
 .options button:hover:not([disabled]){border-color:var(--accent)}
 .options button.right{background:var(--good-soft);border-color:var(--good);color:var(--good)}
 .options button.wrong{background:var(--bad-soft);border-color:var(--bad);color:var(--bad)}
+/* exercices à questions : progression, réponses animées, série */
+.logslider{width:min(420px,100%);height:32px;-webkit-appearance:none;appearance:none;background:transparent;cursor:pointer}
+.logslider::-webkit-slider-runnable-track{height:6px;border-radius:3px;background:var(--line)}
+.logslider::-webkit-slider-thumb{-webkit-appearance:none;width:26px;height:26px;margin-top:-10px;border-radius:50%;background:var(--gold);box-shadow:0 0 0 3px var(--surface),0 1px 4px rgba(0,0,0,.25)}
+.logslider::-moz-range-track{height:6px;border-radius:3px;background:var(--line)}
+.logslider::-moz-range-thumb{width:26px;height:26px;border:0;border-radius:50%;background:var(--gold);box-shadow:0 0 0 3px var(--surface),0 1px 4px rgba(0,0,0,.25)}
+.fermi-val{font-family:var(--f-body);font-weight:600;font-size:1.3rem;min-height:1.5em;text-align:center;margin:0}
+.lscale-l{display:flex;justify-content:space-between;width:min(420px,100%);font-size:.72rem;color:var(--muted);margin-top:-6px}
+.lscale{position:relative;height:72px;width:min(420px,100%)}
+.lscale::before{content:"";position:absolute;left:0;right:0;top:35px;height:2px;background:var(--line)}
+.lscale .band{position:absolute;top:30px;height:12px;border-radius:6px;background:var(--good-soft);box-shadow:inset 0 0 0 1px var(--good)}
+.lscale .mk{position:absolute;top:0;bottom:0;width:0;transition:left 1s cubic-bezier(.2,.8,.2,1)}
+.lscale .mk i{position:absolute;top:29px;left:-7px;width:14px;height:14px;border-radius:50%;background:currentColor;box-shadow:0 0 0 2px var(--surface)}
+.lscale .mk b{position:absolute;left:0;transform:translateX(-50%);font-size:.78rem;white-space:nowrap}
+.lscale .mk.ans{color:var(--gold-deep)} .lscale .mk.ans b{top:6px}
+.lscale .mk.you{color:var(--accent)} .lscale .mk.you b{top:48px}
+.qhead{display:flex;align-items:center;gap:10px;width:min(520px,100%)}
+.qbar{display:flex;gap:4px;flex:1}
+.qbar i{flex:1;height:6px;border-radius:3px;background:var(--line);transition:background .3s}
+.qbar i.cur{background:var(--gold);animation:qcur 1.4s ease-in-out infinite}
+.qbar i.ok{background:var(--good)} .qbar i.ko{background:var(--bad)}
+@keyframes qcur{50%{opacity:.45}}
+.qcount{font-size:.85rem;color:var(--muted);font-variant-numeric:tabular-nums}
+.combo{display:inline-flex;align-items:center;gap:4px;background:var(--warm-soft);color:var(--warm);border-radius:999px;padding:2px 10px;font-size:.85rem;font-weight:700;white-space:nowrap}
+.combo.bump{animation:bump .45s ease-out}
+@keyframes bump{40%{transform:scale(1.25)}}
+.options button.right,.aibubble .wrongsent{animation:right .45s ease-out}
+.options button.wrong,.aibubble .missed{animation:shake .4s ease-in-out}
+@keyframes right{40%{transform:scale(1.03)}}
+@keyframes shake{20%,60%{transform:translateX(-6px)}40%,80%{transform:translateX(6px)}}
+.answer:not([hidden]){animation:rise .35s ease-out}
+@keyframes rise{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+#arena[data-v=ok] .answer{box-shadow:inset 4px 0 0 var(--good)} #arena[data-v=ko] .answer{box-shadow:inset 4px 0 0 var(--bad)}
+#arena[data-v=ok] .answer>.label:first-child{color:var(--good)} #arena[data-v=ko] .answer>.label:first-child{color:var(--bad)}
+/* écran de fin */
+.result .score{font-variant-numeric:tabular-nums}
+.result.record .score{animation:glow 1.6s ease-out}
+@keyframes glow{0%{transform:scale(.6);opacity:0}40%{transform:scale(1.15);opacity:1;text-shadow:0 0 24px var(--gold)}100%{transform:none}}
+.gains{display:flex;gap:8px;flex-wrap:wrap;justify-content:center}
+.gains span{background:var(--gold-soft);color:var(--gold-deep);border-radius:999px;padding:3px 12px;font-weight:700;font-size:.9rem;animation:rise .4s .5s both ease-out}
+.gains span.rec{background:var(--good-soft);color:var(--good)}
+.recap{display:flex;flex-direction:column;align-items:center;gap:6px;width:min(320px,100%)}
+.recap .qbar{width:100%;flex:none}
+.recap.wide{width:min(520px,100%);align-items:stretch;gap:12px}
+#st-bar{height:3px;border-radius:2px;background:var(--line);overflow:hidden;margin-top:-4px}
+#st-bar i{display:block;height:100%;background:var(--gold);transition:width .25s linear}
+#st-bar.late i{background:var(--bad)}
 .quote{font-family:var(--f-display);font-size:1.15rem;font-weight:500;max-width:52ch;border-left:4px solid var(--accent);padding-left:14px;text-align:left}
 .goal{border-color:var(--line)}
 .goal .big{font-family:var(--f-display);font-size:1.2rem;font-weight:700;overflow-wrap:anywhere}
@@ -448,6 +496,12 @@ a{color:var(--accent);text-underline-offset:3px}
 .cjl-year{font-family:var(--f-display);font-size:1.7rem;font-weight:700;color:var(--accent);line-height:1.1}
 .options.chrono button{font-weight:400;line-height:1.4}
 .options.chrono b{font-family:var(--f-display);font-weight:700}
+.frise{list-style:none;margin:0;padding:0 0 0 18px;border-left:2px solid var(--gold);display:flex;flex-direction:column;gap:10px;text-align:left;width:min(520px,100%)}
+.frise li{position:relative;line-height:1.4;animation:rise .4s both ease-out}
+.frise li::before{content:"";position:absolute;left:-25px;top:6px;width:12px;height:12px;border-radius:50%;background:var(--gold);box-shadow:0 0 0 2px var(--surface)}
+.frise li.miss::before{background:var(--bad)}
+.frise b{font-family:var(--f-display);margin-right:8px}
+.frise li:nth-child(2){animation-delay:.08s}.frise li:nth-child(3){animation-delay:.16s}.frise li:nth-child(4){animation-delay:.24s}.frise li:nth-child(5){animation-delay:.32s}.frise li:nth-child(6){animation-delay:.4s}.frise li:nth-child(n+7){animation-delay:.48s}
 .orig summary{cursor:pointer;color:var(--fg2);font-size:.95rem}
 .orig p{color:var(--fg2);max-width:68ch;margin-top:8px}
 .cat{display:inline-block;font-size:.76rem;letter-spacing:.08em;text-transform:uppercase;font-weight:600;color:var(--muted)}
@@ -746,9 +800,10 @@ q{quotes:"« " " »" "“" "”"}
         </div>
         <div class="row">
           <span class="timer" id="st-timer" hidden></span>
-          <button class="btn ghost" id="st-close">Fermer</button>
+          <button class="iconbtn" id="st-close" aria-label="Fermer l’exercice" title="Fermer"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg></button>
         </div>
       </div>
+      <div id="st-bar" hidden><i></i></div>
       <details class="orig" id="st-orig"><summary>D'où vient cet exercice ?</summary><p></p></details>
       <div class="arena" id="arena"></div>
     </div>
@@ -2928,9 +2983,10 @@ function freshPick(bank,arr,n){
   idx.forEach(i=>{sn[i]=now;}); persist(); return idx.map(i=>arr[i]);
 }
 let cleanup=null;
-function stopRun(){if(cleanup){cleanup();cleanup=null;}$('#st-timer').hidden=true;}
+function stopRun(){if(cleanup){cleanup();cleanup=null;}$('#st-timer').hidden=true;$('#st-bar').hidden=true;}
 function openEx(key){
   stopRun();
+  curEx=key; qmarks=[];
   const e=EX[key]; $('#exgrid').hidden=true; $('#stage').hidden=false; $('#st-skill').textContent=e.skill; $('#st-name').textContent=e.name;
   const o=$('#st-orig'); o.open=false; o.hidden=!ORIG[key]; o.querySelector('p').textContent=ORIG[key]||'';
   RUN[key]($('#arena'));
@@ -2938,18 +2994,53 @@ function openEx(key){
 }
 $('#st-close').addEventListener('click',()=>{stopRun();$('#stage').hidden=true;$('#exgrid').hidden=false;});
 function countdown(sec,onTick,onEnd){
-  const t=$('#st-timer'); t.hidden=false; const end=Date.now()+sec*1000;
-  const f=()=>{const left=Math.max(0,Math.ceil((end-Date.now())/1000));t.textContent=Math.floor(left/60)+':'+String(left%60).padStart(2,'0');onTick&&onTick(left);if(left<=0){clearInterval(iv);onEnd();}};
+  const t=$('#st-timer'), bar=$('#st-bar'); t.hidden=false; bar.hidden=false; const end=Date.now()+sec*1000;
+  const f=()=>{const ms=Math.max(0,end-Date.now()), left=Math.ceil(ms/1000);t.textContent=Math.floor(left/60)+':'+String(left%60).padStart(2,'0');
+    bar.firstChild.style.width=(ms/(sec*1000)*100)+'%'; bar.classList.toggle('late',left<=Math.min(10,sec/4));
+    onTick&&onTick(left);if(left<=0){clearInterval(iv);bar.hidden=true;onEnd();}};
   const iv=setInterval(f,250); f(); return()=>clearInterval(iv);
 }
 function intro(arena,text,controls,onStart){
   arena.replaceChildren(el('p',{class:'fg2',text,style:'max-width:52ch'}),controls||null,el('button',{class:'btn primary',text:'Commencer',onclick:onStart}));
 }
-function showResult(arena,score,unit,msg,again){
-  $('#st-timer').hidden=true;
-  arena.replaceChildren(el('div',{class:'result'},el('span',{class:'label',text:'Résultat'}),el('span',{class:'score',text:fmt(score)}),el('span',{class:'fg2',text:unit})),
+/* exercices à questions : barre de progression, verdict animé, série de bonnes réponses */
+let curEx=null, qmarks=[], qcur=0, combo=0;
+const FLAME='<svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2c1 4-3 6-3 10a3 3 0 0 0 6 0c0-1-.5-2-1-3 3 1 5 4 5 7a7 7 0 0 1-14 0c0-6 7-8 7-14z"/></svg>';
+function qprog(i,n){
+  if(i===0){qmarks=[];combo=0;}
+  qcur=i; delete $('#arena').dataset.v;
+  const bar=el('div',{class:'qbar',role:'progressbar','aria-valuemin':'1','aria-valuemax':String(n),'aria-valuenow':String(i+1),'aria-label':`Question ${i+1} sur ${n}`});
+  for(let j=0;j<n;j++)bar.append(el('i',{class:j<i?(qmarks[j]?'ok':'ko'):j===i?'cur':null}));
+  const c=el('span',{class:'combo',hidden:combo<2?'':null}); if(combo>=2)c.innerHTML=FLAME+combo+' d’affilée';
+  return el('div',{class:'qhead'},bar,el('span',{class:'qcount',text:`${i+1}/${n}`}),c);
+}
+function hit(right){
+  right=!!right; qmarks[qcur]=right; combo=right?combo+1:0;
+  const a=$('#arena'); a.dataset.v=right?'ok':'ko';
+  const seg=a.querySelector('.qbar i.cur'); if(seg)seg.className=right?'ok':'ko';
+  const c=a.querySelector('.combo');
+  if(c){c.hidden=combo<2; if(combo>=2){c.innerHTML=FLAME+combo+' d’affilée'; c.classList.remove('bump'); void c.offsetWidth; c.classList.add('bump');}}
+  try{if(navigator.vibrate)navigator.vibrate(right?12:[25,40,25]);}catch(e){}
+}
+function countUp(node,to){
+  const reduce=window.matchMedia&&matchMedia('(prefers-reduced-motion: reduce)').matches;
+  if(reduce||!(to>0)){node.textContent=fmt(to);return;}
+  const t0=performance.now(), dur=Math.min(1200,400+to*8), dec=to%1?1:0;
+  const f=now=>{const k=Math.min(1,(now-t0)/dur), v=to*(1-Math.pow(1-k,3));node.textContent=fmt(dec?Math.round(v*10)/10:Math.round(v));if(k<1)requestAnimationFrame(f);};
+  requestAnimationFrame(f);
+}
+function showResult(arena,score,unit,msg,again,extra){
+  $('#st-timer').hidden=true; $('#st-bar').hidden=true; delete arena.dataset.v;
+  // le résultat tout juste enregistré dit s'il y a un record à fêter (les XP ont déjà leur notification)
+  const last=state.results[state.results.length-1], fresh=last&&last.ex===curEx&&Date.now()-last.t<5000;
+  const sc=el('span',{class:'score',text:'0'}), marks=qmarks.slice(); qmarks=[];
+  const gains=fresh&&last.rec?el('div',{class:'gains'},el('span',{class:'rec',text:'Nouveau record'})):null;
+  const recap=marks.length>1?el('div',{class:'recap'},el('span',{class:'label',text:'Ton parcours'}),el('div',{class:'qbar'},...marks.map(m=>el('i',{class:m?'ok':'ko'})))):null;
+  arena.replaceChildren(...[el('div',{class:'result'+(fresh&&last.rec?' record':'')},el('span',{class:'label',text:'Résultat'}),sc,el('span',{class:'fg2',text:unit})),
+    gains,recap,extra,
     msg?el('p',{class:'fg2',text:msg,style:'max-width:50ch'}):null,
-    el('div',{class:'row',style:'justify-content:center'},el('button',{class:'btn primary',text:'Recommencer',onclick:again}),el('button',{class:'btn',text:'Retour à la routine',onclick:()=>{stopRun();$('#stage').hidden=true;$('#exgrid').hidden=false;showTab('aujourdhui');}})));
+    el('div',{class:'row',style:'justify-content:center'},el('button',{class:'btn primary',text:'Recommencer',onclick:again}),el('button',{class:'btn',text:'Retour à la routine',onclick:()=>{stopRun();$('#stage').hidden=true;$('#exgrid').hidden=false;showTab('aujourdhui');}}))].filter(Boolean));
+  countUp(sc,score);
 }
 function bestOf(ex){const rs=state.results.filter(r=>r.ex===ex);return rs.length?Math.max(...rs.map(r=>r.s)):null;}
 function recordMsg(ex,s){const b=bestOf(ex);return b===null?'Premier score enregistré. Il servira de point de départ.':s>b?'Nouveau record !':`Ton record est de ${fmt(b)}.`;}
@@ -3165,9 +3256,11 @@ citations(arena){
       const id=ids[qi], q=QBY[id], x=f[id], b=x?x.b:0, isDue=x&&x.n<=t;
       const type=q.c==='fausse'?(b>=3?'trou':'verif'):b<=1?'qui':b<=3?(Math.random()<.65?'trou':'qui'):pick(['trou','verif','qui']);
       const fb=el('div',{class:'answer',hidden:''}), next=el('button',{class:'btn primary',text:qi<ids.length-1?'Suivante':'Voir le résultat',hidden:''});
-      const head=el('div',{class:'row',style:'justify-content:center'},el('span',{class:'muted',text:`Citation ${qi+1} / ${ids.length}`}),el('span',{class:'cat '+q.c,text:x?QCAT[q.c]:'Nouvelle · '+QCAT[q.c]}),x?boxes(b):null);
+      // la catégorie « fausse citation » donnerait la réponse : elle n'apparaît qu'après
+      const head=el('div',{class:'row',style:'justify-content:center'},q.c==='fausse'?(x?null:el('span',{class:'cat',text:'Nouvelle'})):el('span',{class:'cat '+q.c,text:x?QCAT[q.c]:'Nouvelle · '+QCAT[q.c]}),x?boxes(b):null);
       const done=right=>{
         if(right)ok++;
+        hit(right);
         if(x){if(!right){x.b=1;x.n=addDays(t,1);}else if(isDue){x.b=Math.min(5,x.b+1);x.n=addDays(t,LEITNER[x.b-1]);}x.u=Date.now();}
         else{f[id]={b:right?2:1,n:addDays(t,right?LEITNER[1]:1),a:Date.now(),u:Date.now()};added++;}
         const y=f[id];
@@ -3196,7 +3289,7 @@ citations(arena){
         setTimeout(()=>inp.focus(),0);
       }
       next.addEventListener('click',()=>{qi++;if(qi<ids.length)ask();else finish();});
-      arena.replaceChildren(head,...body,fb,next);
+      arena.replaceChildren(qprog(qi,ids.length),head,...body,fb,next);
     };
     const finish=()=>{
       const sc=ok/ids.length*100, m=recordMsg('citations',sc); logResult('citations',sc,{n:ids.length}); renderFlori(); renderQuoteDay();
@@ -3221,10 +3314,11 @@ ortho(arena){
       opts.forEach((o,i)=>box.append(el('button',{text:o,onclick:e=>{
         [...box.children].forEach((b,j)=>{b.disabled=true;if(j===right)b.classList.add('right');});
         if(i===right)ok++;else{e.currentTarget.classList.add('wrong');miss.push(qs[qi]);}
+        hit(i===right);
         fb.replaceChildren(el('span',{class:'label',text:i===right?'Exact':'La bonne forme : '+opts[right]}),el('span',{class:'fg2',text:why}));fb.hidden=false;next.hidden=false;next.focus();
       }})));
       next.addEventListener('click',()=>{qi++;if(qi<8)ask();else{const sc=ok/8*100;const m=recordMsg('ortho',sc);logResult('ortho',sc,{miss});showResult(arena,Math.round(sc),`% de bonnes réponses (${ok} sur 8)`,m+(miss.length?' Les phrases ratées reviendront en priorité lors des prochaines séances.':''),()=>RUN.ortho(arena));}});
-      arena.replaceChildren(el('span',{class:'muted',text:`Phrase ${qi+1} / 8`}),el('p',{class:'quote',text:ph}),box,fb,next);
+      arena.replaceChildren(qprog(qi,8),el('p',{class:'quote',text:ph}),box,fb,next);
     };
     ask();
   }
@@ -3246,9 +3340,10 @@ lecture(arena){
         sh.forEach(([o,i])=>box.append(el('button',{text:o,onclick:e=>{
           [...box.children].forEach(b=>{b.disabled=true;if(b.textContent===opts[0])b.classList.add('right');});
           if(i===0)ok++;else e.currentTarget.classList.add('wrong');
+          hit(i===0);
           setTimeout(()=>{qi++;if(qi<qs.length)ask();else done();},900);
         }})));
-        arena.replaceChildren(el('span',{class:'muted',text:`Question ${qi+1} / ${qs.length}`}),el('p',{class:'prompt',style:'text-align:center',text:q}),box);
+        arena.replaceChildren(qprog(qi,qs.length),el('p',{class:'prompt',style:'text-align:center',text:q}),box);
       };
       const done=()=>{
         const comp=ok/qs.length, eff=Math.round(wpm*comp); const m=recordMsg('lecture',eff);
@@ -3343,10 +3438,11 @@ erreuria(arena){
       ph.forEach((t,i)=>bubble.append(el('button',{class:'sent',text:t,onclick:e=>{
         [...bubble.children].forEach((b,j)=>{b.disabled=true;if(j===bad)b.classList.add('wrongsent');});
         if(i===bad)ok++;else e.currentTarget.classList.add('missed');
+        hit(i===bad);
         fb.replaceChildren(el('span',{class:'label',text:i===bad?'Bien vu':'L\u2019erreur était ailleurs'}),el('span',{class:'fg2',text:why}));fb.hidden=false;next.hidden=false;next.focus();
       }}),document.createTextNode(' ')));
       next.addEventListener('click',()=>{qi++;if(qi<qs.length)ask();else{const sc=ok/qs.length*100;const m=recordMsg('erreuria',sc);logResult('erreuria',sc);showResult(arena,Math.round(sc),`% d'erreurs repérées (${ok} sur ${qs.length})`,m+' Applique le même réflexe aux vraies réponses de ton IA : vérifie surtout les chiffres, les dates et la dernière ligne.',()=>RUN.erreuria(arena));}});
-      arena.replaceChildren(el('span',{class:'muted',text:`Réponse ${qi+1} / ${qs.length}`}),el('p',{class:'me-q',text:q}),bubble,fb,next);
+      arena.replaceChildren(qprog(qi,qs.length),el('p',{class:'me-q',text:q}),bubble,fb,next);
     };
     ask();
   }
@@ -3389,10 +3485,11 @@ sophismes(arena){
       opts.forEach(o=>box.append(el('button',{text:o,onclick:e=>{
         [...box.children].forEach(b=>{b.disabled=true;if(b.textContent===right)b.classList.add('right');});
         if(o===right)ok++;else e.currentTarget.classList.add('wrong');
+        hit(o===right);
         fb.replaceChildren(el('span',{class:'label',text:o===right?'Exact':'C’était : '+right}),el('span',{class:'fg2',text:why})); fb.hidden=false; next.hidden=false; next.focus();
       }})));
       next.addEventListener('click',()=>{qi++;if(qi<5)ask();else{const s=ok/5*100;const m=recordMsg('sophismes',s);logResult('sophismes',s);showResult(arena,s,'% de bonnes réponses ('+ok+' sur 5)',m+' Cette semaine, essaie d’en repérer un dans une conversation, un article ou une réponse d’IA.',()=>RUN.sophismes(arena));}});
-      arena.replaceChildren(el('span',{class:'muted',text:`Argument ${qi+1} / 5`}),el('p',{class:'quote',text:'« '+txt+' »'}),box,fb,next);
+      arena.replaceChildren(qprog(qi,5),el('p',{class:'quote',text:'« '+txt+' »'}),box,fb,next);
     };
     ask();
   }
@@ -3453,7 +3550,7 @@ fluency(arena){
   }
 },
 fermi(arena){
-  intro(arena,"Trois questions sans réponse exacte connue. Décompose le problème, fais des hypothèses et calcule de tête. Ce qui compte, c'est l'ordre de grandeur. Tu peux écrire 3e9, 3 milliards ou 2,5M.",null,go);
+  intro(arena,"Trois questions sans réponse exacte connue. Décompose le problème, fais des hypothèses et calcule de tête. Ce qui compte, c'est l'ordre de grandeur : fais glisser le curseur, ou tape un nombre (3e9, 3 milliards, 2,5M).",null,go);
   function parse(s){
     s=s.toLowerCase().replace(/\s/g,'').replace(',', '.');
     const m=s.match(/^([0-9]*\.?[0-9]+(?:e[0-9]+)?)(k|m|md|g|milliers?|millions?|milliards?)?$/); if(!m)return NaN;
@@ -3462,20 +3559,34 @@ fermi(arena){
   }
   function go(){
     const qs=freshPick('fermi',FERMI,3); let qi=0, scores=[];
+    // échelle logarithmique de 1 à mille milliards : chaque cran multiplie par 10
+    const pos=v=>Math.min(97,Math.max(3,Math.log10(v)/12*100));
+    const nice=v=>{v=Number(v.toPrecision(2));return v>=1e9?fmt(v/1e9)+' milliard'+(v>=2e9?'s':''):v>=1e6?fmt(v/1e6)+' million'+(v>=2e6?'s':''):fmt(v);};
+    const ruler=()=>el('div',{class:'lscale-l','aria-hidden':'true'},...['1','1 000','1 million','1 milliard','1 000 milliards'].map(t=>el('span',{text:t})));
     const ask=()=>{
       const [q,ans,unit,why]=qs[qi];
-      const inp=el('input',{class:'bigin',type:'text',autocomplete:'off','aria-label':'Ton estimation',id:'fermi-in',style:'width:min(300px,100%)'});
-      const hint=el('p',{class:'note'}); const fb=el('p',{class:'feedback'});
-      const sub=el('button',{class:'btn primary',text:'Valider'});
-      arena.replaceChildren(el('span',{class:'muted',text:`Question ${qi+1} / 3`}),el('p',{class:'prompt',style:'text-align:center',text:q}),inp,hint,sub,fb); inp.focus();
-      inp.addEventListener('input',()=>{const v=parse(inp.value);hint.textContent=isFinite(v)&&v>0?'≈ '+fmt(v)+' '+unit:'';});
+      const sl=el('input',{type:'range',class:'logslider',min:'0',max:'12',step:'0.02',value:'6','aria-label':'Ordre de grandeur de ton estimation'});
+      const inp=el('input',{class:'bigin',type:'text',autocomplete:'off',inputmode:'decimal','aria-label':'Ton estimation, en chiffres',id:'fermi-in',placeholder:'ou tape un nombre',style:'width:min(260px,100%)'});
+      const hint=el('p',{class:'fermi-val',text:'Fais glisser vers ton ordre de grandeur'}); const fb=el('p',{class:'feedback'});
+      const sub=el('button',{class:'btn primary',text:'Valider',disabled:''});
+      let v=NaN;
+      const show=()=>{hint.textContent='≈ '+nice(v)+' '+unit;sub.disabled=false;fb.textContent='';};
+      sl.addEventListener('input',()=>{v=Math.pow(10,+sl.value);inp.value='';show();});
+      inp.addEventListener('input',()=>{const x=parse(inp.value);if(x>0){v=x;sl.value=String(Math.min(12,Math.max(0,Math.log10(x))));show();}});
+      arena.replaceChildren(qprog(qi,3),el('p',{class:'prompt',style:'text-align:center',text:q}),hint,sl,ruler(),inp,sub,fb);
       const check=()=>{
-        const v=parse(inp.value); if(!(v>0)){fb.className='feedback ko';fb.textContent='Entre un nombre positif.';return;}
+        if(!(v>0)){fb.className='feedback ko';fb.textContent='Fais glisser le curseur ou tape un nombre.';return;}
         const err=Math.abs(Math.log10(v/ans)); const s=Math.max(0,Math.round(100-err*100)); scores.push(s);
         const verdict=err<=.3?'Excellent, à moins d’un facteur 2':err<=.5?'Bon ordre de grandeur':err<=1?'Moins d’un facteur 10 d’écart':'Plus d’un facteur 10 d’écart';
-        arena.replaceChildren(el('span',{class:'muted',text:`Question ${qi+1} / 3`}),el('p',{class:'prompt',style:'text-align:center',text:q}),
-          el('div',{class:'answer'},el('span',{class:'label',text:'Réponse'}),el('strong',{text:'≈ '+fmt(ans)+' '+unit}),el('span',{class:'fg2',text:why}),el('span',{text:`Ton estimation : ${fmt(v)}. ${verdict}.`})),
+        // les deux repères sur l'échelle : le tien, puis la réponse qui glisse jusqu'à sa place
+        const you=el('span',{class:'mk you',style:`left:${pos(v)}%`},el('b',{text:'Toi'}),el('i')), real=el('span',{class:'mk ans',style:`left:${pos(v)}%`},el('b',{text:'Réponse'}),el('i'));
+        const band=el('span',{class:'band',style:`left:${Math.log10(ans/2)/12*100}%;width:${Math.log10(4)/12*100}%`});
+        arena.replaceChildren(qprog(qi,3),el('p',{class:'prompt',style:'text-align:center',text:q}),
+          el('div',{class:'lscale'},band,you,real),ruler(),
+          el('div',{class:'answer'},el('span',{class:'label',text:verdict}),el('strong',{text:'≈ '+nice(ans)+' '+unit}),el('span',{class:'fg2',text:why}),el('span',{text:`Ton estimation : ${nice(v)}.`})),
           el('button',{class:'btn primary',text:qi<2?'Question suivante':'Voir le résultat',onclick:()=>{qi++;if(qi<3)ask();else{const avg=scores.reduce((a,b)=>a+b,0)/3;const m=recordMsg('fermi',avg);logResult('fermi',avg);showResult(arena,Math.round(avg),'% de justesse moyenne',m+' 100 % = pile la bonne valeur, 0 % = un facteur 10 ou plus d’écart.',()=>RUN.fermi(arena));}}}));
+        hit(err<=.5);
+        requestAnimationFrame(()=>requestAnimationFrame(()=>{real.style.left=pos(ans)+'%';}));
       };
       sub.addEventListener('click',check); inp.addEventListener('keydown',e=>{if(e.key==='Enter')check();});
     };
@@ -3487,7 +3598,7 @@ chrono(arena){
   function go(){
     // écart en années visé à chaque manche, du plus large au plus serré
     const GAPS=[[200,3000],[80,200],[30,80],[12,30],[3,12],[0,2]], used=new Set(), key=e=>e[1]*1e4+ +e[0];
-    let qi=0, ok=0;
+    let qi=0, ok=0; const seen=[];
     const pair=([lo,hi])=>{
       for(let t=0;t<300;t++){
         const a=pick(EVENTS); if(used.has(a))continue;
@@ -3503,11 +3614,14 @@ chrono(arena){
       p.forEach((e,i)=>box.append(el('button',{text:e[2],onclick:ev=>{
         [...box.children].forEach((b,j)=>{b.disabled=true;b.prepend(el('b',{text:fmtY(p[j][1])+' · '}));if(j===first)b.classList.add('right');});
         if(i===first)ok++;else ev.currentTarget.classList.add('wrong');
+        hit(i===first); seen.push([p[0],i===first],[p[1],i===first]);
         fb.replaceChildren(el('span',{class:'label',text:i===first?'Exact':'Raté'}),el('span',{class:'fg2',text:gap===0?`La même année : le ${evDate(p[first][0])}, puis le ${evDate(p[1-first][0])}.`:`${fmt(gap)} an${gap>1?'s':''} d'écart.`}));
         fb.hidden=false; next.hidden=false; next.focus();
       }})));
-      next.addEventListener('click',()=>{qi++;if(qi<6)ask();else{const sc=ok/6*100;const m=recordMsg('chrono',sc);logResult('chrono',sc);showResult(arena,Math.round(sc),`% de bonnes réponses (${ok} sur 6)`,m+' Pour retenir une date, accroche-la à une autre que tu connais déjà : avant ou après la Révolution, combien de temps après la chute de Rome.',()=>RUN.chrono(arena));}});
-      arena.replaceChildren(el('span',{class:'muted',text:`Manche ${qi+1} / 6`}),el('p',{class:'prompt',style:'text-align:center',text:'Lequel s’est produit en premier ?'}),box,fb,next);
+      next.addEventListener('click',()=>{qi++;if(qi<6)ask();else{const sc=ok/6*100;const m=recordMsg('chrono',sc);logResult('chrono',sc);// tous les événements de la séance, remis dans l'ordre : les manches ratées sont signalées
+        const frise=el('div',{class:'recap wide'},el('span',{class:'label',text:'Ta frise du jour'}),el('ol',{class:'frise'},...seen.sort((a,b)=>key(a[0])-key(b[0])).map(([e,good])=>el('li',{class:good?null:'miss'},el('b',{text:fmtY(e[1])}),document.createTextNode(e[2])))));
+        showResult(arena,Math.round(sc),`% de bonnes réponses (${ok} sur 6)`,m+' Pour retenir une date, accroche-la à une autre que tu connais déjà : avant ou après la Révolution, combien de temps après la chute de Rome.',()=>RUN.chrono(arena),frise);}});
+      arena.replaceChildren(qprog(qi,6),el('p',{class:'prompt',style:'text-align:center',text:'Lequel s’est produit en premier ?'}),box,fb,next);
     };
     ask();
   }

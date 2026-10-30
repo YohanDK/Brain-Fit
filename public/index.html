@@ -998,7 +998,7 @@ const EX={
   lecture:{name:'Lecture chronométrée',skill:'Lecture & compréhension',desc:"Lis un texte à ton rythme, puis réponds à deux questions. Vitesse et compréhension mesurées.",unit:'mots/min compris'},
   citations:{name:'Florilège',skill:'Mémoire & culture',desc:"Retiens les citations qui comptent : qui l'a dit, le mot manquant, vraie ou fausse attribution. Répétition espacée.",unit:'% de bonnes réponses'},
   chrono:{name:'Chronologie',skill:'Culture & repères',desc:"Deux événements : lequel s'est produit en premier ? Six manches, des écarts de plus en plus serrés.",unit:'% de bonnes réponses'},
-  fiche:{name:'Fiche papier',skill:'Hors écran',desc:"Une fiche à imprimer selon tes points faibles : problèmes, estimations, sophismes, orthographe, chronologie, écriture, dictée. Corrigé à part.",unit:'% de bonnes réponses'},
+  fiche:{name:'Fiche papier',skill:'Hors écran',desc:"Des PDF à imprimer : la fiche du jour qui mélange tout, ou un cahier entier de problèmes, sophismes, orthographe, estimations, erreurs d'IA ou chronologie. Corrigé à la fin.",unit:'% de bonnes réponses'},
   focus:{name:'Séance sans écran',skill:'Attention soutenue',desc:"Lecture, écriture à la main ou réflexion, minuteur lancé. Si tu quittes la page, c'est une interruption.",unit:'minutes'},
   calc:{name:'Calcul mental',skill:'Vitesse de traitement',desc:"Un maximum d'opérations justes en 60 secondes, sans calculatrice.",unit:'bonnes réponses'},
   span:{name:'Empan de chiffres',skill:'Mémoire de travail',desc:"Retiens une suite de chiffres qui s'allonge. Mode inversé pour corser.",unit:'chiffres retenus'},
@@ -2192,17 +2192,23 @@ function ficheData(){
   const names=[...new Set([...soph.map(f=>f[1]),...[...FALLACIES].sort(()=>Math.random()-.5).map(f=>f[1])])].slice(0,8).sort((a,b)=>a.localeCompare(b,'fr'));
   return{probs,fermi,soph,names,ortho,ev,subj:pick(ARGU),dict:pickDictee(state.settings.dicteeLvl||2),n:state.results.filter(r=>r.ex==='fiche').length+1};
 }
-async function makeFichePdf(F){
+// outils communs aux PDF à imprimer : texte qui passe à la page, lignes d'écriture, titres
+async function pdfKit(){
   const {jsPDF}=await loadJsPDF();
   const doc=new jsPDF({unit:'mm',format:'a4'}), W=210, M=18, TW=W-2*M, BOT=297-16; let y=M;
   // polices standard du PDF : on remplace les rares signes hors de leur jeu de caractères
-  const clean=s=>String(s).replace(/[’‘]/g,"'").replace(/[“”]/g,'"').replace(/≈\s?/g,'env. ').replace(/×/g,'x').replace(/→/g,'->').replace(/−/g,'-').replace(/⁹/g,'^9').replace(/⁷/g,'^7').replace(/⁵/g,'^5').replace(/[\u00A0\u202F\u2009]/g,' ').replace(/…/g,'...');
+  const clean=s=>String(s).replace(/[’‘]/g,"'").replace(/[“”]/g,'"').replace(/≈\s?/g,'env. ').replace(/×/g,'x').replace(/→/g,'->').replace(/−/g,'-').replace(/π/g,'pi').replace(/⁹/g,'^9').replace(/⁷/g,'^7').replace(/⁵/g,'^5').replace(/[\u00A0\u202F\u2009]/g,' ').replace(/…/g,'...')
+    .replace(/[^\x00-\xFF€‚ƒ„†‡ˆ‰Š‹ŒŽ•–—˜™š›œžŸ]/g,c=>c.normalize('NFD').replace(/[^\x00-\xFF]/g,''));
   const need=h=>{if(y+h>BOT){doc.addPage();y=M;}};
   const text=(s,o={})=>{const size=o.size||11, lh=size*.43;doc.setFont(o.font||'times',o.style||'normal');doc.setFontSize(size);doc.setTextColor(o.grey?110:20);
     const lines=doc.splitTextToSize(clean(s),TW-(o.indent||0));need(Math.min(lines.length,3)*lh);
     for(const ln of lines){need(lh);doc.text(ln,M+(o.indent||0),y+lh*.78);y+=lh;}y+=o.gap??1.6;};
   const lines=(n,gap=8.5)=>{doc.setDrawColor(200);doc.setLineWidth(.2);for(let i=0;i<n;i++){need(gap);y+=gap;doc.line(M,y,W-M,y);}y+=3;};
   const h=s=>{need(18);y+=4;text(s,{size:13,style:'bold',font:'helvetica',gap:2.5});};
+  return {doc,text,lines,h,need,page:()=>{doc.addPage();y=M;},room:()=>Math.floor((BOT-y-3)/8.5)};
+}
+async function makeFichePdf(F){
+  const K=await pdfKit(), {doc,text,lines,h}=K;
   const date=fd(new Date(),{day:'numeric',month:'long',year:'numeric'});
   text('BRAIN FIT',{size:9,font:'helvetica',style:'bold',grey:1,gap:.5});
   text(`Fiche papier n° ${F.n}`,{size:20,style:'bold',gap:1});
@@ -2216,8 +2222,8 @@ async function makeFichePdf(F){
   h('5. Chronologie  (1 point) — numérote de 1 (le plus ancien) à 5'); F.ev.forEach(e=>text(`[   ]  ${e[2]}`,{gap:2.5}));
   h('6. Écriture — 15 lignes, sans brouillon numérique'); text('Sujet : '+F.subj,{style:'italic'}); text('Une thèse, deux arguments avec un exemple chacun, une objection et ta réponse.',{size:10,grey:1});
   // les lignes d'écriture remplissent la page, ou passent sur une nouvelle s'il en reste moins de dix
-  const room=Math.floor((BOT-y-3)/8.5); lines(room>=10?room:15);
-  doc.addPage(); y=M;
+  const room=K.room(); lines(room>=10?room:15);
+  K.page();
   h('Dictée — à faire lire par quelqu\'un'); text(`Demande à quelqu'un de te lire ce texte lentement, groupe par groupe, ponctuation comprise ; écris sur une feuille à part. Ou utilise la dictée de l'appli (niveau ${F.dict.l}).`,{size:10,grey:1,gap:3});
   text(F.dict.ti,{style:'bold'}); text(F.dict.tx,{size:12,gap:2}); if(F.dict.a)text(F.dict.a,{size:10,grey:1,style:'italic'});
   text('Pièges : '+F.dict.p.map(p=>p[0]).join(' · '),{size:10,grey:1,gap:4});
@@ -2229,6 +2235,67 @@ async function makeFichePdf(F){
   text('5. Chronologie',{style:'bold'}); [...F.ev].sort((a,b)=>a[1]-b[1]||a[0].localeCompare(b[0])).forEach((e,i)=>text(`${i+1}. ${fmtY(e[1])} : ${e[2]}`,{size:10}));
   text('Compte un point par réponse juste, puis note ton score dans Brain Fit (Exercices › Fiche papier).',{size:10,grey:1});
   return doc.output('blob');
+}
+/* cahiers thématiques à imprimer : une série d'un seul exercice, un coup de pouce, puis le corrigé */
+const CAHIERS={
+  probleme:{t:'Cahier de problèmes',d:'10 problèmes de raisonnement',n:10},
+  sophismes:{t:'Cahier de sophismes',d:'12 arguments à démasquer',n:12},
+  ortho:{t:'Cahier d’orthographe',d:'20 phrases à compléter',n:20},
+  fermi:{t:'Cahier d’estimations',d:'8 ordres de grandeur à calculer',n:8},
+  erreuria:{t:'Cahier « Trouve l’erreur de l’IA »',d:'6 réponses piégées à corriger',n:6},
+  chrono:{t:'Cahier de chronologie',d:'3 frises de 6 événements à remettre dans l’ordre',n:18}
+};
+function cahierData(kind){
+  const L=String.fromCharCode, n=state.results.filter(r=>r.ex==='fiche').length+1;
+  if(kind==='probleme')return{kind,n,items:freshPick('cprob',PROBLEMS,10)};
+  if(kind==='sophismes'){const items=freshPick('csoph',FALLACIES,12);
+    const names=[...new Set([...items.map(f=>f[1]),...[...FALLACIES].sort(()=>Math.random()-.5).map(f=>f[1])])].slice(0,16).sort((a,b)=>a.localeCompare(b,'fr'));
+    return{kind,n,items,names};}
+  if(kind==='ortho'){const mc=missCounts();return{kind,n,items:[...ORTHO.keys()].sort(()=>Math.random()-.5).sort((a,b)=>(mc.get(b)||0)-(mc.get(a)||0)).slice(0,20).map(i=>ORTHO[i])};}
+  if(kind==='fermi')return{kind,n,items:freshPick('cfermi',FERMI,8)};
+  if(kind==='erreuria')return{kind,n,items:freshPick('caierr',AIERR,6)};
+  // trois frises : six événements d'époques bien distinctes dans chacune, jamais deux fois le même
+  const used=new Set(), sets=[];
+  for(let k=0;k<3;k++){const ev=[];for(const e of [...EVENTS].sort(()=>Math.random()-.5)){if(!used.has(e)&&ev.every(x=>Math.abs(x[1]-e[1])>=12)){ev.push(e);used.add(e);}if(ev.length===6)break;}sets.push(ev);}
+  return{kind,n,items:sets};
+}
+async function makeCahierPdf(C){
+  const K=await pdfKit(), {text,lines,h}=K, c=CAHIERS[C.kind], L=i=>String.fromCharCode(97+i);
+  const date=fd(new Date(),{day:'numeric',month:'long',year:'numeric'});
+  text('BRAIN FIT',{size:9,font:'helvetica',style:'bold',grey:1,gap:.5});
+  text(c.t,{size:20,style:'bold',gap:1});
+  text(`${date} · Sans écran, sans IA, un stylo. Le corrigé est à la fin : ne le regarde qu'une fois tout fini.`,{size:10.5,grey:1,gap:1});
+  text(`Commencé à : ________     Fini à : ________     Score : ____ / ${c.n}`,{size:10.5,grey:1,gap:3});
+  if(C.kind==='probleme'){
+    h('Problèmes — écris ta réponse et ton raisonnement');
+    text("Méfie-toi de la première réponse qui vient : ces problèmes sont faits pour piéger l'intuition. Bloqué ? Le coup de pouce est avant le corrigé.",{size:10,grey:1,gap:3});
+    C.items.forEach((p,i)=>{K.need(56);text(`${i+1}. ${p[0]}`);lines(4);});
+    K.page(); h('Coup de pouce — un indice par problème, seulement si tu bloques');
+    C.items.forEach((p,i)=>text(`${i+1}. ${p[3]||'Relis l’énoncé mot à mot et écris ce que tu sais.'}`,{size:10.5,gap:2}));
+    h('Corrigé'); C.items.forEach((p,i)=>text(`${i+1}. ${p[1]}. ${p[2]}`,{size:10,gap:2}));
+  }else if(C.kind==='sophismes'){
+    h('Nomme la faille de chaque argument'); text('Au choix (certains servent plusieurs fois, d’autres jamais) : '+C.names.join(' · '),{size:10,grey:1,gap:3});
+    C.items.forEach((f,i)=>{K.need(16);text(`${i+1}. « ${f[0]} »`);text('Sophisme : ______________________________   Pourquoi : ____________________________',{size:10,gap:3.5});});
+    K.page(); h('Corrigé'); C.items.forEach((f,i)=>text(`${i+1}. ${f[1]} : ${f[2]}`,{size:10,gap:2}));
+  }else if(C.kind==='ortho'){
+    h('Écris la bonne forme sur le trait'); text('Ce sont les pièges que les correcteurs automatiques nous font oublier. Tes erreurs passées dans l’appli reviennent en priorité.',{size:10,grey:1,gap:3});
+    C.items.forEach((o,i)=>text(`${i+1}. ${o[0].replace('___','__________')}   (${o[1].join(' / ')})`,{gap:3.2}));
+    K.page(); h('Corrigé'); C.items.forEach((o,i)=>text(`${i+1}. ${o[1][o[2]]} : ${o[3]}`,{size:10,gap:2}));
+  }else if(C.kind==='fermi'){
+    h("Estimations — l'ordre de grandeur, calcul détaillé"); text('Décompose, fais des hypothèses chiffrées, calcule de tête. Une réponse est juste si elle tombe à moins d’un facteur 3 de la bonne valeur.',{size:10,grey:1,gap:3});
+    C.items.forEach((q,i)=>{K.need(46);text(`${i+1}. ${q[0]}`);lines(3);});
+    K.page(); h('Corrigé'); C.items.forEach((q,i)=>text(`${i+1}. env. ${fmt(q[1])} ${q[2]}. ${q[3]}`,{size:10,gap:2}));
+  }else if(C.kind==='erreuria'){
+    h("Chaque réponse d'IA contient une seule phrase fausse"); text('Entoure-la, puis écris la correction. Relis comme un correcteur, pas comme un lecteur : tout le reste sonne juste.',{size:10,grey:1,gap:3});
+    C.items.forEach(([q,ph],i)=>{K.need(50);text(`${i+1}. Question : ${q}`,{style:'bold'});ph.forEach((t,j)=>text(`(${L(j)}) ${t}`,{indent:5,gap:1.2}));text('Correction :',{size:10,grey:1,gap:0});lines(1);});
+    K.page(); h('Corrigé'); C.items.forEach(([,ph,bad,why],i)=>text(`${i+1}. Phrase (${L(bad)}). ${why}`,{size:10,gap:2}));
+  }else{
+    h('Numérote chaque frise de 1 (le plus ancien) à 6'); text('Pour chaque événement, note aussi l’année si tu la connais : un point bonus par date juste à 10 ans près.',{size:10,grey:1,gap:3});
+    C.items.forEach((ev,k)=>{K.need(50);text(`Frise ${k+1}`,{style:'bold',font:'helvetica',gap:2});ev.forEach(e=>text(`[   ]  ${e[2]}   Année : ______`,{gap:2.4}));K.need(6);text('',{gap:3});});
+    K.page(); h('Corrigé'); C.items.forEach((ev,k)=>{text(`Frise ${k+1}`,{style:'bold',size:10});[...ev].sort((a,b)=>a[1]-b[1]||a[0].localeCompare(b[0])).forEach((e,i)=>text(`${i+1}. ${fmtY(e[1])} : ${e[2]}`,{size:10}));});
+  }
+  text(`Compte un point par réponse juste, puis note ton score dans Brain Fit (Exercices › Fiche papier).`,{size:10,grey:1});
+  return K.doc.output('blob');
 }
 // enregistre un fichier : par le service de téléchargement quand il existe, sinon téléchargement direct
 async function saveFile(name,blob){
@@ -3854,22 +3921,31 @@ dictee(arena){
   }
 },
 fiche(arena){
-  const mk=el('button',{class:'btn primary',text:'Créer ma fiche (PDF)'}), msg=el('p',{class:'note'});
-  const n=el('input',{type:'text',inputmode:'numeric',class:'bigin',style:'width:5ch',placeholder:'0','aria-label':'Bonnes réponses sur 15'});
-  const val=el('button',{class:'btn',text:'Enregistrer'});
-  arena.replaceChildren(el('p',{class:'fg2',style:'max-width:54ch',text:"Une fiche à imprimer, faite pour toi : tes erreurs d'orthographe reviennent, les questions changent à chaque fois, une dictée et un sujet d'écriture complètent. Remplis-la au stylo, loin des écrans, puis reviens noter ton score."}),
-    mk,msg,el('span',{class:'label',text:'Fiche remplie ? Ton score'}),el('div',{class:'row',style:'justify-content:center'},n,el('span',{class:'fg2',text:'/ 15'}),val));
+  // la fiche du jour mélange tout ; les cahiers enchaînent un seul exercice, avec leur corrigé
+  const kinds=[['fiche','Fiche du jour : un peu de tout, avec dictée et écriture'],...Object.entries(CAHIERS).map(([k,c])=>[k,`${c.t} : ${c.d}`])];
+  const sel=el('select',{'aria-label':'Que veux-tu imprimer ?',style:'max-width:100%'},...kinds.map(([k,t])=>el('option',{value:k,text:t})));
+  if(state.settings.ficheKind&&kinds.some(([k])=>k===state.settings.ficheKind))sel.value=state.settings.ficheKind;
+  const outOf=()=>sel.value==='fiche'?15:CAHIERS[sel.value].n;
+  const mk=el('button',{class:'btn primary',text:'Créer le PDF'}), msg=el('p',{class:'note'});
+  const n=el('input',{type:'text',inputmode:'numeric',class:'bigin',style:'width:5ch',placeholder:'0','aria-label':'Bonnes réponses'});
+  const tot=el('span',{class:'fg2'}), val=el('button',{class:'btn',text:'Enregistrer'});
+  const upd=()=>{tot.textContent='/ '+outOf();n.setAttribute('aria-label','Bonnes réponses sur '+outOf());};
+  sel.addEventListener('change',()=>{state.settings.ficheKind=sel.value;save();upd();});
+  arena.replaceChildren(el('p',{class:'fg2',style:'max-width:54ch',text:"Des exercices à imprimer, faits pour toi : les questions changent à chaque fois, tes erreurs reviennent, le corrigé est à la fin. Remplis-les au stylo, loin des écrans, puis reviens noter ton score."}),
+    el('label',{class:'label',text:'Que veux-tu imprimer ?'}),sel,
+    mk,msg,el('span',{class:'label',text:'Fiche remplie ? Ton score'}),el('div',{class:'row',style:'justify-content:center'},n,tot,val));
+  upd();
   mk.addEventListener('click',async()=>{
     mk.disabled=true; msg.textContent='Préparation de ta fiche…';
     try{
-      const F=ficheData(), blob=await makeFichePdf(F); save();
-      const r=await saveFile(`brain-fit-fiche-${F.n}.pdf`,blob);
+      const k=sel.value, F=k==='fiche'?ficheData():cahierData(k), blob=k==='fiche'?await makeFichePdf(F):await makeCahierPdf(F); save();
+      const r=await saveFile(k==='fiche'?`brain-fit-fiche-${F.n}.pdf`:`brain-fit-${k}-${F.n}.pdf`,blob);
       msg.textContent=r==='saved'?'Fiche prête. Imprime-la, ou recopie-la à la main si tu n’as pas d’imprimante.':r==='declined'?'Enregistrement annulé.':'Impossible d’enregistrer le fichier ici.';
     }catch(e){msg.textContent='La fiche n’a pas pu être créée. Vérifie ta connexion et réessaie.';}
-    mk.disabled=false; mk.textContent='Créer une autre fiche';
+    mk.disabled=false; mk.textContent='Créer un autre PDF';
   });
-  val.addEventListener('click',()=>{const v=parseInt(n.value,10);if(!(v>=0&&v<=15)){n.focus();return;}const sc=Math.round(v/15*100);const m=recordMsg('fiche',sc);logResult('fiche',sc,{ok:v});
-    showResult(arena,v,'bonnes réponses sur 15',m+' Reprends au propre les questions ratées : elles reviendront dans les prochaines fiches.',()=>RUN.fiche(arena));});
+  val.addEventListener('click',()=>{const N=outOf(), v=parseInt(n.value,10);if(!(v>=0&&v<=N)){n.focus();return;}const sc=Math.round(v/N*100);const m=recordMsg('fiche',sc);logResult('fiche',sc,{ok:v,of:N,k:sel.value});
+    showResult(arena,v,'bonnes réponses sur '+N,m+' Reprends au propre les questions ratées : elles reviendront dans les prochaines fiches.',()=>RUN.fiche(arena));});
 },
 bilan(arena){
   const ans=Array(BILAN_Q.length).fill(null), B=state.bilans||[], LBL=['Jamais','Rarement','Parfois','Souvent','Toujours'];

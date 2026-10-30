@@ -3,8 +3,20 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>Brain Fit</title>
-<meta name="description" content="Garder l'esprit vif à l'heure de l'IA : écriture, raisonnement, un exercice chaque jour.">
+<title>Brain Fit · Garder l'esprit vif à l'heure de l'IA</title>
+<meta name="description" content="Quelques minutes par jour pour écrire, raisonner et retenir par toi-même. Gratuit, sans publicité.">
+<link rel="canonical" href="https://yohandk.github.io/Brain-Fit/">
+<meta property="og:type" content="website">
+<meta property="og:locale" content="fr_FR">
+<meta property="og:site_name" content="Brain Fit">
+<meta property="og:title" content="Brain Fit · Garder l'esprit vif à l'heure de l'IA">
+<meta property="og:description" content="Quelques minutes par jour pour écrire, raisonner et retenir par toi-même. Gratuit, sans publicité.">
+<meta property="og:url" content="https://yohandk.github.io/Brain-Fit/">
+<meta property="og:image" content="https://yohandk.github.io/Brain-Fit/og.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="Le cerf de Brain Fit et la devise « Garder l'esprit vif à l'heure de l'IA »">
+<meta name="twitter:card" content="summary_large_image">
 <meta name="theme-color" content="#FAF9F6" media="(prefers-color-scheme: light)">
 <meta name="theme-color" content="#101219" media="(prefers-color-scheme: dark)">
 <meta name="apple-mobile-web-app-capable" content="yes">
@@ -13,16 +25,22 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="icon" href="icon.svg" type="image/svg+xml">
+<link rel="icon" href="icon-192.png" type="image/png" sizes="192x192">
 <link rel="apple-touch-icon" href="icon-180.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700&family=EB+Garamond:ital,wght@0,400;0,600;0,700;1,400&display=swap">
+<link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700&family=EB+Garamond:ital,wght@0,400;0,600;0,700;1,400&display=swap" onload="this.onload=null;this.rel='stylesheet'">
+<noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700&family=EB+Garamond:ital,wght@0,400;0,600;0,700;1,400&display=swap"></noscript>
+<script>
+// les sections restent masquées le temps que l'appli les remplisse : rien ne saute à l'écran (filet : 3 s)
+document.documentElement.classList.add('boot');setTimeout(function(){document.documentElement.classList.remove('boot');},3000);
+</script>
 <style>
 /* Layout : une colonne de travail (max 880px), en-tête gravé sur bande de méandre, onglets ; chaque exercice s'ouvre sur un « plateau ».
    Direction : pierre claire, lapis-lazuli et touches d'or. Capitales romaines (Cinzel) pour les titres, Garamond pour le texte. Ludique par les pièces, le laurier et la série. */
 :root{
   --bg:#FAF9F6; --surface:#FFFFFF; --sunk:#F3F1EC; --line:#E6E1D6;
-  --fg:#24211C; --fg2:#58524A; --muted:#8C867B;
+  --fg:#24211C; --fg2:#58524A; --muted:#736D63;
   --accent:#3A5DBF; --accent-soft:#EBEFFB; --on-accent:#FFFFFF; --accent-deep:#2B4799;
   --gold:#B08A30; --gold-soft:#FAF2DE; --gold-deep:#80621A; --gold-hi:#E4C67C;
   --warm:#B08A30; --warm-soft:#FAF2DE;
@@ -38,7 +56,7 @@
 }
 @media (prefers-color-scheme: dark){ :root:not([data-theme="light"]){
   --bg:#101219; --surface:#181B25; --sunk:#212533; --line:#343A4D;
-  --fg:#EEE8DA; --fg2:#BEB5A2; --muted:#8C8575;
+  --fg:#EEE8DA; --fg2:#BEB5A2; --muted:#9A9383;
   --accent:#9DB0F0; --accent-soft:#252F57; --on-accent:#0E1220; --accent-deep:#5E73B8;
   --gold:#D9B45A; --gold-soft:#3A3018; --gold-deep:#9C7A2C; --gold-hi:#F0D48A;
   --warm:#D9B45A; --warm-soft:#3A3018;
@@ -50,7 +68,7 @@
   color-scheme:dark; } }
 :root[data-theme="dark"]{
   --bg:#101219; --surface:#181B25; --sunk:#212533; --line:#343A4D;
-  --fg:#EEE8DA; --fg2:#BEB5A2; --muted:#8C8575;
+  --fg:#EEE8DA; --fg2:#BEB5A2; --muted:#9A9383;
   --accent:#9DB0F0; --accent-soft:#252F57; --on-accent:#0E1220; --accent-deep:#5E73B8;
   --gold:#D9B45A; --gold-soft:#3A3018; --gold-deep:#9C7A2C; --gold-hi:#F0D48A;
   --warm:#D9B45A; --warm-soft:#3A3018;
@@ -537,6 +555,58 @@ a{color:var(--accent);text-underline-offset:3px}
   .badge span{font-size:.72rem;line-height:1.3}
   table.week th,table.week td{padding:8px 4px}
 }
+/* finitions : démarrage, accueil, familles d'exercices, cases à cocher, pied de page */
+html.boot .view{visibility:hidden}
+.welcome{position:fixed;inset:0;z-index:60;background:var(--bg);overflow-y:auto;display:flex;padding:max(24px, env(safe-area-inset-top, 0px)) 20px max(28px, env(safe-area-inset-bottom, 0px))}
+.welcome[hidden]{display:none}
+.welcome:focus{outline:none}
+.wl-in{margin:auto;max-width:520px;width:100%;display:flex;flex-direction:column;align-items:center;text-align:center;gap:14px}
+.wl-em{width:128px;height:128px;border-radius:50%;background:var(--surface);box-shadow:0 0 0 1px var(--line),0 0 0 8px var(--gold-soft),0 0 0 9px var(--gold-hi);display:grid;place-items:center;margin-bottom:10px}
+.wl-em svg{width:104px;height:104px;overflow:visible}
+.welcome h1{font-size:2.6rem;letter-spacing:.06em}
+.welcome h1 span{color:var(--gold)}
+.foot-brand span{color:var(--gold-deep)}
+.wl-motto{font-family:var(--f-display);font-size:.85rem;letter-spacing:.16em;color:var(--gold-deep);margin:-6px 0 0}
+.wl-lead{font-size:1.45rem;font-style:italic;line-height:1.25;margin:6px 0 0}
+.wl-in>.fg2{max-width:42ch}
+.wl-pts{list-style:none;margin:6px 0;padding:0;display:flex;flex-direction:column;gap:10px;width:100%;text-align:left}
+.wl-pts li{display:flex;gap:14px;align-items:baseline;background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:12px 16px}
+.wl-pts i{font-style:normal;font-family:var(--f-display);color:var(--gold-deep);font-weight:700;min-width:1.8em}
+.wl-pts b{display:block}
+.wl-pts span{color:var(--fg2);font-size:.95rem}
+.wl-act{display:flex;flex-direction:column;gap:6px;width:100%;max-width:320px;margin-top:6px}
+.wl-act .btn{width:100%;padding:12px 16px}
+.welcome .meander{width:100%;max-width:360px;margin:6px 0}
+@media (max-width:640px){.wl-in{gap:10px}.wl-em{width:96px;height:96px;margin-bottom:6px}.wl-em svg{width:80px;height:80px}.welcome h1{font-size:2.15rem}.wl-lead{font-size:1.25rem}.wl-pts{gap:8px}.wl-pts li{padding:10px 14px}.wl-pts span{font-size:.9rem;line-height:1.35}.welcome .meander{display:none}}
+.exgrid{display:flex;flex-direction:column;gap:30px}
+.exgroup{display:flex;flex-direction:column;gap:12px}
+.exgroup-head h2{font-size:1.1rem}
+.exgroup-head p{margin:2px 0 0;max-width:64ch}
+.exgroup .cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:12px}
+.excard .best:empty{display:none}
+input[type=checkbox]{appearance:none;-webkit-appearance:none;width:22px;height:22px;margin:1px 0 0;border:1.5px solid var(--muted);border-radius:6px;background:var(--surface);display:grid;place-content:center;flex:none;cursor:pointer;transition:background .15s,border-color .15s}
+input[type=checkbox]::after{content:"";width:12px;height:7px;border:solid var(--on-accent);border-width:0 0 2.5px 2.5px;transform:translateY(-2px) rotate(-45deg) scale(0);transition:transform .15s}
+input[type=checkbox]:checked{background:var(--good);border-color:var(--good)}
+input[type=checkbox]:checked::after{transform:translateY(-2px) rotate(-45deg) scale(1)}
+.habit:has(input:checked){background:var(--good-soft)}
+.studies>summary,details.qcat>summary{cursor:pointer;color:var(--accent);font-weight:600;font-size:.95rem;list-style:none}
+.studies>summary::-webkit-details-marker,details.qcat>summary::-webkit-details-marker{display:none}
+.studies>summary::before,details.qcat>summary::before{content:"›";display:inline-block;width:1em;transition:transform .2s}
+.studies[open]>summary::before,details.qcat[open]>summary::before{transform:rotate(90deg)}
+.about-list{margin:0;padding-left:1.1em;display:flex;flex-direction:column;gap:6px;max-width:65ch}
+.studies[open]{display:flex;flex-direction:column;gap:10px}
+.toc{display:flex;flex-wrap:wrap;gap:6px 8px}
+.toc button{border:1px solid var(--line);background:var(--surface);border-radius:999px;padding:5px 12px;font-size:.92rem;color:var(--fg2);cursor:pointer}
+.toc button:hover{color:var(--accent);border-color:var(--accent)}
+.badges-more{align-self:flex-start}
+.foot{display:flex;flex-direction:column;align-items:center;gap:6px;text-align:center;color:var(--muted);font-size:.92rem;padding-top:8px}
+.foot .meander{width:100%;opacity:.35;margin-bottom:8px}
+.foot p{margin:0}
+.foot-brand{font-family:var(--f-display);font-weight:700;letter-spacing:.06em;color:var(--fg)}
+.linkbtn{border:0;background:none;padding:2px 2px;color:var(--fg2);text-decoration:underline;text-decoration-color:var(--line);text-underline-offset:3px;cursor:pointer;font:inherit}
+.linkbtn:hover{color:var(--accent);text-decoration-color:var(--accent)}
+@media (max-width:640px){table.week th{letter-spacing:.02em;font-size:.68rem}table.week td:first-child{white-space:normal}table.week td,table.week th{padding:8px 3px}}
+@media (prefers-reduced-motion:reduce){*,*::before,*::after{animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important;scroll-behavior:auto!important}}
 /* le cerf, emblème interactif */
 .brand{flex-direction:row;align-items:center;gap:10px;position:relative}
 .brand-txt{display:flex;flex-direction:column;gap:2px;min-width:0}
@@ -798,7 +868,7 @@ q{quotes:"« " " »" "“" "”"}
       </div>
     </div>
     <div class="panel">
-      <div class="row spread"><h3>Tes passages par le sas</h3><span class="muted" id="sas-stats"></span></div>
+      <div class="row spread"><h2>Tes passages par le sas</h2><span class="muted" id="sas-stats"></span></div>
       <div class="history" id="sas-history"></div>
     </div>
   </section>
@@ -826,7 +896,7 @@ q{quotes:"« " " »" "“" "”"}
   <!-- PROGRES -->
   <section class="view" id="v-progres" hidden>
     <div class="panel" id="parcours">
-      <div class="row spread"><div><h3>Mon parcours</h3><p class="muted note" id="pc-sub"></p></div><button class="btn" id="pc-bilan">Faire le point</button></div>
+      <div class="row spread"><div><h2>Mon parcours</h2><p class="muted note" id="pc-sub"></p></div><button class="btn" id="pc-bilan">Faire le point</button></div>
       <ol class="etapes" id="pc-steps"></ol>
       <p class="fg2" id="pc-desc"></p>
       <div class="crit" id="pc-next"></div>
@@ -835,7 +905,7 @@ q{quotes:"« " " »" "“" "”"}
     </div>
     <div class="panel" id="xp-panel">
       <div class="row spread">
-        <div><h3>Tes XP cette semaine</h3><p class="muted note" id="xp-week-sub"></p></div>
+        <div><h2>Tes XP cette semaine</h2><p class="muted note" id="xp-week-sub"></p></div>
         <div class="seg" role="group" aria-label="Objectif quotidien" id="xp-goal-seg">
           <button data-g="30" title="Tranquille">30 XP</button><button data-g="60" title="Sérieux">60 XP</button><button data-g="100" title="Intense">100 XP</button>
         </div>
@@ -844,8 +914,9 @@ q{quotes:"« " " »" "“" "”"}
       <p class="note" id="xp-total"></p>
     </div>
     <div class="panel">
-      <div class="row spread"><h3>Badges</h3><span class="muted" id="badge-count"></span></div>
+      <div class="row spread"><h2>Badges</h2><span class="muted" id="badge-count"></span></div>
       <div class="badges" id="badges"></div>
+      <button class="btn ghost badges-more" id="badges-more" hidden>Voir tous les badges</button>
       <p class="note">Pourquoi une série et des XP ? Chez Duolingo, les apprenants qui atteignent 7 jours de série ont 3,6 fois plus de chances de terminer leur cours, et les « gels de série » (ici, les égides) évitent qu'un seul jour manqué fasse tout abandonner. <a href="https://blog.duolingo.com/how-duolingo-streak-builds-habit" target="_blank" rel="noopener">Source</a>. Le but reste le même : que l'envie de penser par toi-même prenne le relais des récompenses.</p>
     </div>
     <div class="panel">
@@ -857,16 +928,16 @@ q{quotes:"« " " »" "“" "”"}
       </div>
     </div>
     <div class="panel">
-      <div><h3>Bilan de la semaine</h3><p class="muted note">Moyenne de tes scores depuis lundi, comparée à la semaine précédente.</p></div>
+      <div><h2>Cette semaine en chiffres</h2><p class="muted note">Moyenne de tes scores depuis lundi, comparée à la semaine précédente.</p></div>
       <div class="tablewrap" id="weekly"></div>
     </div>
     <div class="panel">
-      <div><h3>Temps d'écran, 14 derniers jours</h3><p class="muted note" id="scr-sub">La ligne pointillée marque ton objectif.</p></div>
+      <div><h2>Temps d'écran, 14 derniers jours</h2><p class="muted note" id="scr-sub">La ligne pointillée marque ton objectif.</p></div>
       <div class="bars" id="scr-bars" role="img" aria-label="Temps d'écran par jour" style="grid-template-columns:repeat(14,1fr);gap:4px"></div>
     </div>
     <div class="panel">
       <div class="row spread">
-        <h3>16 dernières semaines</h3>
+        <h2>16 dernières semaines</h2>
         <div class="legend">moins <i style="background:var(--heat0)"></i><i style="background:var(--heat1)"></i><i style="background:var(--heat2)"></i><i style="background:var(--heat3)"></i><i style="background:var(--heat4)"></i> plus</div>
       </div>
       <div class="heatwrap"><div class="heat" id="heat" role="img" aria-label="Calendrier d'activité"></div></div>
@@ -874,20 +945,23 @@ q{quotes:"« " " »" "“" "”"}
     </div>
     <div class="panel">
       <div class="row spread">
-        <div><h3>Carnet d'écriture</h3><p class="muted note">Tes textes, du plus récent au plus ancien, avec leurs mesures de style.</p></div>
+        <div><h2>Carnet d'écriture</h2><p class="muted note">Tes textes, du plus récent au plus ancien, avec leurs mesures de style.</p></div>
         <button class="btn" id="carnet-coach" hidden>Avis du coach sur mon évolution</button>
       </div>
       <div class="coachout" id="carnet-out" hidden></div>
       <div id="carnet" style="display:flex;flex-direction:column;gap:14px"></div>
     </div>
     <div class="panel">
-      <h3>Par exercice</h3>
+      <h2>Par exercice</h2>
       <div class="excstats" id="excstats"></div>
     </div>
   </section>
 
   <!-- CONSEILS -->
   <section class="view" id="v-conseils" hidden>
+    <nav class="toc" id="biblio-toc" aria-label="Sommaire de la bibliothèque">
+      <button data-to="flori-panel">Florilège</button><button data-to="research">La recherche</button><button data-to="origins-panel">Les exercices</button><button data-to="pistes-panel">8 pistes</button><button data-to="rules-panel">10 règles</button><button data-to="about">À propos</button>
+    </nav>
     <div class="panel">
       <div class="rule">
         <span class="label">Règle du jour</span>
@@ -904,7 +978,7 @@ q{quotes:"« " " »" "“" "”"}
         <div class="flori" id="qcat-list"></div>
       </details>
     </div>
-    <div class="panel">
+    <div class="panel" id="research">
       <div>
         <h2>Ce que dit la recherche</h2>
         <p class="fg2">L'IA ne rend pas « bête » en soi. Les études convergent sur quatre enseignements, avec des niveaux de preuve différents : chaque étude indique le sien.</p>
@@ -912,17 +986,27 @@ q{quotes:"« " " »" "“" "”"}
       <div class="lessons" id="lessons"></div>
       <p class="note">Sources vérifiées le 29 octobre 2026. Une expérience randomisée pèse plus qu'une enquête ou une corrélation, et un modèle théorique ne mesure rien : il décrit un scénario possible.</p>
     </div>
-    <div class="panel">
+    <div class="panel" id="origins-panel">
       <div><h2>D'où viennent les exercices</h2><p class="fg2">Aucun n'est inventé au hasard. Les formats viennent de la psychologie cognitive, de la logique et de la pédagogie, souvent de tests utilisés depuis plus d'un siècle. Les contenus (phrases, problèmes, arguments, événements) ont été rédigés et vérifiés pour Brain Fit, et le coach peut en créer d'autres. Une limite à connaître : un exercice entraîne surtout ce qu'il entraîne. C'est pourquoi l'écriture, le raisonnement et la lecture passent avant les jeux de mémoire.</p></div>
       <div id="origins"></div>
     </div>
-    <div class="panel">
+    <div class="panel" id="pistes-panel">
       <div><h2>8 pistes pour rester maître de sa pensée</h2><p class="fg2">Les pistes de la vidéo sur l'IA vue comme un « virus cognitif », et où les pratiquer dans Brain Fit.</p></div>
       <div class="tips" id="pistes"></div>
     </div>
-    <div class="panel">
+    <div class="panel" id="rules-panel">
       <h2>10 règles pour utiliser l'IA sans t'affaiblir</h2>
       <div class="tips" id="tips"></div>
+    </div>
+    <div class="panel" id="about">
+      <h2>À propos de Brain Fit</h2>
+      <p class="fg2" style="max-width:65ch">Brain Fit est né d'une inquiétude simple : à force de tout demander à l'IA, on risque de ne plus savoir écrire, raisonner ni retenir par soi-même. L'application propose un entraînement court et quotidien, fondé sur la recherche en psychologie cognitive et sur une tradition éducative ancienne : la dispute, l'examen, la relecture.</p>
+      <ul class="fg2 about-list">
+        <li>Gratuit, sans publicité ni mesure d'audience.</li>
+        <li>Sans compte, tout reste sur ton appareil. Avec un compte, tes progrès sont gardés chez Supabase : le détail est dans « Tes données », dans les réglages.</li>
+        <li>Les contenus (problèmes, citations, questions disputées, études) ont été rédigés et vérifiés pour Brain Fit. Chaque citation et chaque étude indique sa source.</li>
+        <li>Site hébergé par GitHub Pages (GitHub, Inc.). Il s'installe comme une application : sur iPhone, « Partager » puis « Sur l'écran d'accueil » ; sur Android, « Installer l'application ».</li>
+      </ul>
     </div>
   </section>
 
@@ -932,14 +1016,15 @@ q{quotes:"« " " »" "“" "”"}
       <div><h2>Réglages</h2><p class="muted" id="account-line">Progrès enregistrés dans ce navigateur.</p></div>
       <div class="row"><button class="btn" id="login-open" hidden>Se connecter</button><button class="btn ghost" id="logout" hidden>Se déconnecter</button></div>
       <form class="row reel-city" id="city-form"><label class="note" for="city-in">Ta ville, pour le défi du réel</label><input type="text" id="city-in" placeholder="Ta ville" autocomplete="address-level2"><button class="btn mini">Valider</button></form>
+      <div class="row"><span class="note">Couleurs</span><div class="seg" id="theme-seg" role="group" aria-label="Thème"><button data-th="light">Claires</button><button data-th="dark">Sombres</button><button data-th="auto">Comme le téléphone</button></div></div>
     </div>
     <div class="panel">
-      <div><h3>Mes thèmes</h3><p class="muted note">Jusqu'à trois. Citations, « Ce jour-là », dictées, sujets d'écriture et coach s'en inspirent.</p></div>
+      <div><h2>Mes thèmes</h2><p class="muted note">Jusqu'à trois. Citations, « Ce jour-là », dictées, sujets d'écriture et coach s'en inspirent.</p></div>
       <div class="seg themes" id="themes-seg" role="group" aria-label="Mes thèmes"></div>
     </div>
     <div class="panel">
       <div class="row spread">
-        <div><h3>Sauvegarde</h3><p class="muted note">Copie tes données pour les garder ou les transférer.</p><span class="sync" id="sync">Progrès enregistrés dans ce navigateur</span></div>
+        <div><h2>Sauvegarde</h2><p class="muted note">Copie tes données pour les garder ou les transférer.</p><span class="sync" id="sync">Progrès enregistrés dans ce navigateur</span></div>
         <div class="row">
           <button class="btn" id="export">Copier mes données</button>
           <button class="btn ghost" id="import">Coller des données</button>
@@ -951,7 +1036,6 @@ q{quotes:"« " " »" "“" "”"}
         <button class="btn" id="reset-yes" style="color:var(--bad)">Oui, effacer</button>
         <button class="btn ghost" id="reset-no">Annuler</button>
       </div>
-      <div class="row"><span class="muted">Couleurs</span><div class="seg" id="theme-seg" role="group" aria-label="Thème"><button data-th="light">Claires</button><button data-th="dark">Sombres</button><button data-th="auto">Comme le téléphone</button></div></div>
       <textarea id="export-box" hidden readonly style="min-height:120px;font-family:var(--f-mono);font-size:.8rem"></textarea>
       <p class="note" id="export-msg" hidden></p>
       <div id="import-row" hidden style="display:flex;flex-direction:column;gap:8px">
@@ -960,7 +1044,7 @@ q{quotes:"« " " »" "“" "”"}
       </div>
     </div>
     <div class="panel" id="privacy">
-      <div><h3>Tes données</h3>
+      <div><h2>Tes données</h2>
         <p class="fg2" style="max-width:65ch">Avec un compte, Brain Fit garde ton e-mail, tes progrès et tes textes chez Supabase, qui héberge sa base de données. Les autres utilisateurs ne peuvent pas les lire ; techniquement, la personne qui gère ce Brain Fit y a accès. Si tu rejoins un cercle, ses membres voient seulement ton pseudo, tes XP de la semaine et ta série. Quand tu parles au coach, ta demande et le résumé de tes progrès sont envoyés à Claude (Anthropic) pour qu'il réponde. Rien n'est vendu, et il n'y a ni publicité ni mesure d'audience.</p></div>
       <div class="row"><button class="btn ghost" id="erase" hidden>Effacer mon compte</button></div>
       <div id="erase-confirm" class="row" hidden>
@@ -971,6 +1055,29 @@ q{quotes:"« " " »" "“" "”"}
       <p class="note" id="erase-msg" role="status"></p>
     </div>
   </section>
+  <footer class="foot">
+    <div class="meander" aria-hidden="true"></div>
+    <p><span class="foot-brand">Brain <span>Fit</span></span> · Garder l'esprit vif à l'heure de l'IA</p>
+    <p><button class="linkbtn" id="foot-about">À propos</button> · <button class="linkbtn" id="foot-privacy">Tes données</button> · <button class="linkbtn" id="foot-biblio">Bibliothèque</button></p>
+    <p class="note">Gratuit, sans publicité ni mesure d'audience.</p>
+  </footer>
+</div>
+<div class="welcome" id="welcome" tabindex="-1" role="dialog" aria-modal="true" aria-labelledby="wl-title" hidden>
+  <div class="wl-in">
+    <div class="wl-em" id="wl-em" aria-hidden="true"></div>
+    <h1 id="wl-title">Brain <span>Fit</span></h1>
+    <p class="wl-motto" title="Connais-toi toi-même">ΓΝΩΘΙ ΣΕΑΥΤΟΝ</p>
+    <p class="wl-lead">Garder l'esprit vif à l'heure de l'IA.</p>
+    <p class="fg2">Quelques minutes par jour pour écrire, raisonner et retenir par toi-même. L'IA reste un outil : c'est toi qui penses.</p>
+    <div class="meander" aria-hidden="true"></div>
+    <ul class="wl-pts">
+      <li><i>I</i><div><b>Écrire sans aide</b><span>Un sujet, un minuteur, zéro copier-coller, puis un regard exigeant sur ton texte.</span></div></li>
+      <li><i>II</i><div><b>Raisonner juste</b><span>Problèmes pièges, sophismes, erreurs d'IA à débusquer, disputes à la manière de saint Thomas.</span></div></li>
+      <li><i>III</i><div><b>Revenir au réel</b><span>Défis hors écran, fiches à imprimer, lectures longues et un bilan chaque dimanche.</span></div></li>
+    </ul>
+    <div class="wl-act"><button class="btn primary" id="wl-start">Commencer</button><button class="btn ghost" id="wl-login">J'ai déjà un compte</button></div>
+    <p class="note">Gratuit, sans publicité. Sans compte, tes progrès restent sur cet appareil.</p>
+  </div>
 </div>
 <div class="tip" id="tip" hidden></div>
 <div class="toasts" id="toasts" aria-live="polite"></div>
@@ -1581,8 +1688,9 @@ const LESSONS=[
 function renderLessons(){
   const box=$('#lessons'); box.replaceChildren();
   LESSONS.forEach(([title,intro,studies],i)=>{
-    const l=el('div',{class:'lesson'},el('h3',{},el('span',{class:'k',text:String(i+1).padStart(2,'0')}),document.createTextNode(title)),el('p',{text:intro}));
-    for(const [lv,h,txt,ref,url] of studies)l.append(el('div',{class:'study'},el('h4',{text:h}),el('p',{text:txt}),
+    const st=el('details',{class:'studies'},el('summary',{text:studies.length>1?`Les ${studies.length} études`:'L’étude'}));
+    const l=el('div',{class:'lesson'},el('h3',{},el('span',{class:'k',text:String(i+1).padStart(2,'0')}),document.createTextNode(title)),el('p',{text:intro}),st);
+    for(const [lv,h,txt,ref,url] of studies)st.append(el('div',{class:'study'},el('h4',{text:h}),el('p',{text:txt}),
       el('div',{class:'meta'},el('span',{class:'lvl '+(lv==='rev'?'mod':lv),text:LEVELS[lv]}),el('span',{text:ref}),el('a',{href:url,target:'_blank',rel:'noopener',text:'Lire la source'}))));
     box.append(l);
   });
@@ -2532,10 +2640,10 @@ function renderProgress(){
   const w0=weekStart(t), wPrev=addDays(w0,-7);
   const inW=(k,s)=>k>=s&&k<addDays(s,7);
   const tbl=el('table',{class:'week'}); const head=el('tr');
-  ['Exercice','Cette semaine','Semaine passée','Évolution'].forEach(h=>head.append(el('th',{text:h}))); tbl.append(el('thead',{},head));
+  ['Exercice','Cette semaine','La précédente','Tendance'].forEach(h=>head.append(el('th',{text:h}))); tbl.append(el('thead',{},head));
   const tb=el('tbody'); tbl.append(tb);
   const avg=a=>a.length?a.reduce((x,y)=>x+y,0)/a.length:null;
-  const deltaCell=(a,b,unit)=>{if(a===null||b===null)return el('td',{},el('span',{class:'delta flat',text:'—'}));const d=a-b;const pct=b?Math.round(d/Math.abs(b)*100):0;const cls=Math.abs(pct)<3?'flat':d>0?'up':'down';return el('td',{},el('span',{class:'delta '+cls,text:(cls==='flat'?'= ':d>0?'↑ +':'↓ ')+(cls==='flat'?'stable':pct+' %')}));};
+  const deltaCell=(a,b,unit)=>{if(a===null||b===null)return el('td',{},el('span',{class:'delta flat',text:'—'}));const d=a-b;const pct=b?Math.round(d/Math.abs(b)*100):0;const cls=Math.abs(pct)<3?'flat':d>0?'up':'down';return el('td',{},el('span',{class:'delta '+cls,text:cls==='flat'?'=':(d>0?'↑ +':'↓ ')+pct+' %'}));};
   const fmtA=v=>v===null?'—':fmt(Math.round(v*10)/10);
   for(const[key,e] of Object.entries(EX)){
     if(e.manual||e.hidden)continue;
@@ -2554,13 +2662,14 @@ function renderProgress(){
   for(const[key,e] of Object.entries(EX)){
     if(e.manual||e.hidden)continue;
     const rs=state.results.filter(r=>r.ex===key);
-    if(!rs.length){box.append(el('div',{class:'stat'},el('span',{class:'label',text:e.skill}),el('h3',{text:e.name}),el('p',{class:'note',text:"Pas encore de séance. Ton premier score apparaîtra ici."})));continue;}
+    if(!rs.length)continue;
     any=true;
     const last=rs[rs.length-1].s, best=Math.max(...rs.map(r=>r.s));
     box.append(el('div',{class:'stat'},el('span',{class:'label',text:e.skill}),el('h3',{text:e.name}),
       el('div',{class:'vals'},el('div',{},el('span',{class:'num',text:fmt(last)}),el('span',{class:'note',text:'dernier'})),el('div',{},el('span',{class:'num',text:fmt(best)}),el('span',{class:'note',text:'record'})),el('div',{},el('span',{class:'num',text:rs.length}),el('span',{class:'note',text:'séances'}))),
       spark(rs.slice(-20),e.unit),el('span',{class:'note',text:'En '+e.unit+', 20 dernières séances'})));
   }
+  if(!any)box.append(el('p',{class:'note',style:'grid-column:1/-1',text:'Tes courbes apparaîtront ici, exercice par exercice, dès ta première séance.'}));
 }
 function spark(rs,unit){
   const W=240,H=56,P=6, ns='http://www.w3.org/2000/svg';
@@ -2826,13 +2935,16 @@ function renderXpPanel(){
   const wk=vals.reduce((a,b)=>a+b,0), prev=[...Array(7)].reduce((a,_,i)=>a+(m[addDays(w0,i-7)]||0),0);
   $('#xp-week-sub').textContent=`${wk} XP cette semaine · semaine passée : ${prev} XP. ${wk>prev?'Tu bats ton toi de la semaine dernière.':prev?'Encore '+(prev-wk+1)+' XP pour battre ton toi de la semaine dernière.':''}`;
   const L=gamiCtx.level; $('#xp-total').textContent=`Niveau ${roman(L)} (${levelName(L)}) · ${fmt(gamiCtx.total)} XP au total · prochain niveau à ${fmt(needFor(L+1))} XP. Gains : exercice 10, écriture 20, record +5, sas 15, habitude 5, discussion 5, défi 50, citation ajoutée au florilège 5, séance sans écran 1 par minute.`;
-  const bx=$('#badges'); bx.replaceChildren(); const defs=badgeDefs(gamiCtx); let got=0;
-  for(const[id,name,desc] of defs){const ts=(state.badges||{})[id]; if(ts)got++;
+  const bx=$('#badges'); bx.replaceChildren(); const defs=badgeDefs(gamiCtx); let got=0, next=0;
+  for(const[id,name,desc] of defs){const ts=(state.badges||{})[id]; if(ts)got++; else if(!badgesAll&&++next>3)continue;
     const GL='ΑΒΓΔΕΖΗΘΙΚΛΜΝΞΟΠΡΣΤΥΦΧΨΩ'; const gi=defs.findIndex(d=>d[0]===id);
     bx.append(el('div',{class:'badge'+(ts?'':' locked')},el('span',{class:'medal'},el('span',{text:GL[gi%GL.length]})),el('strong',{text:name}),el('span',{text:ts?'Obtenu le '+fd(new Date(ts),{day:'numeric',month:'short'}):desc})));}
   $('#badge-count').textContent=`${got} sur ${defs.length}`;
+  const more=$('#badges-more'); more.hidden=defs.length-got<=3; more.textContent=badgesAll?'Montrer moins':`Voir les ${defs.length} badges`;
 }
+let badgesAll=false;
 $$('#xp-goal-seg button').forEach(b=>b.addEventListener('click',()=>{state.settings.xpGoal=+b.dataset.g;save();renderXpPanel();}));
+$('#badges-more').addEventListener('click',()=>{badgesAll=!badgesAll;renderXpPanel();});
 $('#goalring').addEventListener('click',()=>{showTab('progres');setTimeout(()=>$('#xp-panel').scrollIntoView({behavior:'smooth',block:'start'}),50);});
 function toast(html,kind){
   const t=el('div',{class:'toast'+(kind?' '+kind:''),html}), box=$('#toasts'); box.append(t);
@@ -3235,14 +3347,25 @@ $$('.tabs button').forEach(b=>b.addEventListener('click',()=>{const same=b.getAt
 window.addEventListener('hashchange',()=>showTab(location.hash.slice(1)));
 
 /* ---------- exercices ---------- */
+// les familles d'exercices, de la plus importante à la plus légère
+const EXFAM=[
+  ['Écrire',"Le cœur de l'entraînement : penser en écrivant, sans aide.",['write','ortho','dictee']],
+  ['Raisonner',"Débusquer l'erreur, le sophisme et la réponse trop rapide.",['probleme','erreuria','sophismes','hypotheses','fermi']],
+  ['Lire et retenir',"Lire vraiment, puis garder en mémoire ce qui compte.",['lecture','citations','chrono']],
+  ['Hors écran',"Le papier et le silence : là où l'attention se reforme.",['fiche','focus']],
+  ['Échauffements',"Des tests classiques de psychologie cognitive, courts et chronométrés. Utiles pour s'échauffer ; l'écriture et le raisonnement comptent davantage.",['calc','span','words','nback','stroop','fluency']]
+];
 function renderExGrid(){
-  const g=$('#exgrid'); g.replaceChildren();
-  for(const[key,e] of Object.entries(EX)){
-    if(e.manual||e.hidden)continue;
-    const rs=state.results.filter(r=>r.ex===key);
-    const best=rs.length?'Record : '+fmt(Math.max(...rs.map(r=>r.s)))+' '+e.unit:'Jamais fait';
-    g.append(el('button',{class:'excard',onclick:()=>openEx(key)},el('span',{class:'skill',text:e.skill}),el('h3',{text:e.name}),el('p',{text:e.desc}),el('span',{class:'best',text:(day().done[key]?'✓ Fait aujourd’hui · ':'')+best})));
-  }
+  const g=$('#exgrid'), seen=new Set(), card=key=>{const e=EX[key];seen.add(key);
+    const rs=state.results.filter(r=>r.ex===key), done=day().done[key];
+    const best=rs.length?'Record : '+fmt(Math.max(...rs.map(r=>r.s)))+' '+e.unit:'';
+    return el('button',{class:'excard',onclick:()=>openEx(key)},el('span',{class:'skill',text:e.skill}),el('h3',{text:e.name}),el('p',{text:e.desc}),el('span',{class:'best',text:(done?'✓ Fait aujourd’hui'+(best?' · ':''):'')+best}));};
+  const fams=EXFAM.map(([t,d,keys])=>[t,d,keys.filter(k=>EX[k]&&!EX[k].manual&&!EX[k].hidden)]);
+  // un exercice ajouté sans famille rejoint les échauffements plutôt que de disparaître
+  const rest=Object.keys(EX).filter(k=>!EX[k].manual&&!EX[k].hidden&&!fams.some(f=>f[2].includes(k)));
+  fams[fams.length-1][2].push(...rest);
+  g.replaceChildren(...fams.filter(f=>f[2].length).map(([t,d,keys])=>el('section',{class:'exgroup'},
+    el('div',{class:'exgroup-head'},el('h2',{text:t}),el('p',{class:'muted note',text:d})),el('div',{class:'cards'},...keys.map(card)))));
 }
 // tirage sans lassitude : les questions les moins récemment vues passent en premier
 function freshPick(bank,arr,n){
@@ -3550,7 +3673,7 @@ citations(arena){
       if(type==='qui'){
         const opts=[q.a,...QAUTHORS.filter(a=>a!==q.a).sort(()=>Math.random()-.5).slice(0,3)].sort(()=>Math.random()-.5);
         const box=el('div',{class:'options'});
-        opts.forEach(o=>box.append(el('button',{text:o,onclick:e=>{[...box.children].forEach(bt=>{bt.disabled=true;if(bt.textContent===q.a)bt.classList.add('right');});if(o!==q.a)e.currentTarget.classList.add('wrong');done(o===q.a);}})));
+        opts.forEach(o=>box.append(el('button',{text:o,onclick:e=>{[...box.children].forEach(bt=>{bt.disabled=true;if(sameText(bt.textContent,q.a))bt.classList.add('right');});if(o!==q.a)e.currentTarget.classList.add('wrong');done(o===q.a);}})));
         body=[el('span',{class:'label',text:'Qui l’a dit ou écrit ?'}),el('p',{class:'quote',text:'« '+q.q+' »'}),box];
       }else if(type==='verif'){
         const claimed=q.f||(Math.random()<.5?q.a:pick(QAUTHORS.filter(a=>a!==q.a))), truth=!q.f&&claimed===q.a;
@@ -3615,7 +3738,7 @@ lecture(arena){
         const [q,opts]=qs[qi]; const sh=opts.map((o,i)=>[o,i]).sort(()=>Math.random()-.5);
         const box=el('div',{class:'options'});
         sh.forEach(([o,i])=>box.append(el('button',{text:o,onclick:e=>{
-          [...box.children].forEach(b=>{b.disabled=true;if(b.textContent===opts[0])b.classList.add('right');});
+          [...box.children].forEach(b=>{b.disabled=true;if(sameText(b.textContent,opts[0]))b.classList.add('right');});
           if(i===0)ok++;else e.currentTarget.classList.add('wrong');
           hit(i===0);
           setTimeout(()=>{qi++;if(qi<qs.length)ask();else done();},900);
@@ -3764,7 +3887,7 @@ sophismes(arena){
       const box=el('div',{class:'options'}); const fb=el('div',{class:'answer',hidden:''});
       const next=el('button',{class:'btn primary',text:qi<4?'Suivant':'Voir le résultat',hidden:''});
       opts.forEach(o=>box.append(el('button',{text:o,onclick:e=>{
-        [...box.children].forEach(b=>{b.disabled=true;if(b.textContent===right)b.classList.add('right');});
+        [...box.children].forEach(b=>{b.disabled=true;if(sameText(b.textContent,right))b.classList.add('right');});
         if(o===right)ok++;else{e.currentTarget.classList.add('wrong');missAgain('soph',FALLACIES,qs[qi]);}
         hit(o===right);
         fb.replaceChildren(el('span',{class:'label',text:o===right?'Exact':'C’était : '+right}),el('span',{class:'fg2',text:why})); fb.hidden=false; next.hidden=false; next.focus();
@@ -4080,10 +4203,56 @@ function showGoalProposal(text){
   $('#coach-goal-text').textContent=g;
   $('#coach-goal-adopt').onclick=()=>{state.goal={text:g.slice(0,300),t:Date.now()};save();renderGoal();$('#coach-goal').hidden=true;$('#coach-review-date').textContent='Objectif adopté : tu le retrouves dans Aujourd\u2019hui.';};
 }
+/* ---------- typographie française : apostrophe courbe, espace insécable avant ; : ! ? » et après « ---------- */
+const NB_TEST=/ [;:!?»]|« |\p{L}'\p{L}/u, NB_SKIP=new Set(['SCRIPT','STYLE','TEXTAREA','INPUT','CODE','PRE']);
+const frTypo=t=>t.replace(/(\S) ([;:!?»])/g,'$1\u00a0$2').replace(/« /g,'«\u00a0').replace(/(\p{L})'(?=\p{L})/gu,'$1’');
+// pour comparer un texte affiché à sa donnée d'origine
+const sameText=(a,b)=>String(a).replace(/\u00a0/g,' ').replace(/’/g,"'")===String(b).replace(/\u00a0/g,' ').replace(/’/g,"'");
+function nbText(root){
+  if(root.nodeType===3){if(!NB_SKIP.has(root.parentNode&&root.parentNode.nodeName)&&NB_TEST.test(root.data))root.data=frTypo(root.data);return;}
+  const w=document.createTreeWalker(root,NodeFilter.SHOW_TEXT,{acceptNode:n=>NB_SKIP.has(n.parentNode&&n.parentNode.nodeName)||!NB_TEST.test(n.data)?NodeFilter.FILTER_REJECT:NodeFilter.FILTER_ACCEPT});
+  const todo=[]; for(let n;(n=w.nextNode());)todo.push(n);
+  for(const n of todo)n.data=frTypo(n.data);
+}
+nbText(document.body);
+new MutationObserver(ms=>{for(const m of ms){if(m.type==='characterData')nbText(m.target);else for(const n of m.addedNodes)if(n.nodeType===3||(n.nodeType===1&&!NB_SKIP.has(n.nodeName)))nbText(n);}})
+  .observe(document.body,{childList:true,subtree:true,characterData:true});
+
+/* ---------- accueil du nouveau venu ---------- */
+const LS_WELCOME='brainfit.welcome';
+function hasSession(){try{return Object.keys(localStorage).some(k=>/^sb-.*-auth-token$/.test(k));}catch(e){return false;}}
+function welcomeNeeded(){
+  try{if(localStorage.getItem(LS_WELCOME))return false;}catch(e){return false;}
+  // retour d'un lien de confirmation d'e-mail, compte déjà ouvert ou progrès déjà là : pas d'accueil
+  if(/access_token|type=signup|[?&]code=/.test(location.hash+location.search)||hasSession())return false;
+  return !state.results.length&&!Object.keys(state.days).length;
+}
+function closeWelcome(login){
+  try{localStorage.setItem(LS_WELCOME,'1');}catch(e){}
+  $('#welcome').hidden=true; document.body.style.overflow='';
+  if(login){try{sessionStorage.removeItem('brainfit.later');}catch(e){}$('#syncwarn').hidden=false;showTab('aujourdhui');window.scrollTo(0,0);setTimeout(()=>$('#login-email').focus(),50);}
+  else{try{sessionStorage.setItem('brainfit.later','1');}catch(e){}$('#syncwarn').hidden=true;showTab('aujourdhui');window.scrollTo(0,0);}
+}
+if(welcomeNeeded()){
+  $('#wl-em').innerHTML=stagSVG(1,'proud'); $('#welcome').hidden=false; document.body.style.overflow='hidden';
+  $('#wl-login').hidden=!window.bfSupabase;
+  setTimeout(()=>$('#welcome').focus({preventScroll:true}),0);
+}
+$('#wl-start').addEventListener('click',()=>closeWelcome(false));
+$('#wl-login').addEventListener('click',()=>closeWelcome(true));
+
+/* ---------- pied de page et sommaire de la bibliothèque ---------- */
+const goPanel=(tab,id)=>{showTab(tab);setTimeout(()=>{const p=document.getElementById(id);if(p)p.scrollIntoView({behavior:'smooth',block:'start'});},30);};
+$('#foot-about').addEventListener('click',()=>goPanel('conseils','about'));
+$('#foot-privacy').addEventListener('click',()=>goPanel('reglages','privacy'));
+$('#foot-biblio').addEventListener('click',()=>{showTab('conseils');window.scrollTo(0,0);});
+$$('#biblio-toc button').forEach(b=>b.addEventListener('click',()=>goPanel('conseils',b.dataset.to)));
+
 initCarnetCoach();
 applyFreezes(); gami(true);
 renderTips(); renderOrigins(); renderAll(); showTab(location.hash.slice(1)); setSync('local'); weekBilanNotice();
-initStore();
+// on dévoile la page une fois le compte vérifié, ou au plus tard après 0,8 s
+Promise.race([initStore(),new Promise(r=>setTimeout(r,800))]).finally(()=>document.documentElement.classList.remove('boot'));
 if('serviceWorker' in navigator)navigator.serviceWorker.register('sw.js').catch(()=>{});
 })();
 </script>

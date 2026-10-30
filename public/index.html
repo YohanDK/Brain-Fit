@@ -564,6 +564,10 @@ details.fold[open]{display:flex;flex-direction:column;gap:10px}
 .stag .spark{transform-box:fill-box;transform-origin:center;animation:twinkle 1.8s ease-in-out infinite}
 @keyframes twinkle{50%{opacity:.35;transform:scale(.8)}}
 @media (prefers-reduced-motion: reduce){.stag svg,.stag *{animation:none!important}}
+.stagtalk{display:flex;align-items:flex-end;gap:10px;text-align:left;width:min(520px,100%)}
+.stag.mini{width:58px;height:58px;cursor:default}
+.stagtalk .say{position:relative;flex:1;min-width:0;background:var(--surface);border:1px solid var(--gold);border-radius:12px;padding:9px 13px;line-height:1.45;margin-bottom:10px;animation:pop .3s ease-out}
+.stagtalk .say::before{content:"";position:absolute;left:-7px;bottom:14px;width:12px;height:12px;background:var(--surface);border-left:1px solid var(--gold);border-bottom:1px solid var(--gold);transform:rotate(45deg)}
 .stag-bubble{position:absolute;top:calc(100% + 8px);left:0;z-index:25;width:max-content;max-width:min(320px,calc(100vw - 32px));background:var(--surface);color:var(--fg);border:1px solid var(--gold);border-radius:12px;padding:10px 14px;box-shadow:0 8px 24px rgba(60,50,30,.14);line-height:1.4;cursor:pointer;animation:pop .25s ease-out}
 .stag-bubble::before{content:"";position:absolute;top:-7px;left:30px;width:12px;height:12px;background:var(--surface);border-left:1px solid var(--gold);border-top:1px solid var(--gold);transform:rotate(45deg)}
 q{quotes:"« " " »" "“" "”"}
@@ -1410,7 +1414,35 @@ const ORTHO=[
   ["Il faut que tu ___ à l'heure.",["sois","soit","soi"],0,"Subjonctif d'être : que je sois, que tu sois, qu'il soit. « Soi » est un pronom."],
   ["C'est ___ que je pensais.",["ce","se"],0,"« Ce » désigne une chose (cela). « Se » accompagne un verbe pronominal : il se lave."],
   ["Les enfants, ___ par le bruit, se sont réveillés.",["dérangé","dérangés"],1,"Participe employé comme adjectif : il s'accorde avec « les enfants »."],
-  ["Je vous ___ de bonnes vacances.",["souhaite","souhaites"],0,"Le sujet est « je » : je souhaite. « Vous » est ici complément."]
+  ["Je vous ___ de bonnes vacances.",["souhaite","souhaites"],0,"Le sujet est « je » : je souhaite. « Vous » est ici complément."],
+  ["Tu es ___ arriver à huit heures.", ["sensé", "censé"], 1, "« Censé » veut dire « supposé ». « Sensé » veut dire « qui a du bon sens » : une remarque sensée."],
+  ["Je suis ___ à partir.", ["près", "prêt"], 1, "« Prêt à » : préparé à. « Près de » : à côté de."],
+  ["Il ___ pleuvoir cet après-midi.", ["peu", "peut", "peux"], 1, "Verbe pouvoir : il peut. Astuce : on peut dire « il pouvait »."],
+  ["Il a ___ d'amis dans cette ville.", ["peu", "peut"], 0, "« Peu » signifie « pas beaucoup ». On ne peut pas dire « il a pouvait d'amis »."],
+  ["___ à moi, je préfère rester.", ["Quand", "Quant", "Qu'en"], 1, "« Quant à » signifie « en ce qui concerne ». « Quand » marque le temps."],
+  ["Je ne sais pas ___ penser.", ["qu'en", "quand", "quant"], 0, "« Qu'en » = « que » + « en » : que penser de cela."],
+  ["Pour réussir, il faudra travailler ___.", ["d'avantage", "davantage"], 1, "« Davantage », en un mot, signifie « plus ». « Un avantage » est un bénéfice."],
+  ["Elles se sont ___ toute la soirée.", ["parlées", "parlé", "parlés"], 1, "On parle à quelqu'un : « se » est complément indirect. Pas d'accord : elles se sont parlé."],
+  ["Elles se sont ___ de leur erreur.", ["aperçu", "aperçues"], 1, "« S'apercevoir de » ne s'emploie qu'à la forme pronominale : le participe s'accorde avec le sujet."],
+  ["Il porte des chaussures ___.", ["marron", "marrons"], 0, "Un nom employé comme couleur reste invariable : des chaussures marron, des yeux noisette."],
+  ["Elle a acheté des robes ___.", ["rose", "roses"], 1, "« Rose » fait exception : avec mauve, fauve, pourpre et écarlate, il s'accorde."],
+  ["Il a mis ses chemises bleu ___.", ["claires", "clair"], 1, "Une couleur composée de deux mots reste invariable : des chemises bleu clair."],
+  ["Bien qu'il ___ tard, je reste encore un peu.", ["est", "soit"], 1, "« Bien que » est toujours suivi du subjonctif : bien qu'il soit tard."],
+  ["Je te rappellerai après que tu ___ rentré.", ["seras", "sois"], 0, "« Après que » se construit avec l'indicatif, car l'action est réalisée. Le subjonctif, très répandu, est une faute."],
+  ["Ces livres, je les ai tous ___.", ["lu", "lus"], 1, "Le COD « les » (ces livres) est placé avant avoir : accord au masculin pluriel."],
+  ["Combien de pommes as-tu ___ ?", ["mangé", "mangées"], 1, "« Combien de pommes » est le COD, placé avant avoir : accord au féminin pluriel."],
+  ["Elle est ___ heureuse de sa journée.", ["tout", "toute"], 0, "« Tout » adverbe reste invariable devant un adjectif féminin qui commence par une voyelle ou un h muet."],
+  ["Montre-moi ___ livres que tu as achetés hier.", ["ses", "ces"], 1, "« Ces » montre : ces livres-là. « Ses » indique qu'ils appartiennent à quelqu'un d'autre : ses livres à lui."],
+  ["Il y avait deux ___ cinquante invités.", ["cents", "cent"], 1, "« Cent » ne prend pas de s quand il est suivi d'un autre nombre : deux cent cinquante, mais deux cents."],
+  ["Il a parcouru trois ___ kilomètres à vélo.", ["mille", "milles"], 0, "« Mille » est toujours invariable."],
+  ["La réunion de ce soir a été ___.", ["annulé", "annulée", "annuler"], 1, "Avec être, le participe s'accorde avec le sujet : la réunion, féminin singulier."],
+  ["Vous devez ___ ce formulaire avant lundi.", ["rempli", "remplir", "remplis"], 1, "Après un verbe comme « devoir », on met l'infinitif. Astuce : remplace par « prendre »."],
+  ["___ grands que soient leurs efforts, ils n'y arriveront pas seuls.", ["Quelques", "Quelque", "Quels que"], 1, "Devant un adjectif, « quelque » signifie « si » : il est adverbe, donc invariable."],
+  ["Les sommes ___ seront remboursées.", ["dûes", "dues", "dûs"], 1, "« Dû » ne garde son accent qu'au masculin singulier : due, dus, dues."],
+  ["Il a ___ partir plus tôt que prévu.", ["du", "dû"], 1, "Participe passé de devoir : dû, avec un accent qui le distingue de l'article « du »."],
+  ["Elle s'est ___ de partir sans prévenir.", ["permise", "permis"], 1, "On permet quelque chose à quelqu'un : « se » est complément indirect, pas d'accord."],
+  ["Elles ont ___ toute la nuit.", ["dormies", "dormi"], 1, "« Dormir » n'a jamais de COD : avec avoir, son participe ne s'accorde pas."],
+  ["Voici la lettre ___ j'attendais.", ["dont", "que"], 1, "On attend quelque chose, sans préposition : le relatif est « que ». On dit « dont » pour « parler de »."]
 ];
 const QUIZ={
   "Le sommeil et la mémoire":[["Pendant quelle phase l'hippocampe « rejoue »-t-il les expériences de la journée ?",["Le sommeil lent profond","Le sommeil paradoxal","Le sommeil léger"]],["Que provoque une nuit blanche après un apprentissage ?",["Une baisse de rétention qui persiste malgré la récupération","Rien, si l'on récupère les nuits suivantes","Une meilleure mémorisation"]]],
@@ -1435,7 +1467,18 @@ const AIERR=[
   ["Quel est le rôle du sommeil pour la mémoire ?",["Pendant le sommeil, le cerveau consolide les souvenirs de la journée.","L'hippocampe joue un rôle central dans cette consolidation.","Une courte sieste peut améliorer la rétention après un apprentissage.","Pendant le sommeil profond, le cerveau est presque totalement inactif."],3,"Le cerveau reste très actif pendant le sommeil profond : c'est justement là qu'il rejoue et consolide les souvenirs. La phrase contredit la première."],
   ["Qui a construit la tour Eiffel ?",["La tour Eiffel a été construite pour l'Exposition universelle de 1889.","Elle porte le nom de Gustave Eiffel, dont l'entreprise l'a conçue et bâtie.","Les ingénieurs Maurice Koechlin et Émile Nouguier en avaient dessiné le premier projet.","Haute de 312 mètres à l'origine, elle est restée le plus haut monument du monde jusqu'en 1960."],3,"Elle a perdu ce titre en 1930, dépassée par le Chrysler Building à New York. La fausse date se cache au milieu de détails exacts."],
   ["Combien de temps met la lumière du Soleil pour nous parvenir ?",["Le Soleil est à environ 150 millions de kilomètres de la Terre.","La lumière parcourt près de 300 000 kilomètres par seconde.","Il lui faut donc environ 500 secondes pour faire le trajet.","Autrement dit, la lumière que nous voyons a quitté le Soleil il y a un peu plus de 8 heures."],3,"500 secondes font environ 8 minutes et 20 secondes, pas 8 heures. Le calcul était juste, la conversion d'unité non."],
-  ["Quand a eu lieu la bataille de Marignan ?",["La bataille de Marignan a eu lieu en 1515, près de Milan.","Elle oppose l'armée de François Ier aux mercenaires suisses qui défendent le duché.","Elle se termine par une victoire française au bout de deux jours de combat.","François Ier y est fait prisonnier, puis emmené à Madrid."],3,"C'est à Pavie, en 1525, que François Ier est fait prisonnier. À Marignan, il est vainqueur. Deux batailles d'Italie confondues : une erreur typique d'IA."]
+  ["Quand a eu lieu la bataille de Marignan ?",["La bataille de Marignan a eu lieu en 1515, près de Milan.","Elle oppose l'armée de François Ier aux mercenaires suisses qui défendent le duché.","Elle se termine par une victoire française au bout de deux jours de combat.","François Ier y est fait prisonnier, puis emmené à Madrid."],3,"C'est à Pavie, en 1525, que François Ier est fait prisonnier. À Marignan, il est vainqueur. Deux batailles d'Italie confondues : une erreur typique d'IA."],
+  ["Qui a écrit Le Rouge et le Noir ?", ["Le Rouge et le Noir est un roman de Stendhal.", "Stendhal est le pseudonyme de Gustave Flaubert.", "Le roman a été publié en 1830.", "Son héros, Julien Sorel, est un jeune homme ambitieux d'origine modeste."], 1, "Stendhal est le pseudonyme d'Henri Beyle. Flaubert, lui, est l'auteur de Madame Bovary."],
+  ["Pourquoi la Lune nous montre-t-elle toujours la même face ?", ["La Lune tourne sur elle-même.", "Elle met autant de temps à tourner sur elle-même qu'à faire le tour de la Terre, environ 27 jours.", "On parle de rotation synchrone.", "C'est pour cela que sa face cachée est toujours plongée dans la nuit."], 3, "La face cachée reçoit autant de lumière que l'autre : elle est seulement invisible depuis la Terre."],
+  ["Combien font 15 % de 80 ?", ["10 % de 80, c'est 8.", "5 %, c'est la moitié de 10 %, soit 4.", "15 %, c'est 10 % plus 5 %.", "Donc 15 % de 80 font 14."], 3, "8 + 4 = 12. La méthode était juste : c'est l'addition finale qui est fausse."],
+  ["Qu'est-ce que la photosynthèse ?", ["C'est le processus par lequel les plantes fabriquent leur matière organique.", "Elles utilisent pour cela l'énergie de la lumière.", "Elles absorbent de l'oxygène et rejettent du dioxyde de carbone.", "Elle a lieu surtout dans les feuilles, grâce à la chlorophylle."], 2, "C'est l'inverse : la photosynthèse absorbe du dioxyde de carbone et rejette de l'oxygène."],
+  ["Que s'est-il passé le 14 juillet 1789 ?", ["La Bastille était une forteresse qui servait de prison royale.", "Elle a été prise par les émeutiers parisiens le 14 juillet 1789.", "Ce jour-là, elle ne comptait que sept prisonniers.", "Le 14 juillet est devenu fête nationale dès l'année suivante, en 1790."], 3, "Le 14 juillet 1790, on célèbre la fête de la Fédération, mais le 14 juillet ne devient fête nationale qu'avec la loi de 1880."],
+  ["Les chauves-souris sont-elles des oiseaux ?", ["Non, les chauves-souris sont des mammifères.", "Elles allaitent leurs petits.", "Comme les oiseaux, elles pondent des œufs.", "Ce sont les seuls mammifères capables d'un vrai vol battu."], 2, "Les chauves-souris ne pondent pas : elles mettent bas, comme presque tous les mammifères."],
+  ["Un article à 50 € bénéficie de deux remises successives de 10 %. Quel est son prix final ?", ["La première remise porte sur 50 €, soit 5 €.", "Le prix passe à 45 €.", "La seconde remise porte sur 45 €, soit 4,50 €.", "Le prix final est donc de 40 €, soit 20 % de remise au total."], 3, "45 − 4,50 = 40,50 €. Deux remises de 10 % ne font pas 20 % : la seconde porte sur un prix déjà réduit."],
+  ["Quelle est la plus haute montagne de France ?", ["Le mont Blanc est le plus haut sommet de France.", "Sa première ascension a eu lieu en 1953.", "Il culmine à environ 4 805 mètres.", "Il se trouve dans le massif des Alpes, à la frontière avec l'Italie."], 1, "La première ascension du mont Blanc date de 1786, par Jacques Balmat et Michel Paccard. 1953, c'est l'Everest."],
+  ["Qu'est-ce qu'un nombre premier ?", ["Un nombre premier a exactement deux diviseurs : 1 et lui-même.", "2 est le seul nombre premier pair.", "1 est le plus petit nombre premier.", "Il en existe une infinité, comme Euclide l'a démontré."], 2, "1 n'a qu'un seul diviseur, lui-même : il n'est pas premier. Le plus petit nombre premier est 2."],
+  ["Qui était Napoléon Ier ?", ["Napoléon Bonaparte naît en 1769 à Ajaccio.", "Il se fait sacrer empereur des Français en 1804, à Notre-Dame de Paris.", "Il meurt en 1815, peu après sa défaite à Waterloo.", "Ses cendres reposent aux Invalides, à Paris, depuis 1840."], 2, "Après Waterloo (1815), Napoléon est exilé à Sainte-Hélène, où il meurt en 1821."],
+  ["Pourquoi l'eau de mer est-elle salée ?", ["L'eau de pluie dissout lentement les minéraux des roches.", "Les rivières transportent ces sels jusqu'à la mer.", "L'évaporation emporte l'eau mais laisse le sel.", "Les océans contiennent en moyenne 3,5 grammes de sel par litre."], 3, "C'est environ 35 grammes par litre. Une erreur d'un facteur 10 passe facilement inaperçue quand le reste sonne juste."]
 ];
 const SCENARIOS=[
   "Les ventes d'un glacier de bord de mer ont chuté de 30 % en juillet par rapport à l'an dernier.",
@@ -1449,7 +1492,19 @@ const SCENARIOS=[
   "Les pays qui consomment le plus de chocolat ont le plus de prix Nobel par habitant.",
   "Une entreprise qui a instauré le télétravail voit sa productivité mesurée augmenter de 15 %.",
   "Un restaurant toujours plein se retrouve à moitié vide, alors que ses prix n'ont pas changé.",
-  "Les enfants qui prennent un petit-déjeuner ont de meilleurs résultats scolaires."
+  "Les enfants qui prennent un petit-déjeuner ont de meilleurs résultats scolaires.",
+  "Les ventes de parapluies d'un magasin ont doublé en mai, alors qu'il a moins plu que l'an dernier.",
+  "Un élève brillant obtient soudain de mauvaises notes dans toutes les matières.",
+  "Les plaintes pour cambriolage baissent dans un quartier, mais les habitants disent se sentir moins en sécurité.",
+  "Un même médicament semble plus efficace dans un hôpital que dans un autre.",
+  "Les ventes de livres papier augmentent chez les 15-25 ans.",
+  "Dans une entreprise, les arrêts maladie sont deux fois plus nombreux le lundi.",
+  "Les candidats reçus en entretien le matin sont plus souvent recrutés que ceux de l'après-midi.",
+  "Une ligne de bus devenue gratuite attire moins de voyageurs que prévu.",
+  "Un quartier où l'on a installé des caméras voit les vols de vélos augmenter.",
+  "Les élèves assis au premier rang ont de meilleures notes.",
+  "Le nombre de diagnostics d'une maladie double en dix ans.",
+  "Un village perd sa boulangerie, et la fréquentation de son café baisse aussi."
 ];
 const LEVELS={rct:'Expérience randomisée',obs:'Observation',svy:'Enquête',mod:'Modèle théorique',rev:'Synthèse'};
 const LESSONS=[
@@ -1538,7 +1593,20 @@ const FERMI=[
   ["Combien de mots lis-tu en un an si tu lis 20 minutes par jour, à 250 mots par minute ?",1.8e6,"mots","20 × 250 = 5 000 mots par jour, × 365 ≈ 1,8 million de mots : une vingtaine de romans."],
   ["Combien de litres d'air respires-tu en une journée, au repos ?",1.1e4,"litres","≈ 0,5 litre par inspiration × 15 inspirations par minute × 1 440 minutes ≈ 11 000 litres."],
   ["Combien de jours faut-il pour compter jusqu'à un million, à raison d'un nombre par seconde, sans dormir ?",11.6,"jours","1 000 000 s ÷ 86 400 s par jour ≈ 11,6 jours. Jusqu'à un milliard, il faudrait près de 32 ans."],
-  ["Combien de feuilles A4 faut-il pour recouvrir un terrain de football de 105 m × 68 m ?",1.15e5,"feuilles","Le terrain fait ≈ 7 100 m² et une feuille A4 ≈ 0,062 m² (21 × 29,7 cm) : ≈ 115 000 feuilles."]
+  ["Combien de feuilles A4 faut-il pour recouvrir un terrain de football de 105 m × 68 m ?",1.15e5,"feuilles","Le terrain fait ≈ 7 100 m² et une feuille A4 ≈ 0,062 m² (21 × 29,7 cm) : ≈ 115 000 feuilles."],
+  ["Combien de litres de sang ton cœur pompe-t-il en une journée, au repos ?",7200,"litres","≈ 5 litres par minute × 1 440 minutes ≈ 7 000 litres par jour."],
+  ["Combien de minutes compte une vie de 80 ans ?",4.2e+07,"minutes","80 × 365 × 24 × 60 ≈ 42 millions de minutes."],
+  ["Combien de kilomètres la Terre parcourt-elle chaque jour autour du Soleil ?",2.6e+06,"km","Orbite ≈ 2π × 150 millions de km ≈ 940 millions de km par an, soit ≈ 2,6 millions de km par jour."],
+  ["Combien de gouttes d'eau contient un litre ?",20000,"gouttes","Une goutte fait ≈ 0,05 mL, soit ≈ 20 gouttes par millilitre et ≈ 20 000 par litre."],
+  ["Combien de feuilles de papier faut-il empiler pour une pile d'un mètre ?",10000,"feuilles","Une feuille de papier ordinaire fait ≈ 0,1 mm d'épaisseur : 1 000 mm ÷ 0,1 mm = 10 000."],
+  ["Combien d'heures dors-tu dans une vie de 80 ans, à 8 heures par nuit ?",230000,"heures","8 × 365 × 80 ≈ 234 000 heures, soit environ 27 ans."],
+  ["Combien de Lunes, alignées côte à côte, faudrait-il pour couvrir la distance Terre–Lune ?",111,"Lunes","≈ 384 000 km ÷ 3 475 km de diamètre ≈ 110."],
+  ["Combien de personnes en France fêtent leur anniversaire aujourd'hui ?",190000,"personnes","≈ 68 millions d'habitants ÷ 365 jours ≈ 190 000 personnes."],
+  ["Combien de litres d'eau utilises-tu pour une douche de 5 minutes ?",60,"litres","Une pomme de douche courante débite ≈ 12 litres par minute : 5 × 12 ≈ 60 litres."],
+  ["Combien de lettres et de signes contient un roman de 300 pages ?",540000,"signes","≈ 300 mots par page × 6 signes par mot (espace compris) ≈ 1 800 signes ; × 300 pages ≈ 540 000."],
+  ["Combien de fois ton cœur bat-il pendant un film de 2 heures ?",8400,"battements","≈ 70 battements par minute × 120 minutes ≈ 8 400."],
+  ["Combien de tours fait une roue de vélo de 70 cm de diamètre sur 10 km ?",4500,"tours","Circonférence = π × 0,7 ≈ 2,2 m ; 10 000 m ÷ 2,2 m ≈ 4 500 tours."],
+  ["Combien de pièces de 1 € faudrait-il empiler pour atteindre le sommet de la tour Eiffel (330 m) ?",140000,"pièces","Une pièce de 1 € fait ≈ 2,3 mm d'épaisseur : 330 000 mm ÷ 2,3 mm ≈ 140 000."]
 ];
 const WORDS=["piano","lampe","girafe","citron","bateau","montagne","ciseaux","nuage","tambour","fourchette","violon","cerise","valise","phare","tortue","bougie","échelle","marteau","orange","cactus","fusée","chapeau","miroir","horloge","panier","renard","volcan","balai","crayon","dauphin","lune","ancre","tulipe","sifflet","château","pinceau","raquette","gâteau","parapluie","chameau","boussole","clé","oreiller","trompette","fraise","tracteur","hibou","savon","guitare","pyramide","éventail","casserole","papillon","sapin","cerf-volant","moulin","flûte","coquillage","lion","bouteille","sandale","igloo","brouette","perroquet","ananas","cloche","tapis","grenouille","épée","banc"];
 const LETTERS=["P","M","C","B","L","R","S","T","D","F","G","V","A","N"];
@@ -1580,27 +1648,68 @@ const FALLACIES=[
   ["Un employé, c'est comme un clou : il faut taper dessus pour qu'il avance.","Fausse analogie","Deux choses semblables sur un point ne le sont pas sur tout : un employé n'est pas un objet."],
   ["Les uns disent que la Terre est ronde, les autres qu'elle est plate : la vérité doit être entre les deux.","Juste milieu","Le compromis entre deux positions n'est pas forcément vrai : parfois, l'une des deux a simplement raison."],
   ["On me reproche la pollution de l'usine ? Parlons plutôt des emplois qu'elle a créés et du club de foot qu'elle finance.","Diversion","On détourne l'attention vers un autre sujet au lieu de répondre à la critique."],
-  ["Prends la dernière version de ce logiciel : elle est forcément meilleure.","Appel à la nouveauté","Récent ne veut pas dire meilleur. C'est le pendant de l'appel à la tradition."]
+  ["Prends la dernière version de ce logiciel : elle est forcément meilleure.","Appel à la nouveauté","Récent ne veut pas dire meilleur. C'est le pendant de l'appel à la tradition."],
+  ["S'il a la grippe, il a de la fièvre. Or il a de la fièvre. Donc il a la grippe.", "Affirmation du conséquent", "La fièvre peut avoir bien d'autres causes. « Si A, alors B » et « B » ne permettent pas de conclure A."],
+  ["Aucun vrai Breton ne met de sucre dans son cidre. Ton cousin breton en met ? Alors ce n'est pas un vrai Breton.", "Vrai Écossais", "On redéfinit le groupe après coup pour écarter le contre-exemple. L'affirmation devient impossible à réfuter, donc vide."],
+  ["Cette voyante avait annoncé trois événements de l'année, et ils se sont produits ! (On oublie les quarante autres prédictions.)", "Tireur d'élite texan", "On ne retient, après coup, que les résultats qui collent, comme un tireur qui dessine la cible autour de ses impacts."],
+  ["Quand mon candidat arrange la vérité, c'est de la stratégie. Quand le tien le fait, c'est un scandale.", "Deux poids, deux mesures", "On juge le même acte différemment selon qui le commet. Un critère honnête s'applique à tout le monde."],
+  ["Je ne peux pas avoir raté cet examen : sinon je devrais redoubler, et c'est impensable.", "Appel aux conséquences", "Qu'une conclusion soit désagréable ne la rend pas fausse. Le résultat ne dépend pas de ce qu'il entraînerait."],
+  ["Chaque joueur de cette équipe est excellent, donc l'équipe sera excellente.", "Composition", "Ce qui vaut pour chaque partie ne vaut pas forcément pour le tout : une équipe, c'est aussi un collectif."],
+  ["Cette entreprise est très riche, donc chacun de ses employés est riche.", "Division", "Ce qui vaut pour le tout ne vaut pas forcément pour chacune de ses parties."],
+  ["Un sandwich vaut mieux que rien. Or rien ne vaut le bonheur. Donc un sandwich vaut mieux que le bonheur.", "Équivoque", "Le mot « rien » change de sens en cours de route : le raisonnement joue sur les mots."],
+  ["Je n'ai jamais attaché ma ceinture et je n'ai jamais eu d'accident. La ceinture ne sert à rien.", "Généralisation hâtive", "Un seul cas personnel ne dit rien d'un risque qui se mesure sur des millions de trajets."],
+  ["Ce grand footballeur recommande ce placement financier : on peut y aller les yeux fermés.", "Fausse autorité", "Son talent sportif ne lui donne aucune compétence en finance."],
+  ["Si on autorise le téléphone en récréation, les élèves l'utiliseront bientôt en classe, puis pendant les examens.", "Pente glissante", "On enchaîne des conséquences de plus en plus graves sans montrer pourquoi chaque étape suivrait la précédente."],
+  ["Tous mes amis disent que ce film est un chef-d'œuvre, donc c'en est un.", "Appel à la popularité", "Le nombre de personnes qui pensent une chose ne la rend pas vraie."],
+  ["Soit on interdit complètement les voitures en ville, soit on accepte de respirer un air pollué.", "Faux dilemme", "Il existe bien d'autres options : transports en commun, vélo, véhicules moins polluants, zones à circulation limitée."],
+  ["Tu critiques mon analyse économique ? Tu n'as même pas fait d'études.", "Attaque personnelle", "On disqualifie la personne au lieu de répondre à l'argument."],
+  ["Il faut garder cette coutume : on l'a toujours faite.", "Appel à la tradition", "L'ancienneté d'une pratique ne prouve ni qu'elle est bonne, ni qu'elle est mauvaise. Il faut d'autres raisons."],
+  ["Ce shampoing est 100 % naturel, il ne peut donc pas provoquer d'allergie.", "Appel à la nature", "Naturel ne veut pas dire sans danger : bien des plantes sont allergisantes, voire toxiques."],
+  ["Pourquoi as-tu arrêté de tricher aux examens ?", "Question piège", "La question suppose que tu trichais : quelle que soit ta réponse, tu l'admets."]
 ];
 const PROBLEMS=[
-  ["Une raquette et une balle coûtent 1,10 € au total. La raquette coûte 1 € de plus que la balle. Combien coûte la balle ?","0,05 €","Si la balle coûtait 0,10 €, la raquette coûterait 1,10 € et le total 1,20 €. Avec x pour la balle : x + (x + 1) = 1,10, donc x = 0,05 €. La réponse intuitive (0,10 €) est fausse."],
-  ["5 machines fabriquent 5 objets en 5 minutes. Combien de temps faut-il à 100 machines pour fabriquer 100 objets ?","5 minutes","Chaque machine fait 1 objet en 5 minutes. 100 machines font donc 100 objets en 5 minutes."],
-  ["Une tache de nénuphars double de surface chaque jour. Il lui faut 48 jours pour couvrir le lac. En combien de jours en couvre-t-elle la moitié ?","47 jours","Puisqu'elle double chaque jour, la veille du 48e jour elle couvrait la moitié du lac."],
-  ["Quatre cartes montrent : A, K, 4, 7. Règle : « si une carte a une voyelle d'un côté, elle a un nombre pair de l'autre ». Quelles cartes faut-il retourner, au minimum, pour vérifier la règle ?","A et 7","A : il faut vérifier qu'il y a un nombre pair derrière. 7 : s'il y avait une voyelle derrière, la règle serait fausse. Le 4 ne prouve rien (la règle ne dit pas que les pairs ont une voyelle), K non plus."],
-  ["Une maladie touche 1 personne sur 1 000. Un test la détecte toujours, mais donne 5 % de faux positifs chez les personnes saines. Ton test est positif. Quelle est la probabilité que tu sois malade ?","Environ 2 %","Sur 1 000 personnes : 1 malade testé positif, et 5 % des 999 saines, soit environ 50 faux positifs. 1 vrai positif sur 51 positifs ≈ 2 %. C'est l'oubli du taux de base."],
-  ["Combien de fois écrit-on le chiffre 9 en écrivant tous les nombres de 1 à 100 ?","20 fois","10 fois en chiffre des unités (9, 19… 99) et 10 fois en chiffre des dizaines (90 à 99). 99 compte deux fois."],
-  ["Un escargot est au fond d'un puits de 10 m. Chaque jour il monte de 3 m, chaque nuit il glisse de 2 m. En combien de jours sort-il ?","8 jours","Il gagne 1 m par jour et nuit. Au matin du 8e jour il est à 7 m, il monte de 3 m dans la journée et sort sans glisser."],
-  ["Un nombre de 3 chiffres a pour chiffre des centaines le double de celui des unités, et la somme de ses chiffres vaut 13. Son chiffre des dizaines est 7. Quel est ce nombre ?","472","c = 2u et c + 7 + u = 13, donc 3u = 6 : u = 2 et c = 4. Le nombre est 472."],
-  ["Dans un tiroir sombre, il y a 10 chaussettes noires et 10 blanches. Combien faut-il en prendre, au minimum, pour être sûr d'avoir une paire de la même couleur ?","3","Avec deux couleurs, la troisième chaussette forme forcément une paire avec l'une des deux premières."],
-  ["Tous les chercheurs de ce labo sont des biologistes. Certains biologistes sont musiciens. Peut-on conclure que certains chercheurs du labo sont musiciens ?","Non","Les biologistes musiciens peuvent tous être hors du labo. La conclusion n'est pas garantie par les prémisses."],
-  ["Un prix augmente de 20 %, puis baisse de 20 %. Par rapport au prix de départ, est-il plus haut, plus bas ou identique ?","Plus bas de 4 %","100 → 120 → 120 × 0,8 = 96. La baisse s'applique sur une base plus grande."],
-  ["Paul a deux enfants. Au moins l'un d'eux est une fille. Quelle est la probabilité que les deux soient des filles ?","1 sur 3","Les cas possibles avec au moins une fille : FF, FG, GF. Un seul sur trois est FF."],
-  ["Dans une course, tu doubles le deuxième. À quelle place es-tu ?","Deuxième","Tu prends sa place : il passe troisième et toi deuxième. La réponse intuitive, « premier », est fausse."],
-  ["3 chats attrapent 3 souris en 3 minutes. Combien de chats faut-il pour attraper 100 souris en 100 minutes ?","3 chats","À eux trois, ils attrapent 1 souris par minute, donc 100 souris en 100 minutes. Même piège que les machines."],
-  ["Marie a 4 sœurs, et chacune de ces filles a exactement un frère. Combien d'enfants ont leurs parents ?","6","5 filles (Marie et ses 4 sœurs) et un seul garçon, frère de toutes. L'intuition compte un frère par fille."],
-  ["Un livre coûte 10 € plus la moitié de son prix. Combien coûte-t-il ?","20 €","Si le prix est p, alors p = 10 + p/2, donc p/2 = 10 et p = 20 €. La réponse intuitive (15 €) prend la moitié de 10 au lieu de la moitié du prix."],
-  ["Trois portes, une voiture derrière l'une d'elles. Tu choisis la porte 1. L'animateur, qui sait où est la voiture, ouvre la porte 3 : une chèvre. Il te propose de passer à la porte 2. As-tu intérêt à changer ?","Oui : 2 chances sur 3","Ton premier choix avait 1 chance sur 3 d'être bon, et l'animateur n'y change rien puisqu'il ouvre toujours une porte perdante. Les 2 chances sur 3 restantes se reportent sur la porte 2. C'est le problème de Monty Hall."],
-  ["Un train part de Paris vers Lyon à 100 km/h. Au même moment, un autre part de Lyon vers Paris à 125 km/h. Quand ils se croisent, lequel est le plus près de Paris ?","Aucun","Au moment où ils se croisent, ils sont au même endroit, donc à la même distance de Paris. Les vitesses ne servent qu'à distraire."]
+  ["Une raquette et une balle coûtent 1,10 € au total. La raquette coûte 1 € de plus que la balle. Combien coûte la balle ?","0,05 €","Si la balle coûtait 0,10 €, la raquette coûterait 1,10 € et le total 1,20 €. Avec x pour la balle : x + (x + 1) = 1,10, donc x = 0,05 €. La réponse intuitive (0,10 €) est fausse.","Si la balle coûtait 0,10 €, combien coûterait la raquette, et le total ?"],
+  ["5 machines fabriquent 5 objets en 5 minutes. Combien de temps faut-il à 100 machines pour fabriquer 100 objets ?","5 minutes","Chaque machine fait 1 objet en 5 minutes. 100 machines font donc 100 objets en 5 minutes.","Combien de temps faut-il à une seule machine pour fabriquer un objet ?"],
+  ["Une tache de nénuphars double de surface chaque jour. Il lui faut 48 jours pour couvrir le lac. En combien de jours en couvre-t-elle la moitié ?","47 jours","Puisqu'elle double chaque jour, la veille du 48e jour elle couvrait la moitié du lac.","Que s'est-il passé la veille du jour où le lac est entièrement couvert ?"],
+  ["Quatre cartes montrent : A, K, 4, 7. Règle : « si une carte a une voyelle d'un côté, elle a un nombre pair de l'autre ». Quelles cartes faut-il retourner, au minimum, pour vérifier la règle ?","A et 7","A : il faut vérifier qu'il y a un nombre pair derrière. 7 : s'il y avait une voyelle derrière, la règle serait fausse. Le 4 ne prouve rien (la règle ne dit pas que les pairs ont une voyelle), K non plus.","Pour chaque carte, demande-toi si ce qu'il y a derrière pourrait contredire la règle."],
+  ["Une maladie touche 1 personne sur 1 000. Un test la détecte toujours, mais donne 5 % de faux positifs chez les personnes saines. Ton test est positif. Quelle est la probabilité que tu sois malade ?","Environ 2 %","Sur 1 000 personnes : 1 malade testé positif, et 5 % des 999 saines, soit environ 50 faux positifs. 1 vrai positif sur 51 positifs ≈ 2 %. C'est l'oubli du taux de base.","Imagine 1 000 personnes testées : combien de vrais malades, combien de faux positifs ?"],
+  ["Combien de fois écrit-on le chiffre 9 en écrivant tous les nombres de 1 à 100 ?","20 fois","10 fois en chiffre des unités (9, 19… 99) et 10 fois en chiffre des dizaines (90 à 99). 99 compte deux fois.","Compte à part les 9 en position des unités et ceux en position des dizaines."],
+  ["Un escargot est au fond d'un puits de 10 m. Chaque jour il monte de 3 m, chaque nuit il glisse de 2 m. En combien de jours sort-il ?","8 jours","Il gagne 1 m par jour et nuit. Au matin du 8e jour il est à 7 m, il monte de 3 m dans la journée et sort sans glisser.","Attention au dernier jour : une fois sorti, il ne glisse plus."],
+  ["Un nombre de 3 chiffres a pour chiffre des centaines le double de celui des unités, et la somme de ses chiffres vaut 13. Son chiffre des dizaines est 7. Quel est ce nombre ?","472","c = 2u et c + 7 + u = 13, donc 3u = 6 : u = 2 et c = 4. Le nombre est 472.","Écris c = 2u, puis utilise la somme des chiffres."],
+  ["Dans un tiroir sombre, il y a 10 chaussettes noires et 10 blanches. Combien faut-il en prendre, au minimum, pour être sûr d'avoir une paire de la même couleur ?","3","Avec deux couleurs, la troisième chaussette forme forcément une paire avec l'une des deux premières.","Avec deux couleurs seulement, combien de chaussettes peuvent être toutes de couleurs différentes ?"],
+  ["Tous les chercheurs de ce labo sont des biologistes. Certains biologistes sont musiciens. Peut-on conclure que certains chercheurs du labo sont musiciens ?","Non","Les biologistes musiciens peuvent tous être hors du labo. La conclusion n'est pas garantie par les prémisses.","Dessine les ensembles : les biologistes musiciens sont-ils forcément dans le labo ?"],
+  ["Un prix augmente de 20 %, puis baisse de 20 %. Par rapport au prix de départ, est-il plus haut, plus bas ou identique ?","Plus bas de 4 %","100 → 120 → 120 × 0,8 = 96. La baisse s'applique sur une base plus grande.","Pars de 100 € et fais les deux calculs l'un après l'autre."],
+  ["Paul a deux enfants. Au moins l'un d'eux est une fille. Quelle est la probabilité que les deux soient des filles ?","1 sur 3","Les cas possibles avec au moins une fille : FF, FG, GF. Un seul sur trois est FF.","Écris toutes les familles possibles de deux enfants, puis garde celles qui ont au moins une fille."],
+  ["Dans une course, tu doubles le deuxième. À quelle place es-tu ?","Deuxième","Tu prends sa place : il passe troisième et toi deuxième. La réponse intuitive, « premier », est fausse.","Si tu doubles le deuxième, qui est encore devant toi ?"],
+  ["3 chats attrapent 3 souris en 3 minutes. Combien de chats faut-il pour attraper 100 souris en 100 minutes ?","3 chats","À eux trois, ils attrapent 1 souris par minute, donc 100 souris en 100 minutes. Même piège que les machines.","Combien de souris les trois chats attrapent-ils ensemble en une minute ?"],
+  ["Marie a 4 sœurs, et chacune de ces filles a exactement un frère. Combien d'enfants ont leurs parents ?","6","5 filles (Marie et ses 4 sœurs) et un seul garçon, frère de toutes. L'intuition compte un frère par fille.","Le frère de Marie est-il aussi le frère de ses sœurs ?"],
+  ["Un livre coûte 10 € plus la moitié de son prix. Combien coûte-t-il ?","20 €","Si le prix est p, alors p = 10 + p/2, donc p/2 = 10 et p = 20 €. La réponse intuitive (15 €) prend la moitié de 10 au lieu de la moitié du prix.","Appelle p le prix et écris l'équation."],
+  ["Trois portes, une voiture derrière l'une d'elles. Tu choisis la porte 1. L'animateur, qui sait où est la voiture, ouvre la porte 3 : une chèvre. Il te propose de passer à la porte 2. As-tu intérêt à changer ?","Oui : 2 chances sur 3","Ton premier choix avait 1 chance sur 3 d'être bon, et l'animateur n'y change rien puisqu'il ouvre toujours une porte perdante. Les 2 chances sur 3 restantes se reportent sur la porte 2. C'est le problème de Monty Hall.","Imagine 100 portes : tu en choisis une, l'animateur ouvre 98 portes perdantes. Changes-tu ?"],
+  ["Un train part de Paris vers Lyon à 100 km/h. Au même moment, un autre part de Lyon vers Paris à 125 km/h. Quand ils se croisent, lequel est le plus près de Paris ?","Aucun","Au moment où ils se croisent, ils sont au même endroit, donc à la même distance de Paris. Les vitesses ne servent qu'à distraire.","Où sont les deux trains au moment précis où ils se croisent ?"],
+  ["Aujourd'hui, un père a 36 ans et son fils 12. Dans combien d'années le père aura-t-il le double de l'âge de son fils ?", "Dans 12 ans", "Avec x années : 36 + x = 2 × (12 + x), donc 36 + x = 24 + 2x et x = 12. Le père aura 48 ans, le fils 24.", "Appelle x le nombre d'années et écris l'âge de chacun dans x ans."],
+  ["Tu fais l'aller Paris–Chartres (90 km) à 90 km/h et le retour à 45 km/h. Quelle est ta vitesse moyenne sur l'aller-retour ?", "60 km/h", "L'aller prend 1 h, le retour 2 h : 180 km en 3 h, soit 60 km/h. La moyenne des deux vitesses (67,5 km/h) est fausse, car tu passes plus de temps à rouler lentement.", "Calcule le temps de chaque trajet plutôt que la moyenne des vitesses."],
+  ["À une réunion de 8 personnes, chacun serre la main de tous les autres, une seule fois. Combien y a-t-il de poignées de main ?", "28", "Chacun serre 7 mains : 8 × 7 = 56. Mais chaque poignée de main concerne deux personnes, donc 56 ÷ 2 = 28.", "Chacun serre 7 mains, mais une poignée de main se fait à deux."],
+  ["Quel angle forment les aiguilles d'une horloge à 3 h 15 ?", "7,5 degrés", "La grande aiguille est sur le 3, à 90°. Mais en un quart d'heure, la petite aiguille a avancé d'un quart de l'intervalle entre 3 et 4 (30° ÷ 4 = 7,5°). L'angle n'est donc pas nul.", "En 15 minutes, l'aiguille des heures avance aussi."],
+  ["Dans une ville, 85 % des taxis sont verts et 15 % sont bleus. Un témoin, fiable 8 fois sur 10, affirme qu'un taxi bleu a causé un accident. Le taxi est-il plus probablement bleu ou vert ?", "Plus probablement vert (environ 59 %)", "Sur 100 accidents : 15 taxis bleus, dont 12 reconnus bleus ; 85 verts, dont 17 pris à tort pour des bleus. Sur les 29 taxis « vus bleus », 17 sont verts. Le témoignage ne suffit pas à renverser la rareté des taxis bleus (Kahneman et Tversky).", "Imagine 100 accidents : combien de taxis bleus seraient vus bleus, et combien de verts seraient pris pour des bleus ?"],
+  ["Linda a 31 ans, elle a étudié la philosophie et milité contre les discriminations. Qu'est-ce qui est le plus probable : (a) Linda est guichetière de banque ; (b) Linda est guichetière de banque et militante féministe ?", "(a)", "Toutes les guichetières féministes sont des guichetières : (b) ne peut pas être plus probable que (a). La description pousse vers (b), c'est l'erreur de conjonction étudiée par Kahneman et Tversky.", "Deux conditions réunies peuvent-elles être plus probables qu'une seule ?"],
+  ["S'il pleut, la route est mouillée. La route est mouillée. A-t-il plu ?", "Pas forcément", "La route peut être mouillée pour une autre raison : arrosage, nettoyage, rosée. « Si A alors B » ne permet pas de remonter de B à A.", "Cherche une autre raison pour laquelle la route pourrait être mouillée."],
+  ["Sur une île, les chevaliers disent toujours la vérité et les fripons mentent toujours. A dit : « Nous sommes tous les deux des fripons. » Que sont A et B ?", "A est un fripon, B un chevalier", "Si A était chevalier, sa phrase serait vraie et il serait fripon : impossible. A est donc fripon et sa phrase est fausse : ils ne sont pas tous les deux fripons, donc B est chevalier.", "Suppose que A dit vrai : est-ce possible ?"],
+  ["Tu as 9 pièces identiques en apparence, dont une un peu plus lourde. Avec une balance à deux plateaux, combien de pesées faut-il au minimum pour être sûr de la trouver ?", "2 pesées", "Fais trois tas de 3 et compare deux tas : le plus lourd contient la pièce, ou bien c'est le troisième en cas d'équilibre. Puis compare deux pièces de ce tas de la même façon.", "Une pesée a trois issues possibles, pas deux."],
+  ["Un article passe de 80 € à 100 €. De combien de pourcents a-t-il augmenté ? S'il redescend ensuite de 100 € à 80 €, de combien de pourcents baisse-t-il ?", "+25 %, puis −20 %", "20 € de plus sur 80 €, c'est 25 %. 20 € de moins sur 100 €, c'est 20 %. Le même écart ne donne pas le même pourcentage, car la base change.", "Un pourcentage se calcule par rapport au prix de départ de chaque variation."],
+  ["Combien faut-il de personnes dans une pièce pour qu'il y ait plus d'une chance sur deux que deux d'entre elles aient le même jour d'anniversaire ?", "23 personnes", "Avec 23 personnes, il y a déjà 253 paires possibles. La probabilité que toutes les dates soient différentes tombe sous 50 %. L'intuition pense à 183 (la moitié de l'année), car elle compte les personnes au lieu des paires.", "Compte les paires de personnes, pas les personnes."],
+  ["On entoure la Terre, à l'équateur, d'une corde bien tendue. On rallonge la corde d'un seul mètre et on la soulève partout de la même hauteur. Une souris peut-elle passer dessous ?", "Oui : la corde s'élève d'environ 16 cm", "La circonférence vaut 2πr. Si elle augmente de 1 m, le rayon augmente de 1 ÷ 2π ≈ 0,16 m, quelle que soit la taille de la sphère.", "La circonférence vaut 2πr : de combien varie r si la circonférence augmente de 1 m ?"],
+  ["Une pièce équilibrée vient de tomber cinq fois de suite sur pile. Quelle est la probabilité que le sixième lancer donne face ?", "1 sur 2", "La pièce n'a pas de mémoire : chaque lancer est indépendant. Croire qu'une série « appelle » son contraire, c'est l'erreur du joueur.", "La pièce se souvient-elle des lancers précédents ?"],
+  ["Alex, Bastien et Chloé ont chacun un animal : un chat, un chien, un poisson. Celui qui a le chien est plus âgé que Chloé. Alex est le plus jeune des trois. Bastien n'a pas de chat. Chloé est allergique aux poils. Qui a le poisson ?", "Chloé", "Le maître du chien est plus âgé que Chloé : ce n'est ni Chloé, ni Alex, le plus jeune. C'est donc Bastien. Chloé, allergique aux poils, a le poisson, et Alex le chat.", "Commence par le chien : qui peut être plus âgé que Chloé ?"],
+  ["Le produit de trois nombres entiers consécutifs vaut 210. Quels sont ces nombres ?", "5, 6 et 7", "5 × 6 × 7 = 210. Le nombre du milieu est proche de la racine cubique de 210, un peu moins de 6.", "Le nombre du milieu est proche de la racine cubique de 210."],
+  ["Une horloge sonne 6 coups en 5 secondes. Combien de temps lui faut-il pour sonner 12 coups ?", "11 secondes", "6 coups font 5 intervalles, donc 1 seconde par intervalle. 12 coups font 11 intervalles : 11 secondes, et non 10.", "Compte les intervalles entre les coups, pas les coups."],
+  ["Ta moyenne est de 12 sur 20 après 4 devoirs. Quelle note te faut-il au 5e devoir pour atteindre 13 de moyenne ?", "17", "4 devoirs à 12 de moyenne font 48 points. Pour 13 de moyenne sur 5 devoirs, il en faut 65. 65 − 48 = 17.", "Raisonne sur les totaux de points, pas sur les moyennes."],
+  ["On lance deux dés. Quelle est la probabilité d'obtenir au moins un six ?", "11 sur 36, environ 31 %", "La probabilité de n'avoir aucun six est 5/6 × 5/6 = 25/36. Celle d'en avoir au moins un est donc 11/36. Additionner 1/6 + 1/6 compterait deux fois le double six.", "Calcule d'abord la probabilité de n'avoir aucun six."],
+  ["Aucun reptile n'a de poils. Certains animaux de compagnie ont des poils. Peut-on conclure que certains animaux de compagnie ne sont pas des reptiles ?", "Oui", "Les animaux de compagnie qui ont des poils ne peuvent pas être des reptiles. Il en existe : la conclusion est donc certaine.", "Regarde seulement les animaux de compagnie qui ont des poils."],
+  ["Règle du club : « Tout invité qui a reçu un badge peut entrer. » Jean ne peut pas entrer. Que peut-on conclure ?", "Jean n'a pas reçu de badge", "Si Jean avait un badge, il pourrait entrer. Or il ne peut pas : il n'en a donc pas. C'est la contraposée, toujours valide.", "Si Jean avait un badge, que se passerait-il ?"],
+  ["Pendant la guerre, on étudie les avions revenus de mission : les impacts de balles sont concentrés sur les ailes et le fuselage, presque aucun sur les moteurs. Où faut-il ajouter du blindage ?", "Sur les moteurs", "Les avions touchés aux moteurs ne sont pas revenus : ils manquent à l'échantillon. Le statisticien Abraham Wald l'a fait remarquer. C'est le biais du survivant.", "Quels avions ne sont pas dans l'échantillon étudié ?"],
+  ["Un moniteur de vol remarque que les élèves félicités après un excellent atterrissage font souvent moins bien la fois suivante, et que ceux qu'il a grondés après un mauvais font mieux. Il en conclut que les compliments nuisent. A-t-il raison ?", "Non : c'est la régression vers la moyenne", "Un atterrissage exceptionnel, bon ou mauvais, doit beaucoup au hasard. Le suivant a toutes les chances d'être plus ordinaire, compliment ou pas. Kahneman raconte cette histoire vécue.", "Un atterrissage exceptionnel est-il la norme pour un élève ?"],
+  ["Combien y a-t-il de carrés, de toutes tailles, sur un échiquier de 8 × 8 cases ?", "204", "64 carrés de 1 × 1, 49 de 2 × 2, 36 de 3 × 3, et ainsi de suite jusqu'à 1 carré de 8 × 8 : 64 + 49 + 36 + 25 + 16 + 9 + 4 + 1 = 204.", "Compte les carrés de 1 × 1, puis de 2 × 2, et ainsi de suite."],
+  ["Une famille a deux enfants, et l'aîné est une fille. Quelle est la probabilité que les deux soient des filles ?", "1 sur 2", "Seul le cadet reste inconnu : fille ou garçon, à chances égales. Compare avec le problème de Paul : savoir lequel des deux est une fille change tout.", "Cette fois, tu sais lequel des deux enfants est une fille."]
 ];
 const COACH_RULES="Tu es le coach cognitif personnel de l'utilisateur, dans l'application Brain Fit. Son but : garder et développer ses capacités de réflexion malgré l'usage quotidien de l'IA. Ses priorités : l'écriture (orthographe comprise) et le raisonnement, avec un exercice chaque jour, un programme hebdomadaire exigeant (2 lectures intensives, 1 séance d'écriture longue), un régime pauvre en contenus courts et 3 discussions intéressantes par jour. Tu t'appuies sur ces principes : réfléchir avant de demander à l'IA, se faire challenger par l'IA plutôt que la laisser produire, apprentissage actif et espacé, expliquer à voix haute, hypothèses concurrentes, métacognition, lecture latérale. Ton style : chaleureux mais exigeant, direct, concret, en français, en tutoyant. Règles absolues : tu ne fais jamais le travail à sa place, tu ne réécris jamais ses textes et tu ne donnes pas de solution toute faite quand il peut la trouver ; tu pointes, tu questionnes, tu proposes un prochain pas. Réponds en texte simple, sans markdown (pas de **, pas de #), avec des tirets pour les listes. Sois concis.";
 const TUTOR="Agis comme un tuteur socratique. Ne me donne pas la réponse directement : pose-moi des questions, donne-moi des indices progressifs et laisse-moi trouver. Voici ma réflexion de départ :\n\n";
@@ -1906,7 +2015,7 @@ async function circleLoad(){
 const newCode=()=>{const A='ABCDEFGHJKLMNPQRSTUVWXYZ23456789';return Array.from(crypto.getRandomValues(new Uint8Array(6)),b=>A[b%A.length]).join('');};
 async function renderCircle(){
   const body=$('#circle-body'), c=state.settings.circle;
-  if(!ref){body.replaceChildren(el('p',{class:'note',text:'Connecte-toi pour créer un cercle ou en rejoindre un.'}));return;}
+  if(!ref){body.replaceChildren(stagTalk('idle','Connecte-toi pour créer un cercle ou en rejoindre un. À plusieurs, on tient mieux.'));return;}
   if(!c){
     const msg=el('p',{class:'note',role:'status'});
     const pseudo=el('input',{type:'text',placeholder:'Ton pseudo',maxlength:'24','aria-label':'Ton pseudo',value:state.settings.pseudo||''});
@@ -1941,7 +2050,9 @@ async function renderCircle(){
     el('div',{class:'row spread'},el('span',{},el('b',{text:circleData.name}),document.createTextNode(' · code '),el('b',{text:c})),el('div',{class:'row'},invite,leave)),
     el('span',{class:'label',text:'Semaine '+isoWeek(todayKey())+' · XP de la semaine'}),
     el('ol',{class:'ranking'},...circleData.rows.map((r,i)=>el('li',{class:r.me?'me':null},el('span',{class:'rk',text:String(i+1)}),el('span',{text:r.pseudo+(r.me?' (toi)':'')}),el('span',{class:'xpw',text:fmt(r.xp)+' XP'}),el('span',{class:'fg2',text:r.streak+' j'})))),
-    ...(circleData.rows.length<2?[el('p',{class:'note',text:'Tu es seul pour l’instant : invite un proche avec le bouton « Inviter ».'})]:[]));
+    circleData.rows.length<2?stagTalk('idle','Tu es seul pour l’instant : invite un proche avec le bouton « Inviter ».')
+      :!circleData.rows[0].xp?stagTalk('idle','La semaine commence : le premier qui s’entraîne prend la tête.')
+      :circleData.rows[0].me?stagTalk('proud','Tu mènes le cercle cette semaine. Tiens bon jusqu’à dimanche !'):stagTalk('idle',`${circleData.rows[0].pseudo} mène cette semaine. Une séance de plus peut tout changer.`));
 }
 // effacer son compte : tout part, côté serveur comme sur cet appareil
 $('#erase').addEventListener('click',()=>{$('#erase-confirm').hidden=false;});
@@ -2524,6 +2635,19 @@ function renderStag(){
   $('#stag').innerHTML=stagSVG(L,m);
 }
 function stagJump(){const b=$('#stag');b.classList.remove('joy');void b.offsetWidth;b.classList.add('joy');}
+// le cerf ailleurs dans l'appli : une humeur, une phrase
+function stagTalk(mood,text){
+  const st=el('span',{class:'stag mini'+(mood==='proud'?' joy':''),html:stagSVG(gamiCtx.level||1,mood)});
+  return el('div',{class:'stagtalk'},st,el('p',{class:'say',text}));
+}
+function stagVerdict(score,unit,rec){
+  const pct=/%/.test(unit), P=a=>a[Math.floor(Math.random()*a.length)];
+  if(rec)return stagTalk('proud',P(['Nouveau record. Mes bois en frémissent.','Record battu ! Voilà ce que donne l’entraînement.','Record ! Note bien ce que tu as fait aujourd’hui.']));
+  if(!pct)return stagTalk('idle',P(['Bien joué. La régularité fera le reste.','Chaque séance compte, même les moyennes.']));
+  if(score>=80)return stagTalk('proud',P(['Superbe séance. Tu peux être fier.','Très beau travail, rien à redire ou presque.','Excellent. Demain, on vise aussi haut.']));
+  if(score>=50)return stagTalk('idle',P(['Bonne séance. Relis les explications ratées : c’est là que ça rentre.','Pas mal du tout. Les erreurs d’aujourd’hui sont tes progrès de demain.']));
+  return stagTalk('worried',P(['Séance difficile ? Ce sont souvent celles qui font le plus progresser.','Ne lâche rien : on retient souvent mieux ce qu’on a d’abord raté.']));
+}
 function stagSay(t){const b=$('#stag-bubble');b.textContent=t;b.hidden=false;clearTimeout(stagTimer);stagTimer=setTimeout(()=>{b.hidden=true;},8000);}
 const STAG_FACTS=["Chaque fin d'hiver, le cerf perd ses bois, puis les refait en quelques mois. Tes capacités aussi repoussent, si tu les entretiens.",
   "Le seul nom écrit de Cernunnos, dieu gaulois coiffé de bois de cerf, a été retrouvé à Paris, sur le pilier des Nautes, sous le chœur de Notre-Dame.",
@@ -2779,9 +2903,10 @@ function renderWeekBilan(){
   const dm=k=>fd(new Date(k+'T12:00:00'),{day:'numeric',month:'long'}).replace(/^1 /,'1er ');
   const from=ws.slice(5,7)===end.slice(5,7)?dm(ws).split(' ')[0]:dm(ws);
   $('#wb-week').textContent=`Semaine du ${from} au ${dm(end)}. Le suivant arrive dimanche à 18 h.`;
-  if(!b){$('#wb-body').replaceChildren(el('p',{class:'fg2',text:'Aucune activité enregistrée cette semaine-là. Fais quelques exercices : ton bilan t’attendra dimanche soir.'}));return;}
+  if(!b){$('#wb-body').replaceChildren(stagTalk('sleepy','Rien d’enregistré cette semaine-là. Fais quelques exercices : ton bilan t’attendra dimanche soir.'));return;}
   const P=(t,x)=>el('p',{},el('b',{text:t}),document.createTextNode(x));
   $('#wb-body').replaceChildren(
+    b.act>=5?stagTalk('proud',`Belle semaine : ${b.act} jours actifs sur 7. Un cerf ne recule pas.`):b.act>=3?stagTalk('idle','Une semaine honnête. Voici où gagner du terrain.'):stagTalk('worried','Semaine en pointillé. On repart ensemble, une étape par jour.'),
     P('En chiffres',`${b.act} jour${b.act>1?'s':''} actif${b.act>1?'s':''} sur 7 (semaine d'avant : ${b.actP}), ${b.n} séance${b.n>1?'s':''}, ${fmt(b.xp)} XP.`),
     P('Ce qui progresse',b.good),
     P('À travailler',b.weak),
@@ -2982,6 +3107,8 @@ function freshPick(bank,arr,n){
   const idx=[...arr.keys()].sort(()=>Math.random()-.5).sort((a,b)=>(sn[a]||0)-(sn[b]||0)).slice(0,n);
   idx.forEach(i=>{sn[i]=now;}); persist(); return idx.map(i=>arr[i]);
 }
+// une question ratée repasse devant toutes les autres à la prochaine séance
+function missAgain(bank,arr,item){const i=arr.indexOf(item);if(i>=0)((state.seen=state.seen||{})[bank]||(state.seen[bank]={}))[i]=-1;}
 let cleanup=null;
 function stopRun(){if(cleanup){cleanup();cleanup=null;}$('#st-timer').hidden=true;$('#st-bar').hidden=true;}
 function openEx(key){
@@ -3037,7 +3164,7 @@ function showResult(arena,score,unit,msg,again,extra){
   const gains=fresh&&last.rec?el('div',{class:'gains'},el('span',{class:'rec',text:'Nouveau record'})):null;
   const recap=marks.length>1?el('div',{class:'recap'},el('span',{class:'label',text:'Ton parcours'}),el('div',{class:'qbar'},...marks.map(m=>el('i',{class:m?'ok':'ko'})))):null;
   arena.replaceChildren(...[el('div',{class:'result'+(fresh&&last.rec?' record':'')},el('span',{class:'label',text:'Résultat'}),sc,el('span',{class:'fg2',text:unit})),
-    gains,recap,extra,
+    gains,stagVerdict(score,unit,fresh&&last.rec),recap,extra,
     msg?el('p',{class:'fg2',text:msg,style:'max-width:50ch'}):null,
     el('div',{class:'row',style:'justify-content:center'},el('button',{class:'btn primary',text:'Recommencer',onclick:again}),el('button',{class:'btn',text:'Retour à la routine',onclick:()=>{stopRun();$('#stage').hidden=true;$('#exgrid').hidden=false;showTab('aujourdhui');}}))].filter(Boolean));
   countUp(sc,score);
@@ -3355,26 +3482,30 @@ lecture(arena){
   }
 },
 probleme(arena){
-  const done=new Set(state.results.filter(r=>r.ex==='probleme'&&r.p!=null).map(r=>r.p));
-  let idx=PROBLEMS.findIndex((_,i)=>!done.has(i)); if(idx<0)idx=rnd(0,PROBLEMS.length-1);
+  // d'abord les problèmes jamais vus, puis ceux qui n'ont pas encore été réussis, en commençant par les plus anciens
+  const best={}, last={}; for(const r of state.results)if(r.ex==='probleme'&&r.p!=null){best[r.p]=Math.max(best[r.p]??0,r.s);last[r.p]=r.t;}
+  let idx=PROBLEMS.findIndex((_,i)=>!(i in best));
+  if(idx<0){const redo=Object.keys(best).filter(i=>best[i]<100&&PROBLEMS[i]).sort((a,b)=>last[a]-last[b]);idx=redo.length?+redo[0]:rnd(0,PROBLEMS.length-1);}
   const gen=el('button',{class:'btn',text:'Un problème inédit du coach'});
   intro(arena,"Lis l'énoncé, puis écris ta réponse et surtout ton raisonnement, étape par étape. Méfie-toi de la première réponse qui vient : ces problèmes sont faits pour piéger l'intuition.",gen,()=>go(PROBLEMS[idx],idx));
   gen.addEventListener('click',async()=>{
     const s=await sampler(); gen.disabled=true; gen.textContent='Le coach prépare un problème…';
     if(!s){gen.textContent="Le coach n'est pas encore branché";return;}
     try{
-      const p=await s.json("Crée un problème de raisonnement original en français, résoluble de tête ou sur papier en 3 à 6 minutes, avec une réponse unique et vérifiable. Varie les types : logique, probabilités, piège d'intuition, déduction, raisonnement quantitatif. Évite les classiques trop connus (raquette et balle, nénuphars, Monty Hall). Réponds uniquement en JSON : {\"enonce\": string, \"reponse\": string courte, \"explication\": string de 2 à 4 phrases}."+themeHint(),{cache:false});
-      if(p&&p.enonce&&p.reponse)go([String(p.enonce),String(p.reponse),String(p.explication||'')],null);
+      const p=await s.json("Crée un problème de raisonnement original en français, résoluble de tête ou sur papier en 3 à 6 minutes, avec une réponse unique et vérifiable. Varie les types : logique, probabilités, piège d'intuition, déduction, raisonnement quantitatif. Évite les classiques trop connus (raquette et balle, nénuphars, Monty Hall). Réponds uniquement en JSON : {\"enonce\": string, \"reponse\": string courte, \"explication\": string de 2 à 4 phrases, \"indice\": string, une piste qui aide sans donner la réponse}."+themeHint(),{cache:false});
+      if(p&&p.enonce&&p.reponse)go([String(p.enonce),String(p.reponse),String(p.explication||''),p.indice?String(p.indice):''],null);
       else throw 0;
     }catch(e){gen.disabled=false;gen.textContent=e&&e.code==='not_granted'?'Coach non autorisé':'Réessayer un problème du coach';}
   });
   function go(P,pi){
-    const [q,ans,why]=P;
+    const [q,ans,why,tip]=P; let usedTip=false;
     const ta=el('textarea',{id:'pb-ta','aria-label':'Ton raisonnement',placeholder:'Ma réponse : …\nMon raisonnement : …',style:'min-height:150px'});
     ta.addEventListener('paste',e=>e.preventDefault());
     const reveal=el('button',{class:'btn primary',text:'Voir la solution'});
     arena.style.alignItems='stretch';
-    arena.replaceChildren(el('p',{class:'quote',text:q}),ta,el('div',{class:'row'},reveal,el('span',{class:'note',text:'Écris au moins une phrase avant de regarder.'})));
+    const tipBox=el('p',{class:'answer',hidden:''});
+    const tipBtn=tip?el('button',{class:'btn ghost',text:'Un indice',onclick:()=>{usedTip=true;tipBox.replaceChildren(el('span',{class:'label',text:'Indice'}),el('span',{class:'fg2',text:tip}));tipBox.hidden=false;tipBtn.remove();ta.focus();}}):null;
+    arena.replaceChildren(el('p',{class:'quote',text:q}),tipBox,ta,el('div',{class:'row'},reveal,tipBtn,el('span',{class:'note',text:'Écris au moins une phrase avant de regarder.'})));
     ta.focus();
     cleanup=()=>{arena.style.alignItems='';};
     reveal.addEventListener('click',()=>{
@@ -3383,7 +3514,7 @@ probleme(arena){
       const rate=el('div',{class:'row'});
       [['J’avais juste',100],['À moitié',50],['Faux',0]].forEach(([t,v])=>rate.append(el('button',{class:'btn',text:t,onclick:()=>{
         arena.style.alignItems='';
-        const m=recordMsg('probleme',v); logResult('probleme',v,pi==null?{}:{p:pi});
+        const m=recordMsg('probleme',v); logResult('probleme',v,Object.assign(pi==null?{}:{p:pi},usedTip?{h:1}:{}));
         showResult(arena,v,'% de réussite',v===100?'Bien joué. Vérifie que ton raisonnement tenait aussi, pas seulement la réponse.':'Relis la solution et repère l’étape où ton raisonnement a bifurqué. C’est là que tu progresses.',()=>RUN.probleme(arena));
         arena.append(coachBlock('Avis du coach sur mon raisonnement',()=>COACH_RULES+`\n\nProblème : ${q}\nRéponse attendue : ${ans}\nExplication : ${why}\n\nSa réponse et son raisonnement :\n---\n${mine.slice(0,6000)}\n---\n\nÉvalue son RAISONNEMENT plus que sa réponse, en 150 mots maximum : ce qui était solide, l'étape exacte où il s'est trompé ou a sauté une justification (s'il y en a une), le biais cognitif en jeu le cas échéant, et une astuce de méthode réutilisable.`));
       }})));
@@ -3437,7 +3568,7 @@ erreuria(arena){
       const next=el('button',{class:'btn primary',text:qi<qs.length-1?'Suivante':'Voir le résultat',hidden:''});
       ph.forEach((t,i)=>bubble.append(el('button',{class:'sent',text:t,onclick:e=>{
         [...bubble.children].forEach((b,j)=>{b.disabled=true;if(j===bad)b.classList.add('wrongsent');});
-        if(i===bad)ok++;else e.currentTarget.classList.add('missed');
+        if(i===bad)ok++;else{e.currentTarget.classList.add('missed');missAgain('aierr',AIERR,qs[qi]);}
         hit(i===bad);
         fb.replaceChildren(el('span',{class:'label',text:i===bad?'Bien vu':'L\u2019erreur était ailleurs'}),el('span',{class:'fg2',text:why}));fb.hidden=false;next.hidden=false;next.focus();
       }}),document.createTextNode(' ')));
@@ -3484,7 +3615,7 @@ sophismes(arena){
       const next=el('button',{class:'btn primary',text:qi<4?'Suivant':'Voir le résultat',hidden:''});
       opts.forEach(o=>box.append(el('button',{text:o,onclick:e=>{
         [...box.children].forEach(b=>{b.disabled=true;if(b.textContent===right)b.classList.add('right');});
-        if(o===right)ok++;else e.currentTarget.classList.add('wrong');
+        if(o===right)ok++;else{e.currentTarget.classList.add('wrong');missAgain('soph',FALLACIES,qs[qi]);}
         hit(o===right);
         fb.replaceChildren(el('span',{class:'label',text:o===right?'Exact':'C’était : '+right}),el('span',{class:'fg2',text:why})); fb.hidden=false; next.hidden=false; next.focus();
       }})));
@@ -3585,7 +3716,7 @@ fermi(arena){
           el('div',{class:'lscale'},band,you,real),ruler(),
           el('div',{class:'answer'},el('span',{class:'label',text:verdict}),el('strong',{text:'≈ '+nice(ans)+' '+unit}),el('span',{class:'fg2',text:why}),el('span',{text:`Ton estimation : ${nice(v)}.`})),
           el('button',{class:'btn primary',text:qi<2?'Question suivante':'Voir le résultat',onclick:()=>{qi++;if(qi<3)ask();else{const avg=scores.reduce((a,b)=>a+b,0)/3;const m=recordMsg('fermi',avg);logResult('fermi',avg);showResult(arena,Math.round(avg),'% de justesse moyenne',m+' 100 % = pile la bonne valeur, 0 % = un facteur 10 ou plus d’écart.',()=>RUN.fermi(arena));}}}));
-        hit(err<=.5);
+        hit(err<=.5); if(err>.5)missAgain('fermi',FERMI,qs[qi]);
         requestAnimationFrame(()=>requestAnimationFrame(()=>{real.style.left=pos(ans)+'%';}));
       };
       sub.addEventListener('click',check); inp.addEventListener('keydown',e=>{if(e.key==='Enter')check();});

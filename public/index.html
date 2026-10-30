@@ -426,6 +426,7 @@ a{color:var(--accent);text-underline-offset:3px}
 .login{display:flex;flex-direction:column;gap:8px;max-width:420px}
 .login input{font:inherit;font-size:1rem;padding:10px 12px;border:1px solid var(--line);border-radius:var(--r);background:var(--surface);color:var(--fg)}
 .login .note:empty{display:none}
+.seg.themes{justify-content:flex-start}
 .cjl-text{font-size:1.12rem;line-height:1.45;max-width:60ch;text-wrap:pretty}
 .cjl-res{display:flex;flex-wrap:wrap;align-items:baseline;gap:4px 14px}
 .cjl-year{font-family:var(--f-display);font-size:1.7rem;font-weight:700;color:var(--accent);line-height:1.1}
@@ -536,6 +537,11 @@ q{quotes:"« " " »" "“" "”"}
         <div class="row"><button class="btn primary" id="login-in">Se connecter</button><button class="btn ghost" id="login-new">Créer mon compte</button><button class="btn ghost" type="button" id="syncwarn-ok">Plus tard</button></div>
         <p class="note" id="login-msg" role="status"></p>
       </form>
+    </div>
+    <div class="panel" id="themes-ask" hidden>
+      <p><b>Qu'est-ce qui t'intéresse ?</b> Choisis jusqu'à trois thèmes : citations, « Ce jour-là », dictées, sujets d'écriture et coach s'en inspireront.</p>
+      <div class="seg themes" id="themes-seg2" role="group" aria-label="Mes thèmes"></div>
+      <div class="row"><button class="btn primary" id="themes-ok">C'est choisi</button><button class="btn ghost" id="themes-later">Plus tard</button></div>
     </div>
     <div class="panel quoteday" id="qday">
       <div class="row spread" style="flex-wrap:nowrap;align-items:flex-start"><span><span class="label" id="qd-label">Citation du jour</span> · <span class="cat" id="qd-cat"></span></span><button class="btn ghost mini" id="qd-next" style="flex:none">Une autre</button></div>
@@ -765,6 +771,10 @@ q{quotes:"« " " »" "“" "”"}
     <div class="panel">
       <h3>Par exercice</h3>
       <div class="excstats" id="excstats"></div>
+    </div>
+    <div class="panel">
+      <div><h3>Mes thèmes</h3><p class="muted note">Jusqu'à trois. Citations, « Ce jour-là », dictées, sujets d'écriture et coach s'en inspirent.</p></div>
+      <div class="seg themes" id="themes-seg" role="group" aria-label="Mes thèmes"></div>
     </div>
     <div class="panel">
       <div class="row spread">
@@ -1007,6 +1017,7 @@ const EVENTS=[
 ['0501',1891,"Fusillade de Fourmies : la troupe tire sur des ouvriers en grève."],
 ['0505',1789,"Ouverture des États généraux à Versailles."],
 ['0505',1821,"Napoléon meurt en exil à Sainte-Hélène."],
+['0506',1954,"Roger Bannister court le mile en moins de quatre minutes, à Oxford."],
 ['0507',1954,"Chute du camp retranché de Diên Biên Phu."],
 ['0508',1429,"Jeanne d'Arc fait lever le siège d'Orléans."],
 ['0508',1945,"Capitulation de l'Allemagne nazie : fin de la guerre en Europe."],
@@ -1031,8 +1042,10 @@ const EVENTS=[
 ['0601',1885,"Funérailles nationales de Victor Hugo : son corps est porté au Panthéon."],
 ['0602',1953,"Couronnement d'Élisabeth II à Westminster."],
 ['0604',1989,"Répression sanglante des manifestants de la place Tian'anmen, à Pékin."],
+['0605',1983,"Yannick Noah remporte Roland-Garros, dernier Français vainqueur du tournoi à ce jour."],
 ['0606',1944,"Débarquement allié en Normandie."],
 ['0609',1815,"Acte final du congrès de Vienne, qui redessine l'Europe après Napoléon."],
+['0610',1829,"Première course d'aviron entre Oxford et Cambridge, sur la Tamise."],
 ['0610',1944,"Massacre d'Oradour-sur-Glane par une division SS."],
 ['0614',1800,"Bataille de Marengo : victoire de Bonaparte sur les Autrichiens."],
 ['0614',1940,"Les troupes allemandes entrent dans Paris."],
@@ -1049,15 +1062,18 @@ const EVENTS=[
 ['0626',1945,"Signature de la Charte des Nations unies à San Francisco."],
 ['0628',1914,"L'archiduc François-Ferdinand est assassiné à Sarajevo."],
 ['0628',1919,"Signature du traité de Versailles."],
+['0701',1903,"Départ du premier Tour de France cycliste, à Montgeron."],
 ['0701',1916,"Début de la bataille de la Somme."],
 ['0703',1608,"Samuel de Champlain fonde Québec."],
 ['0704',1776,"Les treize colonies américaines proclament leur indépendance."],
 ['0705',1687,"Publication des Principia de Newton."],
 ['0705',1962,"L'Algérie proclame son indépendance."],
 ['0706',1885,"Pasteur vaccine contre la rage le jeune Joseph Meister."],
+['0712',1998,"La France bat le Brésil 3 à 0 et remporte sa première Coupe du monde de football."],
 ['0714',1789,"Prise de la Bastille."],
 ['0714',1790,"Fête de la Fédération sur le Champ-de-Mars."],
 ['0715',1099,"Les croisés prennent Jérusalem."],
+['0715',2018,"La France bat la Croatie 4 à 2 à Moscou et remporte sa deuxième Coupe du monde de football."],
 ['0716',1942,"Rafle du Vél' d'Hiv : plus de 13 000 Juifs arrêtés à Paris en deux jours."],
 ['0716',1945,"Premier essai d'une bombe atomique, au Nouveau-Mexique."],
 ['0717',1429,"Sacre de Charles VII à Reims, en présence de Jeanne d'Arc."],
@@ -1066,6 +1082,7 @@ const EVENTS=[
 ['0720',1969,"Apollo 11 se pose sur la Lune."],
 ['0721',1798,"Bataille des Pyramides : Bonaparte bat les Mamelouks."],
 ['0725',1909,"Louis Blériot traverse la Manche en avion."],
+['0726',2024,"Cérémonie d'ouverture des Jeux olympiques de Paris, sur la Seine."],
 ['0727',1214,"Bataille de Bouvines : Philippe Auguste bat l'empereur Otton IV et ses alliés."],
 ['0727',1794,"Chute de Robespierre, le 9 thermidor an II."],
 ['0727',1830,"Début des Trois Glorieuses, révolution qui renverse Charles X."],
@@ -1080,6 +1097,7 @@ const EVENTS=[
 ['0813',1961,"Début de la construction du mur de Berlin."],
 ['0815',1769,"Naissance de Napoléon Bonaparte à Ajaccio."],
 ['0815',1947,"L'Inde devient indépendante."],
+['0816',2009,"Usain Bolt court le 100 mètres en 9 s 58 à Berlin, record du monde."],
 ['0821',1911,"La Joconde est volée au Louvre."],
 ['0823',1939,"Signature du pacte germano-soviétique."],
 ['0824',79,"Éruption du Vésuve, qui ensevelit Pompéi (date traditionnelle, discutée)."],
@@ -1164,29 +1182,29 @@ const EVENTS=[
 const fmtY=y=>y<0?(-y)+' av. J.-C.':String(y);
 // dictées : l niveau 1 à 4, a auteur (null : texte écrit pour Brain Fit), p pièges [mot tel qu'il apparaît, règle]
 const DICTEES=[
-  {id:'marche',l:1,ti:'Le marché du samedi',a:null,tx:"Chaque samedi, ma grand-mère part au marché avec son panier. Elle achète des pommes, des poireaux et un gros pain de campagne. Les marchands l'appellent par son prénom et lui gardent les plus beaux fruits. Sur le chemin du retour, elle s'arrête toujours pour bavarder avec ses voisines.",
+  {id:'marche',th:'',l:1,ti:'Le marché du samedi',a:null,tx:"Chaque samedi, ma grand-mère part au marché avec son panier. Elle achète des pommes, des poireaux et un gros pain de campagne. Les marchands l'appellent par son prénom et lui gardent les plus beaux fruits. Sur le chemin du retour, elle s'arrête toujours pour bavarder avec ses voisines.",
    p:[["grand-mère","Nom composé avec trait d'union ; « grand » reste invariable devant un nom féminin."],["achète","Acheter prend un accent grave devant une syllabe muette : elle achète, nous achetons."],["poireaux","Les noms en -eau font leur pluriel en -x."],["appellent","Appeler double le l devant un e muet : ils appellent, nous appelons."],["beaux","Beau devient beaux au pluriel."],["s'arrête","Verbe pronominal : elle s'arrête, avec l'apostrophe."]]},
-  {id:'chat',l:1,ti:'Le chat de la voisine',a:null,tx:"Le chat de la voisine est entré par la fenêtre ouverte. Il a sauté sur la table, renversé un verre et mangé les restes du dîner. Quand nous sommes arrivés, il dormait tranquillement sur le canapé. Nous avons ri, puis nous l'avons ramené chez lui.",
+  {id:'chat',th:'',l:1,ti:'Le chat de la voisine',a:null,tx:"Le chat de la voisine est entré par la fenêtre ouverte. Il a sauté sur la table, renversé un verre et mangé les restes du dîner. Quand nous sommes arrivés, il dormait tranquillement sur le canapé. Nous avons ri, puis nous l'avons ramené chez lui.",
    p:[["est entré","Avec être, le participe passé s'accorde avec le sujet : le chat est entré."],["renversé","Participe passé en -é : on peut le remplacer par « vendu », pas par « vendre »."],["dîner","Accent circonflexe sur le i (« diner » est aussi admis depuis 1990)."],["sommes arrivés","Avec être, accord avec le sujet « nous » : arrivés."],["tranquillement","Adverbe formé sur l'adjectif au féminin : tranquille, tranquillement."],["ramené","Le COD « l' » (le chat) est placé avant avoir : accord au masculin singulier."]]},
-  {id:'corbeau',l:2,ti:'Le Corbeau et le Renard',a:"Jean de La Fontaine, Fables, livre I (1668)",tx:"Maître Corbeau, sur un arbre perché,\nTenait en son bec un fromage.\nMaître Renard, par l'odeur alléché,\nLui tint à peu près ce langage :\n« Hé ! bonjour, Monsieur du Corbeau.\nQue vous êtes joli ! que vous me semblez beau !\nSans mentir, si votre ramage\nSe rapporte à votre plumage,\nVous êtes le Phénix des hôtes de ces bois. »",
+  {id:'corbeau',th:'lettres',l:2,ti:'Le Corbeau et le Renard',a:"Jean de La Fontaine, Fables, livre I (1668)",tx:"Maître Corbeau, sur un arbre perché,\nTenait en son bec un fromage.\nMaître Renard, par l'odeur alléché,\nLui tint à peu près ce langage :\n« Hé ! bonjour, Monsieur du Corbeau.\nQue vous êtes joli ! que vous me semblez beau !\nSans mentir, si votre ramage\nSe rapporte à votre plumage,\nVous êtes le Phénix des hôtes de ces bois. »",
    p:[["Maître","Accent circonflexe sur le i (« maitre » est admis depuis 1990)."],["perché","Participe employé comme adjectif : accord avec « Corbeau », masculin singulier."],["alléché","Même règle : accord avec « Renard »."],["tint","Passé simple de tenir : il tint, sans s."],["à peu près","Locution en trois mots, avec un accent sur à et sur près."],["hôtes","Accent circonflexe sur le o : hôte vient de l'ancien « hoste »."]]},
-  {id:'rentree',l:2,ti:'La rentrée',a:null,tx:"Les feuilles commençaient à tomber quand les élèves sont revenus dans la cour. Certains s'étaient fait de nouveaux amis pendant l'été ; d'autres, un peu intimidés, restaient près du portail. La directrice, qu'on avait aperçue de loin, a sonné la cloche. Aussitôt, tous se sont rangés deux par deux, et les conversations se sont tues.",
+  {id:'rentree',th:'',l:2,ti:'La rentrée',a:null,tx:"Les feuilles commençaient à tomber quand les élèves sont revenus dans la cour. Certains s'étaient fait de nouveaux amis pendant l'été ; d'autres, un peu intimidés, restaient près du portail. La directrice, qu'on avait aperçue de loin, a sonné la cloche. Aussitôt, tous se sont rangés deux par deux, et les conversations se sont tues.",
    p:[["commençaient","Cédille sous le c devant a, o, u pour garder le son [s]."],["sont revenus","Avec être, accord avec le sujet « les élèves »."],["s'étaient fait","Le COD « de nouveaux amis » est placé après : « fait » reste invariable."],["intimidés","Participe employé comme adjectif : accord avec « d'autres » (des élèves)."],["aperçue","Le COD « qu' » (la directrice) est placé avant avoir : accord au féminin."],["se sont rangés","« Se » est COD (ranger quelqu'un) : accord avec le sujet « tous »."],["se sont tues","Se taire n'existe qu'à la forme pronominale : accord avec le sujet « les conversations »."]]},
-  {id:'orage',l:2,ti:"L'orage",a:null,tx:"Vers cinq heures, le ciel s'est assombri d'un coup. Les promeneurs, surpris par les premières gouttes, se sont abrités sous les arbres. Le tonnerre grondait au-dessus des collines, et la pluie tombait si fort qu'on ne voyait plus la route. Une demi-heure plus tard, le soleil était revenu ; les flaques brillaient, et l'air sentait la terre mouillée.",
+  {id:'orage',th:'nature',l:2,ti:"L'orage",a:null,tx:"Vers cinq heures, le ciel s'est assombri d'un coup. Les promeneurs, surpris par les premières gouttes, se sont abrités sous les arbres. Le tonnerre grondait au-dessus des collines, et la pluie tombait si fort qu'on ne voyait plus la route. Une demi-heure plus tard, le soleil était revenu ; les flaques brillaient, et l'air sentait la terre mouillée.",
    p:[["s'est assombri","Verbe pronominal : accord avec le sujet « le ciel », masculin singulier."],["surpris","Participe employé comme adjectif : accord avec « les promeneurs »."],["se sont abrités","« Se » est COD (abriter quelqu'un) : accord avec le sujet."],["au-dessus","Locution avec trait d'union."],["demi-heure","Demi, placé devant le nom, est invariable et suivi d'un trait d'union."],["était revenu","Avec être, accord avec « le soleil »."],["mouillée","Accord avec « la terre »."]]},
-  {id:'demain',l:3,ti:"Demain, dès l'aube",a:"Victor Hugo, Les Contemplations (1856)",tx:"Demain, dès l'aube, à l'heure où blanchit la campagne,\nJe partirai. Vois-tu, je sais que tu m'attends.\nJ'irai par la forêt, j'irai par la montagne.\nJe ne puis demeurer loin de toi plus longtemps.\nJe marcherai les yeux fixés sur mes pensées,\nSans rien voir au dehors, sans entendre aucun bruit,\nSeul, inconnu, le dos courbé, les mains croisées,\nTriste, et le jour pour moi sera comme la nuit.\nJe ne regarderai ni l'or du soir qui tombe,\nNi les voiles au loin descendant vers Harfleur,\nEt quand j'arriverai, je mettrai sur ta tombe\nUn bouquet de houx vert et de bruyère en fleur.",
+  {id:'demain',th:'lettres',l:3,ti:"Demain, dès l'aube",a:"Victor Hugo, Les Contemplations (1856)",tx:"Demain, dès l'aube, à l'heure où blanchit la campagne,\nJe partirai. Vois-tu, je sais que tu m'attends.\nJ'irai par la forêt, j'irai par la montagne.\nJe ne puis demeurer loin de toi plus longtemps.\nJe marcherai les yeux fixés sur mes pensées,\nSans rien voir au dehors, sans entendre aucun bruit,\nSeul, inconnu, le dos courbé, les mains croisées,\nTriste, et le jour pour moi sera comme la nuit.\nJe ne regarderai ni l'or du soir qui tombe,\nNi les voiles au loin descendant vers Harfleur,\nEt quand j'arriverai, je mettrai sur ta tombe\nUn bouquet de houx vert et de bruyère en fleur.",
    p:[["dès","Dès, préposition (« à partir de »), prend un accent grave."],["où","Où, relatif de lieu ou de temps, prend un accent : à l'heure où."],["Vois-tu","Inversion du sujet : trait d'union entre le verbe et le pronom."],["fixés","Participe employé comme adjectif : accord avec « les yeux »."],["aucun bruit","Aucun s'accorde avec le nom, ici au singulier."],["croisées","Accord avec « les mains »."],["descendant","Participe présent : invariable (« qui descendent »)."],["bruyère en fleur","« En fleur » reste au singulier : la bruyère est en fleur."]]},
-  {id:'roseau',l:3,ti:'Le roseau pensant',a:"Blaise Pascal, Pensées (1670)",tx:"L'homme n'est qu'un roseau, le plus faible de la nature ; mais c'est un roseau pensant. Il ne faut pas que l'univers entier s'arme pour l'écraser : une vapeur, une goutte d'eau, suffit pour le tuer. Mais, quand l'univers l'écraserait, l'homme serait encore plus noble que ce qui le tue, puisqu'il sait qu'il meurt, et l'avantage que l'univers a sur lui ; l'univers n'en sait rien.",
+  {id:'roseau',th:'philo lettres',l:3,ti:'Le roseau pensant',a:"Blaise Pascal, Pensées (1670)",tx:"L'homme n'est qu'un roseau, le plus faible de la nature ; mais c'est un roseau pensant. Il ne faut pas que l'univers entier s'arme pour l'écraser : une vapeur, une goutte d'eau, suffit pour le tuer. Mais, quand l'univers l'écraserait, l'homme serait encore plus noble que ce qui le tue, puisqu'il sait qu'il meurt, et l'avantage que l'univers a sur lui ; l'univers n'en sait rien.",
    p:[["n'est qu'un","Ne… que : n'oublie pas le « n' » de la négation."],["pensant","Adjectif verbal : il s'accorde comme un adjectif (des roseaux pensants)."],["s'arme","Après « il faut que », subjonctif : qu'il s'arme."],["suffit","Les sujets vont en gradation et le dernier les résume : le verbe s'accorde avec lui, au singulier."],["écraserait","« Quand » suivi du conditionnel a ici le sens de « même si »."],["puisqu'il","Puisque s'élide devant il, elle, on, un, une."],["n'en sait rien","Négation complète : n'… rien."]]},
-  {id:'proust',l:3,ti:'Longtemps',a:"Marcel Proust, Du côté de chez Swann (1913)",tx:"Longtemps, je me suis couché de bonne heure. Parfois, à peine ma bougie éteinte, mes yeux se fermaient si vite que je n'avais pas le temps de me dire : « Je m'endors. » Et, une demi-heure après, la pensée qu'il était temps de chercher le sommeil m'éveillait ; je voulais poser le volume que je croyais avoir encore dans les mains et souffler ma lumière.",
+  {id:'proust',th:'lettres',l:3,ti:'Longtemps',a:"Marcel Proust, Du côté de chez Swann (1913)",tx:"Longtemps, je me suis couché de bonne heure. Parfois, à peine ma bougie éteinte, mes yeux se fermaient si vite que je n'avais pas le temps de me dire : « Je m'endors. » Et, une demi-heure après, la pensée qu'il était temps de chercher le sommeil m'éveillait ; je voulais poser le volume que je croyais avoir encore dans les mains et souffler ma lumière.",
    p:[["couché","Verbe pronominal conjugué avec être : accord avec le sujet « je », ici un narrateur masculin."],["à peine","En deux mots, avec un accent sur à."],["éteinte","Participe employé comme adjectif : accord avec « ma bougie »."],["demi-heure","Demi, devant le nom, est invariable et suivi d'un trait d'union."],["m'éveillait","Le sujet est « la pensée » : troisième personne du singulier."],["croyais","Imparfait de croire : je croyais, avec un y."]]},
-  {id:'biblio',l:3,ti:'La bibliothèque',a:null,tx:"Les livres que mon grand-père m'a laissés occupent tout un mur. Je les ai longtemps regardés sans oser les ouvrir. Quels que soient les sujets qu'ils abordent, chacun porte dans ses marges des remarques au crayon que j'ai fini par déchiffrer. Ces notes, quelque peu effacées, m'ont appris davantage que bien des cours : elles m'ont montré comment on lit un texte, la plume à la main.",
+  {id:'biblio',th:'lettres',l:3,ti:'La bibliothèque',a:null,tx:"Les livres que mon grand-père m'a laissés occupent tout un mur. Je les ai longtemps regardés sans oser les ouvrir. Quels que soient les sujets qu'ils abordent, chacun porte dans ses marges des remarques au crayon que j'ai fini par déchiffrer. Ces notes, quelque peu effacées, m'ont appris davantage que bien des cours : elles m'ont montré comment on lit un texte, la plume à la main.",
    p:[["laissés","Le COD « que » (les livres) est placé avant avoir : accord au masculin pluriel."],["regardés","Le COD « les » (les livres) est placé avant : accord."],["Quels que soient","« Quel que » en deux mots, accordé avec le sujet « les sujets »."],["chacun porte","Chacun est singulier : le verbe aussi."],["fini","« J'ai fini par » : aucun COD placé avant, participe invariable."],["quelque peu","Quelque, devant un adverbe, signifie « assez » : invariable."],["davantage","Adverbe en un seul mot, à ne pas confondre avec « d'avantage »."],["montré","« M' » est complément indirect (montrer à moi) : pas d'accord."]]},
-  {id:'gaulle',l:4,ti:'Une certaine idée de la France',a:"Charles de Gaulle, Mémoires de guerre, t. I, L'Appel (1954)",tx:"Toute ma vie, je me suis fait une certaine idée de la France. Le sentiment me l'inspire aussi bien que la raison. Ce qu'il y a, en moi, d'affectif imagine naturellement la France, telle la princesse des contes ou la madone aux fresques des murs, comme vouée à une destinée éminente et exceptionnelle. J'ai, d'instinct, l'impression que la Providence l'a créée pour des succès achevés ou des malheurs exemplaires.",
+  {id:'gaulle',th:'histoire politique',l:4,ti:'Une certaine idée de la France',a:"Charles de Gaulle, Mémoires de guerre, t. I, L'Appel (1954)",tx:"Toute ma vie, je me suis fait une certaine idée de la France. Le sentiment me l'inspire aussi bien que la raison. Ce qu'il y a, en moi, d'affectif imagine naturellement la France, telle la princesse des contes ou la madone aux fresques des murs, comme vouée à une destinée éminente et exceptionnelle. J'ai, d'instinct, l'impression que la Providence l'a créée pour des succès achevés ou des malheurs exemplaires.",
    p:[["fait","Le COD « une certaine idée » est placé après : « fait » reste invariable."],["telle","Telle, employé pour « comme », s'accorde avec le nom qui suit : la princesse."],["vouée","Accord avec « la France »."],["éminente","Éminent, « qui s'élève au-dessus », à ne pas confondre avec imminent, « qui va arriver »."],["exceptionnelle","Deux n et deux l au féminin."],["créée","Le COD « l' » (la France) est placé avant : accord au féminin, d'où trois e."],["achevés","Accord avec « des succès »."]]},
-  {id:'vendanges',l:4,ti:'Les vendanges',a:null,tx:"Les vendanges qu'ont faites cette année les vignerons du village ont dépassé toutes les espérances. Les grappes, mûries par un soleil que l'on n'avait plus vu depuis des lustres, se sont laissé cueillir sans peine. Les vendangeurs se sont succédé du matin au soir ; certains, harassés, se sont assoupis à l'ombre des ceps. On a goûté le vin nouveau dès la Saint-Martin : quelque deux cents bouteilles ont été vidées, et les plus sceptiques se sont plu à reconnaître qu'il était excellent.",
+  {id:'vendanges',th:'nature',l:4,ti:'Les vendanges',a:null,tx:"Les vendanges qu'ont faites cette année les vignerons du village ont dépassé toutes les espérances. Les grappes, mûries par un soleil que l'on n'avait plus vu depuis des lustres, se sont laissé cueillir sans peine. Les vendangeurs se sont succédé du matin au soir ; certains, harassés, se sont assoupis à l'ombre des ceps. On a goûté le vin nouveau dès la Saint-Martin : quelque deux cents bouteilles ont été vidées, et les plus sceptiques se sont plu à reconnaître qu'il était excellent.",
    p:[["qu'ont faites","Le COD « qu' » (les vendanges) est placé avant avoir : accord, même quand le sujet est inversé."],["mûries","Mûrir garde l'accent de mûr (orthographe traditionnelle) ; accord avec « les grappes »."],["vu","Le COD « que » reprend « un soleil » : masculin singulier."],["se sont laissé","Laissé suivi d'un infinitif reste invariable (règle de 1990)."],["se sont succédé","Succéder à quelqu'un : « se » est complément indirect, pas d'accord."],["assoupis","S'assoupir est essentiellement pronominal : accord avec le sujet."],["quelque deux cents","Quelque, devant un nombre, signifie « environ » : invariable. Deux cents prend un s, car aucun nombre ne le suit."],["se sont plu","Le participe de plaire reste invariable, même à la forme pronominale."]]},
-  {id:'ecrans',l:4,ti:'La pensée lente',a:null,tx:"Combien d'heures avons-nous passées devant nos écrans ces dernières années ? Les études que j'ai consultées sont formelles : notre attention s'est émiettée. Pourtant, il suffit de quelques semaines pour qu'elle se reconstruise. Les carnets qu'on a noircis à la main, les livres qu'on a lus d'une traite, les conversations qu'on a eues sans téléphone : voilà les remèdes qu'on nous a souvent conseillé d'essayer. Quoi qu'on en dise, la pensée a besoin de lenteur.",
+  {id:'ecrans',th:'philo sciences',l:4,ti:'La pensée lente',a:null,tx:"Combien d'heures avons-nous passées devant nos écrans ces dernières années ? Les études que j'ai consultées sont formelles : notre attention s'est émiettée. Pourtant, il suffit de quelques semaines pour qu'elle se reconstruise. Les carnets qu'on a noircis à la main, les livres qu'on a lus d'une traite, les conversations qu'on a eues sans téléphone : voilà les remèdes qu'on nous a souvent conseillé d'essayer. Quoi qu'on en dise, la pensée a besoin de lenteur.",
    p:[["passées","Le COD « combien d'heures » est placé avant avoir : accord au féminin pluriel."],["consultées","Le COD « que » (les études) est placé avant : accord."],["s'est émiettée","Verbe pronominal : accord avec le sujet « notre attention »."],["se reconstruise","Après « pour que », subjonctif."],["noircis","Le COD « qu' » (les carnets) est placé avant : accord au masculin pluriel."],["eues","Le COD « qu' » (les conversations) est placé avant : eues, au féminin pluriel."],["conseillé","Le COD de « conseiller » est « d'essayer » : le participe reste invariable."],["Quoi qu'on","En deux mots : « quelle que soit la chose que »."]]}
 ];
 const HABITS=[
@@ -1209,8 +1227,10 @@ const RULES=[
   ["Apprends quelque chose de difficile","Une langue, un instrument, un jeu de stratégie : un apprentissage exigeant et durable stimule plus que n'importe quel exercice de mémoire.","Simons et al., 2016"],
   ["Protège sommeil et mouvement","La mémoire se consolide pendant le sommeil, et l'activité aérobie régulière augmente le volume de l'hippocampe. Aucun exercice ne compense une mauvaise nuit.","Erickson et al., PNAS 2011"]
 ];
-const ARGU=["Faut-il interdire les téléphones portables à l'école ?","Le télétravail devrait-il devenir la norme ?","Faut-il passer à la semaine de 4 jours ?","L'IA devrait-elle être autorisée pour les devoirs scolaires ?","Vaut-il mieux être spécialiste ou généraliste ?","Les réseaux sociaux font-ils plus de bien que de mal ?","Faut-il apprendre à programmer à tous les enfants ?","Faut-il limiter la publicité dans l'espace public ?","Vaut-il mieux louer ou acheter son logement ?","Les voitures devraient-elles être bannies des centres-villes ?"];
-const EXPL=["l'inflation","les intérêts composés","pourquoi le ciel est bleu","comment fonctionne un vaccin","ce qu'est un algorithme","l'effet de serre","la loi de l'offre et de la demande","comment un avion tient en l'air","ce qu'est une probabilité conditionnelle","comment la mémoire à long terme se forme","ce qu'est une blockchain","pourquoi il y a des saisons"];
+const ARGU=["Faut-il interdire les téléphones portables à l'école ?","Le télétravail devrait-il devenir la norme ?","Faut-il passer à la semaine de 4 jours ?","L'IA devrait-elle être autorisée pour les devoirs scolaires ?","Vaut-il mieux être spécialiste ou généraliste ?","Les réseaux sociaux font-ils plus de bien que de mal ?","Faut-il apprendre à programmer à tous les enfants ?","Faut-il limiter la publicité dans l'espace public ?","Vaut-il mieux louer ou acheter son logement ?","Les voitures devraient-elles être bannies des centres-villes ?","Faut-il enseigner davantage l'histoire de France à l'école ?","Le sport de haut niveau est-il un bon modèle pour les jeunes ?","Faut-il lire les classiques plutôt que les livres récents ?","Peut-on être heureux sans réfléchir ?","Les Jeux olympiques valent-ils ce qu'ils coûtent à la ville qui les accueille ?","Faut-il protéger la nature même quand cela freine l'économie ?"];
+const ARGU_TH=['politique sciences','eco','eco politique','sciences philo','philo','politique sciences','sciences','eco politique','eco','politique nature','histoire politique','sport','lettres','philo','sport eco','nature eco'];
+const EXPL=["l'inflation","les intérêts composés","pourquoi le ciel est bleu","comment fonctionne un vaccin","ce qu'est un algorithme","l'effet de serre","la loi de l'offre et de la demande","comment un avion tient en l'air","ce qu'est une probabilité conditionnelle","comment la mémoire à long terme se forme","ce qu'est une blockchain","pourquoi il y a des saisons","pourquoi la Révolution française a éclaté","comment une loi est votée en France","ce qu'est le hors-jeu au football","pourquoi l'entraînement fractionné améliore l'endurance","ce qu'est un sonnet","ce que voulait dire Descartes par « Je pense, donc je suis »","comment se forment les montagnes"];
+const EXPL_TH=['eco','eco','sciences nature','sciences','sciences','sciences nature','eco','sciences','sciences','sciences','eco sciences','nature sciences','histoire','politique','sport','sport sciences','lettres','philo','nature'];
 const SOURCES=[
   ["Le sommeil et la mémoire","Pendant longtemps, on a pensé que le cerveau se mettait en veille la nuit. Les recherches des dernières décennies montrent l'inverse : le sommeil joue un rôle actif dans la mémoire. Pendant le sommeil lent profond, l'hippocampe « rejoue » les expériences de la journée et les transfère progressivement vers le cortex, où elles sont stockées à plus long terme. Le sommeil paradoxal, lui, semble aider à relier les souvenirs entre eux et à en extraire des règles générales. Une nuit blanche après un apprentissage réduit nettement ce que l'on retient, même après plusieurs nuits de récupération. À l'inverse, une courte sieste après une séance d'étude peut améliorer la rétention. Conclusion pratique : réviser tard en sacrifiant son sommeil est souvent un mauvais calcul."],
   ["L'effet d'espacement","Si tu dois apprendre quelque chose, vaut-il mieux l'étudier trois heures d'affilée ou trois fois une heure, à quelques jours d'intervalle ? Depuis les travaux d'Hermann Ebbinghaus à la fin du XIXe siècle, la réponse est connue : l'apprentissage espacé l'emporte presque toujours. Quand on révise juste avant d'oublier, le cerveau doit faire un effort pour retrouver l'information, et cet effort renforce la trace. Réviser en bloc donne une impression de maîtrise, car tout est frais, mais cette impression est trompeuse : ce qui est appris vite s'oublie vite. Les applications de cartes mémoire reposent sur ce principe en programmant les révisions à des intervalles croissants. L'effet a été reproduit des centaines de fois, chez des enfants comme chez des adultes."],
@@ -1463,6 +1483,29 @@ const TUTOR="Agis comme un tuteur socratique. Ne me donne pas la réponse direct
 /* ---------- citations à retenir ----------
    c : philo, politique, histoire, nation, classique, ecriture, fausse. a : auteur réel. f : fausse attribution courante.
    k : mot à retrouver dans l'exercice « mot manquant ». n : le contexte « À retenir ». */
+/* ---------- thèmes : 2 ou 3 sujets choisis orientent citations, « Ce jour-là », dictées, sujets d'écriture et coach ---------- */
+const THEMES=[['histoire','Histoire'],['sciences','Sciences'],['philo','Philosophie'],['eco','Économie'],['politique','Politique et société'],['lettres','Arts et lettres'],['sport','Sport'],['nature','Nature et géographie']];
+const THEME_NAME=Object.fromEntries(THEMES);
+const QCAT_TH={philo:'philo',politique:'politique',histoire:'histoire',nation:'histoire politique',classique:'lettres',ecriture:'lettres'};
+// « Ce jour-là » : thèmes reconnus aux mots de l'événement ; tous sont de l'histoire
+const EV_RX={
+  sport:/olympi|Tour de France|Coupe du monde|Roland-Garros|record du monde|football|aviron|mile\b/i,
+  sciences:/découvre\b|découvrent|vaccin|satellite|fusée|spatial|\bLune\b|planète|télescope|nucléaire|physique|chimie|médecine|théorie|ordinateur|Internet|invent|\bADN\b|électri|scien|brevet|mathémat|comète|astronaute|Apollo|pénicilline|Marconi|motorisé/i,
+  lettres:/roman|poète|poème|publi|pièce|théâtre|opéra|peint|tableau|musée|Louvre|film|cinéma|symphonie|écrivain|Académie française|Goncourt|livre|chanson|sculpt|Comédie|Molière|Encyclopédie|musique|Joconde/i,
+  eco:/\beuros?\b|monnaie|banque|krach|Bourse|économi|grève|salaire|impôt|commerce|industri|chemin de fer|usine|pétrole|congés payés|Sécurité sociale|ruée vers l'or|vend la Louisiane/i,
+  nature:/séisme|tremblement|éruption|volcan|ouragan|tempête|inondation|pôle|Everest|tsunami|Mont-Blanc|glacier|climat|Lascaux/i,
+  politique:/élu|élection|président|Constitution|\bloi\b|vote|suffrage|Assemblée|républi|gouvernement|ministre|référendum|droit|abolit|parlement|Sénat|traité|Nations unies|Union européenne/i,
+};
+const myThemes=()=>(state.settings.themes||[]).filter(t=>THEME_NAME[t]);
+const hasTheme=th=>{const m=myThemes();return !!th&&m.some(t=>th.split(' ').includes(t));};
+const evThemes=txt=>['histoire',...Object.keys(EV_RX).filter(k=>EV_RX[k].test(txt))].join(' ');
+// tire au sort en préférant, deux fois sur trois, ce qui touche à ses thèmes
+function pickT(arr,ths){
+  const ok=arr.filter((_,i)=>hasTheme(ths[i]));
+  return ok.length&&Math.random()<2/3?pick(ok):pick(arr);
+}
+// pour le coach : ses thèmes, s'il en a choisi
+const themeHint=()=>{const m=myThemes();return m.length?` Choisis de préférence un sujet lié à ses centres d'intérêt : ${m.map(t=>THEME_NAME[t].toLowerCase()).join(', ')}.`:'';};
 const QCAT={philo:'Philosophie',politique:'Politique',histoire:'Histoire',nation:'Nation & tradition',classique:'Classiques français',ecriture:'Écriture',fausse:'Fausse citation'};
 const QUOTES=[
 {id:'delphes',c:'philo',q:"Connais-toi toi-même.",a:"Inscription de Delphes",s:"Temple d'Apollon à Delphes (VIe s. av. J.-C.), devise reprise par Socrate chez Platon",n:"Pour Socrate, se connaître, c'est d'abord connaître les limites de son savoir. Le piège moderne : croire savoir parce qu'on a lu une réponse bien tournée.",k:"Connais"},
@@ -1662,8 +1705,10 @@ const LEITNER=[1,3,7,14,30];
 let qdOff=0, pendingQuote=null, qcatF='all';
 const gcd=(a,b)=>b?gcd(b,a%b):a;
 function quoteOfDay(k,off){
-  const N=QUOTES.length, n=Math.floor(new Date(k+'T12:00:00').getTime()/864e5)+off; let step=7; while(gcd(step,N)!==1)step++;
-  return QUOTES[((n*step)%N+N)%N];
+  const mine=QUOTES.filter(q=>q.c==='fausse'||hasTheme(QCAT_TH[q.c]));
+  const Q=mine.filter(q=>q.c!=='fausse').length>=8?mine:QUOTES;
+  const N=Q.length, n=Math.floor(new Date(k+'T12:00:00').getTime()/864e5)+off; let step=7; while(gcd(step,N)!==1)step++;
+  return Q[((n*step)%N+N)%N];
 }
 function floriDue(){const k=todayKey(), f=state.flori||{};return Object.keys(f).filter(id=>QBY[id]&&f[id].n<=k);}
 function floriAdd(id,quiet){
@@ -1695,11 +1740,27 @@ function cjlEvent(k,off){
   // les événements du jour d'abord (un autre chaque année), puis ceux des jours les plus proches
   const t=doy(k.slice(5,7)+k.slice(8,10));
   const L=EVENTS.map((e,i)=>{let x=EV_DOY[i]-t;if(x>183)x-=366;else if(x<-183)x+=366;return{e,x};}).sort((a,b)=>Math.abs(a.x)-Math.abs(b.x)||a.x-b.x||a.e[1]-b.e[1]);
-  const n0=L.filter(o=>o.x===0).length, r=n0?(+k.slice(0,4))%n0:0;
-  const ord=L.slice(r,n0).concat(L.slice(0,r),L.slice(n0));
+  const day=L.filter(o=>o.x===0), mine=day.filter(o=>hasTheme(evThemes(o.e[2]))), rest=day.filter(o=>!mine.includes(o));
+  const rot=a=>{const r=a.length?(+k.slice(0,4))%a.length:0;return a.slice(r).concat(a.slice(0,r));};
+  const ord=rot(mine).concat(rot(rest),L.slice(day.length));
   return ord[off%ord.length];
 }
 const evDate=md=>fd(new Date(2024,+md.slice(0,2)-1,+md.slice(2)),{day:'numeric',month:'long'}).replace(/^1 /,'1er ');
+function renderThemes(){
+  const m=myThemes();
+  for(const id of ['#themes-seg','#themes-seg2'])$(id).replaceChildren(...THEMES.map(([k,v])=>el('button',{'aria-pressed':String(m.includes(k)),text:v,onclick:()=>toggleTheme(k)})));
+  $('#themes-ask').hidden=!!state.settings.themesSet;
+}
+function toggleTheme(k){
+  let m=myThemes();
+  if(m.includes(k))m=m.filter(x=>x!==k);
+  else if(m.length>=3){toast('<span>Trois thèmes au plus : retires-en un d’abord.</span>');return;}
+  else m=[...m,k];
+  state.settings.themes=m; if($('#themes-ask').hidden)state.settings.themesSet=true;
+  qdOff=0; save(); renderThemes(); renderQuoteDay();
+}
+$('#themes-ok').addEventListener('click',()=>{state.settings.themesSet=true;save();renderThemes();});
+$('#themes-later').addEventListener('click',()=>{state.settings.themesSet=true;save();renderThemes();});
 function renderCjl(){
   const k=todayKey(), o=cjlEvent(k,cjlOff), [md,y,txt]=o.e, d=(state.days[k]||{}).cjl;
   // la devinette du jour reste résolue après un rechargement
@@ -1773,7 +1834,8 @@ function speak(text,rate){
 const wordCount=tx=>(tx.match(/\p{L}+/gu)||[]).length;
 function pickDictee(l){
   const last=new Map(state.results.filter(r=>r.ex==='dictee'&&r.id).map(r=>[r.id,r.t]));
-  return DICTEES.filter(d=>d.l===l).sort(()=>Math.random()-.5).sort((a,b)=>(last.get(a.id)||0)-(last.get(b.id)||0))[0];
+  const due=d=>(last.get(d.id)||0)-(hasTheme(d.th)?7*864e5:0);
+  return DICTEES.filter(d=>d.l===l).sort(()=>Math.random()-.5).sort((a,b)=>due(a)-due(b))[0];
 }
 // règles ratées récemment : orthographe et dictées, pour cibler la suite
 function weakRules(){
@@ -2388,6 +2450,7 @@ function coachSummary(){
   const fl=Object.values(state.flori||{});
   lines.push(`Florilège de citations à retenir : ${fl.length} citations, dont ${fl.filter(f=>f.b>=5).length} maîtrisées et ${floriDue().length} à réviser aujourd'hui.`);
   lines.push(`Gamification : niveau ${gamiCtx.level} (${levelName(gamiCtx.level)}), ${gamiCtx.total} XP au total, objectif quotidien ${state.settings.xpGoal||60} XP.`);
+  lines.push('Ses thèmes de prédilection : '+(myThemes().map(t=>THEME_NAME[t]).join(', ')||'aucun choisi')+'.');
   lines.push('Son objectif du moment : '+(state.goal&&state.goal.text?'« '+state.goal.text+' »':'aucun pour l\u2019instant')+'.');
   const tx=texts.slice(-8);
   if(tx.length)lines.push('Derniers textes écrits : '+tx.map(x=>`${(WMODES[x.mode]||WMODES.libre).label} (${x.words} mots, ${x.wpm} mots/min, ${x.avgSent} mots/phrase)`).join(' ; ')+'.');
@@ -2725,8 +2788,8 @@ write(arena){
   else try{const d=JSON.parse(localStorage.getItem('brainfit.draft')||'null');if(d&&d.text){prompt=d.prompt;draft=d.text;mode=d.mode||'libre';src=d.src||null;orig=d.origT?texts.find(x=>x.t===d.origT)||null:null;}}catch(e){}
   if(mode==='revise'&&draft&&!orig){mode='libre';}
   const pickPrompt=()=>{
-    if(mode==='argu')prompt=pick(ARGU);
-    else if(mode==='expl')prompt='Explique '+pick(EXPL)+' à un enfant de 12 ans.';
+    if(mode==='argu')prompt=pickT(ARGU,ARGU_TH);
+    else if(mode==='expl')prompt='Explique '+pickT(EXPL,EXPL_TH)+' à un enfant de 12 ans.';
     else if(mode==='revise'){
       // le plus ancien texte pas encore révisé, écrit avant aujourd'hui
       const c=texts.filter(x=>x.mode!=='revise'&&!x.rev&&iso(x.t)<todayKey()&&x.t!==(orig&&orig.t)).sort((a,b)=>a.t-b.t);
@@ -2907,7 +2970,7 @@ probleme(arena){
     const s=await sampler(); gen.disabled=true; gen.textContent='Le coach prépare un problème…';
     if(!s){gen.textContent="Le coach n'est pas encore branché";return;}
     try{
-      const p=await s.json("Crée un problème de raisonnement original en français, résoluble de tête ou sur papier en 3 à 6 minutes, avec une réponse unique et vérifiable. Varie les types : logique, probabilités, piège d'intuition, déduction, raisonnement quantitatif. Évite les classiques trop connus (raquette et balle, nénuphars, Monty Hall). Réponds uniquement en JSON : {\"enonce\": string, \"reponse\": string courte, \"explication\": string de 2 à 4 phrases}.",{cache:false});
+      const p=await s.json("Crée un problème de raisonnement original en français, résoluble de tête ou sur papier en 3 à 6 minutes, avec une réponse unique et vérifiable. Varie les types : logique, probabilités, piège d'intuition, déduction, raisonnement quantitatif. Évite les classiques trop connus (raquette et balle, nénuphars, Monty Hall). Réponds uniquement en JSON : {\"enonce\": string, \"reponse\": string courte, \"explication\": string de 2 à 4 phrases}."+themeHint(),{cache:false});
       if(p&&p.enonce&&p.reponse)go([String(p.enonce),String(p.reponse),String(p.explication||'')],null);
       else throw 0;
     }catch(e){gen.disabled=false;gen.textContent=e&&e.code==='not_granted'?'Coach non autorisé':'Réessayer un problème du coach';}
@@ -2968,7 +3031,7 @@ erreuria(arena){
     const s=await sampler(); gen.disabled=true; gen.textContent='Le coach prépare un piège…';
     if(!s){gen.textContent="Le coach n'est pas encore branché";return;}
     try{
-      const r=await s.json("Écris en français une courte réponse d'assistant IA, convaincante et bien rédigée, à une question de culture générale, de sciences, de logique ou de calcul (choisis un sujet varié). La réponse fait exactement 4 ou 5 phrases. UNE SEULE phrase contient une erreur factuelle, logique ou de calcul, plausible et subtile ; toutes les autres sont strictement exactes. Réponds uniquement en JSON : {\"question\": string, \"phrases\": [string], \"erreur\": index de la phrase fausse à partir de 0, \"explication\": string de 1 à 2 phrases}.",{cache:false});
+      const r=await s.json("Écris en français une courte réponse d'assistant IA, convaincante et bien rédigée, à une question de culture générale, de sciences, de logique ou de calcul (choisis un sujet varié). La réponse fait exactement 4 ou 5 phrases. UNE SEULE phrase contient une erreur factuelle, logique ou de calcul, plausible et subtile ; toutes les autres sont strictement exactes. Réponds uniquement en JSON : {\"question\": string, \"phrases\": [string], \"erreur\": index de la phrase fausse à partir de 0, \"explication\": string de 1 à 2 phrases}."+themeHint(),{cache:false});
       if(r&&Array.isArray(r.phrases)&&r.phrases.length>=3&&Number.isInteger(r.erreur)&&r.phrases[r.erreur])go([[String(r.question),r.phrases.map(String),r.erreur,String(r.explication||'')]]);
       else throw 0;
     }catch(e){gen.disabled=false;gen.textContent=e&&e.code==='not_granted'?'Coach non autorisé':'Réessayer avec le coach';}
@@ -3163,7 +3226,7 @@ dictee(arena){
     if(!s){gen.textContent="Le coach n'est pas encore branché";return;}
     const l=state.settings.dicteeLvl||2, weak=weakRules();
     try{
-      const r=await s.json(`Écris une dictée originale en français, de niveau ${l} sur 4 (1 : phrases simples, environ 50 mots ; 2 : environ 60 mots ; 3 : environ 75 mots ; 4 : phrases complexes et accords difficiles, environ 90 mots). Un texte vivant et concret, de préférence sur la France, son histoire, ses paysages ou la vie quotidienne. ${weak.length?"Fais travailler en priorité ces règles, qu'il a ratées récemment : "+weak.join(' ; ')+'.':''} Orthographe et grammaire irréprochables, orthographe traditionnelle. Réponds uniquement en JSON : {"titre": string, "texte": string, "pieges": [{"mot": string (exactement tel qu'il apparaît dans le texte), "regle": string (une phrase)}]}, avec 5 à 8 pièges.`,{cache:false});
+      const r=await s.json(`Écris une dictée originale en français, de niveau ${l} sur 4 (1 : phrases simples, environ 50 mots ; 2 : environ 60 mots ; 3 : environ 75 mots ; 4 : phrases complexes et accords difficiles, environ 90 mots). Un texte vivant et concret, de préférence sur la France, son histoire, ses paysages ou la vie quotidienne. ${weak.length?"Fais travailler en priorité ces règles, qu'il a ratées récemment : "+weak.join(' ; ')+'.':''} Orthographe et grammaire irréprochables, orthographe traditionnelle. Réponds uniquement en JSON : {"titre": string, "texte": string, "pieges": [{"mot": string (exactement tel qu'il apparaît dans le texte), "regle": string (une phrase)}]}, avec 5 à 8 pièges.${themeHint()}`,{cache:false});
       const tx=r&&typeof r.texte==='string'?r.texte.trim():'';
       if(tx.length<120||tx.length>1400||!Array.isArray(r.pieges))throw 0;
       go({id:null,l,ti:String(r.titre||'Dictée du coach'),a:null,tx,p:r.pieges.filter(x=>x&&typeof x.mot==='string').map(x=>[x.mot,String(x.regle||'')]).slice(0,10)});
@@ -3302,7 +3365,7 @@ function renderOrigins(){
   $('#origins').replaceChildren(...Object.entries(ORIG).map(([k,t])=>el('details',{class:'hist'},el('summary',{text:EX[k].name+' · '+EX[k].skill}),el('p',{text:t}))));
 }
 function renderAll(){
-  renderQuoteDay();renderCjl();renderFlori();renderGoal();renderProgram();renderScreens();renderToday();renderExGrid();
+  renderThemes();renderQuoteDay();renderCjl();renderFlori();renderGoal();renderProgram();renderScreens();renderToday();renderExGrid();
   if(!$('#v-progres').hidden){renderProgress();renderCarnet();}
   if(!$('#v-coach').hidden)renderSas();
 }

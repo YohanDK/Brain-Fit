@@ -476,6 +476,17 @@ a{color:var(--accent);text-underline-offset:3px}
 /* le cerf, emblème interactif */
 .brand{flex-direction:row;align-items:center;gap:10px;position:relative}
 .brand-txt{display:flex;flex-direction:column;gap:2px;min-width:0}
+.top-actions{margin-left:auto;display:flex;gap:2px}
+@media (min-width:700px){.top-actions{order:9;margin-left:4px}}
+.iconbtn{width:40px;height:40px;display:grid;place-items:center;border:0;border-radius:10px;background:none;color:var(--fg2);cursor:pointer}
+.iconbtn:hover,.iconbtn[aria-current="page"]{background:var(--accent-soft);color:var(--accent)}
+.iconbtn:focus-visible{outline:2px solid var(--accent);outline-offset:1px}
+details.fold{border-top:1px solid var(--line);padding-top:10px}
+details.fold>summary{cursor:pointer;list-style:none;display:flex;align-items:baseline;gap:8px;flex-wrap:wrap}
+details.fold>summary::-webkit-details-marker{display:none}
+details.fold>summary::before{content:"›";display:inline-block;transition:transform .2s;color:var(--muted)}
+details.fold[open]>summary::before{transform:rotate(90deg)}
+details.fold[open]{display:flex;flex-direction:column;gap:10px}
 .stag{width:78px;height:78px;padding:0;border:0;background:none;cursor:pointer;flex:none;-webkit-tap-highlight-color:transparent}
 .stag svg{width:100%;height:100%;display:block;overflow:visible}
 .stag:focus-visible{outline:2px solid var(--gold);outline-offset:2px;border-radius:50%}
@@ -515,6 +526,10 @@ q{quotes:"« " " »" "“" "”"}
         <span class="num" id="streak">0</span><span id="streak-unit">jour d'affilée</span>
         <span class="freeze" id="freeze" title="Égides : chacune protège ta série si tu manques un jour"><svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2l8 3v6c0 5-3.4 9.3-8 11-4.6-1.7-8-6-8-11V5z" opacity=".25"/><path d="M12 2l8 3v6c0 5-3.4 9.3-8 11-4.6-1.7-8-6-8-11V5zm0 2.2L6 6.4V11c0 3.9 2.5 7.4 6 8.9 3.5-1.5 6-5 6-8.9V6.4z"/><circle cx="12" cy="11" r="2.6"/></svg><span class="num" id="freeze-n">1</span></span>
       </div>
+      <div class="top-actions">
+        <button class="iconbtn" id="go-biblio" aria-label="Bibliothèque" title="Bibliothèque"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 9l9-5 9 5M5.5 10v8M10 10v8M14 10v8M18.5 10v8M3 20h18"/></svg></button>
+        <button class="iconbtn" id="go-settings" aria-label="Réglages" title="Réglages"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/></svg></button>
+      </div>
       <button class="goalring" id="goalring" title="Objectif d'XP du jour">
         <svg viewBox="0 0 36 36" width="40" height="40" aria-hidden="true"><circle cx="18" cy="18" r="15" class="rbg"/><circle cx="18" cy="18" r="15" class="rfg" id="ring-fg" stroke-dasharray="0 100" pathLength="100"/></svg>
         <span class="gr-txt"><span class="num" id="xp-today">0</span><span class="note" id="xp-goal">/ 60 XP</span></span>
@@ -529,10 +544,10 @@ q{quotes:"« " " »" "“" "”"}
 
   <nav class="tabs" role="tablist" aria-label="Sections">
     <button role="tab" data-tab="aujourdhui" aria-selected="true"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3v2M12 19v2M4.2 4.2l1.4 1.4M18.4 18.4l1.4 1.4M3 12h2M19 12h2M4.2 19.8l1.4-1.4M18.4 5.6l1.4-1.4M12 8a4 4 0 1 0 0 8a4 4 0 1 0 0-8"/></svg><span>Aujourd'hui</span></button>
+    <button role="tab" data-tab="semaine" aria-selected="false"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3.5" y="5" width="17" height="15" rx="2"/><path d="M3.5 10h17M8 3v4M16 3v4M7.5 14h2M11 14h2M14.5 14h2"/></svg><span>Semaine</span></button>
     <button role="tab" data-tab="exercices" aria-selected="false"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6.5 6.5v11M17.5 6.5v11M3.5 9.5v5M20.5 9.5v5M6.5 12h11"/></svg><span>Exercices</span></button>
     <button role="tab" data-tab="coach" aria-selected="false"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 5h16v11H10l-4 4v-4H4z"/></svg><span>Coach</span></button>
     <button role="tab" data-tab="progres" aria-selected="false"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 20v-6M12 20V5M19 20v-10M3 20h18"/></svg><span>Progrès</span></button>
-    <button role="tab" data-tab="conseils" aria-selected="false"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 9l9-5 9 5M5.5 10v8M10 10v8M14 10v8M18.5 10v8M3 20h18"/></svg><span>Bibliothèque</span></button>
   </nav>
 
   <!-- AUJOURD'HUI -->
@@ -564,18 +579,6 @@ q{quotes:"« " " »" "“" "”"}
       <div class="row" id="cjl-ask"><input type="text" id="cjl-in" inputmode="numeric" autocomplete="off" placeholder="Année ?" aria-label="En quelle année ?" style="width:9ch;text-align:center"><span class="fg2" id="cjl-bc" hidden>av. J.-C.</span><button class="btn" id="cjl-go">Deviner</button><button class="btn ghost" id="cjl-show">Voir la date</button></div>
       <div class="cjl-res" id="cjl-res" hidden><span class="cjl-year" id="cjl-year"></span><span class="fg2" id="cjl-fb"></span></div>
     </div>
-    <div class="panel goal">
-      <span class="label">Mon objectif du moment</span>
-      <div id="goal-view" class="row spread" hidden>
-        <div style="min-width:0;display:flex;flex-direction:column;gap:2px"><p class="big" id="goal-text"></p><span class="note" id="goal-since"></span></div>
-        <button class="btn ghost" id="goal-edit">Modifier</button>
-      </div>
-      <form id="goal-form" class="row" style="flex-wrap:nowrap">
-        <input type="text" id="goal-in" placeholder="Ex. : écrire des argumentaires plus clairs d'ici décembre" style="flex:1;min-width:0" autocomplete="off">
-        <button class="btn primary" type="submit">Fixer</button>
-      </form>
-      <p class="note">Ton coach en tient compte dans ses bilans. Il peut aussi t'en proposer un.</p>
-    </div>
     <div class="panel">
       <div class="row spread">
         <div>
@@ -590,38 +593,56 @@ q{quotes:"« " " »" "“" "”"}
       <ol class="steps" id="steps"></ol>
     </div>
 
+
+
+
+
+
+
     <div class="panel">
       <div>
-        <h2>Hygiène IA du jour</h2>
-        <p class="muted">Coche ce que tu as vraiment fait aujourd'hui. C'est ce qui compte le plus, bien plus que les exercices.</p>
+        <h2>Mes habitudes du jour</h2>
+        <p class="muted">Coche ce que tu as vraiment fait aujourd'hui : c'est ce qui compte le plus.</p>
       </div>
       <div class="habits" id="habits"></div>
       <div class="row spread talks">
         <div style="min-width:0"><span class="step-title">Discussions intéressantes aujourd'hui</span><br><span class="note">Une vraie conversation d'idées, sans écran entre vous. Objectif : 3.</span></div>
         <div class="row"><button class="btn" id="talk-minus" aria-label="Retirer une discussion">−</button><span class="num" id="talk-n" style="font-size:1.3rem;font-weight:700;min-width:3ch;text-align:center">0/3</span><button class="btn" id="talk-plus" aria-label="Ajouter une discussion">+</button></div>
       </div>
+      <details class="fold" id="screens-fold">
+        <summary><span class="step-title">Écrans</span> <span class="note" id="scr-sum"></span></summary>
+        <p class="muted">Note ton temps d'écran d'hier : il est dans Temps d'écran (iPhone) ou Bien-être numérique (Android).</p>
+        <div class="screenrow">
+          <label for="scr-h" class="step-title">Hier</label>
+          <input type="number" id="scr-h" min="0" max="24" inputmode="numeric" aria-label="Heures"> <span>h</span>
+          <input type="number" id="scr-m" min="0" max="59" inputmode="numeric" aria-label="Minutes"> <span>min</span>
+          <button class="btn" id="scr-save">Noter</button>
+          <span id="scr-verdict"></span>
+        </div>
+        <div class="screenrow">
+          <label for="scr-target" class="note">Mon objectif par jour</label>
+          <select id="scr-target"><option value="60">1 h</option><option value="90">1 h 30</option><option value="120">2 h</option><option value="180">3 h</option><option value="240">4 h</option></select>
+        </div>
+        <div class="habits" id="scr-habits"></div>
+        <div class="row"><button class="btn primary" id="scr-focus">Lancer une séance sans écran</button><span class="note">Lecture, écriture à la main, réflexion : on mesure ta concentration.</span></div>
+      </details>
     </div>
+  </section>
 
-    <div class="panel">
-      <div>
-        <h2>Écrans</h2>
-        <p class="muted">Ton attention est la ressource que les écrans se disputent. Note ton temps d'écran d'hier : il est dans Temps d'écran (iPhone) ou Bien-être numérique (Android).</p>
+  <!-- SEMAINE -->
+  <section class="view" id="v-semaine" hidden>
+    <div class="panel goal">
+      <span class="label">Mon objectif du moment</span>
+      <div id="goal-view" class="row spread" hidden>
+        <div style="min-width:0;display:flex;flex-direction:column;gap:2px"><p class="big" id="goal-text"></p><span class="note" id="goal-since"></span></div>
+        <button class="btn ghost" id="goal-edit">Modifier</button>
       </div>
-      <div class="screenrow">
-        <label for="scr-h" class="step-title">Hier</label>
-        <input type="number" id="scr-h" min="0" max="24" inputmode="numeric" aria-label="Heures"> <span>h</span>
-        <input type="number" id="scr-m" min="0" max="59" inputmode="numeric" aria-label="Minutes"> <span>min</span>
-        <button class="btn" id="scr-save">Noter</button>
-        <span id="scr-verdict"></span>
-      </div>
-      <div class="screenrow">
-        <label for="scr-target" class="note">Mon objectif par jour</label>
-        <select id="scr-target"><option value="60">1 h</option><option value="90">1 h 30</option><option value="120">2 h</option><option value="180">3 h</option><option value="240">4 h</option></select>
-      </div>
-      <div class="habits" id="scr-habits"></div>
-      <div class="row"><button class="btn primary" id="scr-focus">Lancer une séance sans écran</button><span class="note">Lecture, écriture à la main, réflexion : on mesure ta concentration.</span></div>
+      <form id="goal-form" class="row" style="flex-wrap:nowrap">
+        <input type="text" id="goal-in" placeholder="Ex. : écrire des argumentaires plus clairs d'ici décembre" style="flex:1;min-width:0" autocomplete="off">
+        <button class="btn primary" type="submit">Fixer</button>
+      </form>
+      <p class="note">Ton coach en tient compte dans ses bilans. Il peut aussi t'en proposer un.</p>
     </div>
-
     <div class="panel">
       <div>
         <h2>Programme de la semaine</h2>
@@ -629,25 +650,19 @@ q{quotes:"« " " »" "“" "”"}
       </div>
       <div class="prog" id="prog"></div>
     </div>
-
     <div class="panel">
       <span class="label">Défi de la semaine</span>
       <div class="challenge" id="challenge"></div>
     </div>
-
     <div class="panel" id="reel">
       <div class="row spread" style="flex-wrap:nowrap;align-items:flex-start"><span class="label">Défi du réel</span><button class="btn ghost mini" id="reel-next" style="flex:none">Un autre</button></div>
       <div class="challenge" id="reel-box"></div>
       <div class="row reel-city"><span class="note" id="reel-city-txt"></span><button class="btn ghost mini" id="reel-city-edit"></button></div>
       <form class="row reel-city" id="reel-city-form" hidden><input type="text" id="reel-city-in" placeholder="Ta ville" aria-label="Ta ville" autocomplete="address-level2"><button class="btn mini">Valider</button></form>
     </div>
-
-    <div class="panel">
-      <div class="rule">
-        <span class="label">Règle du jour</span>
-        <p class="big" id="rule-title"></p>
-        <p class="fg2" id="rule-text"></p>
-      </div>
+    <div class="panel" id="circle-panel">
+      <div><h3>Mon cercle</h3><p class="muted note">Un classement de la semaine entre proches. Seuls ton pseudo, tes XP de la semaine et ta série sont partagés, et seulement avec les membres de ton cercle.</p></div>
+      <div id="circle-body" style="display:flex;flex-direction:column;gap:10px"></div>
     </div>
   </section>
 
@@ -787,52 +802,17 @@ q{quotes:"« " " »" "“" "”"}
       <h3>Par exercice</h3>
       <div class="excstats" id="excstats"></div>
     </div>
-    <div class="panel">
-      <div><h3>Mes thèmes</h3><p class="muted note">Jusqu'à trois. Citations, « Ce jour-là », dictées, sujets d'écriture et coach s'en inspirent.</p></div>
-      <div class="seg themes" id="themes-seg" role="group" aria-label="Mes thèmes"></div>
-    </div>
-    <div class="panel" id="circle-panel">
-      <div><h3>Mon cercle</h3><p class="muted note">Un classement de la semaine entre proches. Seuls ton pseudo, tes XP de la semaine et ta série sont partagés, et seulement avec les membres de ton cercle.</p></div>
-      <div id="circle-body" style="display:flex;flex-direction:column;gap:10px"></div>
-    </div>
-    <div class="panel">
-      <div class="row spread">
-        <div><h3>Sauvegarde</h3><p class="muted note">Copie tes données pour les garder ou les transférer.</p><span class="sync" id="sync">Progrès enregistrés dans ce navigateur</span></div>
-        <div class="row">
-          <button class="btn" id="export">Copier mes données</button>
-          <button class="btn ghost" id="import">Coller des données</button>
-          <button class="btn ghost" id="reset">Tout effacer</button>
-          <button class="btn ghost" id="logout" hidden>Se déconnecter</button>
-        </div>
-      </div>
-      <div id="reset-confirm" class="row" hidden>
-        <span class="fg2">Effacer tout l'historique ? Ce n'est pas réversible.</span>
-        <button class="btn" id="reset-yes" style="color:var(--bad)">Oui, effacer</button>
-        <button class="btn ghost" id="reset-no">Annuler</button>
-      </div>
-      <div class="row"><span class="muted">Couleurs</span><div class="seg" id="theme-seg" role="group" aria-label="Thème"><button data-th="light">Claires</button><button data-th="dark">Sombres</button><button data-th="auto">Comme le téléphone</button></div></div>
-      <textarea id="export-box" hidden readonly style="min-height:120px;font-family:var(--f-mono);font-size:.8rem"></textarea>
-      <p class="note" id="export-msg" hidden></p>
-      <div id="import-row" hidden style="display:flex;flex-direction:column;gap:8px">
-        <textarea id="import-box" style="min-height:120px;font-family:var(--f-mono);font-size:.8rem" placeholder="Colle ici les données copiées depuis Brain Fit ouvert ailleurs." aria-label="Données à fusionner"></textarea>
-        <div class="row"><button class="btn" id="import-go">Fusionner avec mes progrès</button><span class="note" id="import-msg"></span></div>
-      </div>
-    </div>
-    <div class="panel" id="privacy">
-      <div><h3>Tes données</h3>
-        <p class="fg2" style="max-width:65ch">Avec un compte, Brain Fit garde ton e-mail, tes progrès et tes textes chez Supabase, qui héberge sa base de données. Les autres utilisateurs ne peuvent pas les lire ; techniquement, la personne qui gère ce Brain Fit y a accès. Si tu rejoins un cercle, ses membres voient seulement ton pseudo, tes XP de la semaine et ta série. Quand tu parles au coach, ta demande et le résumé de tes progrès sont envoyés à Claude (Anthropic) pour qu'il réponde. Rien n'est vendu, et il n'y a ni publicité ni mesure d'audience.</p></div>
-      <div class="row"><button class="btn ghost" id="erase" hidden>Effacer mon compte</button></div>
-      <div id="erase-confirm" class="row" hidden>
-        <span class="fg2">Effacer ton compte, tes progrès, tes textes et ta place dans ton cercle ? Ce n'est pas réversible.</span>
-        <button class="btn" id="erase-yes" style="color:var(--bad)">Oui, tout effacer</button>
-        <button class="btn ghost" id="erase-no">Annuler</button>
-      </div>
-      <p class="note" id="erase-msg" role="status"></p>
-    </div>
   </section>
 
   <!-- CONSEILS -->
   <section class="view" id="v-conseils" hidden>
+    <div class="panel">
+      <div class="rule">
+        <span class="label">Règle du jour</span>
+        <p class="big" id="rule-title"></p>
+        <p class="fg2" id="rule-text"></p>
+      </div>
+    </div>
     <div class="panel" id="flori-panel">
       <div><h2>Mon florilège</h2><p class="fg2">Les citations que tu veux garder en tête. Chacune revient à intervalles croissants : 1, 3, 7, 14 puis 30 jours. Réussis-la à chaque fois et elle sera gravée dans le marbre.</p></div>
       <div class="row"><button class="btn primary" id="flori-go">Réviser</button><span class="note" id="flori-sub"></span></div>
@@ -861,6 +841,52 @@ q{quotes:"« " " »" "“" "”"}
     <div class="panel">
       <h2>10 règles pour utiliser l'IA sans t'affaiblir</h2>
       <div class="tips" id="tips"></div>
+    </div>
+  </section>
+
+  <!-- RÉGLAGES -->
+  <section class="view" id="v-reglages" hidden>
+    <div class="panel">
+      <div><h2>Réglages</h2><p class="muted" id="account-line">Progrès enregistrés dans ce navigateur.</p></div>
+      <div class="row"><button class="btn" id="login-open" hidden>Se connecter</button><button class="btn ghost" id="logout" hidden>Se déconnecter</button></div>
+      <form class="row reel-city" id="city-form"><label class="note" for="city-in">Ta ville, pour le défi du réel</label><input type="text" id="city-in" placeholder="Ta ville" autocomplete="address-level2"><button class="btn mini">Valider</button></form>
+    </div>
+    <div class="panel">
+      <div><h3>Mes thèmes</h3><p class="muted note">Jusqu'à trois. Citations, « Ce jour-là », dictées, sujets d'écriture et coach s'en inspirent.</p></div>
+      <div class="seg themes" id="themes-seg" role="group" aria-label="Mes thèmes"></div>
+    </div>
+    <div class="panel">
+      <div class="row spread">
+        <div><h3>Sauvegarde</h3><p class="muted note">Copie tes données pour les garder ou les transférer.</p><span class="sync" id="sync">Progrès enregistrés dans ce navigateur</span></div>
+        <div class="row">
+          <button class="btn" id="export">Copier mes données</button>
+          <button class="btn ghost" id="import">Coller des données</button>
+          <button class="btn ghost" id="reset">Tout effacer</button>
+        </div>
+      </div>
+      <div id="reset-confirm" class="row" hidden>
+        <span class="fg2">Effacer tout l'historique ? Ce n'est pas réversible.</span>
+        <button class="btn" id="reset-yes" style="color:var(--bad)">Oui, effacer</button>
+        <button class="btn ghost" id="reset-no">Annuler</button>
+      </div>
+      <div class="row"><span class="muted">Couleurs</span><div class="seg" id="theme-seg" role="group" aria-label="Thème"><button data-th="light">Claires</button><button data-th="dark">Sombres</button><button data-th="auto">Comme le téléphone</button></div></div>
+      <textarea id="export-box" hidden readonly style="min-height:120px;font-family:var(--f-mono);font-size:.8rem"></textarea>
+      <p class="note" id="export-msg" hidden></p>
+      <div id="import-row" hidden style="display:flex;flex-direction:column;gap:8px">
+        <textarea id="import-box" style="min-height:120px;font-family:var(--f-mono);font-size:.8rem" placeholder="Colle ici les données copiées depuis Brain Fit ouvert ailleurs." aria-label="Données à fusionner"></textarea>
+        <div class="row"><button class="btn" id="import-go">Fusionner avec mes progrès</button><span class="note" id="import-msg"></span></div>
+      </div>
+    </div>
+    <div class="panel" id="privacy">
+      <div><h3>Tes données</h3>
+        <p class="fg2" style="max-width:65ch">Avec un compte, Brain Fit garde ton e-mail, tes progrès et tes textes chez Supabase, qui héberge sa base de données. Les autres utilisateurs ne peuvent pas les lire ; techniquement, la personne qui gère ce Brain Fit y a accès. Si tu rejoins un cercle, ses membres voient seulement ton pseudo, tes XP de la semaine et ta série. Quand tu parles au coach, ta demande et le résumé de tes progrès sont envoyés à Claude (Anthropic) pour qu'il réponde. Rien n'est vendu, et il n'y a ni publicité ni mesure d'audience.</p></div>
+      <div class="row"><button class="btn ghost" id="erase" hidden>Effacer mon compte</button></div>
+      <div id="erase-confirm" class="row" hidden>
+        <span class="fg2">Effacer ton compte, tes progrès, tes textes et ta place dans ton cercle ? Ce n'est pas réversible.</span>
+        <button class="btn" id="erase-yes" style="color:var(--bad)">Oui, tout effacer</button>
+        <button class="btn ghost" id="erase-no">Annuler</button>
+      </div>
+      <p class="note" id="erase-msg" role="status"></p>
     </div>
   </section>
 </div>
@@ -1658,7 +1684,7 @@ function persist(){
   clearTimeout(saveTimer);
   saveTimer=setTimeout(()=>{const snap=JSON.parse(JSON.stringify(state));saving=saving.then(()=>ref.set(snap)).then(()=>{setSync('ok');circlePush().catch(()=>{});}).catch(()=>setSync('err'));},700);
 }
-function setSync(s){$('#sync').textContent=s==='ok'?'Progrès synchronisés avec ton compte':s==='err'?"Synchronisation impossible, progrès gardés dans ce navigateur":'Progrès enregistrés dans ce navigateur';}
+function setSync(s){$('#account-line').textContent=s==='ok'?'Connecté : tes progrès sont synchronisés avec ton compte.':s==='err'?'Synchronisation impossible pour l’instant : tes progrès sont gardés sur cet appareil.':'Sans compte : tes progrès restent sur cet appareil.';$('#sync').textContent=s==='ok'?'Progrès synchronisés avec ton compte':s==='err'?"Synchronisation impossible, progrès gardés dans ce navigateur":'Progrès enregistrés dans ce navigateur';}
 function localOnly(){let ok=false;try{ok=sessionStorage.getItem('brainfit.later')==='1';}catch(e){}$('#syncwarn').hidden=ok;$('#logout').hidden=true;}
 async function initStore(){
   try{
@@ -2248,7 +2274,7 @@ document.addEventListener('pointerover',e=>{const t=e.target.closest&&e.target.c
 document.addEventListener('pointermove',e=>{if(tip.hidden)return;const w=tip.offsetWidth;tip.style.left=Math.min(window.innerWidth-w-8,Math.max(8,e.clientX-w/2))+'px';tip.style.top=(e.clientY-34)+'px';});
 
 $('#export').addEventListener('click',()=>{const t=JSON.stringify(state);const box=$('#export-box');box.value=t;box.hidden=false;$('#import-row').hidden=true;
-  const next=" Ouvre ensuite Brain Fit là où tu veux retrouver tes progrès, puis Progrès › Sauvegarde › « Coller des données » : les deux historiques sont fusionnés, rien n'est effacé.";
+  const next=" Ouvre ensuite Brain Fit là où tu veux retrouver tes progrès, puis la rubrique Sauvegarde › « Coller des données » : les deux historiques sont fusionnés, rien n'est effacé.";
   const msg=t=>{$('#export-msg').textContent=t+next;$('#export-msg').hidden=false;};
   const done=()=>{$('#export').textContent='Copié';msg('Copié.');setTimeout(()=>$('#export').textContent='Copier mes données',1800);};
   const manual=()=>{box.select();msg('Copie tout le texte ci-dessus.');};
@@ -2503,6 +2529,7 @@ const fmtMin=m=>m>=60?Math.floor(m/60)+' h'+(m%60?' '+String(m%60).padStart(2,'0
 function renderScreens(){
   const tgt=state.settings.screenTarget||120, y=addDays(todayKey(),-1), ys=(state.days[y]||{}).screen||{};
   $('#scr-target').value=String(tgt);
+  $('#scr-sum').textContent=ys.min!=null?'hier : '+fmtMin(ys.min)+(ys.min<=tgt?', objectif tenu':''):'temps d’hier à noter';
   if(ys.min!=null&&document.activeElement!==$('#scr-h')&&document.activeElement!==$('#scr-m')){$('#scr-h').value=Math.floor(ys.min/60);$('#scr-m').value=ys.min%60;}
   const v=$('#scr-verdict'); v.replaceChildren();
   if(ys.min!=null){const ok=ys.min<=tgt;v.append(el('span',{class:'pill '+(ok?'good':'bad'),text:ok?'Sous ton objectif · +10 XP':'Au-dessus de ton objectif de '+fmtMin(ys.min-tgt)}));}
@@ -2778,16 +2805,24 @@ function renderSas(){
 try{const d=JSON.parse(localStorage.getItem(SAS_LS)||'null');if(d){$('#sas-q').value=d.q||'';$('#sas-mine').value=d.mine||'';$('#sas-learn').value=d.learn||'';sasRate=d.rate||0;sasStart=d.start||null;}}catch(e){}
 sasUpdate();
 
-const TABS=['aujourdhui','exercices','coach','progres','conseils'];
+const TABS=['aujourdhui','semaine','exercices','coach','progres','conseils','reglages'];
 function showTab(t){
   if(t==='exercices'&&$('#stage').hidden)$('#exgrid').hidden=false;
   if(!TABS.includes(t))t='aujourdhui';
   $$('.tabs button').forEach(b=>b.setAttribute('aria-selected',String(b.dataset.tab===t)));
   TABS.forEach(x=>$('#v-'+x).hidden=x!==t);
-  if(t==='progres'){renderProgress();renderCarnet();renderXpPanel();renderScreenChart();renderCircle();}
+  $('#go-biblio').toggleAttribute('aria-current',t==='conseils'); $('#go-settings').toggleAttribute('aria-current',t==='reglages');
+  if(t==='conseils'||t==='reglages')$('#go-'+(t==='conseils'?'biblio':'settings')).setAttribute('aria-current','page');
+  if(t==='progres'){renderProgress();renderCarnet();renderXpPanel();renderScreenChart();}
+  if(t==='semaine')renderCircle();
+  if(t==='reglages')$('#city-in').value=city();
   if(t==='coach'){renderSas();renderCoach();}
   if(location.hash!=='#'+t)try{history.replaceState(null,'','#'+t);}catch(e){}
 }
+$('#city-form').addEventListener('submit',e=>{e.preventDefault();state.settings.city=$('#city-in').value.trim().slice(0,60);save();renderReel();toast('<span>Ville enregistrée.</span>');});
+$('#go-biblio').addEventListener('click',()=>{showTab('conseils');window.scrollTo(0,0);});
+$('#go-settings').addEventListener('click',()=>{showTab('reglages');window.scrollTo(0,0);});
+$('#login-open').addEventListener('click',()=>{try{sessionStorage.removeItem('brainfit.later');}catch(e){}$('#syncwarn').hidden=false;showTab('aujourdhui');window.scrollTo(0,0);$('#login-email').focus();});
 $$('.tabs button').forEach(b=>b.addEventListener('click',()=>{const same=b.getAttribute('aria-selected')==='true';showTab(b.dataset.tab);if(!same)window.scrollTo(0,0);}));
 window.addEventListener('hashchange',()=>showTab(location.hash.slice(1)));
 
@@ -3544,8 +3579,9 @@ function renderOrigins(){
 }
 function renderAll(){
   renderThemes();renderQuoteDay();renderCjl();renderFlori();renderGoal();renderProgram();renderScreens();renderToday();renderExGrid();
-  if(!$('#v-progres').hidden){renderProgress();renderCarnet();renderCircle();}
-  $('#erase').hidden=!ref;
+  if(!$('#v-progres').hidden){renderProgress();renderCarnet();}
+  if(!$('#v-semaine').hidden)renderCircle();
+  $('#erase').hidden=!ref; $('#login-open').hidden=!!ref||!window.bfSupabase;
   if(!$('#v-coach').hidden)renderSas();
 }
 function showGoalProposal(text){

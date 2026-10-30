@@ -63,7 +63,7 @@ Pour changer de modèle (par exemple un modèle moins cher), ajoute dans l'ongle
 ### 6. Reprendre tes progrès de l'ancienne version
 
 1. Dans Brain Fit ouvert dans l'app Claude : **Progrès › Sauvegarde › Copier mes données**.
-2. Dans le nouveau site, connecté : **Progrès › Sauvegarde › Coller des données**, colle, puis **Fusionner avec mes progrès**. Rien n'est effacé, les deux historiques s'additionnent.
+2. Dans le nouveau site, connecté : **Réglages (roue dentée en haut) › Sauvegarde › Coller des données**, colle, puis **Fusionner avec mes progrès**. Rien n'est effacé, les deux historiques s'additionnent.
 
 ## Coût
 

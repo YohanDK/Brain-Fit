@@ -9,7 +9,7 @@ const err=(id,m)=>errs.push(`${id} : ${m}`), warn=(id,m)=>warns.push(`${id} : ${
 const str=v=>typeof v==='string'&&v.trim().length>0;
 const date=v=>/^\d{4}-\d{2}-\d{2}$/.test(v||'');
 // les questions d'avant la mise en place des sources (octobre 2026) en sont dispensées ; toutes les suivantes doivent en avoir
-const ANCIENNES={problemes:42,sophismes:40,erreursIA:26,fermi:30,ortho:61};
+const ANCIENNES={problemes:42,sophismes:40,erreursIA:26,fermi:30,ortho:61,textes:6,graphiques:0};
 
 const ids=new Set();
 function common(bank,it,i,fields){
@@ -59,6 +59,42 @@ B.ortho.forEach((o,i)=>{const id=common('ortho',o,i,['phrase','regle']);
   else if(!Number.isInteger(o.bonne)||o.bonne<0||o.bonne>=o.choix.length)err(id,'bonne hors des choix');});
 noDup('ortho','phrase');
 
+const THEMES=['histoire','sciences','philo','eco','politique','lettres','sport','nature'];
+B.textes.forEach((t,i)=>{
+  const id=t.id||`textes[${i}]`;
+  if(!str(t.id))err(id,'id manquant');else if(ids.has(t.id))err(id,'id déjà utilisé');else ids.add(t.id);
+  for(const f of ['titre','texte','th'])if(!str(t[f]))err(id,`champ « ${f} » vide`);
+  if(i>=ANCIENNES.textes){if(!str(t.src))err(id,'src obligatoire pour un nouveau texte');if(!date(t.vu))err(id,'vu obligatoire (AAAA-MM-JJ) pour un nouveau texte');}
+  const n=(String(t.texte).match(/\S+/g)||[]).length; if(n<90||n>200)err(id,`${n} mots : un texte de lecture fait entre 90 et 200 mots`);
+  String(t.th).split(' ').forEach(x=>{if(!THEMES.includes(x))err(id,`thème inconnu : ${x}`);});
+  if(!Array.isArray(t.quiz)||t.quiz.length!==2)err(id,'il faut exactement 2 questions');
+  else t.quiz.forEach(([qq,opts],k)=>{if(!str(qq)||!Array.isArray(opts)||opts.length<3||new Set(opts).size!==opts.length||!opts.every(str))err(id,`question ${k+1} : au moins 3 réponses, toutes différentes (la bonne en premier)`);});
+  if(!Array.isArray(t.idees)||t.idees.length!==3||!t.idees.every(str))err(id,'il faut exactement 3 idées clés');
+});
+noDup('textes','titre');
+
+// graphiques : chaque valeur affichée doit tenir dans l'axe, dans la version piégée comme dans la version honnête
+B.graphiques.forEach((g,i)=>{
+  const id=common('graphiques',g,i,['titre','expl']);
+  if(!B.pieges[g.piege])err(id,`piège inconnu : ${g.piege}`);
+  for(const [nom,v] of [['piégée',g],['honnête',Object.assign({},g,g.corr||{})]]){
+    if(!['barres','courbe'].includes(v.type))err(id,`${nom} : type barres ou courbe`);
+    if(!Array.isArray(v.x)||!v.x.length)err(id,`${nom} : x vide`);
+    if(!(v.ymin<v.ymax))err(id,`${nom} : ymin doit être inférieur à ymax`);
+    if(v.xnum&&v.xnum.length!==v.x.length)err(id,`${nom} : xnum et x de longueurs différentes`);
+    if(v.fenetre&&!(v.fenetre[0]>=0&&v.fenetre[1]<v.x.length&&v.fenetre[0]<v.fenetre[1]))err(id,`${nom} : fenêtre hors des données`);
+    for(const x of v.s||[]){
+      if(x.v.length!==v.x.length)err(id,`${nom} : une série n'a pas autant de valeurs que d'étiquettes`);
+      let t=0; let vals=v.cumul?x.v.map(y=>t+=y):x.v; if(v.fenetre)vals=vals.slice(v.fenetre[0],v.fenetre[1]+1);
+      const [a,b]=x.axe==='d'?[v.ymin2,v.ymax2]:[v.ymin,v.ymax];
+      if(!(a<b))err(id,`${nom} : axe de droite sans bornes`);
+      if(vals.some(y=>!(y>=a&&y<=b)))err(id,`${nom} : une valeur sort de l'axe (${a} à ${b})`);
+    }
+  }
+  if(g.piege!=='honnete'&&g.piege!=='axes'&&!g.corr)warn(id,'pas de version honnête à montrer');
+});
+if(!B.graphiques.some(g=>g.piege==='honnete'))warn('graphiques','aucun graphique honnête');
+
 // variantes : 500 tirages par modèle, la réponse rédigée doit être celle que l'on retrouve en comptant
 const mids=new Set();
 for(const m of B.modeles){
@@ -77,7 +113,7 @@ for(const m of B.modeles){
 }
 
 const n=k=>B[k].filter(x=>!x.retire).length;
-console.log(`Banques : ${n('problemes')} problèmes, ${n('sophismes')} arguments, ${n('erreursIA')} erreurs d'IA, ${n('fermi')} estimations, ${n('ortho')} phrases, ${B.modeles.length} modèles de variantes.`);
+console.log(`Banques : ${n('problemes')} problèmes, ${n('sophismes')} arguments, ${n('erreursIA')} erreurs d'IA, ${n('fermi')} estimations, ${n('ortho')} phrases, ${n('textes')} textes, ${n('graphiques')} graphiques, ${B.modeles.length} modèles de variantes.`);
 warns.forEach(w=>console.log('Attention · '+w));
 if(errs.length){errs.forEach(e=>console.error('Erreur · '+e));console.error(`${errs.length} erreur(s) : à corriger avant de publier.`);process.exit(1);}
 console.log('Tout est en ordre.');

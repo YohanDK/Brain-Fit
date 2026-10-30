@@ -12,7 +12,7 @@ Le site s'installe sur le téléphone comme une appli. Avec un compte, les progr
 | `supabase/setup.sql` | Supabase | La table qui garde tes progrès. Chacun ne voit que les siens. |
 | `supabase/cercle.sql` | Supabase | Les cercles d'amis et leur classement de la semaine, et l'effacement de ses données. |
 | `supabase/signalements.sql` | Supabase | Les signalements « Je conteste » envoyés depuis les corrections. |
-| `public/banques.js` | GitHub Pages | Les problèmes, sophismes, erreurs d'IA, estimations et phrases d'orthographe, avec leur niveau et leur source, et les modèles de variantes. |
+| `public/banques.js` | GitHub Pages | Les problèmes, sophismes, erreurs d'IA, estimations, phrases d'orthographe, textes de lecture et graphiques, avec leur niveau et leur source, et les modèles de variantes. |
 | `tools/verifier-banques.js` | GitHub | Vérifie les banques avant chaque publication : une question mal formée ou un calcul faux bloque la mise en ligne. |
 | `supabase/functions/coach/` | Supabase | Le coach : il reçoit la demande de la page et appelle Claude avec ta clé API, qui reste secrète. |
 | `supabase/functions/account/` | Supabase | Efface un compte et toutes ses données, à la demande de son propriétaire. |

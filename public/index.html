@@ -360,6 +360,21 @@ table.week td.num{font-family:var(--f-mono)}
 .contest{display:flex;flex-direction:column;gap:8px;align-items:flex-start}
 .btn.small{padding:4px 8px;font-size:.85rem;font-weight:600}
 .lvnote{margin:0}
+.chartcard{margin:0;width:min(520px,100%);display:flex;flex-direction:column;gap:4px;text-align:left}
+.chartcard figcaption{display:flex;flex-direction:column}
+.chart{width:100%;height:auto;font-family:var(--f-body)}
+.chart .grid{stroke:var(--line);stroke-width:1}
+.chart .axis{stroke:var(--fg2);stroke-width:1.2}
+.chart .tk{fill:var(--fg2);font-size:11px}
+.chart .tk.s1{fill:var(--gold-deep)}
+.chart .val{fill:var(--fg);font-size:11px;font-weight:700}
+.chart .bar{fill:var(--accent)}
+.chart .ln{fill:none;stroke-width:2.2}
+.chart .ln.s0{stroke:var(--accent)} .chart .dt.s0{fill:var(--accent)}
+.chart .ln.s1{stroke:var(--gold-deep)} .chart .dt.s1{fill:var(--gold-deep)}
+.chart-leg{display:flex;gap:12px;flex-wrap:wrap;font-size:.85rem}
+.chart-leg .s0{color:var(--accent)} .chart-leg .s1{color:var(--gold-deep)}
+.precis .check{display:flex;gap:8px;align-items:flex-start;text-align:left}
 .me-q{align-self:flex-end;background:var(--accent);color:var(--on-accent);padding:8px 14px;border-radius:14px 14px 4px 14px;max-width:85%;text-align:left}
 .hud{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
 .freeze{display:inline-flex;align-items:center;gap:3px;margin-left:6px;padding-left:8px;border-left:1px solid currentColor;color:var(--ice);font-size:.9rem}
@@ -1123,6 +1138,7 @@ const NB=window.NEO_BANQUES;
 const EX={
   write:{name:'Écriture sans IA',skill:'Pensée & expression',desc:"Un sujet, un minuteur, zéro copier-coller. Ensuite, le coach commente ton texte.",unit:'mots'},
   probleme:{name:'Problème du jour',skill:'Raisonnement',desc:"Un problème piège. Écris ton raisonnement, puis compare avec la solution et l'avis du coach.",unit:'% de réussite'},
+  graphe:{name:'Graphique trompeur',skill:'Lecture des chiffres',desc:"Trois graphiques : trouve ce qui cloche, ou reconnais celui qui est honnête. Puis vois la version juste.",unit:'% de bonnes réponses'},
   erreuria:{name:"Trouve l'erreur de l'IA",skill:'Vigilance critique',desc:"Des réponses d'IA convaincantes, avec une erreur cachée. Trouve la phrase fautive et dis si tu en es sûr.",unit:'% de bonnes réponses'},
   hypotheses:{name:'Hypothèses concurrentes',skill:'Raisonnement',desc:"Un fait surprenant : trouve 5 explications possibles, puis comment les départager.",unit:'% de complétion'},
   sophismes:{name:'Détecteur de sophismes',skill:'Esprit critique',desc:"Cinq arguments : trouve la faille, ou reconnais celui qui tient debout. Annonce ta confiance avant chaque réponse.",unit:'% de bonnes réponses'},
@@ -1145,9 +1161,10 @@ const EX={
 };
 // d'où vient chaque exercice : affiché sous le titre du plateau et dans la Bibliothèque
 const ORIG={
-  write:"L'écriture libre (freewriting) vient de Peter Elbow, Writing Without Teachers (1973) : écrire sans s'arrêter ni se corriger, pour que la pensée se forme en écrivant. Le format « Expliquer » reprend la technique dite de Feynman : si tu ne sais pas l'expliquer simplement, tu ne l'as pas compris. La « Disputatio » reprend la forme des articles de la Somme théologique de saint Thomas d'Aquin (XIIIe siècle), héritée de la dispute pratiquée dans les universités médiévales : objections, argument en sens contraire, réponse, réponse à chaque objection. Et ce que l'on produit soi-même se retient mieux que ce que l'on lit : c'est l'effet de génération (Slamecka et Graf, 1978).",
+  write:"L'écriture libre (freewriting) vient de Peter Elbow, Writing Without Teachers (1973) : écrire sans s'arrêter ni se corriger, pour que la pensée se forme en écrivant. Le format « Expliquer » reprend la technique dite de Feynman : si tu ne sais pas l'expliquer simplement, tu ne l'as pas compris. La « Disputatio » reprend la forme des articles de la Somme théologique de saint Thomas d'Aquin (XIIIe siècle), héritée de la dispute pratiquée dans les universités médiévales : objections, argument en sens contraire, réponse, réponse à chaque objection. Et ce que l'on produit soi-même se retient mieux que ce que l'on lit : c'est l'effet de génération (Slamecka et Graf, 1978). L'« Homme d'acier » applique les règles d'Anatol Rapoport, popularisées par Daniel Dennett (Intuition Pumps, 2013) : reformuler la position adverse si bien que son défenseur vous en remercie, avant de la critiquer. Le « Résumer » se vérifie idée par idée : garder la thèse et ses appuis, c'est ce qui distingue un résumé d'un extrait.",
   probleme:"La plupart de ces énigmes viennent du test de réflexion cognitive de Shane Frederick (2005) : la raquette et la balle, les machines, les nénuphars. Elles opposent la réponse intuitive, le « système 1 » de Daniel Kahneman, au calcul réfléchi, le « système 2 ». S'y ajoutent la tâche de sélection de Peter Wason (1966, les quatre cartes), l'oubli du taux de base étudié par Kahneman et Tversky, et le problème de Monty Hall. Une fois tous vus, des variantes changent les nombres et l'histoire : la réponse est recalculée par le code, et l'on ne peut plus réussir de mémoire. Le niveau suit la règle des 85 % : on apprend le mieux en réussissant environ quatre fois sur cinq (Wilson et al., 2019).",
   erreuria:"Un format conçu pour Néophyte, à partir d'un constat : plus on fait confiance à l'IA, moins on vérifie (Lee et al., CHI 2025). Il reprend le réflexe des vérificateurs professionnels étudié par Sam Wineburg et Sarah McGrew à Stanford : ne jamais juger un texte à son aisance. Les réponses piégées ont été écrites pour l'application, et le coach peut en inventer de nouvelles.",
+  graphe:"Darrell Huff a dressé l'inventaire des graphiques qui trompent dans How to Lie with Statistics (1954), l'un des livres de statistique les plus vendus. Alberto Cairo l'a mis à jour pour l'ère des réseaux sociaux dans How Charts Lie (2019) : un graphique n'est pas une preuve mais un argument, qu'il faut lire comme tel. Les données de l'exercice sont fictives ; les pièges, eux, sont réels. Des graphiques honnêtes sont glissés parmi eux, pour ne pas apprendre à se méfier de tout.",
   hypotheses:"La méthode des hypothèses multiples est due au géologue Thomas Chamberlin (1890). Les analystes de la CIA l'ont formalisée sous le nom d'analyse des hypothèses concurrentes (Richards Heuer, Psychology of Intelligence Analysis, 1999), pour se protéger du biais de confirmation.",
   sophismes:"La liste remonte à Aristote, qui décrit treize façons de réfuter en trompant dans ses Réfutations sophistiques. Schopenhauer en a tiré un manuel ironique, L'Art d'avoir toujours raison (écrit vers 1830, publié en 1864). Les noms modernes (homme de paille, pente glissante, biais du survivant) viennent des manuels de logique informelle. Des arguments solides sont glissés parmi eux, contre l'excès inverse : voir des sophismes partout. Et l'on annonce sa confiance avant chaque réponse, comme les « superprévisionnistes » étudiés par Philip Tetlock (Superforecasting, 2015).",
   fermi:"Le physicien Enrico Fermi était célèbre pour ses estimations éclair : lors du premier essai atomique, en 1945, il évalua la puissance de l'explosion en lâchant des bouts de papier et en mesurant leur déplacement par le souffle. Sa question fétiche à ses étudiants : combien y a-t-il d'accordeurs de piano à Chicago ?",
@@ -1493,19 +1510,13 @@ const ARGU=["Faut-il interdire les téléphones portables à l'école ?","Le té
 const ARGU_TH=['politique sciences','eco','eco politique','sciences philo','philo','politique sciences','sciences','eco politique','eco','politique nature','histoire politique','sport','lettres','philo','sport eco','nature eco'];
 const EXPL=["l'inflation","les intérêts composés","pourquoi le ciel est bleu","comment fonctionne un vaccin","ce qu'est un algorithme","l'effet de serre","la loi de l'offre et de la demande","comment un avion tient en l'air","ce qu'est une probabilité conditionnelle","comment la mémoire à long terme se forme","ce qu'est une blockchain","pourquoi il y a des saisons","pourquoi la Révolution française a éclaté","comment une loi est votée en France","ce qu'est le hors-jeu au football","pourquoi l'entraînement fractionné améliore l'endurance","ce qu'est un sonnet","ce que voulait dire Descartes par « Je pense, donc je suis »","comment se forment les montagnes"];
 const EXPL_TH=['eco','eco','sciences nature','sciences','sciences','sciences nature','eco','sciences','sciences','sciences','eco sciences','nature sciences','histoire','politique','sport','sport sciences','lettres','philo','nature'];
-const SOURCES=[
-  ["Le sommeil et la mémoire","Pendant longtemps, on a pensé que le cerveau se mettait en veille la nuit. Les recherches des dernières décennies montrent l'inverse : le sommeil joue un rôle actif dans la mémoire. Pendant le sommeil lent profond, l'hippocampe « rejoue » les expériences de la journée et les transfère progressivement vers le cortex, où elles sont stockées à plus long terme. Le sommeil paradoxal, lui, semble aider à relier les souvenirs entre eux et à en extraire des règles générales. Une nuit blanche après un apprentissage réduit nettement ce que l'on retient, même après plusieurs nuits de récupération. À l'inverse, une courte sieste après une séance d'étude peut améliorer la rétention. Conclusion pratique : réviser tard en sacrifiant son sommeil est souvent un mauvais calcul."],
-  ["L'effet d'espacement","Si tu dois apprendre quelque chose, vaut-il mieux l'étudier trois heures d'affilée ou trois fois une heure, à quelques jours d'intervalle ? Depuis les travaux d'Hermann Ebbinghaus à la fin du XIXe siècle, la réponse est connue : l'apprentissage espacé l'emporte presque toujours. Quand on révise juste avant d'oublier, le cerveau doit faire un effort pour retrouver l'information, et cet effort renforce la trace. Réviser en bloc donne une impression de maîtrise, car tout est frais, mais cette impression est trompeuse : ce qui est appris vite s'oublie vite. Les applications de cartes mémoire reposent sur ce principe en programmant les révisions à des intervalles croissants. L'effet a été reproduit des centaines de fois, chez des enfants comme chez des adultes."],
-  ["Socrate contre l'écriture","Dans le Phèdre, écrit par Platon vers 370 avant notre ère, Socrate raconte une légende égyptienne. Le dieu Theuth présente l'écriture au roi Thamous comme un remède pour la mémoire et la sagesse. Le roi refuse : selon lui, l'écriture produira l'oubli, car les hommes, se fiant aux signes extérieurs, cesseront d'exercer leur mémoire. Ils paraîtront savants sans l'être, ayant beaucoup lu sans avoir été instruits. L'argument fait sourire aujourd'hui, car l'écriture a démultiplié la pensée humaine. Mais il n'est pas absurde : toute technologie qui externalise une fonction mentale la transforme. La vraie question n'est pas de savoir si l'on doit utiliser l'outil, mais ce que l'on choisit de continuer à faire soi-même."],
-  ["Le biais de confirmation","Nous ne cherchons pas l'information de façon neutre. Face à une question, nous avons tendance à remarquer, retenir et juger plus convaincants les éléments qui confirment ce que nous pensons déjà, et à ignorer ou minimiser ceux qui le contredisent. C'est le biais de confirmation. Il ne touche pas que les personnes peu instruites : des experts y sont sujets dans leur propre domaine. Il s'aggrave quand le sujet nous tient à cœur ou touche notre identité. Les moteurs de recherche et les assistants conversationnels peuvent l'amplifier, car la manière dont on formule la question oriente souvent la réponse. Un antidote simple consiste à chercher activement le meilleur argument contre sa propre position avant de conclure."],
-  ["Le mythe du multitâche","Beaucoup de gens pensent bien gérer plusieurs tâches à la fois. Pour les tâches qui demandent de l'attention, le cerveau ne fait en réalité pas deux choses en même temps : il passe rapidement de l'une à l'autre. Chaque bascule a un coût. Il faut quelques instants pour se réengager, et une partie de l'attention reste accrochée à la tâche précédente. Résultat : on va moins vite et on fait plus d'erreurs que si l'on enchaînait les tâches une par une. Les notifications aggravent le problème, car elles provoquent des bascules non choisies. Plusieurs études suggèrent même que ceux qui pratiquent le plus le multitâche avec les médias se laissent davantage distraire par les informations sans importance."],
-  ["La pratique délibérée","Pourquoi certaines personnes progressent-elles pendant des années alors que d'autres stagnent malgré autant d'heures de pratique ? Le psychologue Anders Ericsson a proposé une réponse : ce n'est pas la quantité d'entraînement qui compte le plus, mais sa qualité. La pratique délibérée vise une faiblesse précise, se situe juste au-delà de ce que l'on sait faire, s'accompagne d'un retour immédiat et demande une concentration intense. Elle est donc inconfortable. Jouer pour le plaisir ou répéter ce que l'on maîtrise déjà fait peu progresser. Ce cadre a été discuté et nuancé depuis, notamment sur la part du talent, mais son message central reste utile : pour s'améliorer, il faut chercher la difficulté plutôt que l'éviter."]
-];
+const SOURCES=NB.textes.filter(t=>!t.retire).map(t=>[t.titre,t.texte]);
 const WMODES={
   libre:{label:'Libre',hint:"Écris sans t'arrêter ni chercher d'aide. Pas besoin d'être parfait.",crit:"clarté, structure, précision du vocabulaire, voix personnelle"},
   argu:{label:'Argumenter',hint:"Prends position. Une thèse claire, deux arguments avec un exemple chacun, puis la meilleure objection et ta réponse.",crit:"clarté de la thèse, solidité des arguments, pertinence des exemples, traitement honnête de l'objection, enchaînement logique"},
+  acier:{label:"Homme d'acier",hint:"L'inverse de l'homme de paille : défends la position que tu ne partages pas, sous sa forme la plus forte. Ses meilleures raisons, ses faits les plus solides, ce qu'elle a de vrai. Réussi si un de ses partisans te disait : « Je n'aurais pas mieux dit. »",crit:"fidélité à la position adverse, force réelle des raisons, absence de caricature ou d'ironie, part de vérité reconnue"},
   expl:{label:'Expliquer',hint:"Méthode Feynman : explique à un enfant de 12 ans, sans jargon, avec une analogie et un exemple concret. Là où tu bloques, c'est que tu ne comprends pas encore.",crit:"exactitude, simplicité, qualité de l'analogie, trous ou erreurs dans la compréhension"},
-  resume:{label:'Résumer',hint:"Lis le texte (2 minutes au plus). Il disparaît ensuite : résume-le de mémoire en 60 mots maximum.",crit:"fidélité aux idées principales, hiérarchisation, concision, reformulation personnelle"},
+  resume:{label:'Résumer',hint:"Lis le texte (2 minutes au plus). Il disparaît ensuite : résume-le de mémoire en 60 mots maximum. À la fin, tu vérifies idée par idée.",crit:"fidélité aux idées principales, hiérarchisation, concision, reformulation personnelle"},
   citation:{label:'Citation',hint:"Commente la citation : ce qu'elle veut dire, si tu es d'accord et pourquoi, un exemple tiré de ta vie ou de l'histoire, puis sa limite.",crit:"compréhension de la citation et de son contexte, position claire, exemple concret et pertinent, nuance ou limite, clarté"},
   disput:{label:'Disputatio',hint:"À la manière de la Somme de saint Thomas. Il semble que : les deux objections les plus fortes contre ta position. En sens contraire : un argument ou une autorité. Je réponds que : ta réponse, avec les distinctions nécessaires. Puis réponds à chaque objection. On cherche la vérité, pas la victoire.",crit:"question bien posée, force réelle des objections (pas d'hommes de paille), argument en sens contraire, justesse des distinctions dans la réponse, réponse précise à chaque objection en reconnaissant sa part de vérité, ordre et sobriété"},
   revise:{label:'Réviser',hint:"Reprends un de tes anciens textes, avec un œil neuf. Clarifie, coupe le superflu, renforce les arguments faibles. Réviser, c'est la moitié de l'écriture.",crit:"progrès entre les deux versions : clarté, concision, structure, précision, force des arguments"}
@@ -1544,14 +1555,7 @@ function textStats(s,mins){
   return{words:n,avgSent:Math.round(n/sents*10)/10,variety:first.length?Math.round(new Set(first).size/first.length*100):0,wpm:mins>0?Math.round(n/mins):0};
 }
 const ORTHO=NB.ortho.map(o=>[o.phrase,o.choix,o.bonne,o.regle]);
-const QUIZ={
-  "Le sommeil et la mémoire":[["Pendant quelle phase l'hippocampe « rejoue »-t-il les expériences de la journée ?",["Le sommeil lent profond","Le sommeil paradoxal","Le sommeil léger"]],["Que provoque une nuit blanche après un apprentissage ?",["Une baisse de rétention qui persiste malgré la récupération","Rien, si l'on récupère les nuits suivantes","Une meilleure mémorisation"]]],
-  "L'effet d'espacement":[["Qui a mis en évidence l'effet d'espacement ?",["Hermann Ebbinghaus","Anders Ericsson","Platon"]],["Pourquoi réviser en bloc est-il trompeur ?",["Ça donne une impression de maîtrise qui ne dure pas","Ça fatigue trop le cerveau","Ça empêche de dormir"]]],
-  "Socrate contre l'écriture":[["Dans quel dialogue de Platon se trouve cette légende ?",["Le Phèdre","La République","Le Banquet"]],["Selon le roi Thamous, l'écriture va…",["produire l'oubli","rendre les hommes plus sages","remplacer les dieux"]]],
-  "Le biais de confirmation":[["Quel antidote le texte propose-t-il ?",["Chercher le meilleur argument contre sa propre position","Lire plus de sources qui vont dans son sens","Demander l'avis d'un expert"]],["Quand ce biais s'aggrave-t-il ?",["Quand le sujet touche notre identité","Quand on lit sur papier","Quand on est fatigué"]]],
-  "Le mythe du multitâche":[["Que fait le cerveau face à deux tâches qui demandent de l'attention ?",["Il bascule de l'une à l'autre","Il les traite en parallèle","Il en ignore une"]],["Qu'est-ce que les notifications aggravent ?",["Les bascules d'attention non choisies","La mémoire à long terme","La fatigue visuelle"]]],
-  "La pratique délibérée":[["Qui a proposé la notion de pratique délibérée ?",["Anders Ericsson","Hermann Ebbinghaus","Daniel Kahneman"]],["Quelle est l'une de ses caractéristiques ?",["Elle vise une faiblesse précise","Elle répète ce que l'on maîtrise déjà","Elle se fait sans retour extérieur"]]]
-};
+const QUIZ=Object.fromEntries(NB.textes.map(t=>[t.titre,t.quiz]));
 const AIERR=NB.erreursIA.map(a=>[a.question,a.phrases,a.faute,a.expl]);
 const SCENARIOS=[
   "Les ventes d'un glacier de bord de mer ont chuté de 30 % en juillet par rapport à l'an dernier.",
@@ -3182,7 +3186,7 @@ window.addEventListener('hashchange',()=>showTab(location.hash.slice(1)));
 // les familles d'exercices, de la plus importante à la plus légère
 const EXFAM=[
   ['Écrire',"Le cœur de l'entraînement : penser en écrivant, sans aide.",['write','ortho','dictee']],
-  ['Raisonner',"Débusquer l'erreur, le sophisme et la réponse trop rapide.",['probleme','erreuria','sophismes','hypotheses','fermi']],
+  ['Raisonner',"Débusquer l'erreur, le sophisme et la réponse trop rapide.",['probleme','erreuria','sophismes','graphe','hypotheses','fermi']],
   ['Lire et retenir',"Lire vraiment, puis garder en mémoire ce qui compte.",['lecture','citations','chrono']],
   ['Hors écran',"Le papier et le silence : là où l'attention se reforme.",['fiche','focus']],
   ['Échauffements',"Des tests classiques de psychologie cognitive, courts et chronométrés. Utiles pour s'échauffer ; l'écriture et le raisonnement comptent davantage.",['calc','span','words','nback','stroop','fluency']]
@@ -3207,6 +3211,62 @@ function freshPick(bank,arr,n,ex){
   const idx=[...arr.keys()].filter(i=>!(meta&&meta[i].retire)).sort(()=>Math.random()-.5).sort((a,b)=>age(a)-age(b)||dist(a)-dist(b)||(sn[a]||0)-(sn[b]||0)).slice(0,n);
   idx.forEach(i=>{sn[i]=now;}); persist(); return idx.map(i=>arr[i]);
 }
+// l'homme d'acier se relit avec les règles de Rapoport, rapportées par Daniel Dennett
+function acierCheck(){
+  const crit=['Un partisan de cette position la reconnaîtrait, et la trouverait même bien dite','J’ai donné au moins une raison que je trouve vraiment forte','Pas de caricature, pas d’ironie, pas de « certains prétendent »','J’ai reconnu ce qu’elle a de vrai, ou ce que j’en ai appris'];
+  const box=el('div',{class:'answer precis'},el('span',{class:'label',text:'Relis-toi en partisan'}));
+  const checks=crit.map((d,i)=>{const c=el('input',{type:'checkbox',id:'ac-'+i});box.append(el('label',{class:'check',for:'ac-'+i},c,document.createTextNode(' '+d)));return c;});
+  const ok=el('button',{class:'btn',text:'Valider'}), out=el('p',{class:'note',role:'status'});
+  ok.addEventListener('click',()=>{
+    const k=checks.filter(c=>c.checked).length; checks.forEach(c=>c.disabled=true); ok.remove();
+    const last=texts[texts.length-1]; if(last&&last.mode==='acier'){last.acier=k;saveTexts();}
+    out.textContent=k===4?'Un vrai homme d’acier. Tu peux maintenant répondre à cette position : tu sais contre quoi tu te bats.':'Ce qui manque est ce qui rend l’exercice utile. Reprends-le demain dans « Réviser ».';
+  });
+  box.append(el('div',{class:'row'},ok),out);
+  return box;
+}
+// le résumé se vérifie sans coach : les trois idées clés du texte, et l'on coche celles que l'on a gardées
+function precisCheck(src,text){
+  const t=NB.textes.find(x=>x.titre===src[0]); if(!t)return null;
+  const box=el('div',{class:'answer precis'},el('span',{class:'label',text:'As-tu gardé l’essentiel ?'}),el('p',{class:'fg2',text:'Les trois idées clés du texte. Coche celles qui sont dans ton résumé, même dites autrement.'}));
+  const checks=t.idees.map((d,i)=>{const c=el('input',{type:'checkbox',id:'pc-'+i});box.append(el('label',{class:'check',for:'pc-'+i},c,document.createTextNode(' '+d)));return c;});
+  const ok=el('button',{class:'btn',text:'Valider'}), out=el('p',{class:'note',role:'status'});
+  ok.addEventListener('click',()=>{
+    const k=checks.filter(c=>c.checked).length; checks.forEach(c=>c.disabled=true); ok.remove();
+    const last=texts[texts.length-1]; if(last&&last.mode==='resume'){last.idees=k;saveTexts();}
+    out.textContent=k===3?'Les trois idées y sont : c’est un vrai résumé, pas un extrait.':k===2?'Deux idées sur trois. Relis le texte : laquelle as-tu laissée de côté, et pourquoi ?':'Il manque l’essentiel. Un bon résumé garde la thèse et ses appuis, pas les détails frappants.';
+  });
+  box.append(el('div',{class:'row'},ok),out,contestBtn('resume',t.id,t.titre));
+  return box;
+}
+/* ---------- graphique trompeur : dessin SVG d'un graphique décrit dans banques.js ---------- */
+function chartSVG(g){
+  const W=340, H=220, L=44, R=g.s.some(x=>x.axe==='d')?44:12, T=14, B=34, w=W-L-R, h=H-T-B;
+  const cut=a=>g.fenetre?a.slice(g.fenetre[0],g.fenetre[1]+1):a, cum=a=>{let t=0;return a.map(v=>t+=v);};
+  const xs=cut(g.x), xn=g.xnum?cut(g.xnum):null, ser=g.s.map(x=>({...x,v:cut(g.cumul?cum(x.v):x.v)}));
+  const nice=st=>{const p=Math.pow(10,Math.floor(Math.log10(st))),k=st/p;return(k<=1?1:k<=2?2:k<=2.5?2.5:k<=5?5:10)*p;};
+  const scale=(a,b)=>{const st=nice((b-a)/4);return{a,b,st,y:v=>T+h-(v-a)/(b-a)*h};};
+  const S1=scale(g.ymin,g.ymax), S2=g.ymax2!=null?scale(g.ymin2,g.ymax2):null;
+  const n=xs.length, px=i=>g.type==='barres'?L+w*(i+.5)/n:xn&&g.prop?L+12+(w-24)*(xn[i]-xn[0])/(xn[n-1]-xn[0]):L+12+(w-24)*(n>1?i/(n-1):.5);
+  const f=v=>fmt(Math.round(v*100)/100+0), esc=t=>String(t).replace(/&/g,'&amp;').replace(/</g,'&lt;');
+  let o=`<svg viewBox="0 0 ${W} ${H}" class="chart" role="img" aria-label="${esc(g.titre)}">`;
+  const ticks=(Sc,side)=>{for(let v=Math.ceil(Sc.a/Sc.st-1e-9)*Sc.st;v<=Sc.b+1e-9;v+=Sc.st){const y=Sc.y(v);if(side==='g')o+=`<line x1="${L}" x2="${W-R}" y1="${y}" y2="${y}" class="grid"/>`;o+=`<text x="${side==='g'?L-6:W-R+6}" y="${y+4}" text-anchor="${side==='g'?'end':'start'}" class="${side==='d'?'tk s1':'tk'}">${f(v)}</text>`;}};
+  ticks(S1,'g'); if(S2)ticks(S2,'d');
+  ser.forEach((x,k)=>{const Sc=x.axe==='d'&&S2?S2:S1;
+    if(g.type==='barres'){const bw=Math.min(56,w/n*.55);x.v.forEach((v,i)=>{const y=Sc.y(Math.min(Sc.b,v)),y0=T+h;o+=`<rect x="${px(i)-bw/2}" y="${y}" width="${bw}" height="${Math.max(0,y0-y)}" class="bar"/><text x="${px(i)}" y="${y-5}" text-anchor="middle" class="val">${f(v)}</text>`;});}
+    else{o+=`<polyline points="${x.v.map((v,i)=>px(i)+','+Sc.y(v)).join(' ')}" class="ln s${k}"/>`;x.v.forEach((v,i)=>{o+=`<circle cx="${px(i)}" cy="${Sc.y(v)}" r="3" class="dt s${k}"/>`;});}
+  });
+  o+=`<line x1="${L}" x2="${W-R}" y1="${T+h}" y2="${T+h}" class="axis"/>`;
+  // on saute une étiquette qui chevaucherait la précédente
+  let lastX=-1e9; xs.forEach((t,i)=>{const x=px(i);if(x-lastX<String(t).length*6+6)return;lastX=x;o+=`<text x="${x}" y="${H-B+16}" text-anchor="middle" class="tk">${esc(t)}</text>`;});
+  return o+'</svg>';
+}
+function chartCard(g){
+  const leg=g.s.length>1?el('div',{class:'chart-leg'},...g.s.map((x,k)=>el('span',{class:'s'+k,text:x.nom+(x.axe==='d'?' (axe de droite)':' (axe de gauche)')}))):null;
+  const c=el('figure',{class:'chartcard'},el('figcaption',{},el('strong',{text:g.titre}),g.unite?el('span',{class:'note',text:g.unite}):null),leg,el('div',{html:chartSVG(g)}));
+  c.append(el('span',{class:'note',text:(g.legende?g.legende+' ':'')+'Données fictives, pour l’exercice.'}));
+  return c;
+}
 /* ---------- sophismes : des leurres qui ne soient pas aussi de bonnes réponses ---------- */
 const VALABLE='Argument valable', FAM=new Map(Object.entries(NB.familles).flatMap(([f,ns])=>ns.map(n=>[n,f])));
 function fallacyOptions(right,n){
@@ -3214,9 +3274,9 @@ function fallacyOptions(right,n){
   return [...new Set(NB.sophismes.filter(s=>!s.retire).map(s=>s.nom))].filter(x=>x!==right&&x!==VALABLE&&!near(x)).sort(()=>Math.random()-.5).slice(0,n);
 }
 /* ---------- niveaux, confiance et contestation ---------- */
-const META=new Map([[PROBLEMS,NB.problemes],[FALLACIES,NB.sophismes],[AIERR,NB.erreursIA],[FERMI,NB.fermi],[ORTHO,NB.ortho]]);
+const META=new Map([[NB.graphiques,NB.graphiques],[PROBLEMS,NB.problemes],[FALLACIES,NB.sophismes],[AIERR,NB.erreursIA],[FERMI,NB.fermi],[ORTHO,NB.ortho]]);
 // trois niveaux par exercice ; on vise environ 80 % de réussite (Wilson et al., 2019) : le niveau monte au-delà de 85 %, descend sous 60 %
-const LVBANK={probleme:NB.problemes,sophismes:NB.sophismes,erreuria:NB.erreursIA,fermi:NB.fermi,ortho:NB.ortho};
+const LVBANK={probleme:NB.problemes,sophismes:NB.sophismes,erreuria:NB.erreursIA,fermi:NB.fermi,ortho:NB.ortho,graphe:NB.graphiques};
 const lvl=ex=>(state.lvl||{})[ex]||1;
 function adaptLevel(ex,score){
   const L=lvl(ex), n=score>=85?Math.min(3,L+1):score<60?Math.max(1,L-1):L;
@@ -3477,6 +3537,7 @@ write(arena){
     else if(mode==='citation'){const real=QUOTES.filter(q=>q.c!=='fausse'), mine=real.filter(q=>(state.flori||{})[q.id]);prompt=quotePrompt(pick(mine.length&&Math.random()<.6?mine:real));}
     else if(mode==='disput'){const used=new Set(texts.filter(x=>x.mode==='disput').map(x=>x.prompt).concat(prompt));const fresh=DISPUT.filter(d=>!used.has(DQ(d)));prompt=DQ(pick(fresh.length?fresh:DISPUT.filter(d=>DQ(d)!==prompt)));}
     else if(mode==='resume'){const used=new Set(texts.filter(x=>x.mode==='resume').map(x=>x.prompt));const fresh=SOURCES.filter(s=>!used.has('Résumer : '+s[0]));src=pick(fresh.length?fresh:SOURCES);prompt='Résumer : '+src[0];}
+    else if(mode==='acier'){const used=new Set(texts.filter(x=>x.mode==='acier').map(x=>x.prompt));const all=ARGU.map(q=>'Défends la position que tu ne partages pas : '+q),fresh=all.filter(q=>!used.has(q)&&q!==prompt);prompt=pick(fresh.length?fresh:all);}
     else prompt=pick(PROMPTS);
   };
   if(!prompt)pickPrompt();
@@ -3530,6 +3591,8 @@ write(arena){
       arena.insertBefore(el('div',{class:'row',style:'justify-content:center;gap:18px'},
         rv?null:statChip(st.wpm,'mots / min'),statChip(st.avgSent,'mots / phrase'),statChip(st.variety+' %','vocabulaire varié')),arena.children[2]);
       const extra=mode==='resume'?`\n\nTexte source qu'il devait résumer :\n---\n${src[1]}\n---`:mode==='revise'?`\n\nVersion d'origine, qu'il vient de réviser :\n---\n${orig.text}\n---\nCompare les deux versions : dis précisément ce que la révision a amélioré et ce qui reste à travailler.`:'';
+      if(mode==='resume')arena.append(precisCheck(src,text));
+      if(mode==='acier')arena.append(acierCheck());
       if(mode==='disput'){
         const info=el('p',{class:'note'});
         arena.append(el('div',{class:'coachbox'},el('button',{class:'btn',text:'Disputer avec ton IA',title:'Copie ton texte avec une consigne : ton IA examine ton article et t’oppose une nouvelle objection, sans le réécrire',onclick:()=>copyText(DISPUT_AI+'\n\n'+prompt+'\n\nMon texte :\n'+text,info,'Copié. Colle-le dans ton IA : elle examine ton article et t’oppose une nouvelle objection, sans rien réécrire.')}),info));
@@ -3623,7 +3686,9 @@ lecture(arena){
   intro(arena,"Lis le texte une seule fois, à ton rythme normal, en cherchant à comprendre. Clique sur « Terminé » dès la fin. Deux questions suivent, sans retour possible au texte.",null,go);
   function go(){
     const used=new Set(state.results.filter(r=>r.ex==='lecture').map(r=>r.src)); const fresh=SOURCES.filter(x=>!used.has(x[0]));
-    const src=pick(fresh.length?fresh:SOURCES), words=(src[1].match(/\S+/g)||[]).length, start=performance.now();
+    // parmi les textes pas encore lus, ceux de tes thèmes passent devant
+    const th=state.settings.themes||[], mine=fresh.filter(x=>{const t=NB.textes.find(y=>y.titre===x[0]);return t&&th.some(k=>t.th.split(' ').includes(k));});
+    const src=pick(mine.length?mine:fresh.length?fresh:SOURCES), words=(src[1].match(/\S+/g)||[]).length, start=performance.now();
     arena.style.alignItems='stretch';
     arena.replaceChildren(el('h3',{text:src[0]}),el('p',{class:'fg2',text:src[1],style:'max-width:65ch;text-align:left;font-size:1.05rem'}),el('div',{class:'row'},el('button',{class:'btn primary',text:'Terminé',onclick:quiz})));
     cleanup=()=>{arena.style.alignItems='';};
@@ -3767,6 +3832,35 @@ erreuria(arena){
       }}),document.createTextNode(' ')));
       next.addEventListener('click',()=>{qi++;if(qi<qs.length)ask();else{const sc=ok/qs.length*100;const m=recordMsg('erreuria',sc);logResult('erreuria',sc);const up=custom?'':adaptLevel('erreuria',sc);showResult(arena,Math.round(sc),`% d'erreurs repérées (${ok} sur ${qs.length})`,m+' Applique le même réflexe aux vraies réponses de ton IA : vérifie surtout les chiffres, les dates et la dernière ligne.'+betSummary()+up,()=>RUN.erreuria(arena));}});
       arena.replaceChildren(qprog(qi,qs.length),el('p',{class:'me-q',text:q}),bubble,fb,next);
+    };
+    ask();
+  }
+},
+graphe(arena){
+  intro(arena,"Trois graphiques, chacun avec son titre. Certains trompent : axe tronqué, période choisie, pourcentage sans base… D'autres sont honnêtes. Dis ce qui cloche, ou qu'il n'y a rien à redire, puis découvre la version juste.",null,go);
+  function go(){
+    const G=NB.graphiques, qs=freshPick('graphe',G,3,'graphe'); let qi=0, ok=0;
+    const ask=()=>{
+      const g=qs[qi], right=NB.pieges[g.piege], HON=NB.pieges.honnete;
+      const others=Object.entries(NB.pieges).filter(([k])=>k!==g.piege&&k!=='honnete').map(([,v])=>v).sort(()=>Math.random()-.5);
+      const opts=(g.piege==='honnete'?others.slice(0,4):[...others.slice(0,3),right].sort(()=>Math.random()-.5)).concat(HON);
+      const box=el('div',{class:'options'}), fb=el('div',{class:'answer',hidden:''});
+      const next=el('button',{class:'btn primary',text:qi<2?'Suivant':'Voir le résultat',hidden:''});
+      opts.forEach(o=>box.append(el('button',{text:o,onclick:e=>{
+        const me=e.currentTarget;
+        [...box.children].forEach(b=>{b.disabled=true;});me.classList.add('chosen');
+        box.after(askConf(c=>{
+          me.classList.remove('chosen');
+          [...box.children].forEach(b=>{if(sameText(b.textContent,right))b.classList.add('right');});
+          if(o===right)ok++;else{me.classList.add('wrong');missAgain('graphe',G,g);}
+          hit(o===right); const pts=logConf('graphe',c,o===right?1:0);
+          fb.replaceChildren(el('span',{class:'label'},(o===right?'Exact':g.piege==='honnete'?'Ce graphique est honnête':'Le piège : '+right)+' ',betChip(pts)),el('span',{class:'fg2',text:g.expl}),
+            g.corr?el('span',{class:'label',text:'La version honnête'}):null,g.corr?chartCard(Object.assign({},g,{titre:'Les mêmes chiffres, montrés honnêtement'},g.corr)):null,contestBtn('graphe',g.id,g.titre));
+          fb.hidden=false; next.hidden=false; next.focus();
+        }));
+      }})));
+      next.addEventListener('click',()=>{qi++;if(qi<3)ask();else{const sc=ok/3*100;const m=recordMsg('graphe',sc);logResult('graphe',sc);const up=adaptLevel('graphe',sc);showResult(arena,Math.round(sc),`% de bonnes réponses (${ok} sur 3)`,m+' Devant un graphique qui circule, trois questions : où commence l’axe, quelle période, combien au départ ?'+betSummary()+up,()=>RUN.graphe(arena));}});
+      arena.replaceChildren(qprog(qi,3),chartCard(g),el('p',{class:'prompt',style:'text-align:center',text:'Qu’est-ce qui cloche ?'}),box,fb,next);
     };
     ask();
   }

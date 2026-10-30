@@ -252,6 +252,10 @@ table.week td.num{font-family:var(--f-mono)}
 .chips span{background:var(--accent-soft);color:var(--accent);border-radius:99px;padding:3px 10px;font-size:.9rem;font-weight:700}
 .chips span.ko{background:var(--bad-soft);color:var(--bad);text-decoration:line-through}
 .chips span.miss{background:var(--sunk);color:var(--muted)}
+.wb{display:flex;flex-direction:column;gap:12px}
+.wb p{margin:0;line-height:1.5}
+.wb p b:first-child{display:block;font-size:.78rem;letter-spacing:.1em;text-transform:uppercase;color:var(--gold-deep);font-weight:600}
+.wb .next{background:var(--gold-soft);border-left:3px solid var(--gold);padding:10px 14px;border-radius:0 10px 10px 0}
 .coachout{white-space:pre-wrap;background:var(--sunk);border-radius:10px;padding:14px 16px;color:var(--fg);text-align:left;width:100%;max-width:70ch;line-height:1.6;overflow-wrap:anywhere}
 .coachout.wait{color:var(--muted);font-style:italic}
 .chat{display:flex;flex-direction:column;gap:10px}
@@ -673,6 +677,10 @@ q{quotes:"« " " »" "“" "”"}
 
   <!-- COACH -->
   <section class="view" id="v-coach" hidden>
+    <div class="panel" id="wbilan">
+      <div><h2>Bilan de la semaine</h2><p class="muted" id="wb-week"></p></div>
+      <div class="wb" id="wb-body"></div>
+    </div>
     <div class="panel">
       <div>
         <h2>Ton coach</h2>
@@ -1706,7 +1714,7 @@ async function initStore(){
     saveTexts();
     applyFreezes(); gami(true);
     $('#syncwarn').hidden=true; $('#logout').hidden=false; setSync('ok'); persist(); renderAll();
-    weeklyBilan();
+    weeklyBilan(); weekBilanNotice();
   }catch(e){ref=null;localOnly();}
 }
 // au retour sur la page (téléphone resté ouvert, autre appareil utilisé entre-temps) : on reprend les progrès du compte
@@ -2663,6 +2671,79 @@ function renderReel(){
 $('#reel-next').addEventListener('click',()=>{const wk=weekStart(todayKey());state.reel=state.reel||{};const r=state.reel[wk]||{};state.reel[wk]={o:(r.o||0)+1};save();renderReel();});
 $('#reel-city-edit').addEventListener('click',()=>{const f=$('#reel-city-form');f.hidden=!f.hidden;$('#reel-city-in').value=city();if(!f.hidden)$('#reel-city-in').focus();});
 $('#reel-city-form').addEventListener('submit',e=>{e.preventDefault();state.settings.city=$('#reel-city-in').value.trim().slice(0,60);$('#reel-city-form').hidden=true;save();renderReel();});
+/* ---------- bilan de la semaine : calculé par l'appli, sans coach ----------
+   Visible dès le dimanche 18 h pour la semaine qui s'achève, puis toute la semaine suivante. */
+const REASON=['probleme','hypotheses','sophismes','fermi'];
+const HAB_SHORT={think:'réfléchir seul avant l’IA',own:'rédiger moi-même',check:'vérifier l’IA',recall:'me rappeler de mémoire',slop:'peu de slop',body:'bouger 30 minutes'};
+function bilanWeek(){
+  const t=todayKey(), ws=weekStart(t), now=new Date();
+  return now.getDay()===0&&now.getHours()>=18?ws:addDays(ws,-7);
+}
+function weekBilan(ws){
+  const inW=k=>k>=ws&&k<addDays(ws,7), prev=addDays(ws,-7), inP=k=>k>=prev&&k<ws;
+  const R=state.results.filter(r=>inW(r.d)), P=state.results.filter(r=>inP(r.d));
+  let act=0, actP=0; for(let i=0;i<7;i++){if(isActive(addDays(ws,i)))act++;if(isActive(addDays(prev,i)))actP++;}
+  const m=xpByDay(); let xp=0; for(let i=0;i<7;i++)xp+=m[addDays(ws,i)]||0;
+  if(!act&&!R.length)return null;
+  const avg=a=>a.reduce((x,y)=>x+y,0)/a.length;
+  // évolution de la moyenne par exercice, d'une semaine à l'autre
+  const ev=[];
+  for(const[key,e] of Object.entries(EX)){if(e.manual||e.hidden)continue;
+    const a=R.filter(r=>r.ex===key).map(r=>r.s), b=P.filter(r=>r.ex===key).map(r=>r.s);
+    if(a.length&&b.length&&avg(b)>0)ev.push({key,name:e.name,a:avg(a),b:avg(b),pct:Math.round((avg(a)-avg(b))/avg(b)*100)});}
+  ev.sort((x,y)=>y.pct-x.pct);
+  const n1=v=>fmt(Math.round(v*10)/10);
+  const count={}; for(const r of R)count[r.ex]=(count[r.ex]||0)+1;
+  const fav=Object.entries(count).sort((x,y)=>y[1]-x[1])[0];
+  const up=ev.find(x=>x.pct>=3), down=ev.slice().reverse().find(x=>x.pct<=-5);
+  const pw=(state.prog||{})[ws]||{}, wrote=(count.write||0)+(pw.ecrit||0), reasoned=REASON.reduce((n,k)=>n+(count[k]||0),0);
+  const hab=HABITS.map(h=>{let n=0;for(let i=0;i<7;i++){const d=state.days[addDays(ws,i)];if(d&&d.habits&&d.habits[h[0]])n++;}return {h,n};}).sort((x,y)=>x.n-y.n);
+  const short=h=>HAB_SHORT[h[0]]||h[1];
+  // ce qui progresse
+  const good=up?`${up.name} : ${n1(up.b)} → ${n1(up.a)} de moyenne (+${up.pct} %).`
+    :act>actP&&actP?`Ta régularité : ${act} jours actifs, contre ${actP} la semaine d'avant.`
+    :fav?`${EX[fav[0]].name}, ton exercice le plus pratiqué : ${fav[1]} séance${fav[1]>1?'s':''}.`
+    :`${act} jour${act>1?'s':''} actif${act>1?'s':''} sur 7.`;
+  // le point à travailler, puis une action concrète pour la semaine suivante ; l'écriture et le raisonnement passent en premier
+  let weak, next;
+  if(act<=2){weak=`La régularité : ${act} jour${act>1?'s':''} actif${act>1?'s':''} sur 7.`;next="Vise 5 jours actifs. Un seul exercice de 5 minutes compte pour la journée.";}
+  else if(!wrote){weak="L'écriture : aucune séance cette semaine.";next="Fais 2 séances d'Écriture sans IA, dont une longue de 30 minutes.";}
+  else if(!reasoned){weak="Le raisonnement : aucun problème, sophisme, estimation ni hypothèse cette semaine.";next="Fais 3 fois le Problème du jour ou le Détecteur de sophismes.";}
+  else if(down){weak=`${down.name} recule : ${n1(down.b)} → ${n1(down.a)} de moyenne (−${-down.pct} %).`;next=`Refais ${down.name} 3 fois, sans te presser.`;}
+  else if(hab[0].n<4){weak=`L'habitude « ${short(hab[0].h)} » : ${hab[0].n} jour${hab[0].n>1?'s':''} sur 7.`;next=`Vise « ${short(hab[0].h)} » au moins 4 jours.`;}
+  else{weak="Rien ne recule : bonne semaine.";next=`Monte d'un cran : passe ta routine à ${Math.min(30,(state.settings.minutes||10)+10)} minutes, ou tente un exercice que tu fais peu.`;}
+  const defis=[`défi de la semaine ${state.weeks[ws]?'relevé':'non relevé'}`,`défi du réel ${((state.reel||{})[ws]||{}).d?'fait':'pas fait'}`,`lectures intensives ${Math.min(2,pw.lect||0)}/2`,`écriture longue ${Math.min(1,pw.ecrit||0)}/1`];
+  let rank=null;
+  if(circleData&&ws===weekStart(todayKey())&&circleData.rows.length>1){const i=circleData.rows.findIndex(r=>r.me);if(i>=0)rank=`${i?(i+1)+'e':'1er'} sur ${circleData.rows.length} dans ton cercle « ${circleData.name} ».`;}
+  return {act,actP,xp,n:R.length,good,weak,next,defis,rank};
+}
+function renderWeekBilan(){
+  const ws=bilanWeek(), b=weekBilan(ws), end=addDays(ws,6);
+  // le dimanche soir, la place dans le cercle compte aussi : on charge le classement s'il ne l'est pas encore
+  if(!circleData&&ref&&state.settings.circle&&ws===weekStart(todayKey()))circleLoad().then(()=>{if(circleData)renderWeekBilan();}).catch(()=>{});
+  const dm=k=>fd(new Date(k+'T12:00:00'),{day:'numeric',month:'long'}).replace(/^1 /,'1er ');
+  const from=ws.slice(5,7)===end.slice(5,7)?dm(ws).split(' ')[0]:dm(ws);
+  $('#wb-week').textContent=`Semaine du ${from} au ${dm(end)}. Le suivant arrive dimanche à 18 h.`;
+  if(!b){$('#wb-body').replaceChildren(el('p',{class:'fg2',text:'Aucune activité enregistrée cette semaine-là. Fais quelques exercices : ton bilan t’attendra dimanche soir.'}));return;}
+  const P=(t,x)=>el('p',{},el('b',{text:t}),document.createTextNode(x));
+  $('#wb-body').replaceChildren(
+    P('En chiffres',`${b.act} jour${b.act>1?'s':''} actif${b.act>1?'s':''} sur 7 (semaine d'avant : ${b.actP}), ${b.n} séance${b.n>1?'s':''}, ${fmt(b.xp)} XP.`),
+    P('Ce qui progresse',b.good),
+    P('À travailler',b.weak),
+    P('Défis',b.defis.join(', ').replace(/^./,c=>c.toUpperCase())+'.'),
+    ...(b.rank?[P('Classement',b.rank)]:[]),
+    el('p',{class:'next'},el('b',{text:'Pour la semaine prochaine'}),document.createTextNode(b.next)));
+}
+// une fois par semaine, à la première ouverture après dimanche 18 h (le coach, s'il est branché, prévient lui-même)
+let wbShown=false;
+function weekBilanNotice(){
+  const ws=bilanWeek(); if(state.settings.wbSeen===ws)return;
+  // déjà annoncé avant que les progrès du compte n'arrivent : on le note sans répéter
+  if(wbShown){state.settings.wbSeen=ws;save();return;}
+  if((window.BF_CONFIG||{}).coach||!weekBilan(ws))return;
+  wbShown=true; state.settings.wbSeen=ws; save();
+  toast('<span>Ton bilan de la semaine est prêt<small>À lire dans l’onglet Coach.</small></span>');
+}
 function weeklyBilan(){
   if(!(window.BF_CONFIG||{}).coach)return;
   sampler().then(s=>s&&s.limits()).then(l=>{if(l)weeklyBilanGo();}).catch(()=>{});
@@ -2820,7 +2901,7 @@ function showTab(t){
   if(t==='progres'){renderProgress();renderCarnet();renderXpPanel();renderScreenChart();}
   if(t==='classement')renderCircle();
   if(t==='reglages')$('#city-in').value=city();
-  if(t==='coach'){renderSas();renderCoach();}
+  if(t==='coach'){renderSas();renderCoach();renderWeekBilan();}
   if(location.hash!=='#'+t)try{history.replaceState(null,'','#'+t);}catch(e){}
 }
 $('#city-form').addEventListener('submit',e=>{e.preventDefault();state.settings.city=$('#city-in').value.trim().slice(0,60);save();renderReel();toast('<span>Ville enregistrée.</span>');});
@@ -3586,7 +3667,7 @@ function renderAll(){
   if(!$('#v-progres').hidden){renderProgress();renderCarnet();}
   if(!$('#v-classement').hidden)renderCircle();
   $('#erase').hidden=!ref; $('#login-open').hidden=!!ref||!window.bfSupabase;
-  if(!$('#v-coach').hidden)renderSas();
+  if(!$('#v-coach').hidden){renderSas();renderWeekBilan();}
 }
 function showGoalProposal(text){
   const m=text&&text.match(/Objectif propos[ée]\s*:\s*(.+)/i);
@@ -3597,7 +3678,7 @@ function showGoalProposal(text){
 }
 initCarnetCoach();
 applyFreezes(); gami(true);
-renderTips(); renderOrigins(); renderAll(); showTab(location.hash.slice(1)); setSync('local');
+renderTips(); renderOrigins(); renderAll(); showTab(location.hash.slice(1)); setSync('local'); weekBilanNotice();
 initStore();
 if('serviceWorker' in navigator)navigator.serviceWorker.register('sw.js').catch(()=>{});
 })();

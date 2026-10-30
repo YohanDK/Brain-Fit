@@ -16,7 +16,7 @@ Le site s'installe sur le téléphone comme une appli. Avec un compte, les progr
 | `.github/workflows/pages.yml` | GitHub | Remet le site en ligne à chaque changement. |
 | `.github/workflows/deploy-coach.yml` | GitHub | Remet le coach à jour sur Supabase à chaque changement. |
 
-Le bilan du dimanche se fait tout seul : à la première ouverture après dimanche 18 h, le coach prépare le bilan de la semaine. Il est à lire dans l'onglet Coach.
+Le bilan du dimanche se fait tout seul : dès dimanche 18 h, l'appli calcule le bilan de la semaine (jours actifs, ce qui progresse, le point à travailler, les défis, ta place dans le cercle et une action pour la semaine suivante), sans coach ni clé. Il est à lire en haut de l'onglet Coach. Une fois le coach branché, il ajoute en plus son propre bilan, rédigé.
 
 ## Mise en route (une seule fois)
 

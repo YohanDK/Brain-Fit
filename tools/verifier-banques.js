@@ -95,6 +95,21 @@ B.graphiques.forEach((g,i)=>{
 });
 if(!B.graphiques.some(g=>g.piege==='honnete'))warn('graphiques','aucun graphique honnête');
 
+// événements : dates, dix questions au plus, une seule bonne réponse, chaque question sourcée
+B.evenements.forEach(ev=>{
+  if(!str(ev.id)||!date(ev.du)||!date(ev.au)||!(ev.du<=ev.au))err(ev.id||'evenement','id, du et au (AAAA-MM-JJ, du ≤ au) obligatoires');
+  for(const f of ['titre','court','intro'])if(!str(ev[f]))err(ev.id,`champ « ${f} » vide`);
+  if(!Array.isArray(ev.badge)||ev.badge.length!==2||!ev.badge.every(str))err(ev.id,'badge : [nom, condition]');
+  if(!Array.isArray(ev.questions)||ev.questions.length<5)err(ev.id,'au moins 5 questions');
+  (ev.questions||[]).forEach(q=>{
+    const id=q.id||ev.id; if(!str(q.id))err(id,'id manquant');else if(ids.has(q.id))err(id,'id déjà utilisé');else ids.add(q.id);
+    for(const f of ['q','expl','src'])if(!str(q[f]))err(id,`champ « ${f} » vide`);
+    if(!date(q.vu))err(id,'vu obligatoire (AAAA-MM-JJ)');
+    if(!Array.isArray(q.options)||q.options.length<2||new Set(q.options).size!==q.options.length)err(id,'au moins 2 options, toutes différentes');
+    else if(!Number.isInteger(q.bonne)||q.bonne<0||q.bonne>=q.options.length)err(id,'bonne hors des options');
+  });
+});
+
 // variantes : 500 tirages par modèle, la réponse rédigée doit être celle que l'on retrouve en comptant
 const mids=new Set();
 for(const m of B.modeles){

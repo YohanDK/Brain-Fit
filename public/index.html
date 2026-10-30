@@ -526,6 +526,10 @@ a{color:var(--accent);text-underline-offset:3px}
 .routine>summary::before{content:"›";display:inline-block;transition:transform .2s;color:var(--muted)}
 .routine[open]>summary::before{transform:rotate(90deg)}
 .routine:not([open]){display:block}
+.event{border:1px solid var(--gold);background:linear-gradient(180deg,var(--gold-soft),var(--surface) 70%);gap:6px;padding:16px 20px}
+.event h3{margin:0;font-size:1.15rem}
+.event p{margin:0}
+.event .btn{align-self:flex-start;margin-top:4px}
 /* culture du jour : citation et « Ce jour-là » réunis, en plus petit */
 .culture{gap:0;padding:14px 18px}
 .culture .quoteday{display:flex;flex-direction:column;gap:6px;padding-bottom:12px}
@@ -777,6 +781,12 @@ q{quotes:"« " " »" "“" "”"}
       <p><b>Qu'est-ce qui t'intéresse ?</b> Choisis jusqu'à trois thèmes : citations, « Ce jour-là », dictées, sujets d'écriture et coach s'en inspireront.</p>
       <div class="seg themes" id="themes-seg2" role="group" aria-label="Mes thèmes"></div>
       <div class="row"><button class="btn primary" id="themes-ok">C'est choisi</button><button class="btn ghost" id="themes-later">Plus tard</button></div>
+    </div>
+    <div class="panel event" id="event" hidden>
+      <span class="label" id="ev-label"></span>
+      <h3 id="ev-title"></h3>
+      <p class="fg2" id="ev-sub"></p>
+      <button class="btn gold" id="ev-go"></button>
     </div>
     <details class="panel routine" id="routine">
       <summary><span class="step-title">Le programme du jour</span> <span class="note" id="routine-sub"></span></summary>
@@ -1207,6 +1217,7 @@ const EX={
   nback:{name:'N-back',skill:'Concentration',desc:"Signale quand la case allumée est la même que N étapes plus tôt.",unit:'% de précision'},
   stroop:{name:'Stroop',skill:'Attention & inhibition',desc:"Donne la couleur de l'encre, pas le mot écrit. 30 secondes.",unit:'points'},
   fluency:{name:'Fluence verbale',skill:'Accès au langage',desc:"Un maximum de mots d'une lettre ou d'une catégorie en 60 secondes.",unit:'mots'},
+  evenement:{name:'Événement de saison',skill:'Esprit critique & culture',desc:"Une semaine à thème : vrai, faux ou non prouvé.",unit:'% de bonnes réponses',hidden:true},
   bilan:{name:"Point d'étape",skill:'Parcours',desc:"Huit questions pour mesurer ton autonomie face à l'IA. Le premier sert de point de départ, puis un chaque mois.",unit:'sur 100',hidden:true},
   read:{name:'Lecture profonde',skill:'Attention soutenue',desc:"Lecture sur papier ou liseuse, téléphone dans une autre pièce.",unit:'',manual:true}
 };
@@ -2462,6 +2473,7 @@ function renderToday(){
     ol.append(el('li',{class:'step'+(isDone?' done':'')},tick,el('div',{class:'step-body'},el('span',{class:'step-title',text:e.name}),el('span',{class:'step-meta',text:e.skill+' · '+e.desc})),act));
   }
   renderPlay(steps,d,nextEx);
+  renderEvent();
   const hb=$('#habits'); hb.replaceChildren();
   for(const[id,t,sub] of HABITS){
     const cb=el('input',{type:'checkbox',id:'h-'+id}); cb.checked=!!d.habits[id];
@@ -2723,6 +2735,7 @@ function badgeDefs(ctx){
     ['chal4','Relevé !','4 défis de la semaine relevés',Object.keys(state.weeks||{}).length>=4],
     ['flori10','Mémorialiste','10 citations dans ton florilège',Object.keys(state.flori||{}).length>=10],
     ['grave','Gravé dans le marbre','10 citations au plus haut niveau du florilège',Object.values(state.flori||{}).filter(f=>f.b>=5).length>=10],
+    ...(NB.evenements||[]).map(ev=>['ev-'+ev.id,ev.badge[0],ev.badge[1],n('evenement').some(r=>r.ev===ev.id&&r.s>=80)]),
     ['lvl5','Rhéteur','Atteindre le niveau V',ctx.level>=5],
     ['lvl10','Sage','Atteindre le niveau X',ctx.level>=10]
   ];
@@ -3504,7 +3517,44 @@ function showResult(arena,score,unit,msg,again,extra){
 function bestOf(ex){const rs=state.results.filter(r=>r.ex===ex);return rs.length?Math.max(...rs.map(r=>r.s)):null;}
 function recordMsg(ex,s){const b=bestOf(ex);return b===null?'Premier score enregistré. Il servira de point de départ.':s>b?'Nouveau record !':`Ton record est de ${fmt(b)}.`;}
 
+// événement de saison en cours (une semaine à thème, voir banques.js)
+const evNow=()=>(NB.evenements||[]).find(e=>todayKey()>=e.du&&todayKey()<=e.au);
+const evBest=id=>{const rs=state.results.filter(r=>r.ex==='evenement'&&r.ev===id);return rs.length?Math.max(...rs.map(r=>r.s)):null;};
+function renderEvent(){
+  const ev=evNow(), box=$('#event'); box.hidden=!ev; if(!ev)return;
+  const b=evBest(ev.id), fin=fd(new Date(ev.au+'T12:00:00'),{day:'numeric',month:'long'});
+  $('#ev-label').textContent=`${ev.court} · jusqu’au ${fin}`;
+  $('#ev-title').textContent=ev.titre;
+  $('#ev-sub').textContent=b===null?`${ev.questions.length} questions, un badge à gagner : ${ev.badge[0]}.`:`Ton meilleur score : ${Math.round(b/100*ev.questions.length)} sur ${ev.questions.length}.${b>=80?' Badge gagné : '+ev.badge[0]+'.':' Il en faut 8 pour le badge.'}`;
+  $('#ev-go').textContent=b===null?'Relever le défi':'Rejouer';
+}
+$('#ev-go').addEventListener('click',()=>{showTab('exercices');openEx('evenement');});
 const RUN={
+evenement(arena){
+  const ev=evNow()||NB.evenements[NB.evenements.length-1], Q=ev.questions, n=Q.length;
+  $('#st-name').textContent=ev.titre;
+  intro(arena,ev.intro,null,go);
+  function go(){
+    let qi=0, ok=0;
+    const ask=()=>{
+      const q=Q[qi], right=q.options[q.bonne];
+      const box=el('div',{class:'options'}), fb=el('div',{class:'answer',hidden:''});
+      const next=el('button',{class:'btn primary',text:qi<n-1?'Suivant':'Voir le résultat',hidden:''});
+      q.options.forEach(o=>box.append(el('button',{text:o,onclick:e=>{
+        const me=e.currentTarget; [...box.children].forEach(b=>{b.disabled=true;if(b.textContent===right)b.classList.add('right');});
+        const good=o===right; if(good)ok++;else me.classList.add('wrong'); hit(good);
+        fb.replaceChildren(el('span',{class:'label',text:good?'Exact':'C’était : '+right}),el('span',{class:'fg2',text:q.expl}),el('span',{class:'qsource',text:'Source : '+q.src}),contestBtn('evenement',q.id,q.q));
+        fb.hidden=false; next.hidden=false; next.focus();
+      }})));
+      next.addEventListener('click',()=>{qi++;if(qi<n)ask();else{
+        const sc=ok/n*100, b=evBest(ev.id), m=b===null?'':sc>b?'Nouveau record pour cette semaine !':`Ton meilleur score : ${Math.round(b/100*n)} sur ${n}.`;
+        logResult('evenement',sc,{ev:ev.id}); renderEvent();
+        showResult(arena,ok,`sur ${n}`,(sc>=80?`Badge gagné : ${ev.badge[0]}. `:'Il en faut 8 pour le badge. ')+m,()=>RUN.evenement(arena));}});
+      arena.replaceChildren(qprog(qi,n),el('p',{class:'prompt',text:q.q}),box,fb,next);
+    };
+    ask();
+  }
+},
 calc(arena){
   const lv=el('select',{id:'calc-level','aria-label':'Niveau'});
   [['1','Facile : additions et soustractions'],['2','Moyen : tables et nombres à 2 chiffres'],['3','Difficile : multiplications et divisions']].forEach(([v,t])=>lv.append(el('option',{value:v,text:t})));

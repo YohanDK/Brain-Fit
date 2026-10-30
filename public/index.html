@@ -511,8 +511,32 @@ a{color:var(--accent);text-underline-offset:3px}
 .badge.locked .medal{background:var(--sunk);box-shadow:inset 0 0 0 2px var(--line)}
 .badge.locked .medal span{color:var(--muted)}
 .badge strong{font-weight:600;font-size:1rem}
+/* séance du jour, en tête d'écran */
+.play{border-top:3px solid var(--accent);gap:8px;padding:18px 20px 16px}
+.play-title{font-size:1.45rem;margin:2px 0 0}
+.play-meta{color:var(--fg2);margin:0;max-width:52ch}
+.btn.big{font-size:1.15rem;padding:13px 18px;width:100%;margin-top:6px;letter-spacing:.02em}
+.play-streak{margin:0;font-size:.92rem;color:var(--gold-deep);text-align:center}
+.pips{list-style:none;display:flex;gap:5px;margin:2px 0 4px;padding:0}
+.pips li{flex:1;height:5px;border-radius:3px;background:var(--line)}
+.pips li.ok{background:var(--gold)} .pips li.cur{background:var(--accent)}
+.play.done{border-top-color:var(--gold)}
+.routine>summary{cursor:pointer;list-style:none;display:flex;align-items:baseline;gap:8px;flex-wrap:wrap}
+.routine>summary::-webkit-details-marker{display:none}
+.routine>summary::before{content:"›";display:inline-block;transition:transform .2s;color:var(--muted)}
+.routine[open]>summary::before{transform:rotate(90deg)}
+.routine:not([open]){display:block}
+/* culture du jour : citation et « Ce jour-là » réunis, en plus petit */
+.culture{gap:0;padding:14px 18px}
+.culture .quoteday{display:flex;flex-direction:column;gap:6px;padding-bottom:12px}
+.culture .qtext{font-size:1.02rem;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden;cursor:pointer}
+.culture .qtext.open{-webkit-line-clamp:unset;display:block}
+.culture .qby{font-size:.92rem}
+.culture .qauthor{font-size:.95rem}
+.culture .cjl{display:flex;flex-direction:column;gap:8px;border-top:1px solid var(--line);padding-top:12px}
+.culture .cjl-text{font-size:1rem}
 /* citation du jour */
-.quoteday{border-top:3px solid var(--gold);gap:10px;padding:16px 20px}
+.quoteday{gap:10px}
 .qtext{font-family:var(--f-body);font-style:italic;font-size:1.15rem;line-height:1.4;max-width:38ch;text-wrap:pretty}
 .qby{margin:0;line-height:1.35}
 .quoteday details.fold{border-top:0;padding-top:0}
@@ -732,6 +756,14 @@ q{quotes:"« " " »" "“" "”"}
 
   <!-- AUJOURD'HUI -->
   <section class="view" id="v-aujourdhui">
+    <div class="panel play" id="play">
+      <div class="row spread" style="flex-wrap:nowrap;align-items:baseline"><span class="label" id="play-label">Ta séance du jour</span><span class="note" id="play-count"></span></div>
+      <ol class="pips" id="play-pips" aria-hidden="true"></ol>
+      <h2 class="play-title" id="play-title"></h2>
+      <p class="play-meta" id="play-meta"></p>
+      <button class="btn primary big" id="play-go"></button>
+      <p class="play-streak" id="play-streak"></p>
+    </div>
     <div class="panel syncwarn" id="syncwarn" hidden>
       <p><b>Connecte-toi pour retrouver tes progrès partout.</b> Avec ton compte Néophyte, ton téléphone et ton ordinateur partagent les mêmes progrès, et le coach est disponible. Sans compte, tout reste sur cet appareil.</p>
       <form class="login" id="login">
@@ -746,39 +778,39 @@ q{quotes:"« " " »" "“" "”"}
       <div class="seg themes" id="themes-seg2" role="group" aria-label="Mes thèmes"></div>
       <div class="row"><button class="btn primary" id="themes-ok">C'est choisi</button><button class="btn ghost" id="themes-later">Plus tard</button></div>
     </div>
-    <div class="panel quoteday" id="qday">
-      <div class="row spread" style="flex-wrap:nowrap;align-items:baseline"><span class="label" id="qd-label">Citation du jour</span><button class="btn ghost mini" id="qd-next" style="flex:none">Une autre</button></div>
-      <p class="qtext" id="qd-text"></p>
-      <p class="qby"><span class="qauthor" id="qd-author"></span> <span class="qsource" id="qd-source"></span></p>
-      <details class="fold"><summary><span class="label">À retenir</span></summary><p class="qnote" id="qd-note"></p></details>
-      <div class="row"><button class="btn gold mini" id="qd-add"></button><button class="btn ghost mini" id="qd-write">Écrire dessus</button></div>
-    </div>
-    <div class="panel" id="cjl">
-      <div class="row spread" style="flex-wrap:nowrap;align-items:flex-start"><span class="label" id="cjl-label">Ce jour-là</span><button class="btn ghost mini" id="cjl-next" style="flex:none">Un autre</button></div>
-      <p class="cjl-text" id="cjl-text"></p>
-      <div class="row" id="cjl-ask"><input type="text" id="cjl-in" inputmode="numeric" autocomplete="off" placeholder="Année ?" aria-label="En quelle année ?" style="width:9ch;text-align:center"><span class="fg2" id="cjl-bc" hidden>av. J.-C.</span><button class="btn" id="cjl-go">Deviner</button><button class="btn ghost" id="cjl-show">Voir la date</button></div>
-      <div class="cjl-res" id="cjl-res" hidden><span class="cjl-year" id="cjl-year"></span><span class="fg2" id="cjl-fb"></span></div>
-    </div>
-    <div class="panel">
+    <details class="panel routine" id="routine">
+      <summary><span class="step-title">Le programme du jour</span> <span class="note" id="routine-sub"></span></summary>
       <div class="row spread">
-        <div>
-          <h2>Routine du jour</h2>
-          <p class="muted" id="routine-sub"></p>
-        </div>
+        <span class="note">Durée de la séance</span>
         <div class="seg" role="group" aria-label="Durée de la routine" id="dur">
           <button data-min="10">10 min</button><button data-min="20">20 min</button><button data-min="30">30 min</button>
         </div>
       </div>
       <div class="progressbar" aria-hidden="true"><i id="routine-bar" style="width:0"></i></div>
       <ol class="steps" id="steps"></ol>
+    </details>
+
+
+
+
+
+
+
+    <div class="panel culture">
+    <div class="quoteday" id="qday">
+      <div class="row spread" style="flex-wrap:nowrap;align-items:baseline"><span class="label" id="qd-label">Citation du jour</span><button class="btn ghost mini" id="qd-next" style="flex:none">Une autre</button></div>
+      <p class="qtext" id="qd-text"></p>
+      <p class="qby"><span class="qauthor" id="qd-author"></span> <span class="qsource" id="qd-source"></span></p>
+      <details class="fold"><summary><span class="label">À retenir</span></summary><p class="qnote" id="qd-note"></p>
+      <div class="row"><button class="btn gold mini" id="qd-add"></button><button class="btn ghost mini" id="qd-write">Écrire dessus</button></div></details>
     </div>
-
-
-
-
-
-
-
+    <div class="cjl" id="cjl">
+      <div class="row spread" style="flex-wrap:nowrap;align-items:flex-start"><span class="label" id="cjl-label">Ce jour-là</span><button class="btn ghost mini" id="cjl-next" style="flex:none">Un autre</button></div>
+      <p class="cjl-text" id="cjl-text"></p>
+      <div class="row" id="cjl-ask"><input type="text" id="cjl-in" inputmode="numeric" autocomplete="off" placeholder="Année ?" aria-label="En quelle année ?" style="width:9ch;text-align:center"><span class="fg2" id="cjl-bc" hidden>av. J.-C.</span><button class="btn" id="cjl-go">Deviner</button><button class="btn ghost" id="cjl-show">Voir la date</button></div>
+      <div class="cjl-res" id="cjl-res" hidden><span class="cjl-year" id="cjl-year"></span><span class="fg2" id="cjl-fb"></span></div>
+    </div>
+    </div>
     <div class="panel">
       <div>
         <h2>Mes habitudes du jour</h2>
@@ -1975,6 +2007,7 @@ function renderQuoteDay(){
 }
 $('#qd-add').addEventListener('click',()=>floriAdd(quoteOfDay(todayKey(),qdOff).id));
 $('#qd-next').addEventListener('click',()=>{qdOff++;renderQuoteDay();});
+$('#qd-text').addEventListener('click',e=>e.currentTarget.classList.toggle('open'));
 $('#qd-write').addEventListener('click',()=>{pendingQuote=quoteOfDay(todayKey(),qdOff).id;showTab('exercices');openEx('write');});
 
 /* ---------- ce jour-là : un événement historique par jour, et son année à deviner ---------- */
@@ -2378,6 +2411,27 @@ function renderParcours(){
 $('#pc-bilan').addEventListener('click',()=>{showTab('exercices');openEx('bilan');});
 
 /* ---------- routine ---------- */
+// la séance du jour en tête d'écran : une seule chose à faire, un seul gros bouton
+function renderPlay(steps,d,nextEx){
+  const done=steps.filter(s=>d.done[s.ex]).length, i=steps.findIndex(s=>s.ex===nextEx), e=EX[nextEx], fini=!e, cur=streaks().cur, today=isActive(todayKey());
+  $('#play').classList.toggle('done',fini);
+  $('#play-pips').replaceChildren(...steps.map((s,j)=>el('li',{class:d.done[s.ex]?'ok':j===i?'cur':''})));
+  $('#play-count').textContent=fini?'':`${done} / ${steps.length}`;
+  if(fini){
+    $('#play-label').textContent='Séance terminée';
+    $('#play-title').textContent='Bravo, c’est fait pour aujourd’hui';
+    $('#play-meta').textContent='Un exercice de plus ne fait jamais de mal : choisis celui qui te tente.';
+    $('#play-go').textContent='Un exercice de plus'; $('#play-go').onclick=()=>showTab('exercices');
+  }else{
+    $('#play-label').textContent=done?'On continue':'Ta séance du jour';
+    $('#play-title').textContent=e.name;
+    $('#play-meta').textContent=`${e.skill} · ${steps[i].m} min · ${e.desc}`;
+    $('#play-go').textContent=done?'Continuer':'Jouer';
+    $('#play-go').onclick=()=>{showTab('exercices');openEx(nextEx);};
+  }
+  $('#play-streak').textContent=today?(cur>1?`Série de ${cur} jours : elle est à l’abri pour aujourd’hui.`:'Ta série a commencé : reviens demain pour la prolonger.')
+    :cur?`Une étape suffit pour garder ta série de ${cur} jour${cur>1?'s':''}.`:'Une étape suffit pour commencer une série.';
+}
 function routineFor(k,min){
   // écriture et raisonnement chaque jour ; le reste tourne selon le jour, et le papier gagne du terrain avec les étapes du parcours
   const st=gamiCtx.stage||1, dow=new Date(k+'T12:00:00').getDay(), mem=['span','words','nback'][dow%3], reason=['probleme','erreuria','sophismes','hypotheses','fermi','erreuria','probleme'][dow], warm=['dictee','calc','lecture',st>=2?'dictee':'ortho','fluency','lecture','chrono'][dow], wm=warm==='dictee'?6:2;
@@ -2396,7 +2450,7 @@ function renderToday(){
   $('#today-label').textContent=fd(new Date(),{weekday:'long',day:'numeric',month:'long'});
   $$('#dur button').forEach(b=>b.setAttribute('aria-pressed',String(+b.dataset.min===min)));
   const done=steps.filter(s=>d.done[s.ex]).length;
-  $('#routine-sub').textContent=done===steps.length?'Routine terminée. Bravo, à demain.':`${done} sur ${steps.length} étapes faites · environ ${steps.reduce((a,s)=>a+s.m,0)} minutes`;
+  $('#routine-sub').textContent=done===steps.length?'terminé':`${done} sur ${steps.length} · environ ${steps.reduce((a,s)=>a+s.m,0)} min`;
   $('#routine-bar').style.width=(done/steps.length*100)+'%';
   const ol=$('#steps'); ol.replaceChildren();
   // un seul bouton mis en avant : la prochaine étape à faire
@@ -2404,9 +2458,10 @@ function renderToday(){
   for(const s of steps){
     const e=EX[s.ex], isDone=!!d.done[s.ex];
     const tick=el('button',{class:'tick','aria-label':(isDone?'Marquer non fait : ':'Marquer fait : ')+e.name,html:CHECK,onclick:()=>{d.done[s.ex]=!d.done[s.ex];save();renderToday();renderProgress();}});
-    const act=e.manual?el('span',{class:'minutes',text:s.m+' min'}):el('div',{class:'row actions'},el('span',{class:'minutes',text:s.m+' min'}),el('button',{class:'btn'+(s.ex===nextEx?' primary':''),text:isDone?'Refaire':'Commencer',onclick:()=>{showTab('exercices');openEx(s.ex);}}));
+    const act=e.manual?el('span',{class:'minutes',text:s.m+' min'}):el('div',{class:'row actions'},el('span',{class:'minutes',text:s.m+' min'}),el('button',{class:'btn',text:isDone?'Refaire':'Commencer',onclick:()=>{showTab('exercices');openEx(s.ex);}}));
     ol.append(el('li',{class:'step'+(isDone?' done':'')},tick,el('div',{class:'step-body'},el('span',{class:'step-title',text:e.name}),el('span',{class:'step-meta',text:e.skill+' · '+e.desc})),act));
   }
+  renderPlay(steps,d,nextEx);
   const hb=$('#habits'); hb.replaceChildren();
   for(const[id,t,sub] of HABITS){
     const cb=el('input',{type:'checkbox',id:'h-'+id}); cb.checked=!!d.habits[id];

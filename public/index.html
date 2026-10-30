@@ -97,6 +97,7 @@ section.view{display:flex;flex-direction:column;gap:20px}
 
 /* segmented */
 .seg{display:inline-flex;background:var(--sunk);border-radius:9px;padding:3px;gap:2px}
+.tutorseg{display:grid;grid-template-columns:repeat(2,1fr);max-width:420px}
 .seg button{border:0;background:transparent;padding:6px 12px;border-radius:7px;font-weight:700;color:var(--fg2)}
 .seg button[aria-pressed="true"]{background:var(--surface);color:var(--accent)}
 
@@ -758,6 +759,15 @@ q{quotes:"« " " »" "“" "”"}
       <p class="note" id="coach-status"></p>
     </div>
 
+    <div class="panel" id="tutor-panel">
+      <div>
+        <h2>L'esprit de ton tuteur</h2>
+        <p class="fg2">Comment veux-tu être guidé ? Ce choix règle le mode tuteur du sas, la relecture du dimanche et la manière dont ton coach te répond.</p>
+      </div>
+      <div class="seg tutorseg" role="group" aria-label="Esprit du tuteur" id="tutor-seg"></div>
+      <p class="fg2" id="tutor-desc" style="max-width:62ch"></p>
+    </div>
+
     <div class="panel">
       <div>
         <h2>Le sas avant l'IA</h2>
@@ -1011,7 +1021,7 @@ const EX={
 };
 // d'où vient chaque exercice : affiché sous le titre du plateau et dans la Bibliothèque
 const ORIG={
-  write:"L'écriture libre (freewriting) vient de Peter Elbow, Writing Without Teachers (1973) : écrire sans s'arrêter ni se corriger, pour que la pensée se forme en écrivant. Le format « Expliquer » reprend la technique dite de Feynman : si tu ne sais pas l'expliquer simplement, tu ne l'as pas compris. Et ce que l'on produit soi-même se retient mieux que ce que l'on lit : c'est l'effet de génération (Slamecka et Graf, 1978).",
+  write:"L'écriture libre (freewriting) vient de Peter Elbow, Writing Without Teachers (1973) : écrire sans s'arrêter ni se corriger, pour que la pensée se forme en écrivant. Le format « Expliquer » reprend la technique dite de Feynman : si tu ne sais pas l'expliquer simplement, tu ne l'as pas compris. La « Disputatio » reprend la forme des articles de la Somme théologique de saint Thomas d'Aquin (XIIIe siècle), héritée de la dispute pratiquée dans les universités médiévales : objections, argument en sens contraire, réponse, réponse à chaque objection. Et ce que l'on produit soi-même se retient mieux que ce que l'on lit : c'est l'effet de génération (Slamecka et Graf, 1978).",
   probleme:"La plupart de ces énigmes viennent du test de réflexion cognitive de Shane Frederick (2005) : la raquette et la balle, les machines, les nénuphars. Elles opposent la réponse intuitive, le « système 1 » de Daniel Kahneman, au calcul réfléchi, le « système 2 ». S'y ajoutent la tâche de sélection de Peter Wason (1966, les quatre cartes), l'oubli du taux de base étudié par Kahneman et Tversky, et le problème de Monty Hall.",
   erreuria:"Un format conçu pour Brain Fit, à partir d'un constat : plus on fait confiance à l'IA, moins on vérifie (Lee et al., CHI 2025). Il reprend le réflexe des vérificateurs professionnels étudié par Sam Wineburg et Sarah McGrew à Stanford : ne jamais juger un texte à son aisance. Les réponses piégées ont été écrites pour l'application, et le coach peut en inventer de nouvelles.",
   hypotheses:"La méthode des hypothèses multiples est due au géologue Thomas Chamberlin (1890). Les analystes de la CIA l'ont formalisée sous le nom d'analyse des hypothèses concurrentes (Richards Heuer, Psychology of Intelligence Analysis, 1999), pour se protéger du biais de confirmation.",
@@ -1373,8 +1383,36 @@ const WMODES={
   expl:{label:'Expliquer',hint:"Méthode Feynman : explique à un enfant de 12 ans, sans jargon, avec une analogie et un exemple concret. Là où tu bloques, c'est que tu ne comprends pas encore.",crit:"exactitude, simplicité, qualité de l'analogie, trous ou erreurs dans la compréhension"},
   resume:{label:'Résumer',hint:"Lis le texte (2 minutes au plus). Il disparaît ensuite : résume-le de mémoire en 60 mots maximum.",crit:"fidélité aux idées principales, hiérarchisation, concision, reformulation personnelle"},
   citation:{label:'Citation',hint:"Commente la citation : ce qu'elle veut dire, si tu es d'accord et pourquoi, un exemple tiré de ta vie ou de l'histoire, puis sa limite.",crit:"compréhension de la citation et de son contexte, position claire, exemple concret et pertinent, nuance ou limite, clarté"},
+  disput:{label:'Disputatio',hint:"À la manière de la Somme de saint Thomas. Il semble que : les deux objections les plus fortes contre ta position. En sens contraire : un argument ou une autorité. Je réponds que : ta réponse, avec les distinctions nécessaires. Puis réponds à chaque objection. On cherche la vérité, pas la victoire.",crit:"question bien posée, force réelle des objections (pas d'hommes de paille), argument en sens contraire, justesse des distinctions dans la réponse, réponse précise à chaque objection en reconnaissant sa part de vérité, ordre et sobriété"},
   revise:{label:'Réviser',hint:"Reprends un de tes anciens textes, avec un œil neuf. Clarifie, coupe le superflu, renforce les arguments faibles. Réviser, c'est la moitié de l'écriture.",crit:"progrès entre les deux versions : clarté, concision, structure, précision, force des arguments"}
 };
+// questions disputées : [question, référence, ce que répond saint Thomas]. Sans référence : question moderne, avec une piste chez lui.
+const DISPUT=[
+  ["Dieu existe-t-il ?","Somme théologique, Ia, q. 2, a. 3","Oui, et cela se montre par cinq voies : le mouvement (tout ce qui est mû l'est par un autre, et l'on ne peut remonter à l'infini), la cause efficiente, le possible et le nécessaire, les degrés de perfection, l'ordre du monde. À l'objection du mal, il répond avec saint Augustin : Dieu, souverainement bon, ne laisserait aucun mal dans ses œuvres s'il n'était assez puissant et bon pour tirer le bien du mal lui-même."],
+  ["Le bonheur de l'homme consiste-t-il dans les richesses ?","Somme théologique, Ia-IIae, q. 2, a. 1","Non. Les richesses naturelles (nourriture, vêtement, logement) servent à soutenir la vie : on les cherche pour autre chose. Les richesses artificielles, comme l'argent, ne sont voulues que pour se procurer les premières. Or le bonheur est la fin dernière, que l'on ne cherche pour rien d'autre. Et le désir de l'argent n'a pas de limite, signe qu'il ne comble pas."],
+  ["Le bonheur consiste-t-il dans la gloire, c'est-à-dire la renommée ?","Somme théologique, Ia-IIae, q. 2, a. 3","Non. Être connu et loué des hommes est un effet du bien que l'on possède, non sa cause : la renommée suit le bonheur, elle ne le fait pas. De plus, le jugement des hommes se trompe souvent, et la gloire est instable, alors que le vrai bonheur doit être stable."],
+  ["Le bonheur consiste-t-il dans le pouvoir ?","Somme théologique, Ia-IIae, q. 2, a. 4","Non. Le pouvoir est un principe d'action, qui peut servir au bien comme au mal ; le bonheur, lui, est le bien dernier, dont on ne peut mal user. Avoir le pouvoir ne rend pas heureux : tout dépend de l'usage qu'on en fait."],
+  ["Peut-on être heureux sans amis ?","Somme théologique, Ia-IIae, q. 4, a. 8","Pour le bonheur parfait, en Dieu, les amis ne sont pas nécessaires, même si leur compagnie s'y ajoute. Mais pour le bonheur de cette vie, oui, il faut des amis : non pour l'utilité ou le plaisir, mais pour bien agir, pour leur faire du bien, se réjouir du bien qu'ils font et être aidé par eux à bien faire."],
+  ["Peut-on enseigner quelque chose à quelqu'un ?","Questions disputées sur la vérité, q. 11 (Le maître), a. 1","Oui, mais à la manière du médecin, qui ne guérit pas à la place de la nature : il l'aide à guérir. De même, la raison de l'élève est la cause principale de son savoir. Le maître l'aide en lui proposant des signes et des exemples, et en le conduisant pas à pas du connu vers l'inconnu, par le chemin même qu'il aurait suivi pour découvrir seul."],
+  ["Pour bien juger, faut-il apprendre des autres ?","Somme théologique, IIa-IIae, q. 49, a. 3","Oui. La prudence porte sur des actions particulières d'une variété presque infinie : un homme seul ne peut tout examiner, surtout en peu de temps. Il a besoin d'être instruit par d'autres, en particulier par les anciens qui ont l'expérience. Cette disposition, la docilité, fait partie de la prudence. Elle demande du travail : s'appliquer souvent et avec attention à l'enseignement des sages."],
+  ["L'argument d'autorité est-il un bon argument ?","D'après la Somme théologique, Ia, q. 1, a. 8, réponse à la 2e objection","Cela dépend de l'autorité. Saint Thomas distingue : l'argument fondé sur la révélation divine est le plus fort ; mais l'argument d'autorité fondé sur une raison humaine est le plus faible de tous. Pour une affirmation humaine, ce qui compte, ce sont les raisons qui la fondent, non le prestige de qui la prononce."],
+  ["La curiosité peut-elle être un vice ?","Somme théologique, IIa-IIae, q. 167, a. 1","Oui, non parce que savoir serait mauvais (la connaissance de la vérité est bonne en soi) mais parce que le désir de savoir peut être désordonné : quand on s'y livre en délaissant l'étude que l'on doit faire, quand on cherche à apprendre auprès de sources illégitimes, quand on veut connaître les choses sans les rapporter à leur fin, ou quand on cherche ce qui dépasse ses forces. La vertu qui règle ce désir s'appelle la studiosité (q. 166)."],
+  ["La loi naturelle est-elle la même chez tous les hommes ?","Somme théologique, Ia-IIae, q. 94, a. 4","Pour les premiers principes (faire le bien, éviter le mal, agir selon la raison), oui : ils sont les mêmes pour tous et connus de tous. Pour les conclusions particulières, ils valent dans la plupart des cas mais admettent des exceptions : il faut rendre un dépôt, sauf à qui le réclame pour combattre sa patrie. Et leur connaissance peut être obscurcie par la passion, une mauvaise habitude ou une mauvaise coutume."],
+  ["La loi humaine oblige-t-elle en conscience ?","Somme théologique, Ia-IIae, q. 96, a. 4","Si elle est juste, oui. Elle l'est par sa fin (le bien commun), par son auteur (qui ne dépasse pas son pouvoir) et par sa forme (des charges réparties avec équité). Une loi injuste n'oblige pas en conscience, sauf peut-être pour éviter le scandale ou le désordre ; et une loi qui commanderait d'agir contre la loi de Dieu ne doit jamais être observée : il faut obéir à Dieu plutôt qu'aux hommes."],
+  ["La loi humaine doit-elle réprimer tous les vices ?","Somme théologique, Ia-IIae, q. 96, a. 2","Non. La loi est faite pour une multitude dont la plupart ne sont pas parfaits en vertu. Elle ne défend donc que les vices les plus graves, dont la plupart peuvent s'abstenir, surtout ceux qui nuisent aux autres et sans la répression desquels la société ne pourrait subsister, comme le meurtre ou le vol. Exiger d'un coup trop de vertu ferait mépriser la loi et provoquerait de plus grands maux."],
+  ["Est-il permis de vendre une chose plus cher qu'elle ne vaut ?","Somme théologique, IIa-IIae, q. 77, a. 1","Non. Tromper pour vendre plus cher est toujours injuste. Même sans fraude, l'échange est fait pour l'avantage des deux parties et doit garder l'égalité entre la chose et le prix. Le vendeur peut compter le tort que lui cause le fait de se séparer de son bien, mais il ne peut pas vendre plus cher parce que l'acheteur en a grand besoin : cet avantage-là ne lui appartient pas."],
+  ["Tout mensonge est-il une faute ?","Somme théologique, IIa-IIae, q. 110, a. 3","Oui, car les mots sont faits pour signifier ce que l'on pense : dire le contraire de sa pensée va contre la nature même de la parole. Mais tous les mensonges ne sont pas aussi graves : celui qui nuit à autrui est grave ; le mensonge pour rendre service ou pour plaisanter est une faute légère. Et l'on peut, avec prudence, taire une vérité sans mentir."],
+  ["Le courage consiste-t-il d'abord à attaquer ou à tenir bon ?","Somme théologique, IIa-IIae, q. 123, a. 6","À tenir bon. Endurer est plus difficile qu'attaquer : celui qui endure fait face à plus fort que lui, il affronte un danger déjà présent et non à venir, et son épreuve dure, alors que l'attaque peut être soudaine. L'audace a sa place, mais la force se montre d'abord dans la constance."],
+  ["Toute colère est-elle mauvaise ?","Somme théologique, IIa-IIae, q. 158, a. 1","Non. La colère est un mouvement de l'âme qui désire réparer une injustice. Si elle suit la raison, en voulant une juste réparation et avec mesure, elle est bonne : c'est la colère de zèle. Elle devient un vice quand elle désire une vengeance injuste ou s'emporte au-delà de ce que la raison demande."],
+  ["La vie contemplative vaut-elle mieux que la vie active ?","Somme théologique, IIa-IIae, q. 182, a. 1","En elle-même, oui : elle met en œuvre ce qu'il y a de plus haut en l'homme, l'intelligence, tournée vers les réalités les plus hautes ; elle peut durer davantage et se suffit davantage. C'est « la meilleure part » choisie par Marie, sœur de Marthe. Mais dans certains cas, à cause des nécessités de la vie présente, il faut préférer l'action. Et le plus haut est de transmettre aux autres ce que l'on a contemplé (q. 188, a. 6)."],
+  ["Peut-on confier sa réflexion à une machine sans s'appauvrir ?",null,"Saint Thomas ne connaissait pas l'IA, mais son article sur le maître aide à répondre (Questions disputées sur la vérité, q. 11, a. 1) : le maître n'apprend rien à la place de l'élève, il aide sa raison à faire le chemin. Une machine qui fait le chemin à ta place n'est plus un maître. Et les vertus, rappelle-t-il, s'acquièrent par des actes répétés (Somme, Ia-IIae, q. 63, a. 2)."],
+  ["Faut-il toujours dire toute la vérité, même quand elle blesse ?",null,"Rapproche-la de la question sur le mensonge (Somme, IIa-IIae, q. 110, a. 3) : ne jamais mentir, mais on peut taire une vérité avec prudence. Toute la question devient : quand se taire est-il prudent, et quand est-ce lâche ?"],
+  ["Le progrès technique rend-il l'homme meilleur ?",null,"Pour saint Thomas, l'homme devient meilleur par les vertus, des dispositions acquises par des actes répétés (Somme, Ia-IIae, q. 63, a. 2). Un outil peut aider l'effort ou en dispenser : demande-toi lequel des deux il fait."],
+  ["Faut-il limiter le temps passé devant les écrans ?",null,"Saint Thomas compte parmi les formes de curiosité le désir désordonné de voir et d'entendre (Somme, IIa-IIae, q. 167, a. 2). Mais il défend aussi le jeu et la détente, nécessaires au repos de l'esprit, pourvu qu'ils gardent la mesure (q. 168, a. 2)."],
+  ["Un chef doit-il être aimé ou craint ?",null,"Machiavel répond : craint, si l'on ne peut être les deux. Saint Thomas, dans son traité Du royaume (livre I), soutient l'inverse : le pouvoir fondé sur la crainte est fragile, et l'amour des sujets est l'appui le plus solide d'un gouvernement."]
+];
+const DQ=d=>'Question disputée : '+d[0];
+const DISPUT_AI="Agis comme un maître à la manière de saint Thomas d'Aquin. Voici une question disputée que j'ai rédigée moi-même, sans aide. Ne la réécris pas et ne me donne pas ta propre réponse. Examine-la comme on examinait un article dans les écoles : mes objections sont-elles les plus fortes possibles, ou des hommes de paille ? Ma réponse fait-elle les bonnes distinctions ? Ai-je vraiment répondu à chaque objection, en reconnaissant sa part de vérité ? Puis oppose-moi une nouvelle objection, la plus forte que tu trouves, et attends ma réponse.";
 function textStats(s,mins){
   const w=s.match(/[\p{L}\p{N}'’-]+/gu)||[], n=w.length;
   const sents=s.split(/[.!?…]+/).filter(x=>(x.trim().match(/\S+/g)||[]).length>=2).length||1;
@@ -1711,15 +1749,35 @@ const PROBLEMS=[
   ["Combien y a-t-il de carrés, de toutes tailles, sur un échiquier de 8 × 8 cases ?", "204", "64 carrés de 1 × 1, 49 de 2 × 2, 36 de 3 × 3, et ainsi de suite jusqu'à 1 carré de 8 × 8 : 64 + 49 + 36 + 25 + 16 + 9 + 4 + 1 = 204.", "Compte les carrés de 1 × 1, puis de 2 × 2, et ainsi de suite."],
   ["Une famille a deux enfants, et l'aîné est une fille. Quelle est la probabilité que les deux soient des filles ?", "1 sur 2", "Seul le cadet reste inconnu : fille ou garçon, à chances égales. Compare avec le problème de Paul : savoir lequel des deux est une fille change tout.", "Cette fois, tu sais lequel des deux enfants est une fille."]
 ];
-const COACH_RULES="Tu es le coach cognitif personnel de l'utilisateur, dans l'application Brain Fit. Son but : garder et développer ses capacités de réflexion malgré l'usage quotidien de l'IA. Ses priorités : l'écriture (orthographe comprise) et le raisonnement, avec un exercice chaque jour, un programme hebdomadaire exigeant (2 lectures intensives, 1 séance d'écriture longue), un régime pauvre en contenus courts et 3 discussions intéressantes par jour. Tu t'appuies sur ces principes : réfléchir avant de demander à l'IA, se faire challenger par l'IA plutôt que la laisser produire, apprentissage actif et espacé, expliquer à voix haute, hypothèses concurrentes, métacognition, lecture latérale. Ton style : chaleureux mais exigeant, direct, concret, en français, en tutoyant. Règles absolues : tu ne fais jamais le travail à sa place, tu ne réécris jamais ses textes et tu ne donnes pas de solution toute faite quand il peut la trouver ; tu pointes, tu questionnes, tu proposes un prochain pas. Réponds en texte simple, sans markdown (pas de **, pas de #), avec des tirets pour les listes. Sois concis.";
-const TUTOR="Agis comme un tuteur socratique. Ne me donne pas la réponse directement : pose-moi des questions, donne-moi des indices progressifs et laisse-moi trouver. Voici ma réflexion de départ :\n\n";
+// l'esprit du tuteur : il règle la consigne copiée depuis le sas, la voix du coach et la relecture du dimanche
+const TUTORS={
+  mix:{label:'Les trois',name:'les trois maîtres',desc:"Les questions de Socrate, l'ordre et la dispute de saint Thomas, la relecture et la résolution de saint Ignace.",
+    prompt:"Agis comme un tuteur nourri de la tradition chrétienne d'éducation. Ne me donne pas la réponse. Comme Socrate, pose-moi une question à la fois et fais-moi définir mes termes. Comme saint Thomas d'Aquin, oppose-moi les objections les plus fortes, aide-moi à répondre par des distinctions et cherche la vérité plutôt que la victoire. Comme saint Ignace, fais-moi aller au fond d'une seule chose, relire ce que j'ai compris et finir par une résolution concrète.",
+    coach:"Ta manière de guider unit trois maîtres : les questions de Socrate, qui lui font découvrir par lui-même ; l'ordre et la dispute de saint Thomas d'Aquin, avec les objections les plus fortes et des réponses par distinctions, en cherchant la vérité plutôt que la victoire ; la relecture et la résolution de saint Ignace, qui font aller au fond d'une seule chose et finir par un acte concret.",
+    rel:"Deux minutes de relecture, à la manière de saint Ignace : de quoi rendre grâce dans ton travail de cette semaine ? Qu'est-ce qui t'a aidé, qu'est-ce qui t'a freiné ? Quelle seule résolution prends-tu pour la semaine qui vient ?"},
+  socrate:{label:'Socrate',name:'Socrate',desc:"Des questions, une à la fois, jusqu'à ce que tu voies par toi-même ce que tu croyais savoir.",
+    prompt:"Agis comme un tuteur à la manière de Socrate. Ne me donne pas la réponse. Pose-moi une seule question à la fois, fais-moi définir mes termes, montre-moi mes contradictions par tes questions et ne me donne un indice que si je bloque vraiment. Laisse-moi trouver.",
+    coach:"Ta manière de guider est celle de Socrate : une question à la fois, tu lui fais définir ses termes, tu fais apparaître ses contradictions pour qu'il les voie lui-même, et tu ne donnes un indice que s'il bloque.",
+    rel:"Deux minutes d'examen, comme le voulait Socrate : qu'as-tu cru savoir cette semaine, et que sais-tu vraiment ? Quelle question veux-tu creuser la semaine prochaine ?"},
+  thomas:{label:'Saint Thomas',name:'saint Thomas',desc:"La dispute, comme dans la Somme : les objections les plus fortes d'abord, puis ta réponse par distinctions, et une réponse à chaque objection. On cherche la vérité, pas la victoire.",
+    prompt:"Agis comme un maître à la manière de saint Thomas d'Aquin et de la dispute. Ne me donne pas la réponse toute faite. Avance avec ordre, une étape à la fois, en attendant ma réponse à chaque étape :\n1. Aide-moi à poser exactement la question et à définir les termes.\n2. Oppose-moi les objections les plus fortes contre ma position (« Il semble que… »).\n3. Demande-moi un argument en sens contraire.\n4. Laisse-moi formuler ma réponse et aide-moi à faire les bonnes distinctions : sous quel rapport est-ce vrai, sous quel rapport est-ce faux ?\n5. Fais-moi répondre à chaque objection, en reconnaissant la part de vérité qu'elle contient.\nVa du plus connu au moins connu, sans questions inutiles ni répétitions. Cherche la vérité, pas la victoire.",
+    coach:"Ta manière de guider est celle de saint Thomas d'Aquin et de la dispute : tu l'aides à poser exactement la question, tu lui opposes les objections les plus fortes, tu l'aides à répondre par des distinctions (sous quel rapport est-ce vrai, sous quel rapport faux ?) et à reconnaître la part de vérité de chaque objection. Tu procèdes avec ordre, du plus connu au moins connu, sans questions inutiles ni répétitions. Tu cherches la vérité, pas la victoire.",
+    rel:"Deux minutes, à la manière de saint Thomas : quelle objection à tes idées as-tu vraiment affrontée cette semaine ? Quelle distinction t'a aidé à y voir clair ? Quelle question veux-tu disputer la semaine prochaine ?"},
+  ignace:{label:'Saint Ignace',name:'saint Ignace',desc:"Peu, mais à fond : partir de ton expérience, relire ce que tu as compris et ce qui t'a touché, finir par une résolution concrète. « Ce n'est pas d'en savoir beaucoup qui rassasie et satisfait l'âme, mais de sentir et goûter les choses intérieurement. »",
+    prompt:"Agis comme un accompagnateur à la manière de saint Ignace de Loyola et de la pédagogie des jésuites. Ne me donne pas la réponse. Pars de ce que je sais déjà et de mon expérience. Fais-moi aller au fond d'une seule chose plutôt que d'en survoler beaucoup : « ce n'est pas d'en savoir beaucoup qui rassasie et satisfait l'âme, mais de sentir et goûter les choses intérieurement ». Fais-moi relire ce que je comprends vraiment, ce qui me résiste et ce qui me touche. Termine en m'aidant à prendre une résolution concrète, et demande-moi plus tard si je l'ai tenue.",
+    coach:"Ta manière de guider est celle de saint Ignace de Loyola et de la pédagogie des jésuites : tu pars de son expérience et de ce qu'il sait déjà, tu le fais aller au fond d'une seule chose plutôt que d'en survoler beaucoup (« ce n'est pas d'en savoir beaucoup qui rassasie et satisfait l'âme, mais de sentir et goûter les choses intérieurement »), tu l'invites à relire ce qui l'a aidé ou freiné, et tu termines par une résolution concrète dont il vérifiera la tenue.",
+    rel:"Deux minutes de relecture, à la manière de saint Ignace : de quoi rendre grâce dans ton travail de cette semaine ? Qu'est-ce qui t'a aidé, qu'est-ce qui t'a freiné ? Quelle seule résolution prends-tu pour la semaine qui vient ?"}
+};
+const tutorKey=()=>TUTORS[state.settings.tutor]?state.settings.tutor:'mix';
+const COACH_BASE="Tu es le coach cognitif personnel de l'utilisateur, dans l'application Brain Fit. Son but : garder et développer ses capacités de réflexion malgré l'usage quotidien de l'IA. Ses priorités : l'écriture (orthographe comprise) et le raisonnement, avec un exercice chaque jour, un programme hebdomadaire exigeant (2 lectures intensives, 1 séance d'écriture longue), un régime pauvre en contenus courts et 3 discussions intéressantes par jour. Tu t'appuies sur ces principes : réfléchir avant de demander à l'IA, se faire challenger par l'IA plutôt que la laisser produire, apprentissage actif et espacé, expliquer à voix haute, hypothèses concurrentes, métacognition, lecture latérale. Tu es nourri de la tradition chrétienne d'éducation et de la culture classique : l'étude est une recherche de la vérité, qui demande ordre, humilité et persévérance, et l'intelligence est faite pour le vrai et le bien, non pour briller. Quand c'est juste et naturel, tu peux t'appuyer sur saint Augustin, saint Thomas d'Aquin, saint Ignace de Loyola, Pascal ou les grands auteurs, sans sermonner ni plaquer de citations, et en ne citant que ce dont tu es sûr, avec sa source. Ton style : chaleureux mais exigeant, direct, concret, en français, en tutoyant. Règles absolues : tu ne fais jamais le travail à sa place, tu ne réécris jamais ses textes et tu ne donnes pas de solution toute faite quand il peut la trouver ; tu pointes, tu questionnes, tu proposes un prochain pas. Réponds en texte simple, sans markdown (pas de **, pas de #), avec des tirets pour les listes. Sois concis.";
+const coachRules=()=>COACH_BASE+' '+TUTORS[tutorKey()].coach;
 /* ---------- citations à retenir ----------
    c : philo, politique, histoire, nation, classique, ecriture, fausse. a : auteur réel. f : fausse attribution courante.
    k : mot à retrouver dans l'exercice « mot manquant ». n : le contexte « À retenir ». */
 /* ---------- thèmes : 2 ou 3 sujets choisis orientent citations, « Ce jour-là », dictées, sujets d'écriture et coach ---------- */
 const THEMES=[['histoire','Histoire'],['sciences','Sciences'],['philo','Philosophie'],['eco','Économie'],['politique','Politique et société'],['lettres','Arts et lettres'],['sport','Sport'],['nature','Nature et géographie']];
 const THEME_NAME=Object.fromEntries(THEMES);
-const QCAT_TH={philo:'philo',politique:'politique',histoire:'histoire',nation:'histoire politique',classique:'lettres',ecriture:'lettres'};
+const QCAT_TH={philo:'philo',foi:'philo',politique:'politique',histoire:'histoire',nation:'histoire politique',classique:'lettres',ecriture:'lettres'};
 // « Ce jour-là » : thèmes reconnus aux mots de l'événement ; tous sont de l'histoire
 const EV_RX={
   sport:/olympi|Tour de France|Coupe du monde|Roland-Garros|record du monde|football|aviron|mile\b/i,
@@ -1739,7 +1797,7 @@ function pickT(arr,ths){
 }
 // pour le coach : ses thèmes, s'il en a choisi
 const themeHint=()=>{const m=myThemes();return m.length?` Choisis de préférence un sujet lié à ses centres d'intérêt : ${m.map(t=>THEME_NAME[t].toLowerCase()).join(', ')}.`:'';};
-const QCAT={philo:'Philosophie',politique:'Politique',histoire:'Histoire',nation:'Nation & tradition',classique:'Classiques français',ecriture:'Écriture',fausse:'Fausse citation'};
+const QCAT={philo:'Philosophie',foi:'Tradition chrétienne',politique:'Politique',histoire:'Histoire',nation:'Nation & tradition',classique:'Classiques français',ecriture:'Écriture',fausse:'Fausse citation'};
 const QUOTES=[
 {id:'delphes',c:'philo',q:"Connais-toi toi-même.",a:"Inscription de Delphes",s:"Temple d'Apollon à Delphes (VIe s. av. J.-C.), devise reprise par Socrate chez Platon",n:"Pour Socrate, se connaître, c'est d'abord connaître les limites de son savoir. Le piège moderne : croire savoir parce qu'on a lu une réponse bien tournée.",k:"Connais"},
 {id:'examen',c:'philo',q:"Une vie sans examen ne vaut pas la peine d'être vécue.",a:"Socrate",s:"Platon, Apologie de Socrate, 38a (399 av. J.-C.)",n:"Socrate le dit à son procès, alors qu'il risque la mort : il préfère mourir plutôt que cesser de questionner. Examiner, c'est ne rien tenir pour acquis, pas même ses certitudes.",k:"examen"},
@@ -1753,6 +1811,14 @@ const QUOTES=[
 {id:'jugements',c:'philo',q:"Ce qui trouble les hommes, ce ne sont pas les choses, mais les jugements qu'ils portent sur les choses.",a:"Épictète",s:"Manuel, V (vers 125 apr. J.-C., noté par son élève Arrien)",n:"Épictète, ancien esclave, distingue l'événement de son interprétation. C'est l'une des sources de la thérapie cognitive moderne.",k:"jugements"},
 {id:'depend',c:'philo',q:"Parmi les choses, les unes dépendent de nous, les autres n'en dépendent pas.",a:"Épictète",s:"Manuel, I (vers 125 apr. J.-C.)",n:"La première phrase du Manuel. Ce qui dépend de toi : tes jugements, tes efforts, ton attention. Le reste, accepte-le.",k:"dépendent"},
 {id:'vengeance',c:'philo',q:"La meilleure manière de se venger, c'est de ne pas devenir semblable à l'offenseur.",a:"Marc Aurèle",s:"Pensées pour moi-même, VI, 6 (vers 170-180 apr. J.-C.)",n:"Un empereur qui écrit pour lui seul, sous la tente, pendant ses campagnes. Ses Pensées n'étaient pas destinées à être publiées.",k:"semblable"},
+{id:'inquiet',c:'foi',q:"Tu nous as faits pour toi, Seigneur, et notre cœur est inquiet jusqu'à ce qu'il repose en toi.",a:"Saint Augustin",s:"Confessions, I, 1 (vers 397-400)",n:"La première page des Confessions. Pour Augustin, l'inquiétude humaine n'est pas une panne à réparer mais une boussole : elle dit que nous sommes faits pour plus grand que ce qui nous distrait.",k:"inquiet"},
+{id:'croire',c:'foi',q:"Comprends pour croire, crois pour comprendre.",a:"Saint Augustin",s:"Sermon 43, 9 (début du Ve s.)",n:"Foi et raison ne s'opposent pas : elles s'appellent l'une l'autre. C'est le programme de l'éducation chrétienne, d'Augustin à saint Thomas.",k:"comprendre"},
+{id:'aime',c:'foi',q:"Aime, et fais ce que tu veux.",a:"Saint Augustin",s:"Commentaire de la première épître de saint Jean, VII, 8 (vers 407)",n:"Pas une permission de tout faire. Augustin parle de corriger quelqu'un : si la racine est l'amour vrai, ce qui en sortira sera bon, même la sévérité.",k:"Aime"},
+{id:'eclairer',c:'foi',q:"Il est plus beau d'éclairer que de briller seulement ; de même, il est plus beau de transmettre aux autres ce qu'on a contemplé que de contempler seulement.",a:"Saint Thomas d'Aquin",s:"Somme théologique, IIa-IIae, q. 188, a. 6 (vers 1272)",n:"Les dominicains, l'ordre de saint Thomas, en ont tiré leur devise : contemplata aliis tradere. On ne sait vraiment que ce qu'on sait transmettre.",k:"éclairer"},
+{id:'veritas',c:'foi',q:"L'étude de la philosophie n'a pas pour but de savoir ce que les hommes ont pensé, mais quelle est la vérité des choses.",a:"Saint Thomas d'Aquin",s:"Commentaire du traité Du ciel d'Aristote, I, leçon 22 (vers 1272)",n:"Une règle pour l'ère des résumés : savoir qui a dit quoi ne dispense pas de chercher si c'est vrai.",k:"vérité"},
+{id:'gouter',c:'foi',q:"Ce n'est pas d'en savoir beaucoup qui rassasie et satisfait l'âme, mais de sentir et goûter les choses intérieurement.",a:"Saint Ignace de Loyola",s:"Exercices spirituels, 2e annotation (publiés en 1548)",n:"Le contraire du défilement infini : peu de choses, mais à fond. C'est l'esprit du tuteur à la manière de saint Ignace.",k:"goûter"},
+{id:'dereglement',c:'foi',q:"Le plus grand dérèglement de l'esprit, c'est de croire les choses parce qu'on veut qu'elles soient, et non parce qu'on a vu qu'elles sont en effet.",a:"Bossuet",s:"Traité de la connaissance de Dieu et de soi-même (écrit vers 1670 pour le Dauphin)",n:"Le biais de confirmation, décrit trois siècles avant la psychologie cognitive, par l'évêque qui fut précepteur du fils de Louis XIV.",k:"dérèglement"},
+{id:'solide',c:'foi',q:"Le but d'ouvrir l'esprit, comme d'ouvrir la bouche, est de le refermer sur quelque chose de solide.",a:"G. K. Chesterton",s:"Autobiographie (1936)",n:"L'ouverture d'esprit n'est pas une fin : on écoute pour trouver le vrai, puis pour s'y tenir. Chesterton, converti au catholicisme en 1922, se méfiait du doute érigé en vertu.",k:"solide"},
 {id:'bonsens',c:'philo',q:"Le bon sens est la chose du monde la mieux partagée.",a:"René Descartes",s:"Discours de la méthode, I (1637)",n:"Phrase ironique : chacun croit en avoir assez. La suite compte plus : « ce n'est pas assez d'avoir l'esprit bon, mais le principal est de l'appliquer bien ».",k:"partagée"},
 {id:'roseau',c:'philo',q:"L'homme n'est qu'un roseau, le plus faible de la nature ; mais c'est un roseau pensant.",a:"Blaise Pascal",s:"Pensées (1670, posthume)",n:"Notre grandeur tient à la pensée. Pascal en tire une règle : « Travaillons donc à bien penser : voilà le principe de la morale. »",k:"pensant"},
 {id:'chambre',c:'philo',q:"Tout le malheur des hommes vient d'une seule chose, qui est de ne savoir pas demeurer en repos, dans une chambre.",a:"Blaise Pascal",s:"Pensées, « Divertissement » (1670, posthume)",n:"Pour Pascal, le divertissement nous détourne de penser à nous-mêmes. Le fil d'actualité infini en est la forme la plus aboutie.",k:"chambre"},
@@ -2621,6 +2687,7 @@ function badgeDefs(ctx){
     ['w10','Plume','10 textes écrits sans IA',n('write').length>=10],
     ['w50','Écrivain','50 textes écrits sans IA',n('write').length>=50],
     ['rev5','Réviseur','5 textes révisés',texts.filter(x=>x.mode==='revise').length>=5],
+    ['disp5','Disputeur','5 questions disputées à la manière de saint Thomas',texts.filter(x=>x.mode==='disput').length>=5],
     ['sas10','Cerveau d’abord','10 passages par le sas avant l’IA',(state.sas||[]).length>=10],
     ['err','Œil de lynx','100 % à « Trouve l’erreur de l’IA »',max('erreuria')>=100],
     ['soph','Dialecticien','5 sur 5 au détecteur de sophismes',max('sophismes')>=100],
@@ -2979,7 +3046,8 @@ function renderWeekBilan(){
     P('À travailler',b.weak),
     P('Défis',b.defis.join(', ').replace(/^./,c=>c.toUpperCase())+'.'),
     ...(b.rank?[P('Classement',b.rank)]:[]),
-    el('p',{class:'next'},el('b',{text:'Pour la semaine prochaine'}),document.createTextNode(b.next)));
+    el('p',{class:'next'},el('b',{text:'Pour la semaine prochaine'}),document.createTextNode(b.next)),
+    P('Relecture',TUTORS[tutorKey()].rel.replace(/ ([:;!?»])/g,'\u00a0$1')));
 }
 // une fois par semaine, à la première ouverture après dimanche 18 h (le coach, s'il est branché, prévient lui-même)
 let wbShown=false;
@@ -3010,7 +3078,7 @@ function renderCoach(){
 }
 $('#coach-review').addEventListener('click',async()=>{
   const b=$('#coach-review'); b.disabled=true;
-  const prompt=COACH_RULES+"\n\nVoici ses données d'entraînement :\n"+coachSummary()+"\n\nFais-lui son bilan en 150 à 220 mots :\n- ce qui progresse ou tient bien (avec un chiffre précis) ;\n- le point faible à travailler en priorité, surtout côté écriture et raisonnement ;\n- un plan concret pour les 7 prochains jours (3 actions maximum, réalistes) ;\n- une question qui le fait réfléchir sur son usage de l'IA ;\n- s'il n'a pas d'objectif, ou si le sien est atteint ou trop flou, termine par une dernière ligne exactement au format « Objectif proposé : » suivi d'un objectif précis et mesurable pour les 4 prochaines semaines, en une phrase.\nS'il y a peu de données, dis-le simplement et propose comment bien démarrer.";
+  const prompt=coachRules()+"\n\nVoici ses données d'entraînement :\n"+coachSummary()+"\n\nFais-lui son bilan en 150 à 220 mots :\n- ce qui progresse ou tient bien (avec un chiffre précis) ;\n- le point faible à travailler en priorité, surtout côté écriture et raisonnement ;\n- un plan concret pour les 7 prochains jours (3 actions maximum, réalistes) ;\n- une question qui le fait réfléchir sur son usage de l'IA ;\n- s'il n'a pas d'objectif, ou si le sien est atteint ou trop flou, termine par une dernière ligne exactement au format « Objectif proposé : » suivi d'un objectif précis et mesurable pour les 4 prochaines semaines, en une phrase.\nS'il y a peu de données, dis-le simplement et propose comment bien démarrer.";
   const text=await askCoach(prompt,$('#coach-review-out'));
   if(text){state.coach={t:Date.now(),text:text.slice(0,4000)};save();renderCoach();}
   showGoalProposal(text);
@@ -3022,7 +3090,7 @@ $('#coach-form').addEventListener('submit',async e=>{
   const chat=$('#coach-chat'); chat.append(el('div',{class:'me',text:q}));
   const out=el('div',{class:'coachout'}); chat.append(out);
   chatTurns.push({role:'user',content:q});
-  const ctx=COACH_RULES+"\n\nSes données récentes, pour contexte :\n"+coachSummary()+"\n\nIl va te poser des questions. S'il te demande de faire un travail intellectuel à sa place (rédiger, résoudre, résumer), guide-le pour qu'il le fasse lui-même. Réponds en 120 mots maximum.";
+  const ctx=coachRules()+"\n\nSes données récentes, pour contexte :\n"+coachSummary()+"\n\nIl va te poser des questions. S'il te demande de faire un travail intellectuel à sa place (rédiger, résoudre, résumer), guide-le pour qu'il le fasse lui-même. Réponds en 120 mots maximum.";
   const text=await askCoach([{role:'user',content:ctx},{role:'assistant',content:"Compris. Je suis prêt."},...chatTurns.slice(-10)],out,{cache:false});
   if(text)chatTurns.push({role:'assistant',content:text});else chatTurns.pop();
   $('#coach-send').disabled=false;
@@ -3048,7 +3116,7 @@ function initCarnetCoach(){
   btn.addEventListener('click',async()=>{
     btn.disabled=true;
     const sel=texts.slice(-5).map((x,i)=>`Texte ${i+1} (${fd(new Date(x.t))}, format ${(WMODES[x.mode]||WMODES.libre).label}, consigne « ${x.prompt} », ${x.wpm} mots/min, ${x.avgSent} mots/phrase) :\n${x.text.slice(0,2500)}`).join('\n\n---\n\n');
-    await askCoach(COACH_RULES+`\n\nVoici ses derniers textes, du plus ancien au plus récent :\n\n${sel}\n\nAnalyse son ÉVOLUTION d'écrivain en 200 mots maximum : ses tics ou défauts récurrents (cite-les), ce qui s'améliore d'un texte à l'autre, et l'unique point à travailler en priorité, avec un exercice précis pour sa prochaine séance d'écriture.`,out);
+    await askCoach(coachRules()+`\n\nVoici ses derniers textes, du plus ancien au plus récent :\n\n${sel}\n\nAnalyse son ÉVOLUTION d'écrivain en 200 mots maximum : ses tics ou défauts récurrents (cite-les), ce qui s'améliore d'un texte à l'autre, et l'unique point à travailler en priorité, avec un exercice précis pour sa prochaine séance d'écriture.`,out);
     btn.disabled=false;
   });
 }
@@ -3101,12 +3169,20 @@ function sasUpdate(){
   $$('#sas-rate button').forEach(b=>b.setAttribute('aria-pressed',String(+b.dataset.r===sasRate)));
   $('#sas-save').disabled=!(ready&&sasRate);
 }
-function copyText(txt,info){
-  const ok=()=>{info.textContent='Copié. Colle-le dans ton IA, puis reviens ici pour l’étape 3.';};
+function copyText(txt,info,msg){
+  const ok=()=>{info.textContent=msg||'Copié. Colle-le dans ton IA, puis reviens ici pour l’étape 3.';};
   try{navigator.clipboard.writeText(txt).then(ok,()=>{info.textContent='Copie impossible ici : sélectionne le texte de ta question à la main.';});}catch(e){info.textContent='Copie impossible ici : sélectionne le texte à la main.';}
 }
 $('#sas-copy').addEventListener('click',()=>copyText($('#sas-q').value.trim(),$('#sas-copy-info')));
-$('#sas-tutor').addEventListener('click',()=>copyText(TUTOR+'Question : '+$('#sas-q').value.trim()+'\n\nMa réflexion : '+$('#sas-mine').value.trim(),$('#sas-copy-info')));
+$('#sas-tutor').addEventListener('click',()=>copyText(TUTORS[tutorKey()].prompt+'\n\nQuestion : '+$('#sas-q').value.trim()+'\n\nMa réflexion de départ : '+$('#sas-mine').value.trim(),$('#sas-copy-info'),`Copié, avec la consigne du tuteur à la manière de ${TUTORS[tutorKey()].name}. Colle-le dans ton IA, puis reviens ici pour l’étape 3.`));
+function renderTutor(){
+  const k=tutorKey(), seg=$('#tutor-seg');
+  if(!seg.children.length)Object.entries(TUTORS).forEach(([t,v])=>seg.append(el('button',{'data-t':t,text:v.label,onclick:()=>{state.settings.tutor=t;save();renderTutor();}})));
+  [...seg.children].forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.t===k)));
+  $('#tutor-desc').textContent=TUTORS[k].desc.replace(/ ([:;!?»])/g,'\u00a0$1');
+  $('#sas-tutor').title='Copie ta question avec la consigne du tuteur, à la manière de '+TUTORS[k].name;
+}
+renderTutor();
 ['#sas-q','#sas-mine','#sas-learn'].forEach(s=>$(s).addEventListener('input',()=>{sasUpdate();sasDraft();}));
 $('#sas-mine').addEventListener('paste',e=>{e.preventDefault();$('#sas-copy-info').textContent='Le collage est désactivé ici : écris ta propre réflexion.';});
 $$('#sas-rate button').forEach(b=>b.addEventListener('click',()=>{sasRate=+b.dataset.r;sasUpdate();sasDraft();}));
@@ -3148,7 +3224,7 @@ function showTab(t){
   if(t==='progres'){renderProgress();renderCarnet();renderXpPanel();renderScreenChart();}
   if(t==='classement')renderCircle();
   if(t==='reglages')$('#city-in').value=city();
-  if(t==='coach'){renderSas();renderCoach();renderWeekBilan();}
+  if(t==='coach'){renderSas();renderCoach();renderWeekBilan();renderTutor();}
   if(location.hash!=='#'+t)try{history.replaceState(null,'','#'+t);}catch(e){}
 }
 $('#city-form').addEventListener('submit',e=>{e.preventDefault();state.settings.city=$('#city-in').value.trim().slice(0,60);save();renderReel();toast('<span>Ville enregistrée.</span>');});
@@ -3381,6 +3457,7 @@ write(arena){
       prompt=orig?'Réviser : '+orig.prompt+' (écrit le '+fd(new Date(orig.t),{day:'numeric',month:'long'})+')':"Aucun texte à réviser pour l'instant. Écris un texte dans un autre format : tu pourras le réviser dès demain.";
     }
     else if(mode==='citation'){const real=QUOTES.filter(q=>q.c!=='fausse'), mine=real.filter(q=>(state.flori||{})[q.id]);prompt=quotePrompt(pick(mine.length&&Math.random()<.6?mine:real));}
+    else if(mode==='disput'){const used=new Set(texts.filter(x=>x.mode==='disput').map(x=>x.prompt).concat(prompt));const fresh=DISPUT.filter(d=>!used.has(DQ(d)));prompt=DQ(pick(fresh.length?fresh:DISPUT.filter(d=>DQ(d)!==prompt)));}
     else if(mode==='resume'){const used=new Set(texts.filter(x=>x.mode==='resume').map(x=>x.prompt));const fresh=SOURCES.filter(s=>!used.has('Résumer : '+s[0]));src=pick(fresh.length?fresh:SOURCES);prompt='Résumer : '+src[0];}
     else prompt=pick(PROMPTS);
   };
@@ -3404,7 +3481,7 @@ write(arena){
   function go(){
     if(cleanup){cleanup();cleanup=null;}
     const limit=mode==='resume'?60:0, started=Date.now();
-    const ta=el('textarea',{id:'write-ta','aria-label':'Ton texte',spellcheck:'false',placeholder:mode==='resume'?'De mémoire, en 60 mots maximum…':'Commence par la première idée qui vient…'}); ta.value=draft||(mode==='revise'&&orig?orig.text:'');
+    const ta=el('textarea',{id:'write-ta','aria-label':'Ton texte',spellcheck:'false',placeholder:mode==='resume'?'De mémoire, en 60 mots maximum…':mode==='disput'?"Il semble que… (l'objection la plus forte)\nDe plus… (une deuxième)\nMais en sens contraire…\nJe réponds qu'il faut distinguer…\nÀ la première objection, il faut dire que…":'Commence par la première idée qui vient…'}); ta.value=draft||(mode==='revise'&&orig?orig.text:'');
     const wc=el('span',{class:'muted'}); const fb=el('span',{class:'note'});
     const count=()=>{const n=(ta.value.trim().match(/\S+/g)||[]).length;wc.textContent=n+(limit?' / '+limit:'')+' mots';wc.style.color=limit&&n>limit?'var(--bad)':'';return n;};
     ta.addEventListener('input',()=>{count();try{localStorage.setItem('brainfit.draft',JSON.stringify({prompt,text:ta.value,mode,src,origT:orig?orig.t:null}));}catch(e){}});
@@ -3412,7 +3489,8 @@ write(arena){
     ta.addEventListener('drop',e=>e.preventDefault());
     const fin=el('button',{class:'btn primary',text:'Terminer',onclick:()=>finish()});
     arena.style.alignItems='stretch';
-    arena.replaceChildren(el('span',{class:'label',text:WMODES[mode].label}),el('p',{class:'prompt',text:mode==='resume'?'Résume de mémoire : '+src[0]:prompt}),ta,el('div',{class:'row spread'},el('div',{class:'row'},wc,fb),fin));
+    arena.replaceChildren(el('span',{class:'label',text:WMODES[mode].label}),el('p',{class:'prompt',text:mode==='resume'?'Résume de mémoire : '+src[0]:prompt}),
+      mode==='disput'?el('p',{class:'note dplan',text:'Il semble que… · En sens contraire… · Je réponds que… · Réponse aux objections'}):null,ta,el('div',{class:'row spread'},el('div',{class:'row'},wc,fb),fin));
     count(); ta.focus();
     const total=mode==='resume'?5:mins;
     const stopT=countdown(total*60,null,()=>{fb.textContent='Temps écoulé. Termine ta phrase puis clique sur Terminer.';});
@@ -3428,12 +3506,17 @@ write(arena){
       const m=recordMsg('write',n); logResult('write',n,{w:mode});
       if(mode==='revise')orig.rev=Date.now();
       texts.push({t:Date.now(),mode,prompt,text:text.slice(0,4000),words:st.words,avgSent:st.avgSent,variety:st.variety,wpm:mode==='revise'?0:st.wpm}); saveTexts();
-      const rv=mode==='revise';
-      showResult(arena,n,rv?'mots dans ta version révisée':'mots écrits sans aide',m+(rv?` Version d'origine : ${orig.words} mots, ${orig.avgSent} mots/phrase. Les deux versions sont dans ton carnet.`:" Ton texte est rangé dans ton carnet (onglet Progrès). Relis-le demain : qu'ajouterais-tu, que couperais-tu ?"),()=>RUN.write(arena));
+      const rv=mode==='revise', dq=mode==='disput'?DISPUT.find(d=>DQ(d)===prompt):null;
+      const thom=dq?el('div',{class:'answer'},el('span',{class:'label',text:dq[1]?'Ce que répond saint Thomas':'Une piste chez saint Thomas'}),el('span',{class:'fg2',text:dq[2]}),dq[1]?el('span',{class:'note',text:dq[1]}):null):null;
+      showResult(arena,n,rv?'mots dans ta version révisée':'mots écrits sans aide',m+(rv?` Version d'origine : ${orig.words} mots, ${orig.avgSent} mots/phrase. Les deux versions sont dans ton carnet.`:dq?' Compare avec ta réponse : où es-tu d’accord, où diverges-tu, et pourquoi ?':" Ton texte est rangé dans ton carnet (onglet Progrès). Relis-le demain : qu'ajouterais-tu, que couperais-tu ?"),()=>RUN.write(arena),thom);
       arena.insertBefore(el('div',{class:'row',style:'justify-content:center;gap:18px'},
         rv?null:statChip(st.wpm,'mots / min'),statChip(st.avgSent,'mots / phrase'),statChip(st.variety+' %','vocabulaire varié')),arena.children[2]);
       const extra=mode==='resume'?`\n\nTexte source qu'il devait résumer :\n---\n${src[1]}\n---`:mode==='revise'?`\n\nVersion d'origine, qu'il vient de réviser :\n---\n${orig.text}\n---\nCompare les deux versions : dis précisément ce que la révision a amélioré et ce qui reste à travailler.`:'';
-      arena.append(coachBlock('Avis du coach sur mon texte',()=>COACH_RULES+`\n\nExercice d'écriture « ${WMODES[mode].label} ». Consigne : « ${mode==='resume'?'Résumer de mémoire en 60 mots max : '+src[0]:prompt} ». Il a écrit sans aide en ${Math.round(el_m)} minutes.${extra}\n\nSon texte :\n---\n${text.slice(0,12000)}\n---\n\nCritères pour ce format : ${WMODES[mode].crit}.\nDonne-lui un retour d'entraîneur d'écriture, en 180 mots maximum :\n- 2 points forts précis (cite ses mots) ;\n- 2 axes d'amélioration selon les critères, chacun avec une piste qu'il appliquera lui-même, sans réécrire ses phrases ;\n- une note sur 10 pour ce format, justifiée en une phrase ;\n- une question qui l'oblige à approfondir.`));
+      if(mode==='disput'){
+        const info=el('p',{class:'note'});
+        arena.append(el('div',{class:'coachbox'},el('button',{class:'btn',text:'Disputer avec ton IA',title:'Copie ton texte avec une consigne : ton IA examine ton article et t’oppose une nouvelle objection, sans le réécrire',onclick:()=>copyText(DISPUT_AI+'\n\n'+prompt+'\n\nMon texte :\n'+text,info,'Copié. Colle-le dans ton IA : elle examine ton article et t’oppose une nouvelle objection, sans rien réécrire.')}),info));
+      }
+      arena.append(coachBlock('Avis du coach sur mon texte',()=>coachRules()+`\n\nExercice d'écriture « ${WMODES[mode].label} ». Consigne : « ${mode==='resume'?'Résumer de mémoire en 60 mots max : '+src[0]:prompt} ». Il a écrit sans aide en ${Math.round(el_m)} minutes.${extra}\n\nSon texte :\n---\n${text.slice(0,12000)}\n---\n\nCritères pour ce format : ${WMODES[mode].crit}.\nDonne-lui un retour d'entraîneur d'écriture, en 180 mots maximum :\n- 2 points forts précis (cite ses mots) ;\n- 2 axes d'amélioration selon les critères, chacun avec une piste qu'il appliquera lui-même, sans réécrire ses phrases ;\n- une note sur 10 pour ce format, justifiée en une phrase ;\n- une question qui l'oblige à approfondir.`));
     }
   }
 },
@@ -3583,7 +3666,7 @@ probleme(arena){
         arena.style.alignItems='';
         const m=recordMsg('probleme',v); logResult('probleme',v,Object.assign(pi==null?{}:{p:pi},usedTip?{h:1}:{}));
         showResult(arena,v,'% de réussite',v===100?'Bien joué. Vérifie que ton raisonnement tenait aussi, pas seulement la réponse.':'Relis la solution et repère l’étape où ton raisonnement a bifurqué. C’est là que tu progresses.',()=>RUN.probleme(arena));
-        arena.append(coachBlock('Avis du coach sur mon raisonnement',()=>COACH_RULES+`\n\nProblème : ${q}\nRéponse attendue : ${ans}\nExplication : ${why}\n\nSa réponse et son raisonnement :\n---\n${mine.slice(0,6000)}\n---\n\nÉvalue son RAISONNEMENT plus que sa réponse, en 150 mots maximum : ce qui était solide, l'étape exacte où il s'est trompé ou a sauté une justification (s'il y en a une), le biais cognitif en jeu le cas échéant, et une astuce de méthode réutilisable.`));
+        arena.append(coachBlock('Avis du coach sur mon raisonnement',()=>coachRules()+`\n\nProblème : ${q}\nRéponse attendue : ${ans}\nExplication : ${why}\n\nSa réponse et son raisonnement :\n---\n${mine.slice(0,6000)}\n---\n\nÉvalue son RAISONNEMENT plus que sa réponse, en 150 mots maximum : ce qui était solide, l'étape exacte où il s'est trompé ou a sauté une justification (s'il y en a une), le biais cognitif en jeu le cas échéant, et une astuce de méthode réutilisable.`));
       }})));
       arena.append(el('div',{class:'answer'},el('span',{class:'label',text:'Solution'}),el('strong',{text:ans}),el('span',{class:'fg2',text:why})),el('p',{class:'fg2',text:'Comment ça s’est passé ?'}),rate);
     });
@@ -3666,7 +3749,7 @@ hypotheses(arena){
       const t=test.value.trim(), score=Math.min(100,hs.length*16+(t.length>=15?20:0));
       const m=recordMsg('hypotheses',score); logResult('hypotheses',score,{sc});
       showResult(arena,score,`% de complétion (${hs.length} explications${t.length>=15?' + un test':''})`,m+' Ce qui compte : des explications vraiment différentes, et un moyen concret de les départager.',()=>RUN.hypotheses(arena));
-      arena.append(coachBlock('Avis du coach sur mes hypothèses',()=>COACH_RULES+`\n\nExercice « hypothèses concurrentes ». Fait : « ${sc} »\n\nSes explications :\n${hs.map((h,i)=>`${i+1}. ${h}`).join('\n')}\n\nCe qui les départagerait selon lui : ${t||'(rien proposé)'}\n\nÉvalue en 150 mots maximum : la diversité réelle des explications (causes différentes ou variantes de la même ?), la plus solide et la plus fragile, UNE piste importante qu'il n'a pas envisagée (formulée comme une question, sans donner la réponse toute faite), et la qualité de son test.`));
+      arena.append(coachBlock('Avis du coach sur mes hypothèses',()=>coachRules()+`\n\nExercice « hypothèses concurrentes ». Fait : « ${sc} »\n\nSes explications :\n${hs.map((h,i)=>`${i+1}. ${h}`).join('\n')}\n\nCe qui les départagerait selon lui : ${t||'(rien proposé)'}\n\nÉvalue en 150 mots maximum : la diversité réelle des explications (causes différentes ou variantes de la même ?), la plus solide et la plus fragile, UNE piste importante qu'il n'a pas envisagée (formulée comme une question, sans donner la réponse toute faite), et la qualité de son test.`));
     });
   }
 },
@@ -3965,7 +4048,7 @@ bilan(arena){
     const weak=ans.map((v,i)=>[v,i]).sort((a,b)=>a[0]-b[0]).slice(0,2).map(([,i])=>BILAN_Q[i][1]);
     cleanup(); cleanup=null;
     showResult(arena,s,'sur 100 · autonomie déclarée',(first?`Au départ : ${first.s}. La dernière fois : ${prev.s}. `:'C’est ton point de départ. Refais le point dans un mois pour mesurer le chemin parcouru. ')+'En priorité : '+weak.join(' '),()=>RUN.bilan(arena));
-    arena.append(coachBlock("Avis du coach sur mon point d'étape",()=>COACH_RULES+`\n\nPoint d'étape « autonomie face à l'IA » (0 = jamais, 4 = toujours) :\n${BILAN_Q.map(([q],i)=>`- ${q} ${ans[i]}/4`).join('\n')}\nScore : ${s}/100${first?` (départ : ${first.s}, dernier : ${prev.s})`:' (premier point)'}.${txt?`\nSa priorité : « ${txt} »`:''}\n\nEn 120 mots maximum : ce qui ressort, la priorité des quatre prochaines semaines, et un geste concret hors écran pour cette semaine.`));
+    arena.append(coachBlock("Avis du coach sur mon point d'étape",()=>coachRules()+`\n\nPoint d'étape « autonomie face à l'IA » (0 = jamais, 4 = toujours) :\n${BILAN_Q.map(([q],i)=>`- ${q} ${ans[i]}/4`).join('\n')}\nScore : ${s}/100${first?` (départ : ${first.s}, dernier : ${prev.s})`:' (premier point)'}.${txt?`\nSa priorité : « ${txt} »`:''}\n\nEn 120 mots maximum : ce qui ressort, la priorité des quatre prochaines semaines, et un geste concret hors écran pour cette semaine.`));
   });
 }
 
@@ -3988,7 +4071,7 @@ function renderAll(){
   if(!$('#v-progres').hidden){renderProgress();renderCarnet();}
   if(!$('#v-classement').hidden)renderCircle();
   $('#erase').hidden=!ref; $('#login-open').hidden=!!ref||!window.bfSupabase;
-  if(!$('#v-coach').hidden){renderSas();renderWeekBilan();}
+  if(!$('#v-coach').hidden){renderSas();renderWeekBilan();renderTutor();}
 }
 function showGoalProposal(text){
   const m=text&&text.match(/Objectif propos[ée]\s*:\s*(.+)/i);

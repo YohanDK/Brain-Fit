@@ -549,7 +549,7 @@ q{quotes:"« " " »" "“" "”"}
 
   <nav class="tabs" role="tablist" aria-label="Sections">
     <button role="tab" data-tab="aujourdhui" aria-selected="true"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3v2M12 19v2M4.2 4.2l1.4 1.4M18.4 18.4l1.4 1.4M3 12h2M19 12h2M4.2 19.8l1.4-1.4M18.4 5.6l1.4-1.4M12 8a4 4 0 1 0 0 8a4 4 0 1 0 0-8"/></svg><span>Aujourd'hui</span></button>
-    <button role="tab" data-tab="semaine" aria-selected="false"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3.5" y="5" width="17" height="15" rx="2"/><path d="M3.5 10h17M8 3v4M16 3v4M7.5 14h2M11 14h2M14.5 14h2"/></svg><span>Semaine</span></button>
+    <button role="tab" data-tab="classement" aria-selected="false"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 20h18M4.5 20v-6h5v6M9.5 20V9h5v11M14.5 20v-8h5v8"/><path d="M12 3.5l.9 1.8 2 .3-1.45 1.4.35 2-1.8-.95-1.8.95.35-2L9.1 5.6l2-.3z"/></svg><span>Classement</span></button>
     <button role="tab" data-tab="exercices" aria-selected="false"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6.5 6.5v11M17.5 6.5v11M3.5 9.5v5M20.5 9.5v5M6.5 12h11"/></svg><span>Exercices</span></button>
     <button role="tab" data-tab="coach" aria-selected="false"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 5h16v11H10l-4 4v-4H4z"/></svg><span>Coach</span></button>
     <button role="tab" data-tab="progres" aria-selected="false"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 20v-6M12 20V5M19 20v-10M3 20h18"/></svg><span>Progrès</span></button>
@@ -634,8 +634,12 @@ q{quotes:"« " " »" "“" "”"}
     </div>
   </section>
 
-  <!-- SEMAINE -->
-  <section class="view" id="v-semaine" hidden>
+  <!-- CLASSEMENT -->
+  <section class="view" id="v-classement" hidden>
+    <div class="panel" id="circle-panel">
+      <div><h2>Mon cercle</h2><p class="muted note">Un classement de la semaine entre proches. Seuls ton pseudo, tes XP de la semaine et ta série sont partagés, et seulement avec les membres de ton cercle.</p></div>
+      <div id="circle-body" style="display:flex;flex-direction:column;gap:10px"></div>
+    </div>
     <div class="panel goal">
       <span class="label">Mon objectif du moment</span>
       <div id="goal-view" class="row spread" hidden>
@@ -664,10 +668,6 @@ q{quotes:"« " " »" "“" "”"}
       <div class="challenge" id="reel-box"></div>
       <div class="row reel-city"><span class="note" id="reel-city-txt"></span><button class="btn ghost mini" id="reel-city-edit"></button></div>
       <form class="row reel-city" id="reel-city-form" hidden><input type="text" id="reel-city-in" placeholder="Ta ville" aria-label="Ta ville" autocomplete="address-level2"><button class="btn mini">Valider</button></form>
-    </div>
-    <div class="panel" id="circle-panel">
-      <div><h3>Mon cercle</h3><p class="muted note">Un classement de la semaine entre proches. Seuls ton pseudo, tes XP de la semaine et ta série sont partagés, et seulement avec les membres de ton cercle.</p></div>
-      <div id="circle-body" style="display:flex;flex-direction:column;gap:10px"></div>
     </div>
   </section>
 
@@ -1868,7 +1868,7 @@ async function renderCircle(){
   if(!circleData)body.replaceChildren(el('p',{class:'note',text:'Chargement du classement…'}));
   await circlePush(); await circleLoad();
   if(!circleData){body.replaceChildren(el('p',{class:'note',text:'Classement indisponible pour l’instant.'}));return;}
-  const share=`Rejoins mon cercle Brain Fit « ${circleData.name} » : ouvre https://yohandk.github.io/Brain-Fit/, crée ton compte, puis Progrès › Mon cercle, code ${c}.`;
+  const share=`Rejoins mon cercle Brain Fit « ${circleData.name} » : ouvre https://yohandk.github.io/Brain-Fit/, crée ton compte, puis onglet Classement, code ${c}.`;
   const invite=el('button',{class:'btn',text:'Inviter',onclick:async()=>{try{if(navigator.share){await navigator.share({text:share});return;}await navigator.clipboard.writeText(share);toast('<span>Invitation copiée : colle-la dans un message.</span>');}catch(e){}}});
   const leave=el('button',{class:'btn ghost',text:'Quitter le cercle',onclick:async()=>{
     if(!leave.dataset.sure){leave.dataset.sure='1';leave.textContent='Vraiment quitter ?';return;}
@@ -2809,7 +2809,7 @@ function renderSas(){
 try{const d=JSON.parse(localStorage.getItem(SAS_LS)||'null');if(d){$('#sas-q').value=d.q||'';$('#sas-mine').value=d.mine||'';$('#sas-learn').value=d.learn||'';sasRate=d.rate||0;sasStart=d.start||null;}}catch(e){}
 sasUpdate();
 
-const TABS=['aujourdhui','semaine','exercices','coach','progres','conseils','reglages'];
+const TABS=['aujourdhui','classement','exercices','coach','progres','conseils','reglages'];
 function showTab(t){
   if(t==='exercices'&&$('#stage').hidden)$('#exgrid').hidden=false;
   if(!TABS.includes(t))t='aujourdhui';
@@ -2818,7 +2818,7 @@ function showTab(t){
   $('#go-biblio').toggleAttribute('aria-current',t==='conseils'); $('#go-settings').toggleAttribute('aria-current',t==='reglages');
   if(t==='conseils'||t==='reglages')$('#go-'+(t==='conseils'?'biblio':'settings')).setAttribute('aria-current','page');
   if(t==='progres'){renderProgress();renderCarnet();renderXpPanel();renderScreenChart();}
-  if(t==='semaine')renderCircle();
+  if(t==='classement')renderCircle();
   if(t==='reglages')$('#city-in').value=city();
   if(t==='coach'){renderSas();renderCoach();}
   if(location.hash!=='#'+t)try{history.replaceState(null,'','#'+t);}catch(e){}
@@ -3584,7 +3584,7 @@ function renderOrigins(){
 function renderAll(){
   renderThemes();renderQuoteDay();renderCjl();renderFlori();renderGoal();renderProgram();renderScreens();renderToday();renderExGrid();
   if(!$('#v-progres').hidden){renderProgress();renderCarnet();}
-  if(!$('#v-semaine').hidden)renderCircle();
+  if(!$('#v-classement').hidden)renderCircle();
   $('#erase').hidden=!ref; $('#login-open').hidden=!!ref||!window.bfSupabase;
   if(!$('#v-coach').hidden)renderSas();
 }

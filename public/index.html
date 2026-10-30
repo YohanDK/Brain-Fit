@@ -427,6 +427,7 @@ a{color:var(--accent);text-underline-offset:3px}
 .login input{font:inherit;font-size:1rem;padding:10px 12px;border:1px solid var(--line);border-radius:var(--r);background:var(--surface);color:var(--fg)}
 .login .note:empty{display:none}
 .seg.themes{justify-content:flex-start}
+.reel-city input{font:inherit;font-size:1rem;padding:6px 10px;border:1px solid var(--line);border-radius:var(--r);background:var(--surface);color:var(--fg);max-width:220px}
 .cjl-text{font-size:1.12rem;line-height:1.45;max-width:60ch;text-wrap:pretty}
 .cjl-res{display:flex;flex-wrap:wrap;align-items:baseline;gap:4px 14px}
 .cjl-year{font-family:var(--f-display);font-size:1.7rem;font-weight:700;color:var(--accent);line-height:1.1}
@@ -625,6 +626,13 @@ q{quotes:"« " " »" "“" "”"}
     <div class="panel">
       <span class="label">Défi de la semaine</span>
       <div class="challenge" id="challenge"></div>
+    </div>
+
+    <div class="panel" id="reel">
+      <div class="row spread" style="flex-wrap:nowrap;align-items:flex-start"><span class="label">Défi du réel</span><button class="btn ghost mini" id="reel-next" style="flex:none">Un autre</button></div>
+      <div class="challenge" id="reel-box"></div>
+      <div class="row reel-city"><span class="note" id="reel-city-txt"></span><button class="btn ghost mini" id="reel-city-edit"></button></div>
+      <form class="row reel-city" id="reel-city-form" hidden><input type="text" id="reel-city-in" placeholder="Ta ville" aria-label="Ta ville" autocomplete="address-level2"><button class="btn mini">Valider</button></form>
     </div>
 
     <div class="panel">
@@ -1682,6 +1690,7 @@ function mergeStates(a,b){ // fusionne données distantes (a) et locales (b)
   for(const r of (b.sas||[]))if(!seenS.has(r.t))out.sas.push(r);
   out.sas.sort((x,y)=>x.t-y.t);
   out.weeks=Object.assign({},b.weeks,out.weeks);
+  out.reel=Object.assign({},b.reel,out.reel);
   out.bilans=out.bilans||[]; const seenB=new Set(out.bilans.map(x=>x.t)); for(const x of (b.bilans||[]))if(!seenB.has(x.t))out.bilans.push(x); out.bilans.sort((x,y)=>x.t-y.t);
   out.stage=Math.max(out.stage||1,b.stage||1);
   out.seen=Object.assign({},out.seen); for(const[bk,m] of Object.entries(b.seen||{})){const t=out.seen[bk]=Object.assign({},out.seen[bk]);for(const[i,ts] of Object.entries(m))if(!(t[i]>=ts))t[i]=ts;}
@@ -1757,7 +1766,7 @@ function toggleTheme(k){
   else if(m.length>=3){toast('<span>Trois thèmes au plus : retires-en un d’abord.</span>');return;}
   else m=[...m,k];
   state.settings.themes=m; if($('#themes-ask').hidden)state.settings.themesSet=true;
-  qdOff=0; save(); renderThemes(); renderQuoteDay();
+  qdOff=0; save(); renderThemes(); renderQuoteDay(); renderReel();
 }
 $('#themes-ok').addEventListener('click',()=>{state.settings.themesSet=true;save();renderThemes();});
 $('#themes-later').addEventListener('click',()=>{state.settings.themesSet=true;save();renderThemes();});
@@ -2030,6 +2039,7 @@ function renderToday(){
   chBox.replaceChildren(el('span',{class:'badge',text:chDone?'✓':'S'+String(isoWeek(k))}),el('div',{},el('h3',{text:ch[0]}),el('p',{class:'fg2',text:ch[1]}),
     el('div',{class:'row'},el('button',{class:'btn'+(chDone?'':' primary'),text:chDone?'Défi relevé · annuler':'J’ai relevé le défi',onclick:()=>{if(state.weeks[wk])delete state.weeks[wk];else state.weeks[wk]=Date.now();save();renderToday();}}),el('span',{class:'note',text:'Nouveau défi chaque lundi'}))));
   setStreak(streaks().cur);
+  renderReel();
 }
 $$('#dur button').forEach(b=>b.addEventListener('click',()=>{state.settings.minutes=+b.dataset.min;save();renderToday();}));
 
@@ -2203,6 +2213,7 @@ function xpByDay(){
   const fc={}; for(const f of Object.values(state.flori||{}))if(f.a){const k=iso(f.a);fc[k]=(fc[k]||0)+1;}
   for(const[k,n] of Object.entries(fc))add(k,Math.min(3,n)*5);
   for(const ts of Object.values(state.weeks||{}))if(typeof ts==='number')add(iso(ts),50);
+  for(const r of Object.values(state.reel||{}))if(r&&r.d)add(iso(r.d),50);
   return m;
 }
 function xpTotal(m){let t=Object.values(m).reduce((a,b)=>a+b,0);for(const p of Object.values(state.prog||{}))t+=((p.lect||0)+(p.ecrit||0))*20;return t;}
@@ -2455,9 +2466,74 @@ function coachSummary(){
   const tx=texts.slice(-8);
   if(tx.length)lines.push('Derniers textes écrits : '+tx.map(x=>`${(WMODES[x.mode]||WMODES.libre).label} (${x.words} mots, ${x.wpm} mots/min, ${x.avgSent} mots/phrase)`).join(' ; ')+'.');
   const wk=weekStart(t); lines.push('Défi de la semaine : '+(state.weeks[wk]?'relevé':'pas encore relevé')+'.');
+  lines.push('Défi du réel (sortie hors écran) : « '+reelOf(wk)[1]+' », '+(((state.reel||{})[wk]||{}).d?'fait':'pas encore fait')+'. Ville : '+(city()||'non indiquée')+'.');
   return lines.join('\n');
 }
 let chatTurns=[];
+/* ---------- défi du réel : chaque semaine, une sortie hors écran près de chez soi, puis un retour écrit ---------- */
+// [thèmes, titre, sortie ({ici} : « à Lyon » ou « près de chez toi »), retour écrit]
+const REEL=[
+  ['histoire','Une plaque, une histoire',"Repère une plaque commémorative ou un monument aux morts {ici}. Lis-le en entier et note trois noms ou dates.","Raconte en dix lignes ce que tu as appris, puis écris tes hypothèses sur ce que tu ne sais pas encore, avant de vérifier."],
+  ['histoire lettres','Le plus vieux bâtiment',"Trouve le plus vieux bâtiment que tu peux voir {ici} : église, château, halle, maison ancienne. Observe-le dix minutes, sans photo.","Décris-le de mémoire, puis estime son âge en justifiant ton estimation, avant de chercher la vraie date."],
+  ['histoire politique','La mairie, de près',"Assiste à une séance publique du conseil municipal {ici}, ou lis le compte rendu de la dernière.","Résume la décision la plus importante, puis écris le meilleur argument pour et le meilleur argument contre."],
+  ['sciences nature','Le ciel de ce soir',"Un soir sans nuages, sors {ici}, loin des lumières si tu peux, et observe le ciel quinze minutes sans application.","Note ce que tu as vu, puis explique pourquoi la Lune change de forme au fil du mois, sans rien consulter."],
+  ['sciences','La conférence ou le musée',"Va à une conférence, un planétarium ou un musée des sciences {ici}.","Explique l'idée la plus surprenante comme à un enfant de 12 ans, puis note ce que tu n'as pas compris."],
+  ['sciences eco','Comment c’est fait',"Visite un atelier, une ferme, une usine ou un artisan qui ouvre ses portes {ici}. Pose au moins deux questions.","Décris les étapes de fabrication de mémoire, puis estime combien d'unités sont produites en un an, calcul à l'appui."],
+  ['philo','Le café philo',"Participe à un café philo ou à un débat public {ici}. À défaut, lance une vraie question au cours d'un dîner.","Écris la meilleure objection qu'on t'a faite, puis ta réponse la plus honnête."],
+  ['philo lettres','Une heure sans téléphone',"Passe une heure dehors {ici}, sur un banc ou en marchant, sans téléphone ni écouteurs.","Écris ce qui t'est venu à l'esprit, sans te censurer, puis choisis une idée et développe-la."],
+  ['philo politique','Écouter l’autre camp',"Discute de vive voix avec quelqu'un qui pense autrement que toi sur un sujet qui compte. Écoute plus que tu ne parles.","Résume sa position si fidèlement qu'il pourrait la signer, puis dis ce qu'elle t'apprend."],
+  ['eco','Le marché, en chiffres',"Va au marché ou dans un commerce de quartier {ici}. Relève le prix de cinq produits et parle à un commerçant de son métier.","Estime ce que gagne ce commerçant en une journée, en écrivant chaque étape du calcul."],
+  ['eco politique','Le budget de ta ville',"Cherche le budget de ta commune (site de la mairie ou magazine municipal) et repère ses trois plus gros postes.","Écris ce que tu changerais et pourquoi, en chiffrant au moins une proposition."],
+  ['politique','Une réunion publique',"Va à une réunion publique, une permanence d'élu ou une assemblée d'association {ici}.","Note l'argument le plus convaincant entendu et le moins convaincant, et explique pourquoi."],
+  ['lettres','Un livre au hasard',"Passe une heure à la bibliothèque ou dans une librairie {ici}. Prends un livre au hasard dans un rayon où tu ne vas jamais.","Écris pourquoi tu l'as pris, ce que disent ses dix premières pages, et si tu vas le finir."],
+  ['lettres','Un spectacle vivant',"Va voir une pièce, un concert ou une lecture publique {ici}.","Écris une critique de dix lignes : une chose réussie, une chose ratée, avec un exemple précis pour chacune."],
+  ['lettres histoire','Un tableau, longtemps',"Au musée {ici}, choisis une seule œuvre et regarde-la dix minutes, sans lire le cartel.","Décris-la de mémoire, devine son époque et son sujet, puis compare avec le cartel."],
+  ['sport','Un match, en vrai',"Va voir un match {ici}, amateur ou professionnel, au stade plutôt qu'à la télévision.","Fais le compte rendu du match de mémoire, en expliquant le moment qui a fait basculer la rencontre."],
+  ['sport sciences','Ton effort, estimé',"Fais une course, une marche rapide ou une sortie à vélo {ici}, sans montre connectée. Estime ta distance et ton temps.","Compare avec la réalité (carte, horloge), puis explique d'où vient ton erreur d'estimation."],
+  ['sport','Un sport nouveau',"Fais une séance d'essai dans un club {ici}, d'un sport que tu n'as jamais pratiqué.","Explique les règles de base comme à un débutant, puis ce qui a été le plus dur pour toi."],
+  ['nature','Trois arbres',"Promène-toi dans un parc ou en forêt {ici} et apprends à reconnaître trois arbres : feuille, écorce, silhouette.","Dessine-les de mémoire et écris, pour chacun, un moyen sûr de le reconnaître."],
+  ['nature sciences','La météo, à l’œil',"Trois matins de suite, regarde le ciel {ici} et prévois le temps de l'après-midi avant de consulter la météo.","Note tes prévisions, ton taux de réussite et les indices qui t'ont aidé."],
+  ['nature histoire','La ville à pied',"Fais à pied un trajet nouveau {ici} : la rivière, la colline, le vieux quartier. Sans GPS.","Dessine ton trajet de mémoire, puis explique pourquoi la ville s'est construite à cet endroit, d'abord par hypothèse."],
+  ['','Un café pour apprendre',"Propose à quelqu'un un café {ici} pour parler d'un sujet que vous ne connaissez ni l'un ni l'autre.","Écris trois choses apprises et une question restée ouverte."]
+];
+const city=()=>(state.settings.city||'').trim();
+function ici(){
+  const c=city(); if(!c)return 'près de chez toi';
+  const m=c.match(/^(le|les)\s+(.+)$/i);
+  return m?(m[1].toLowerCase()==='le'?'au ':'aux ')+m[2]:'à '+c;
+}
+function reelOf(wk){
+  const r=(state.reel||{})[wk]||{};
+  if(r.c)return['',r.c.titre,r.c.sortie,r.c.retour];
+  const all=REEL.map((_,i)=>i), mine=all.filter(i=>hasTheme(REEL[i][0])), L=mine.length?mine:all;
+  const wn=Math.floor(new Date(wk+'T12:00:00').getTime()/(7*864e5));
+  return REEL[L[(wn+(r.o||0))%L.length]];
+}
+let pendingPrompt=null;
+function renderReel(){
+  const k=todayKey(), wk=weekStart(k), r=(state.reel||{})[wk]||{}, x=reelOf(wk), done=!!r.d, coach=!!(window.BF_CONFIG||{}).coach;
+  const setR=v=>{state.reel=state.reel||{};state.reel[wk]=Object.assign({},state.reel[wk],v);};
+  const box=$('#reel-box'); box.className='challenge'+(done?' done':'');
+  const tailor=el('button',{class:'btn ghost',text:'Un défi sur mesure',hidden:!coach||done?'':null,onclick:async()=>{
+    const s=await sampler(); tailor.disabled=true; tailor.textContent='Le coach cherche…';
+    try{
+      const c=await s.json(`Nous sommes le ${fd(new Date(),{weekday:'long',day:'numeric',month:'long',year:'numeric'})}. Propose à l'utilisateur un défi pour cette semaine : une sortie hors écran ${ici()}, réaliste, gratuite ou peu chère, adaptée à la saison, puis un court exercice écrit au retour qui fait travailler l'écriture ou le raisonnement. N'invente aucun événement, lieu ou horaire précis dont tu n'es pas certain : décris le type de lieu ou d'activité à chercher.${themeHint()} Réponds uniquement en JSON : {"titre": string de 2 à 5 mots, "sortie": string de 1 à 2 phrases, "retour": string d'une phrase}.`,{cache:false});
+      if(!c||!c.titre||!c.sortie||!c.retour)throw 0;
+      setR({c:{titre:String(c.titre).slice(0,80),sortie:String(c.sortie).slice(0,400),retour:String(c.retour).slice(0,300)}}); save(); renderReel();
+    }catch(e){tailor.disabled=false;tailor.textContent=e&&e.code==='not_granted'?'Connecte-toi pour le coach':'Réessayer avec le coach';}
+  }});
+  box.replaceChildren(el('span',{class:'badge',text:done?'✓':'S'+String(isoWeek(k))}),el('div',{},el('h3',{text:x[1]}),el('p',{class:'fg2',text:x[2].replace('{ici}',ici())}),
+    el('p',{class:'note',text:'Au retour : '+x[3].charAt(0).toLowerCase()+x[3].slice(1)}),
+    el('div',{class:'row'},
+      el('button',{class:'btn'+(done?'':' primary'),text:done?'Fait · annuler':'C’est fait',onclick:()=>{if(done)setR({d:0});else setR({d:Date.now()});save();renderReel();}}),
+      el('button',{class:'btn ghost',text:'Écrire mon retour',onclick:()=>{pendingPrompt=x[3];showTab('exercices');openEx('write');}}),tailor)));
+  $('#reel-next').hidden=done;
+  $('#reel-city-txt').textContent=city()?'Ta ville : '+city():'Indique ta ville pour des défis près de chez toi.';
+  $('#reel-city-edit').textContent=city()?'Changer':'Indiquer ma ville';
+}
+$('#reel-next').addEventListener('click',()=>{const wk=weekStart(todayKey());state.reel=state.reel||{};const r=state.reel[wk]||{};state.reel[wk]={o:(r.o||0)+1};save();renderReel();});
+$('#reel-city-edit').addEventListener('click',()=>{const f=$('#reel-city-form');f.hidden=!f.hidden;$('#reel-city-in').value=city();if(!f.hidden)$('#reel-city-in').focus();});
+$('#reel-city-form').addEventListener('submit',e=>{e.preventDefault();state.settings.city=$('#reel-city-in').value.trim().slice(0,60);$('#reel-city-form').hidden=true;save();renderReel();});
 function weeklyBilan(){
   if(!(window.BF_CONFIG||{}).coach)return;
   const now=new Date(), sun=new Date(now); sun.setHours(18,0,0,0); sun.setDate(sun.getDate()-sun.getDay());
@@ -2785,6 +2861,7 @@ write(arena){
   let mode=state.settings.wmode||'libre', prompt='', src=null, draft='', orig=null;
   const quotePrompt=q=>`« ${q.q} » (${q.a}). Commente cette citation.`;
   if(pendingQuote){mode='citation';prompt=quotePrompt(QBY[pendingQuote]);pendingQuote=null;}
+  else if(pendingPrompt){mode='libre';prompt='Retour du défi du réel : '+pendingPrompt;pendingPrompt=null;}
   else try{const d=JSON.parse(localStorage.getItem('brainfit.draft')||'null');if(d&&d.text){prompt=d.prompt;draft=d.text;mode=d.mode||'libre';src=d.src||null;orig=d.origT?texts.find(x=>x.t===d.origT)||null:null;}}catch(e){}
   if(mode==='revise'&&draft&&!orig){mode='libre';}
   const pickPrompt=()=>{

@@ -1,4 +1,4 @@
-# Brain Fit
+# Néophyte
 
 Garder l'esprit vif à l'heure de l'IA : écriture, raisonnement, un exercice chaque jour.
 
@@ -42,7 +42,7 @@ Dans ce dépôt, **Settings › Secrets and variables › Actions › New reposi
 | `SUPABASE_ACCESS_TOKEN` | le jeton de l'étape 1.5 |
 | `SUPABASE_PROJECT_ID` | l'identifiant de l'étape 1.4 |
 | `ANTHROPIC_API_KEY` | la clé de l'étape 2 |
-| `ALLOWED_EMAIL` | ton adresse e-mail, celle de ton compte Brain Fit : seul ce compte peut utiliser le coach |
+| `ALLOWED_EMAIL` | ton adresse e-mail, celle de ton compte Néophyte : seul ce compte peut utiliser le coach |
 
 Puis **Actions › Déployer le coach › Run workflow** pour mettre le coach en ligne.
 
@@ -57,12 +57,12 @@ Pour changer de modèle (par exemple un modèle moins cher), ajoute dans l'ongle
 ### 5. Sur ton téléphone
 
 1. Ouvre l'adresse du site dans Safari (ou Chrome sur Android), puis **Partager › Sur l'écran d'accueil**.
-2. Ouvre Brain Fit depuis l'écran d'accueil et clique sur **Créer mon compte**. Confirme avec le lien reçu par e-mail, puis connecte-toi.
-3. Pour inviter des amis dans ton cercle, laisse les inscriptions ouvertes : le coach reste réservé à ton adresse (`ALLOWED_EMAIL`), donc à ta clé. Si tu préfères garder Brain Fit pour toi seul, dans Supabase, **Authentication › Sign In / Providers**, décoche **Allow new users to sign up**.
+2. Ouvre Néophyte depuis l'écran d'accueil et clique sur **Créer mon compte**. Confirme avec le lien reçu par e-mail, puis connecte-toi.
+3. Pour inviter des amis dans ton cercle, laisse les inscriptions ouvertes : le coach reste réservé à ton adresse (`ALLOWED_EMAIL`), donc à ta clé. Si tu préfères garder Néophyte pour toi seul, dans Supabase, **Authentication › Sign In / Providers**, décoche **Allow new users to sign up**.
 
 ### 6. Reprendre tes progrès de l'ancienne version
 
-1. Dans Brain Fit ouvert dans l'app Claude : **Progrès › Sauvegarde › Copier mes données**.
+1. Dans Néophyte ouvert dans l'app Claude : **Progrès › Sauvegarde › Copier mes données**.
 2. Dans le nouveau site, connecté : **Réglages (roue dentée en haut) › Sauvegarde › Coller des données**, colle, puis **Fusionner avec mes progrès**. Rien n'est effacé, les deux historiques s'additionnent.
 
 ## Coût

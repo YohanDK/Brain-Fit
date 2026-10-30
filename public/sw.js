@@ -1,4 +1,4 @@
-// Brain Fit hors ligne : on prend toujours la version en ligne si possible, sinon la dernière gardée.
+// Néophyte hors ligne : on prend toujours la version en ligne si possible, sinon la dernière gardée.
 const CACHE='brainfit-v1';
 const SHELL=['./','./config.js','./services.js','./manifest.webmanifest','./icon-192.png'];
 self.addEventListener('install',e=>{self.skipWaiting();e.waitUntil(caches.open(CACHE).then(c=>c.addAll(SHELL)));});

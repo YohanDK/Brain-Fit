@@ -399,8 +399,12 @@ a{color:var(--accent);text-underline-offset:3px}
 .badge.locked .medal span{color:var(--muted)}
 .badge strong{font-weight:600;font-size:1rem}
 /* citation du jour */
-.quoteday{border-top:3px solid var(--gold)}
-.qtext{font-family:var(--f-body);font-style:italic;font-size:1.3rem;line-height:1.4;max-width:38ch;text-wrap:pretty}
+.quoteday{border-top:3px solid var(--gold);gap:10px;padding:16px 20px}
+.qtext{font-family:var(--f-body);font-style:italic;font-size:1.15rem;line-height:1.4;max-width:38ch;text-wrap:pretty}
+.qby{margin:0;line-height:1.35}
+.quoteday details.fold{border-top:0;padding-top:0}
+#qd-source:not(:empty)::before{content:"· ";font-style:normal}
+.qfalse{font-variant:normal;letter-spacing:0;font-weight:400;font-style:italic;color:var(--bad);font-size:.95rem}
 .qauthor{font-weight:600;font-variant:small-caps;letter-spacing:.04em;font-size:1.05rem}
 .qsource{font-style:italic;color:var(--muted);font-size:.95rem}
 .qnote{color:var(--fg2);max-width:65ch}
@@ -445,6 +449,7 @@ a{color:var(--accent);text-underline-offset:3px}
 .cat{display:inline-block;font-size:.76rem;letter-spacing:.08em;text-transform:uppercase;font-weight:600;color:var(--muted)}
 .cat.fausse{color:var(--bad)}
 .btn.mini{padding:4px 8px;font-size:.95rem;color:var(--muted)}
+.btn.gold.mini{color:var(--gold-deep);padding:4px 12px}
 .flori{display:flex;flex-direction:column}
 .flori .fi{padding:12px 0;border-top:1px solid var(--line);display:flex;flex-direction:column;gap:4px}
 .flori .fi:first-child{border-top:0}
@@ -567,11 +572,11 @@ q{quotes:"« " " »" "“" "”"}
       <div class="row"><button class="btn primary" id="themes-ok">C'est choisi</button><button class="btn ghost" id="themes-later">Plus tard</button></div>
     </div>
     <div class="panel quoteday" id="qday">
-      <div class="row spread" style="flex-wrap:nowrap;align-items:flex-start"><span><span class="label" id="qd-label">Citation du jour</span> · <span class="cat" id="qd-cat"></span></span><button class="btn ghost mini" id="qd-next" style="flex:none">Une autre</button></div>
+      <div class="row spread" style="flex-wrap:nowrap;align-items:baseline"><span class="label" id="qd-label">Citation du jour</span><button class="btn ghost mini" id="qd-next" style="flex:none">Une autre</button></div>
       <p class="qtext" id="qd-text"></p>
-      <div class="qby"><span class="qauthor" id="qd-author"></span><br><span class="qsource" id="qd-source"></span></div>
-      <p class="qnote"><b>À RETENIR</b><span id="qd-note"></span></p>
-      <div class="row"><button class="btn gold" id="qd-add"></button><button class="btn ghost" id="qd-write">Écrire dessus</button></div>
+      <p class="qby"><span class="qauthor" id="qd-author"></span> <span class="qsource" id="qd-source"></span></p>
+      <details class="fold"><summary><span class="label">À retenir</span></summary><p class="qnote" id="qd-note"></p></details>
+      <div class="row"><button class="btn gold mini" id="qd-add"></button><button class="btn ghost mini" id="qd-write">Écrire dessus</button></div>
     </div>
     <div class="panel" id="cjl">
       <div class="row spread" style="flex-wrap:nowrap;align-items:flex-start"><span class="label" id="cjl-label">Ce jour-là</span><button class="btn ghost mini" id="cjl-next" style="flex:none">Un autre</button></div>
@@ -1775,14 +1780,13 @@ function floriAdd(id,quiet){
   save(); renderQuoteDay(); renderFlori(); renderToday();
 }
 function quoteBy(q){
-  return q.f?el('span',{},el('s',{text:q.f}),document.createTextNode(' → '+q.a)):document.createTextNode(q.a);
+  return q.f?el('span',{},document.createTextNode(q.f+' '),el('span',{class:'qfalse',text:'(fausse attribution)'})):document.createTextNode(q.a);
 }
 function renderQuoteDay(){
   const q=quoteOfDay(todayKey(),qdOff), inF=!!(state.flori||{})[q.id];
   $('#qd-label').textContent=qdOff?'Citation à retenir':'Citation du jour';
-  const c=$('#qd-cat'); c.className='cat '+q.c; c.textContent=QCAT[q.c];
-  $('#qd-text').textContent='« '+q.q+' »'; $('#qd-author').replaceChildren(quoteBy(q)); $('#qd-source').textContent=q.s; $('#qd-note').textContent=q.n;
-  const add=$('#qd-add'); add.textContent=inF?'Dans ton florilège ✓':'Ajouter au florilège'; add.disabled=inF; add.className='btn '+(inF?'ghost':'gold');
+  $('#qd-text').textContent='« '+q.q+' »'; $('#qd-author').replaceChildren(quoteBy(q)); $('#qd-source').textContent=q.s.replace(/ ([:;!?»])/g,'\u00a0$1'); $('#qd-note').textContent=q.n;
+  const add=$('#qd-add'); add.textContent=inF?'Dans ton florilège ✓':'Ajouter au florilège'; add.disabled=inF; add.className='btn mini '+(inF?'ghost':'gold');
   $('#qd-write').hidden=q.c==='fausse';
 }
 $('#qd-add').addEventListener('click',()=>floriAdd(quoteOfDay(todayKey(),qdOff).id));

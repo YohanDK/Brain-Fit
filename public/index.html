@@ -606,6 +606,33 @@ a{color:var(--accent);text-underline-offset:3px}
 .frise li::before{content:"";position:absolute;left:-25px;top:6px;width:12px;height:12px;border-radius:50%;background:var(--gold);box-shadow:0 0 0 2px var(--surface)}
 .frise li.miss::before{background:var(--bad)}
 .frise b{font-family:var(--f-display);margin-right:8px}
+/* frise à remettre dans l'ordre */
+.sortwrap{display:flex;flex-direction:column;align-items:stretch;gap:6px;width:min(520px,100%)}
+.sortwrap .send{font-size:.78rem;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);text-align:center}
+.sorter{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:8px}
+.sitem{display:grid;grid-template-columns:auto 1fr auto;align-items:center;gap:8px;padding:8px 8px 8px 4px;text-align:left;font-size:.96rem;border:1px solid var(--line);border-left:3px solid var(--gold);border-radius:9px;background:var(--surface);line-height:1.35;transition:transform .22s ease,background .2s,border-color .2s,box-shadow .2s}
+.sitem .grip{display:grid;place-items:center;width:30px;height:40px;color:var(--muted);cursor:grab;touch-action:none;border-radius:6px}
+.sitem .grip:hover{color:var(--gold-deep);background:var(--gold-soft)}
+.sitem.drag{transition:none;z-index:2;position:relative;box-shadow:0 8px 24px rgba(0,0,0,.14);border-color:var(--accent);background:var(--surface)}
+.sitem.drag .grip{cursor:grabbing}
+.sbtns{display:flex;flex-direction:column;gap:2px}
+.sbtns button{border:1px solid var(--line);background:var(--bg);color:var(--fg2);border-radius:6px;width:34px;height:26px;padding:0;font-size:.7rem;line-height:1}
+.sbtns button:hover:not([disabled]){border-color:var(--accent);color:var(--accent)}
+.sorter li:first-child .up,.sorter li:last-child .down{visibility:hidden}
+.sorter.locked .grip{visibility:hidden;cursor:default}
+.sitem.ok{background:var(--good-soft);border-color:var(--good)}
+.sitem.ko{background:var(--bad-soft);border-color:var(--bad);animation:shake .4s ease-in-out}
+.sitem .sdate{font-family:var(--f-display);white-space:nowrap;animation:rise .4s both ease-out}
+.sitem.ok .sdate{color:var(--good)} .sitem.ko .sdate{color:var(--bad)}
+/* chasse à la faute : chaque mot se touche */
+.quote.hunt{line-height:2}
+.tok{font:inherit;color:inherit;background:none;border:0;border-bottom:1px dotted var(--line);border-radius:4px;padding:1px 2px;margin:0 -2px;cursor:pointer;transition:background .15s,border-color .15s}
+.tok:hover:not([disabled]){background:var(--accent-soft);border-bottom-color:var(--accent)}
+.tok[disabled]{cursor:default;border-bottom-color:transparent}
+.tok.found{background:var(--gold-soft);color:var(--gold-deep);text-decoration:underline wavy var(--bad)}
+.tok.right{background:var(--good-soft);color:var(--good);font-weight:700;animation:right .45s ease-out}
+.tok.wrong{background:var(--bad-soft);color:var(--bad);animation:shake .4s ease-in-out}
+.tok.missed{background:var(--bad-soft);color:var(--bad);font-weight:700;text-decoration:underline wavy}
 .frise li:nth-child(2){animation-delay:.08s}.frise li:nth-child(3){animation-delay:.16s}.frise li:nth-child(4){animation-delay:.24s}.frise li:nth-child(5){animation-delay:.32s}.frise li:nth-child(6){animation-delay:.4s}.frise li:nth-child(n+7){animation-delay:.48s}
 .orig summary{cursor:pointer;color:var(--fg2);font-size:.95rem}
 .orig p{color:var(--fg2);max-width:68ch;margin-top:8px}
@@ -1221,11 +1248,11 @@ const EX={
   hypotheses:{name:'Hypothèses concurrentes',skill:'Raisonnement',desc:"Un fait surprenant : trouve 5 explications possibles, puis comment les départager.",unit:'% de complétion'},
   sophismes:{name:'Détecteur de sophismes',skill:'Esprit critique',desc:"Cinq arguments : trouve la faille, ou reconnais celui qui tient debout. Annonce ta confiance avant chaque réponse.",unit:'% de bonnes réponses'},
   fermi:{name:'Estimation',skill:'Raisonnement',desc:"Trois questions de Fermi : trouve l'ordre de grandeur par le raisonnement.",unit:'% de justesse'},
-  ortho:{name:'Orthographe & accords',skill:'Langue écrite',desc:"Huit phrases pièges : choisis la bonne forme, sans correcteur.",unit:'% de bonnes réponses'},
+  ortho:{name:'Orthographe & accords',skill:'Langue écrite',desc:"Huit phrases pièges : choisis la bonne forme, ou trouve la faute et répare-la, sans correcteur.",unit:'% de bonnes réponses'},
   dictee:{name:'Dictée sur papier',skill:'Écoute & orthographe',desc:"L'appli dicte à voix haute, tu écris à la main. Correction par photo de ta copie ou par toi-même.",unit:'% de mots justes'},
   lecture:{name:'Lecture chronométrée',skill:'Lecture & compréhension',desc:"Lis un texte à ton rythme, puis réponds à deux questions. Vitesse et compréhension mesurées.",unit:'mots/min compris'},
   citations:{name:'Florilège',skill:'Mémoire & culture',desc:"Retiens les citations qui comptent : qui l'a dit, le mot manquant, vraie ou fausse attribution. Répétition espacée.",unit:'% de bonnes réponses'},
-  chrono:{name:'Chronologie',skill:'Culture & repères',desc:"Deux événements : lequel s'est produit en premier ? Six manches, des écarts de plus en plus serrés.",unit:'% de bonnes réponses'},
+  chrono:{name:'Chronologie',skill:'Culture & repères',desc:"Remets les événements dans l'ordre sur une frise, en les faisant glisser. Trois frises, des écarts de plus en plus serrés.",unit:'% de bonnes réponses'},
   fiche:{name:'Fiche papier',skill:'Hors écran',desc:"Des PDF à imprimer : la fiche du jour qui mélange tout, ou un cahier entier de problèmes, sophismes, orthographe, estimations, erreurs d'IA ou chronologie. Corrigé à la fin.",unit:'% de bonnes réponses'},
   focus:{name:'Séance sans écran',skill:'Attention soutenue',desc:"Lecture, écriture à la main ou réflexion, minuteur lancé. Si tu quittes la page, c'est une interruption.",unit:'minutes'},
   calc:{name:'Calcul mental',skill:'Vitesse de traitement',desc:"Un maximum d'opérations justes en 60 secondes, sans calculatrice.",unit:'bonnes réponses'},
@@ -3455,7 +3482,7 @@ function countdown(sec,onTick,onEnd){
 }
 function intro(arena,text,controls,onStart){
   const lv=LVBANK[curEx]?el('p',{class:'note lvnote',text:`Niveau ${lvl(curEx)} sur 3. Il s'ajuste à tes résultats pour que tu réussisses environ 4 fois sur 5 : assez pour avancer, assez dur pour progresser.`}):null;
-  arena.replaceChildren(el('p',{class:'fg2',text,style:'max-width:52ch'}),lv,controls||null,el('button',{class:'btn primary',text:'Commencer',onclick:onStart}));
+  arena.replaceChildren(el('p',{class:'fg2',text,style:'max-width:52ch'}),...[lv,controls].filter(Boolean),el('button',{class:'btn primary',text:'Commencer',onclick:onStart}));
 }
 /* ---------- sons : fabriqués dans le navigateur, sans fichier, donc aussi hors ligne ---------- */
 let AC=null;
@@ -3746,8 +3773,8 @@ write(arena){
     ta.addEventListener('drop',e=>e.preventDefault());
     const fin=el('button',{class:'btn primary',text:'Terminer',onclick:()=>finish()});
     arena.style.alignItems='stretch';
-    arena.replaceChildren(el('span',{class:'label',text:WMODES[mode].label}),el('p',{class:'prompt',text:mode==='resume'?'Résume de mémoire : '+src[0]:prompt}),
-      mode==='disput'?el('p',{class:'note dplan',text:'Il semble que… · En sens contraire… · Je réponds que… · Réponse aux objections'}):null,ta,el('div',{class:'row spread'},el('div',{class:'row'},wc,fb),fin));
+    arena.replaceChildren(...[el('span',{class:'label',text:WMODES[mode].label}),el('p',{class:'prompt',text:mode==='resume'?'Résume de mémoire : '+src[0]:prompt}),
+      mode==='disput'?el('p',{class:'note dplan',text:'Il semble que… · En sens contraire… · Je réponds que… · Réponse aux objections'}):null,ta,el('div',{class:'row spread'},el('div',{class:'row'},wc,fb),fin)].filter(Boolean));
     count(); ta.focus();
     const total=mode==='resume'?5:mins;
     const stopT=countdown(total*60,null,()=>{fb.textContent='Temps écoulé. Termine ta phrase puis clique sur Terminer.';});
@@ -3836,7 +3863,7 @@ citations(arena){
   }
 },
 ortho(arena){
-  intro(arena,"Huit phrases, un mot manquant. Choisis la bonne forme sans réfléchir trop longtemps, puis lis la règle. Ce sont les pièges que les correcteurs automatiques nous font oublier.",null,go);
+  intro(arena,"Huit phrases. Pour certaines, un mot manque : choisis la bonne forme. Pour d'autres, relis comme un correcteur : touche le mot fautif s'il y en a un, puis répare-le. Ce sont les pièges que les correcteurs automatiques nous font oublier.",null,go);
   function go(){
     const seen=new Map(); state.results.filter(r=>r.ex==='ortho'&&r.miss).forEach(r=>r.miss.forEach(i=>seen.set(i,(seen.get(i)||0)+1)));
     // les erreurs passées reviennent en priorité (répétition espacée simple)
@@ -3844,18 +3871,57 @@ ortho(arena){
     const order=[...ORTHO.keys()].filter(i=>!NB.ortho[i].retire).sort((a,b)=>(seen.get(b)||0)-(seen.get(a)||0)||Math.random()-.5);
     const qs=[...order.slice(0,3),...order.slice(3).sort(()=>Math.random()-.5).sort((a,b)=>dist(a)-dist(b)).slice(0,5)].sort(()=>Math.random()-.5);
     let qi=0, ok=0, miss=[];
+    // la moitié des phrases se lit comme une copie à corriger : trouver la faute, puis la réparer
+    const hunt=new Set([...Array(8).keys()].sort(()=>Math.random()-.5).slice(0,4));
     const ask=()=>{
-      const [ph,opts,right,why]=ORTHO[qs[qi]];
+      const [ph,opts,right,why]=ORTHO[qs[qi]], idx=qs[qi];
       const box=el('div',{class:'options'}), fb=el('div',{class:'answer',hidden:''});
       const next=el('button',{class:'btn primary',text:qi<7?'Suivante':'Voir le résultat',hidden:''});
-      opts.forEach((o,i)=>box.append(el('button',{text:o,onclick:e=>{
-        [...box.children].forEach((b,j)=>{b.disabled=true;if(j===right)b.classList.add('right');});
-        if(i===right)ok++;else{e.currentTarget.classList.add('wrong');miss.push(qs[qi]);}
-        hit(i===right);
-        fb.replaceChildren(el('span',{class:'label',text:i===right?'Exact':'La bonne forme : '+opts[right]}),el('span',{class:'fg2',text:why}),contestBtn('ortho',NB.ortho[qs[qi]].id,ph));fb.hidden=false;next.hidden=false;next.focus();
+      const conclude=(good,label)=>{
+        if(good)ok++;else miss.push(idx);
+        hit(good);
+        fb.replaceChildren(el('span',{class:'label',text:label||(good?'Exact':'La bonne forme : '+opts[right])}),el('span',{class:'fg2',text:why}),contestBtn('ortho',NB.ortho[idx].id,ph));fb.hidden=false;next.hidden=false;next.focus({preventScroll:true});
+      };
+      const pickForm=(onDone,skip=-1)=>opts.forEach((o,i)=>i!==skip&&box.append(el('button',{text:o,'data-i':i,onclick:e=>{
+        [...box.children].forEach(b=>{b.disabled=true;if(+b.dataset.i===right)b.classList.add('right');});
+        if(i!==right)e.currentTarget.classList.add('wrong');
+        onDone(i===right);
       }})));
       next.addEventListener('click',()=>{qi++;if(qi<8)ask();else{const sc=ok/8*100;const m=recordMsg('ortho',sc);logResult('ortho',sc,{miss});const up=adaptLevel('ortho',sc);showResult(arena,Math.round(sc),`% de bonnes réponses (${ok} sur 8)`,m+(miss.length?' Les phrases ratées reviendront en priorité lors des prochaines séances.':'')+up,()=>RUN.ortho(arena));}});
-      arena.replaceChildren(qprog(qi,8),el('p',{class:'quote',text:ph}),box,fb,next);
+      if(!hunt.has(qi)){
+        pickForm(good=>conclude(good));
+        arena.replaceChildren(qprog(qi,8),el('p',{class:'quote',text:ph}),box,fb,next);
+        return;
+      }
+      // chasse à la faute : trois fois sur quatre, une mauvaise forme est glissée dans la phrase
+      const wrongs=opts.map((o,i)=>i).filter(i=>i!==right), put=Math.random()<.75?pick(wrongs):right, faulty=put!==right;
+      const [pre,post]=ph.split('___'), sent=el('p',{class:'quote hunt'}), toks=[];
+      const tok=(w,isSlot)=>{const b=el('button',{type:'button',class:'tok',text:w,onclick:()=>tap(b,isSlot)});toks.push(b);return b;};
+      const words=t=>t.split(/(\s+)/).map(w=>/^\s+$/.test(w)||!w?document.createTextNode(w):tok(w,false));
+      const slot=tok(opts[put],true);
+      sent.append(...words(pre),slot,...words(post));
+      const none=el('button',{class:'btn',type:'button',text:'Pas de faute',onclick:()=>tap(null,false)});
+      const ask2=el('p',{class:'prompt',style:'text-align:center',hidden:''});
+      const tap=(b,isSlot)=>{
+        toks.forEach(t=>t.disabled=true); none.disabled=true;
+        if(b===null){ // « pas de faute »
+          if(!faulty){slot.classList.add('right');return conclude(true,'Exact : la phrase est juste');}
+          slot.classList.add('missed'); none.classList.add('wrong'); return conclude(false,'Il y avait une faute : '+opts[put]+' → '+opts[right]);
+        }
+        if(isSlot&&faulty){ // faute trouvée : reste à la réparer
+          none.remove();
+          // deux formes possibles : trouver la faute, c'est déjà savoir la réparer
+          if(opts.length===2){slot.textContent=opts[right];slot.classList.add('right');return conclude(true,'Faute trouvée : '+opts[put]+' → '+opts[right]);}
+          slot.classList.add('found'); son('clic');
+          ask2.textContent='Bien vu. Par quoi la remplacer ?'; ask2.hidden=false;
+          pickForm(good=>{slot.textContent=opts[right];slot.classList.remove('found');slot.classList.add(good?'right':'missed');conclude(good,good?'Faute trouvée et corrigée':'Faute trouvée, mais la bonne forme est : '+opts[right]);},put);
+          return;
+        }
+        b.classList.add('wrong');
+        if(faulty){slot.classList.add('missed');return conclude(false,'La faute était ailleurs : '+opts[put]+' → '+opts[right]);}
+        slot.classList.add('right'); return conclude(false,'Cette phrase était juste');
+      };
+      arena.replaceChildren(qprog(qi,8),el('p',{class:'prompt',style:'text-align:center',text:'Une faute ? Touche le mot fautif.'}),sent,el('div',{class:'row',style:'justify-content:center'},none),ask2,box,fb,next);
     };
     ask();
   }
@@ -4194,34 +4260,79 @@ fermi(arena){
   }
 },
 chrono(arena){
-  intro(arena,"Deux événements par manche : lequel s'est produit en premier ? Six manches, de plusieurs siècles d'écart à la même année. Les dates s'affichent après chaque réponse : c'est là que les repères se fixent.",null,go);
+  intro(arena,"Trois frises à remettre dans l'ordre, du plus ancien au plus récent. Fais glisser les événements par la poignée, ou utilise les flèches. Les écarts se resserrent à chaque manche. Les dates s'affichent quand tu valides : c'est là que les repères se fixent.",null,go);
   function go(){
-    // écart en années visé à chaque manche, du plus large au plus serré
-    const GAPS=[[200,3000],[80,200],[30,80],[12,30],[3,12],[0,2]], used=new Set(), key=e=>e[1]*1e4+ +e[0];
-    let qi=0, ok=0; const seen=[];
-    const pair=([lo,hi])=>{
-      for(let t=0;t<300;t++){
-        const a=pick(EVENTS); if(used.has(a))continue;
-        const bs=EVENTS.filter(b=>b!==a&&!used.has(b)&&b[0]+b[1]!==a[0]+a[1]&&Math.abs(b[1]-a[1])>=lo&&Math.abs(b[1]-a[1])<=hi);
-        if(bs.length){const b=pick(bs);used.add(a);used.add(b);return Math.random()<.5?[a,b]:[b,a];}
+    // manches : nombre d'événements, écart minimal entre deux dates, étendue maximale de la frise
+    const ROUNDS=[[4,60,2500],[4,15,400],[5,2,120]], used=new Set(), key=e=>e[1]*1e4+ +e[0];
+    let qi=0, sum=0, perfect=0; const seen=[];
+    const draw=([n,lo,span])=>{
+      for(let t=0;t<400;t++){
+        const set=[pick(EVENTS)]; if(used.has(set[0]))continue;
+        for(let u=0;u<200&&set.length<n;u++){
+          const c=pick(EVENTS);
+          if(used.has(c)||set.includes(c)||set.some(e=>Math.abs(e[1]-c[1])<lo))continue;
+          const ys=[...set,c].map(e=>e[1]); if(Math.max(...ys)-Math.min(...ys)<=span)set.push(c);
+        }
+        if(set.length===n){set.forEach(e=>used.add(e));return set;}
       }
       return null;
     };
     const ask=()=>{
-      const p=pair(GAPS[qi])||pair([1,3000]), first=key(p[0])<key(p[1])?0:1, gap=Math.abs(p[0][1]-p[1][1]);
-      const box=el('div',{class:'options chrono'}), fb=el('div',{class:'answer',hidden:''});
-      const next=el('button',{class:'btn primary',text:qi<5?'Manche suivante':'Voir le résultat',hidden:''});
-      p.forEach((e,i)=>box.append(el('button',{text:e[2],onclick:ev=>{
-        [...box.children].forEach((b,j)=>{b.disabled=true;b.prepend(el('b',{text:fmtY(p[j][1])+' · '}));if(j===first)b.classList.add('right');});
-        if(i===first)ok++;else ev.currentTarget.classList.add('wrong');
-        hit(i===first); seen.push([p[0],i===first],[p[1],i===first]);
-        fb.replaceChildren(el('span',{class:'label',text:i===first?'Exact':'Raté'}),el('span',{class:'fg2',text:gap===0?`La même année : le ${evDate(p[first][0])}, puis le ${evDate(p[1-first][0])}.`:`${fmt(gap)} an${gap>1?'s':''} d'écart.`}));
-        fb.hidden=false; next.hidden=false; next.focus();
-      }})));
-      next.addEventListener('click',()=>{qi++;if(qi<6)ask();else{const sc=ok/6*100;const m=recordMsg('chrono',sc);logResult('chrono',sc);// tous les événements de la séance, remis dans l'ordre : les manches ratées sont signalées
+      const [n]=ROUNDS[qi], evs=draw(ROUNDS[qi])||draw([n,1,5000]);
+      // un mélange qui n'est jamais déjà dans le bon ordre
+      let order; do{order=[...evs].sort(()=>Math.random()-.5);}while(order.every((e,i)=>i===0||key(order[i-1])<key(e)));
+      const list=el('ol',{class:'sorter','aria-label':'Événements à classer, du plus ancien au plus récent'});
+      const fb=el('div',{class:'answer',hidden:''});
+      const next=el('button',{class:'btn primary',text:qi<ROUNDS.length-1?'Frise suivante':'Voir le résultat',hidden:''});
+      const move=(li,d)=>{const sib=d<0?li.previousElementSibling:li.nextElementSibling;if(!sib)return;flip(()=>d<0?list.insertBefore(li,sib):list.insertBefore(sib,li));son('clic');const f=li.querySelector(d<0?'.up':'.down');(getComputedStyle(f).visibility==='hidden'?li.querySelector(d<0?'.down':'.up'):f).focus();};
+      // FLIP : les éléments glissent vers leur nouvelle place au lieu de sauter
+      const flip=fn=>{const items=[...list.children],before=new Map(items.map(x=>[x,x.getBoundingClientRect().top]));fn();
+        items.forEach(x=>{if(x.classList.contains('drag'))return;const d=before.get(x)-x.getBoundingClientRect().top;if(!d)return;x.style.transition='none';x.style.transform=`translateY(${d}px)`;requestAnimationFrame(()=>{x.style.transition='';x.style.transform='';});});};
+      order.forEach(e=>{
+        const grip=el('span',{class:'grip','aria-hidden':'true',html:'<svg width="14" height="20" viewBox="0 0 14 20" fill="currentColor"><circle cx="4" cy="4" r="1.6"/><circle cx="10" cy="4" r="1.6"/><circle cx="4" cy="10" r="1.6"/><circle cx="10" cy="10" r="1.6"/><circle cx="4" cy="16" r="1.6"/><circle cx="10" cy="16" r="1.6"/></svg>'});
+        const li=el('li',{class:'sitem'},grip,el('span',{class:'stext',text:e[2]}),
+          el('span',{class:'sbtns'},el('button',{class:'up',type:'button','aria-label':'Monter : '+e[2],text:'▲',onclick:()=>move(li,-1)}),el('button',{class:'down',type:'button','aria-label':'Descendre : '+e[2],text:'▼',onclick:()=>move(li,1)})));
+        li._ev=e;
+        // glisser-déposer à la souris ou au doigt, par la poignée (le reste de la carte laisse défiler la page)
+        grip.addEventListener('pointerdown',pd=>{
+          if(list.classList.contains('locked'))return;
+          pd.preventDefault(); li.classList.add('drag'); // on écoute la fenêtre : déplacer l'élément dans la page lui ferait perdre la capture du pointeur
+          let startY=pd.clientY+scrollY, top=li.getBoundingClientRect().top+scrollY, last=pd, timer=0;
+          // près du bord de l'écran, la page défile toute seule pour atteindre le haut ou le bas de la frise
+          const edge=()=>{const y=last.clientY, d=y<90?-1:y>innerHeight-90?1:0;if(d){scrollBy(0,d*8);mv(last);}timer=d?requestAnimationFrame(edge):0;};
+          const mv=pm=>{
+            last=pm; if(!timer)timer=requestAnimationFrame(edge);
+            const dy=pm.clientY+scrollY-startY; li.style.transform=`translateY(${dy}px)`;
+            const r=li.getBoundingClientRect(), mid=r.top+r.height/2, p=li.previousElementSibling, nx=li.nextElementSibling;
+            const swap=(fn)=>{const vis=top+dy;li.style.transform='';flip(fn);const nt=li.getBoundingClientRect().top+scrollY;startY=pm.clientY+scrollY-(vis-nt);top=nt;li.style.transform=`translateY(${vis-nt}px)`;son('clic');};
+            if(p){const pr=p.getBoundingClientRect();if(mid<pr.top+pr.height/2)return swap(()=>list.insertBefore(li,p));}
+            if(nx){const nr=nx.getBoundingClientRect();if(mid>nr.top+nr.height/2)return swap(()=>list.insertBefore(nx,li));}
+          };
+          const up=()=>{cancelAnimationFrame(timer);timer=-1;removeEventListener('pointermove',mv);removeEventListener('pointerup',up);removeEventListener('pointercancel',up);li.classList.remove('drag');li.style.transform='';};
+          addEventListener('pointermove',mv); addEventListener('pointerup',up); addEventListener('pointercancel',up);
+        });
+        list.append(li);
+      });
+      const check=el('button',{class:'btn primary',text:'Valider l’ordre',onclick:()=>{
+        check.remove(); list.classList.add('locked'); list.querySelectorAll('button').forEach(b=>b.disabled=true);
+        const mine=[...list.children].map(li=>li._ev), truth=[...mine].sort((a,b)=>key(a)-key(b));
+        // note : la part des paires d'événements rangées dans le bon sens
+        let good=0,tot=0; for(let i=0;i<mine.length;i++)for(let j=i+1;j<mine.length;j++){tot++;if(key(mine[i])<key(mine[j]))good++;}
+        const sc=good/tot, all=sc===1; sum+=sc; if(all)perfect++;
+        [...list.children].forEach((li,i)=>{const ok=li._ev===truth[i];li.classList.add(ok?'ok':'ko');li.querySelector('.sbtns').replaceWith(el('b',{class:'sdate',text:fmtY(li._ev[1])}));seen.push([li._ev,ok]);});
+        hit(all);
+        // après un temps pour voir ses erreurs, la frise se remet d'elle-même dans le bon ordre
+        setTimeout(()=>flip(()=>truth.forEach(e=>list.append([...list.children].find(li=>li._ev===e)))),all?0:900);
+        fb.replaceChildren(el('span',{class:'label',text:all?'Ordre parfait':`${good} paire${good>1?'s':''} sur ${tot} dans le bon sens`}),
+          el('span',{class:'fg2',text:all?'Chaque événement est à sa place.':'En rouge, ceux qui n’étaient pas à leur place. La frise se remet dans l’ordre.'}));
+        fb.hidden=false; next.hidden=false; next.focus({preventScroll:true});
+      }});
+      next.addEventListener('click',()=>{qi++;if(qi<ROUNDS.length)ask();else{
+        const scr=sum/ROUNDS.length*100; const m=recordMsg('chrono',scr); logResult('chrono',scr);
         const frise=el('div',{class:'recap wide'},el('span',{class:'label',text:'Ta frise du jour'}),el('ol',{class:'frise'},...seen.sort((a,b)=>key(a[0])-key(b[0])).map(([e,good])=>el('li',{class:good?null:'miss'},el('b',{text:fmtY(e[1])}),document.createTextNode(e[2])))));
-        showResult(arena,Math.round(sc),`% de bonnes réponses (${ok} sur 6)`,m+' Pour retenir une date, accroche-la à une autre que tu connais déjà : avant ou après la Révolution, combien de temps après la chute de Rome.',()=>RUN.chrono(arena),frise);}});
-      arena.replaceChildren(qprog(qi,6),el('p',{class:'prompt',style:'text-align:center',text:'Lequel s’est produit en premier ?'}),box,fb,next);
+        showResult(arena,Math.round(scr),`% de paires bien rangées (${perfect} frise${perfect>1?'s':''} parfaite${perfect>1?'s':''} sur ${ROUNDS.length})`,m+' Pour retenir une date, accroche-la à une autre que tu connais déjà : avant ou après la Révolution, combien de temps après la chute de Rome.',()=>RUN.chrono(arena),frise);}});
+      arena.replaceChildren(qprog(qi,ROUNDS.length),el('p',{class:'prompt',style:'text-align:center',text:'Du plus ancien au plus récent'}),
+        el('div',{class:'sortwrap'},el('span',{class:'send',text:'Plus ancien'}),list,el('span',{class:'send',text:'Plus récent'})),check,fb,next);
     };
     ask();
   }

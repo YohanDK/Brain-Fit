@@ -1,0 +1,26 @@
+/* Pages fixes de Néophyte (mentions légales, confidentialité, conditions) : même pierre claire, même lapis, même or. */
+:root{--bg:#FAF9F6;--surface:#FFFFFF;--fg:#24211C;--fg2:#58524A;--muted:#736D63;--gold:#B08A30;--accent:#3A5DBF;--line:#E6E1D6;--todo:#FAF2DE}
+@media (prefers-color-scheme:dark){:root{--bg:#101219;--surface:#181B25;--fg:#EEE8DA;--fg2:#BEB5A2;--muted:#9A9383;--gold:#D9B45A;--accent:#9DB0F0;--line:#343A4D;--todo:#3A3018}}
+html{background:var(--bg);color:var(--fg)}
+body{margin:0;font-family:"EB Garamond",Garamond,Georgia,serif;font-size:19px;line-height:1.55}
+main{max-width:68ch;margin:0 auto;padding:28px 16px 64px}
+.top{display:flex;align-items:center;gap:12px;text-decoration:none;color:inherit;margin-bottom:28px}
+.top img{width:40px;height:40px}
+.brand{font-family:Cinzel,serif;font-weight:700;font-size:1.25rem;letter-spacing:.06em}
+.brand span{color:var(--gold)}
+h1{font-family:Cinzel,serif;font-weight:700;font-size:1.6rem;letter-spacing:.03em;line-height:1.25;margin:0 0 4px}
+h2{font-family:Cinzel,serif;font-weight:600;font-size:1.08rem;letter-spacing:.03em;margin:34px 0 8px;padding-top:14px;border-top:1px solid var(--line)}
+p,li{color:var(--fg2)}
+p{margin:0 0 12px}
+ul{margin:0 0 12px;padding-left:1.2em}
+li{margin-bottom:6px}
+strong{color:var(--fg);font-weight:600}
+a{color:var(--accent)}
+.maj{color:var(--muted);font-size:.92rem;margin-bottom:24px}
+.todo{background:var(--todo);color:var(--fg);padding:0 4px;border-radius:4px;font-style:italic}
+table{border-collapse:collapse;width:100%;margin:6px 0 16px;font-size:.95rem}
+th,td{text-align:left;vertical-align:top;padding:8px 10px 8px 0;border-bottom:1px solid var(--line);color:var(--fg2)}
+th{color:var(--fg);font-weight:600}
+@media (max-width:560px){table,thead,tbody,tr,th,td{display:block}thead{display:none}tr{padding:8px 0;border-bottom:1px solid var(--line)}td{border:0;padding:2px 0}td:first-child{color:var(--fg);font-weight:600}}
+.pied{margin-top:44px;padding-top:16px;border-top:1px solid var(--line);font-size:.92rem;color:var(--muted)}
+.pied a{margin-right:14px;white-space:nowrap;display:inline-block}

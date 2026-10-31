@@ -27,10 +27,9 @@
 <link rel="icon" href="icon.svg" type="image/svg+xml">
 <link rel="icon" href="icon-192.png" type="image/png" sizes="192x192">
 <link rel="apple-touch-icon" href="icon-180.png">
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700&family=EB+Garamond:ital,wght@0,400;0,600;0,700;1,400&display=swap" onload="this.onload=null;this.rel='stylesheet'">
-<noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700&family=EB+Garamond:ital,wght@0,400;0,600;0,700;1,400&display=swap"></noscript>
+<link rel="preload" href="fonts/EBGaramond-latin.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="fonts/Cinzel-latin.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="fonts/fonts.css">
 <script>
 // les sections restent masquées le temps que l'appli les remplisse : rien ne saute à l'écran (filet : 3 s)
 document.documentElement.classList.add('boot');setTimeout(function(){document.documentElement.classList.remove('boot');},3000);
@@ -691,6 +690,8 @@ input[type=checkbox]:checked::after{transform:translateY(-2px) rotate(-45deg) sc
 .foot-brand{font-family:var(--f-display);font-weight:700;letter-spacing:.06em;color:var(--fg)}
 .linkbtn{border:0;background:none;padding:2px 2px;color:var(--fg2);text-decoration:underline;text-decoration-color:var(--line);text-underline-offset:3px;cursor:pointer;font:inherit}
 .linkbtn:hover{color:var(--accent);text-decoration-color:var(--accent)}
+.foot a{color:var(--muted);text-decoration:underline;text-decoration-color:var(--line);text-underline-offset:3px}
+.foot a:hover{color:var(--accent);text-decoration-color:var(--accent)}
 @media (max-width:640px){table.week th{letter-spacing:.02em;font-size:.68rem}table.week td:first-child{white-space:normal}table.week td,table.week th{padding:8px 3px}}
 @media (prefers-reduced-motion:reduce){*,*::before,*::after{animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important;scroll-behavior:auto!important}}
 /* le cerf, emblème interactif */
@@ -1108,10 +1109,10 @@ q{quotes:"« " " »" "“" "”"}
       <h2>À propos de Néophyte</h2>
       <p class="fg2" style="max-width:65ch">Néophyte est né d'une inquiétude simple : à force de tout demander à l'IA, on risque de ne plus savoir écrire, raisonner ni retenir par soi-même. L'application propose un entraînement court et quotidien, fondé sur la recherche en psychologie cognitive et sur une tradition éducative ancienne : la dispute, l'examen, la relecture.</p>
       <ul class="fg2 about-list">
-        <li>Gratuit, sans publicité ni mesure d'audience.</li>
+        <li>Gratuit, sans publicité, sans cookie ni traceur. Un simple compteur anonyme dit combien de personnes reviennent.</li>
         <li>Sans compte, tout reste sur ton appareil. Avec un compte, tes progrès sont gardés chez Supabase : le détail est dans « Tes données », dans les réglages.</li>
         <li>Les contenus (problèmes, citations, questions disputées, études) ont été rédigés et vérifiés pour Néophyte. Chaque citation et chaque étude indique sa source.</li>
-        <li>Site hébergé par GitHub Pages (GitHub, Inc.). Il s'installe comme une application : sur iPhone, « Partager » puis « Sur l'écran d'accueil » ; sur Android, « Installer l'application ».</li>
+        <li>Site hébergé par GitHub Pages (GitHub, Inc.) : voir les <a href="mentions-legales.html">mentions légales</a>, la <a href="confidentialite.html">politique de confidentialité</a> et les <a href="conditions.html">conditions d'utilisation</a>. Il s'installe comme une application : sur iPhone, « Partager » puis « Sur l'écran d'accueil » ; sur Android, « Installer l'application ».</li>
       </ul>
     </div>
   </section>
@@ -1152,7 +1153,9 @@ q{quotes:"« " " »" "“" "”"}
     </div>
     <div class="panel" id="privacy">
       <div><h2>Tes données</h2>
-        <p class="fg2" style="max-width:65ch">Avec un compte, Néophyte garde ton e-mail, tes progrès et tes textes chez Supabase, qui héberge sa base de données. Les autres utilisateurs ne peuvent pas les lire ; techniquement, la personne qui gère ce Néophyte y a accès. Si tu rejoins un cercle, ses membres voient seulement ton pseudo, tes XP de la semaine et ta série. Quand tu contestes une réponse, ton message et la question concernée sont envoyés pour être relus ; ils sont effacés avec ton compte. Quand tu parles au coach, ta demande et le résumé de tes progrès sont envoyés à Claude (Anthropic) pour qu'il réponde. Rien n'est vendu, et il n'y a ni publicité ni mesure d'audience.</p></div>
+        <p class="fg2" style="max-width:65ch">Avec un compte, Néophyte garde ton e-mail, tes progrès et tes textes chez Supabase, qui héberge sa base de données. Les autres utilisateurs ne peuvent pas les lire ; techniquement, la personne qui gère ce Néophyte y a accès. Si tu rejoins un cercle, ses membres voient seulement ton pseudo, tes XP de la semaine et ta série. Quand tu contestes une réponse, ton message et la question concernée sont envoyés pour être relus ; ils sont effacés avec ton compte. Quand tu parles au coach, ta demande et le résumé de tes progrès sont envoyés à Claude (Anthropic) pour qu'il réponde. Rien n'est vendu, et il n'y a ni publicité ni traceur. Tout est détaillé dans la <a href="confidentialite.html">politique de confidentialité</a>.</p></div>
+      <div class="row"><span class="note">Compteur anonyme</span><div class="seg" id="mesure-seg" role="group" aria-label="Compteur anonyme"><button data-mesure="on">Activé</button><button data-mesure="off">Coupé</button></div></div>
+      <p class="note" style="max-width:65ch">Une fois par jour, deux dates seulement (ta première visite et aujourd'hui), sans identifiant : de quoi savoir combien de personnes reviennent.</p>
       <div class="row"><button class="btn ghost" id="erase" hidden>Effacer mon compte</button></div>
       <div id="erase-confirm" class="row" hidden>
         <span class="fg2">Effacer ton compte, tes progrès, tes textes et ta place dans ton cercle ? Ce n'est pas réversible.</span>
@@ -1166,7 +1169,8 @@ q{quotes:"« " " »" "“" "”"}
     <div class="meander" aria-hidden="true"></div>
     <p><span class="foot-brand">Néo<span>phyte</span></span> · Garder l'esprit vif à l'heure de l'IA</p>
     <p><button class="linkbtn" id="foot-about">À propos</button> · <button class="linkbtn" id="foot-privacy">Tes données</button> · <button class="linkbtn" id="foot-biblio">Bibliothèque</button></p>
-    <p class="note">Gratuit, sans publicité ni mesure d'audience.</p>
+    <p class="note"><a href="mentions-legales.html">Mentions légales</a> · <a href="confidentialite.html">Confidentialité</a> · <a href="conditions.html">Conditions d'utilisation</a></p>
+    <p class="note">Gratuit, sans publicité ni traceur.</p>
   </footer>
 </div>
 <div class="welcome" id="welcome" tabindex="-1" role="dialog" aria-modal="true" aria-labelledby="wl-title" hidden>
@@ -1190,7 +1194,7 @@ q{quotes:"« " " »" "“" "”"}
 <div class="toasts" id="toasts" aria-live="polite"></div>
 <canvas id="confetti" hidden></canvas>
 
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.117.3/dist/umd/supabase.js"></script>
+<script src="vendor/supabase-2.117.3.js"></script>
 <script src="config.js"></script>
 <script src="services.js"></script>
 <script src="banques.js"></script>
@@ -2253,7 +2257,7 @@ async function shrinkPhoto(file){
 let jspdfP=null;
 function loadJsPDF(){
   if(window.jspdf)return Promise.resolve(window.jspdf);
-  if(!jspdfP)jspdfP=new Promise((ok,ko)=>{const sc=document.createElement('script');sc.src='https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js';sc.onload=()=>ok(window.jspdf);sc.onerror=()=>{jspdfP=null;ko(new Error('jspdf'));};document.head.append(sc);});
+  if(!jspdfP)jspdfP=new Promise((ok,ko)=>{const sc=document.createElement('script');sc.src='vendor/jspdf-2.5.1.umd.min.js';sc.onload=()=>ok(window.jspdf);sc.onerror=()=>{jspdfP=null;ko(new Error('jspdf'));};document.head.append(sc);});
   return jspdfP;
 }
 function missCounts(){const m=new Map();state.results.filter(r=>r.ex==='ortho'&&r.miss).forEach(r=>r.miss.forEach(i=>m.set(i,(m.get(i)||0)+1)));return m;}
@@ -4447,11 +4451,45 @@ $('#foot-privacy').addEventListener('click',()=>goPanel('reglages','privacy'));
 $('#foot-biblio').addEventListener('click',()=>{showTab('conseils');window.scrollTo(0,0);});
 $$('#biblio-toc button').forEach(b=>b.addEventListener('click',()=>goPanel('conseils',b.dataset.to)));
 
+/* ---------- compteur anonyme : qui revient le lendemain, la deuxième semaine, après un mois ---------- */
+// Une ligne par jour au plus : jour de la première visite, jour d'aujourd'hui, étiquette de retour. Ni identifiant ni compte.
+const LS_MESURE='brainfit.mesure';
+function lireMesure(){try{return JSON.parse(localStorage.getItem(LS_MESURE)||'{}')||{};}catch(e){return null;}}
+function mesureOn(){const m=lireMesure();return !!m&&!m.off&&!navigator.globalPrivacyControl;}
+function compterVisite(){
+  const m=lireMesure(); if(!m||m.off||navigator.globalPrivacyControl)return;
+  const sb=window.bfSupabase, t=todayKey(); if(!sb||m.d===t)return;
+  if(!m.c){
+    // les habitués d'avant le compteur sont comptés chaque jour, mais pas dans les arrivées
+    const old=Object.keys(state.days).some(k=>k<t)||state.results.some(r=>r.d&&r.d<t);
+    m.c=old?'ancien':t; m.r=[];
+  }
+  const age=m.c==='ancien'?-1:Math.round((new Date(t)-new Date(m.c))/864e5);
+  let retour=null;
+  if(age===0)retour=0;
+  else if(age===1)retour=1;
+  else if(age>=7&&age<=13&&!m.r.includes(7))retour=7;
+  else if(age>=30&&age<=36&&!m.r.includes(30))retour=30;
+  m.d=t; if(retour)m.r.push(retour);
+  try{localStorage.setItem(LS_MESURE,JSON.stringify(m));}catch(e){return;}
+  sb.from('activite').insert({cohorte:m.c==='ancien'?null:m.c,jour:t,retour}).then(()=>{},()=>{});
+}
+function renderMesure(){
+  const on=mesureOn();
+  $$('#mesure-seg button').forEach(b=>{b.setAttribute('aria-pressed',String(b.dataset.mesure===(on?'on':'off')));b.disabled=!!navigator.globalPrivacyControl;});
+}
+$$('#mesure-seg button').forEach(b=>b.addEventListener('click',()=>{
+  const m=lireMesure()||{}; m.off=b.dataset.mesure==='off';
+  try{localStorage.setItem(LS_MESURE,JSON.stringify(m));}catch(e){}
+  renderMesure();
+}));
+renderMesure();
+
 initCarnetCoach();
 applyFreezes(); gami(true);
 renderTips(); renderOrigins(); renderAll(); showTab(location.hash.slice(1)); setSync('local'); weekBilanNotice();
 // on dévoile la page une fois le compte vérifié, ou au plus tard après 0,8 s
-Promise.race([initStore(),new Promise(r=>setTimeout(r,800))]).finally(()=>document.documentElement.classList.remove('boot'));
+Promise.race([initStore(),new Promise(r=>setTimeout(r,800))]).finally(()=>{document.documentElement.classList.remove('boot');setTimeout(compterVisite,1500);});
 if('serviceWorker' in navigator)navigator.serviceWorker.register('sw.js').catch(()=>{});
 })();
 </script>

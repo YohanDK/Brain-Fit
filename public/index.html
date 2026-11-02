@@ -653,6 +653,28 @@ a{color:var(--accent);text-underline-offset:3px}
 .laurels.automne i:nth-child(3n+1){background:linear-gradient(135deg,#d9a441,#9a6a1c)}
 .laurels.automne i:nth-child(3n+2){background:linear-gradient(135deg,#a8452a,#6e2416)}
 @media (prefers-reduced-motion:reduce){.cierge .flamme,.cierge .halo{animation:none}}
+/* parcours de saison : la couronne de l'Avent (une bougie allumée par semaine) et le calendrier à cases */
+.parcours.sans-ico{padding-right:20px}
+.couronne{position:absolute;right:14px;top:14px;width:64px;height:56px}
+.couronne .branches{fill:none;stroke:var(--gold-deep);stroke-width:3;stroke-dasharray:2 3}
+.couronne .bougie{fill:var(--surface);stroke:var(--gold);stroke-width:1.2}
+.couronne .flamme{fill:#e9a23b;transform-origin:center bottom;transform-box:fill-box;animation:flamme 2.4s ease-in-out infinite}
+@media (prefers-reduced-motion:reduce){.couronne .flamme{animation:none}}
+.pa-cal>summary{cursor:pointer;color:var(--muted);font-size:.9rem;margin-top:4px}
+.pa-cases{list-style:none;margin:10px 0 6px;padding:0;display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:6px}
+.pa-cases button{width:100%;aspect-ratio:1;border-radius:8px;border:1px solid var(--line);background:var(--surface);color:var(--fg);font:inherit;font-size:.85rem;cursor:pointer;padding:0;display:flex;align-items:center;justify-content:center}
+.pa-cases button.fait{background:var(--gold);border-color:var(--gold-deep);color:#2a2112;font-weight:700}
+.pa-cases button.auj{outline:2px solid var(--gold-deep);outline-offset:1px}
+.pa-cases button.sel{box-shadow:0 0 0 3px var(--gold-soft)}
+.pa-cases button.dim{font-style:italic}
+.pa-cases button:disabled{opacity:.35;cursor:default}
+/* énigme du dimanche */
+.enq-recit{max-width:60ch;text-align:left;margin:0}
+.enq-ind{margin:0;padding-left:1.4em;text-align:left;width:100%;display:flex;flex-direction:column;gap:6px}
+.enq-ind li{padding:6px 10px;border-left:3px solid var(--gold);background:var(--sunk);border-radius:0 8px 8px 0}
+@media (prefers-reduced-motion:no-preference){.enq-ind li.neuf{animation:rise .3s ease-out}}
+.enq-opts button.sel{border-color:var(--gold-deep);background:var(--gold-soft);font-weight:700}
+.enq-ta{width:100%;min-height:90px}
 /* culture du jour : citation et « Ce jour-là » réunis, en plus petit */
 .culture{gap:0;padding:14px 18px}
 .culture .quoteday{display:flex;flex-direction:column;gap:6px;padding-bottom:12px}
@@ -1120,6 +1142,14 @@ var fin=function(){if(e.parentNode)e.remove();};e.addEventListener('click',fin);
       <h3 id="ev-title"></h3>
       <p class="fg2" id="ev-sub"></p>
       <button class="btn gold" id="ev-go"></button>
+    </div>
+    <div class="panel event parcours" id="parcours" hidden>
+      <svg class="couronne" id="pa-ico" viewBox="0 0 64 56" aria-hidden="true"><ellipse class="branches" cx="32" cy="44" rx="29" ry="9"/><g id="pa-bougies"></g></svg>
+      <span class="label" id="pa-label"></span>
+      <h3 id="pa-title"></h3>
+      <p class="fg2 note" id="pa-fil"></p>
+      <div class="row" id="pa-actions"></div>
+      <details class="pa-cal" id="pa-cal"><summary>Le calendrier</summary><ol class="pa-cases" id="pa-cases"></ol><p class="note" id="pa-origine"></p></details>
     </div>
     <details class="panel routine" id="routine">
       <summary><span class="step-title">Le programme du jour</span> <span class="note" id="routine-sub"></span></summary>
@@ -1622,6 +1652,7 @@ const EX={
   stroop:{name:'Stroop',skill:'Attention & inhibition',desc:"Donne la couleur de l'encre, pas le mot écrit. 30 secondes.",unit:'points'},
   fluency:{name:'Fluence verbale',skill:'Accès au langage',desc:"Un maximum de mots d'une lettre ou d'une catégorie en 60 secondes.",unit:'mots'},
   enigme:{name:'Énigme du jour',skill:'Défi commun',desc:"Cinq questions, les mêmes pour tout le monde aujourd'hui. Une seule tentative, puis partage ta grille.",unit:'% de bonnes réponses'},
+  dimanche:{name:'Énigme du dimanche',skill:'Raisonnement',desc:"Une enquête par semaine, ouverte le dimanche : cinq indices révélés un à un. Écris ta déduction, et réponds avec le moins d'indices possible.",unit:'% des points'},
   rattrapage:{name:'Rattrapage',skill:'Mémoire des erreurs',desc:"Tes erreurs récentes en orthographe, sophismes et dates reviennent. Réussis-les pour les rayer de ton carnet.",unit:'erreurs rattrapées'},
   eclair:{name:'Éclair',skill:'Vivacité',desc:"90 secondes de questions mêlées : orthographe, dates, sophismes. Bats ton record.",unit:'bonnes réponses'},
   evenement:{name:'Événement de saison',skill:'Esprit critique & culture',desc:"Une semaine à thème : vrai, faux ou non prouvé.",unit:'% de bonnes réponses',hidden:true},
@@ -1632,6 +1663,7 @@ const EX={
 const ORIG={
   rattrapage:"Revenir sur ses erreurs juste avant de les oublier est l'une des méthodes d'apprentissage les mieux établies : c'est l'effet de test (Roediger et Karpicke, 2006) combiné à la répétition espacée. Une erreur rattrapée sort du carnet ; une erreur ratée de nouveau y reste.",
   enigme:"Le principe vient de Wordle (Josh Wardle, 2021) : une seule grille par jour, la même pour tous, et un résultat qu'on partage en petits carrés de couleur sans rien dévoiler. Ici, les questions viennent des banques de Néophyte.",
+  dimanche:"Les énigmes de déduction ont leurs classiques : Lewis Carroll en publiait (Symbolic Logic, 1896), Raymond Smullyan en a fait des livres entiers avec ses chevaliers qui disent toujours vrai et ses fripons qui mentent toujours. Les indices révélés un à un viennent des jeux d'enquête. Chaque énigme de Néophyte est vérifiée par un programme qui passe en revue tous les cas possibles : une seule réponse tient.",
   eclair:"Un sprint chronométré, comme les manches rapides des jeux de culture générale. Répondre vite oblige à reconnaître une règle ou un repère sans tout recalculer : c'est le signe qu'il est vraiment acquis.",
   write:"L'écriture libre (freewriting) vient de Peter Elbow, Writing Without Teachers (1973) : écrire sans s'arrêter ni se corriger, pour que la pensée se forme en écrivant. Le format « Expliquer » reprend la technique dite de Feynman : si tu ne sais pas l'expliquer simplement, tu ne l'as pas compris. La « Disputatio » reprend la forme des articles de la Somme théologique de saint Thomas d'Aquin (XIIIe siècle), héritée de la dispute pratiquée dans les universités médiévales : objections, argument en sens contraire, réponse, réponse à chaque objection. Et ce que l'on produit soi-même se retient mieux que ce que l'on lit : c'est l'effet de génération (Slamecka et Graf, 1978). L'« Homme d'acier » applique les règles d'Anatol Rapoport, popularisées par Daniel Dennett (Intuition Pumps, 2013) : reformuler la position adverse si bien que son défenseur vous en remercie, avant de la critiquer. Le « Résumer » se vérifie idée par idée : garder la thèse et ses appuis, c'est ce qui distingue un résumé d'un extrait.",
   probleme:"La plupart de ces énigmes viennent du test de réflexion cognitive de Shane Frederick (2005) : la raquette et la balle, les machines, les nénuphars. Elles opposent la réponse intuitive, le « système 1 » de Daniel Kahneman, au calcul réfléchi, le « système 2 ». S'y ajoutent la tâche de sélection de Peter Wason (1966, les quatre cartes), l'oubli du taux de base étudié par Kahneman et Tversky, et le problème de Monty Hall. Une fois tous vus, des variantes changent les nombres et l'histoire : la réponse est recalculée par le code, et l'on ne peut plus réussir de mémoire. Le niveau suit la règle des 85 % : on apprend le mieux en réussissant environ quatre fois sur cinq (Wilson et al., 2019).",
@@ -3182,7 +3214,7 @@ function renderToday(){
     ol.append(el('li',{class:'step'+(isDone?' done':'')},tick,el('div',{class:'step-body'},el('span',{class:'step-title',text:e.name}),el('span',{class:'step-meta',text:e.skill+' · '+e.desc})),act));
   }
   renderPlay(steps,d,nextEx); renderQuests();
-  renderEvent();
+  renderEvent(); renderParcours();
   const hb=$('#habits'); hb.replaceChildren();
   for(const[id,t,sub] of HABITS){
     const cb=el('input',{type:'checkbox',id:'h-'+id}); cb.checked=!!d.habits[id];
@@ -3451,6 +3483,8 @@ function badgeDefs(ctx){
     ['flori10','Mémorialiste','10 citations dans ton florilège',Object.keys(state.flori||{}).length>=10],
     ['grave','Gravé dans le marbre','10 citations au plus haut niveau du florilège',Object.values(state.flori||{}).filter(f=>f.b>=5).length>=10],
     ...(NB.evenements||[]).map(ev=>['ev-'+ev.id,ev.badge[0],ev.badge[1],n('evenement').some(r=>r.ev===ev.id&&r.s>=80)]),
+    ...(NB.parcours||[]).map(p=>['pa-'+p.id,p.badge[0],p.badge[1],parcDone(p,true).length>=p.seuil]),
+    ['enq5','Détective','5 énigmes du dimanche trouvées',Object.values(state.enquetes||{}).filter(e=>e.ok).length>=5],
     ['lvl5','Rhéteur','Atteindre le niveau V',ctx.level>=5],
     ['lvl10','Sage','Atteindre le niveau X',ctx.level>=10]
   ];
@@ -4310,7 +4344,7 @@ window.addEventListener('hashchange',()=>showTab(location.hash.slice(1)));
 // les familles d'exercices, de la plus importante à la plus légère
 const EXFAM=[
   ['Écrire',"Le cœur de l'entraînement : penser en écrivant, sans aide.",['write','ortho','dictee']],
-  ['Défis',"Une énigme commune à tous chaque jour, et un sprint contre ton propre record.",['enigme','eclair','rattrapage']],
+  ['Défis',"Une énigme commune à tous chaque jour, une enquête chaque dimanche, et un sprint contre ton propre record.",['enigme','dimanche','eclair','rattrapage']],
   ['Raisonner',"Débusquer l'erreur, le sophisme et la réponse trop rapide.",['probleme','erreuria','sophismes','graphe','hypotheses','fermi']],
   ['Lire et retenir',"Lire vraiment, puis garder en mémoire ce qui compte.",['lecture','citations','chrono']],
   ['Hors écran',"Le papier et le silence : là où l'attention se reforme.",['fiche','focus']],
@@ -4323,6 +4357,7 @@ const EXICON={
   dictee:'<rect x="9" y="6" width="17" height="22" rx="2"/><path d="M13 12h9M13 16h9M13 20h6"/><path class="g" d="M3 13q2 3 0 6M6 11q3 5 0 10"/>',
   enigme:'<rect x="4" y="9" width="6" height="6" rx="1"/><rect class="gf" x="13" y="9" width="6" height="6" rx="1"/><rect x="22" y="9" width="6" height="6" rx="1"/><rect class="gf" x="4" y="18" width="6" height="6" rx="1"/><rect class="gf" x="13" y="18" width="6" height="6" rx="1"/><rect x="22" y="18" width="6" height="6" rx="1"/>',
   eclair:'<path class="gf" d="M18 3L7 18h8l-2 11 12-16h-8z"/>',
+  dimanche:'<circle cx="13" cy="13" r="8"/><path d="M19 19l8 8"/><circle class="gf" cx="13" cy="13" r="3"/>',
   rattrapage:'<path d="M8 5h14a2 2 0 0 1 2 2v20H10a2 2 0 0 1-2-2z"/><path d="M8 25a2 2 0 0 1 2-2h14"/><path class="g" d="M20 12a4.5 4.5 0 1 1-1.3-3.2M19 6v3h-3"/>',
   probleme:'<path d="M16 4a8 8 0 0 0-5 14c1 1 1.5 2 1.5 3.5h7c0-1.5.5-2.5 1.5-3.5a8 8 0 0 0-5-14z"/><path d="M13 25h6M14 28h4"/><path class="g" d="M16 9v5M16 16.5v.5"/>',
   erreuria:'<path d="M5 6h22v14H14l-6 5v-5H5z"/><path d="M9 11h14"/><path class="g" d="M9 15.5q1.5-2 3 0t3 0 3 0 3 0"/>',
@@ -4911,6 +4946,76 @@ function renderEvent(){
   $('#ev-go').textContent=b===null?'Relever le défi':'Rejouer';
 }
 $('#ev-go').addEventListener('click',()=>{showTab('exercices');openEx('evenement');});
+/* ---------- parcours de saison (Avent, Carême) et énigme du dimanche : voir B.parcours et B.enquetes dans banques.js ---------- */
+// ?apercu=AAAA-MM-JJ montre le parcours et l'énigme comme ce jour-là, sans rien enregistrer (pour relire avant la date)
+const APERCU=(()=>{try{const v=new URLSearchParams(location.search).get('apercu');return /^\d{4}-\d{2}-\d{2}$/.test(v||'')?v:null;}catch(e){return null;}})();
+const pToday=()=>APERCU||todayKey();
+const addD=(k,n)=>{const d=new Date(k+'T12:00:00');d.setDate(d.getDate()+n);return iso(d);};
+const isSun=k=>new Date(k+'T12:00:00').getDay()===0;
+const enqOf=k=>(NB.enquetes||[]).filter(e=>e.dim<=k&&k<=addD(e.dim,6)).pop()||null;
+const enqApercu={}; // en aperçu, les réponses restent en mémoire
+const enqState=()=>APERCU?enqApercu:(state.enquetes=state.enquetes||{});
+// les jours comptés du parcours ; au Carême, les dimanches ne comptent pas
+function parcDays(p){const out=[];for(let k=p.du;k<=p.au;k=addD(k,1))if(p.dimanches||!isSun(k))out.push(k);return out;}
+const parcOf=k=>(NB.parcours||[]).find(p=>k>=p.du&&k<=p.au)||null;
+// annoncé une semaine avant
+const parcSoon=k=>(NB.parcours||[]).find(p=>k<p.du&&addD(k,7)>=p.du)||null;
+const paApercu={};
+const paMarks=p=>APERCU?(paApercu[p.id]=paApercu[p.id]||{}):((state.parcours=state.parcours||{})[p.id]=state.parcours[p.id]||{});
+// une case est faite si on l'a cochée, ou si l'exercice qu'elle propose a été fait ce jour-là
+function parcDone(p,real){
+  const m=real?((state.parcours||{})[p.id]||{}):paMarks(p), days=parcDays(p);
+  return days.filter((k,i)=>m[k]||(()=>{const ex=p.pas[i]&&p.pas[i][1],d=state.days[k];return ex&&d&&d.done&&d.done[ex];})());
+}
+let paSel=null;
+function renderParcours(){
+  const box=$('#parcours'); if(!box)return;
+  const k=pToday(), p=parcOf(k), soon=p?null:parcSoon(k); box.hidden=!p&&!soon; if(box.hidden)return;
+  const actions=$('#pa-actions'); actions.replaceChildren();
+  const avent=/^avent/.test((p||soon).id); box.classList.toggle('sans-ico',!avent); $('#pa-ico').style.display=avent?'':'none';
+  if(soon){
+    const j=Math.round((new Date(soon.du+'T12:00:00')-new Date(k+'T12:00:00'))/864e5);
+    $('#pa-label').textContent=soon.court+' · dans '+j+' jour'+(j>1?'s':'');
+    $('#pa-title').textContent=soon.titre+' commence '+fd(new Date(soon.du+'T12:00:00'),{weekday:'long',day:'numeric',month:'long'})+'.';
+    $('#pa-fil').textContent=soon.intro; $('#pa-cal').hidden=true; bougies(0); return;
+  }
+  const days=parcDays(p), done=new Set(parcDone(p)), m=paMarks(p);
+  const sem=p.semaines.filter(w=>w.du<=k).pop(), wi=p.semaines.indexOf(sem);
+  bougies(wi+1);
+  if(!days.includes(paSel)||paSel>k)paSel=null;
+  const sel=paSel||k, i=days.indexOf(sel);
+  const jour=days.indexOf(k);
+  $('#pa-label').textContent=`${p.court} · ${jour<0?'dimanche, hors décompte':'jour '+(jour+1)+' sur '+days.length} · ${sem.titre}`;
+  $('#pa-fil').textContent=sem.fil;
+  if(i<0){ // dimanche de Carême : pas de case, l'énigme tient lieu de rendez-vous
+    $('#pa-title').textContent='Dimanche : l’énigme de la semaine t’attend.';
+    actions.append(el('button',{class:'btn gold',text:'Ouvrir l’énigme',onclick:()=>{showTab('exercices');openEx('dimanche');}}));
+  }else{
+    const [txt,ex]=p.pas[i], fait=done.has(sel), date=sel===k?'':fd(new Date(sel+'T12:00:00'),{weekday:'long',day:'numeric',month:'long'})+' · ';
+    $('#pa-title').textContent=date+txt;
+    if(ex&&EX[ex])actions.append(el('button',{class:'btn gold',text:ex==='dimanche'?'Ouvrir l’énigme':'Faire : '+EX[ex].name,onclick:()=>{showTab('exercices');openEx(ex);}}));
+    actions.append(el('button',{class:'btn'+(fait?' ghost':ex?'':' gold'),text:fait?'✓ Fait · annuler':'C’est fait',onclick:()=>{
+      if(m[sel])delete m[sel];
+      else if(fait){toast('<span>Cette case est faite par l’exercice de ce jour-là.</span>');return;}
+      else{m[sel]=1;son('juste');}
+      if(APERCU)toast('<span>Aperçu : rien n’est enregistré.</span>');else save();
+      renderParcours();}}));
+  }
+  const nb=parcDone(p).length;
+  $('#pa-cal').hidden=false; $('#pa-cal').querySelector('summary').textContent=`Le calendrier · ${nb} case${nb>1?'s':''} sur ${days.length}`+(nb>=p.seuil?' · badge gagné':` · ${p.seuil} pour le badge « ${p.badge[0]} »`);
+  $('#pa-origine').textContent=p.origine;
+  $('#pa-cases').replaceChildren(...days.map((d,j)=>el('li',{},el('button',{
+    class:[done.has(d)?'fait':'',d===k?'auj':'',d===sel&&paSel?'sel':'',isSun(d)?'dim':''].filter(Boolean).join(' ')||null,
+    disabled:d>k?'':null,'aria-label':fd(new Date(d+'T12:00:00'),{weekday:'long',day:'numeric',month:'long'})+(done.has(d)?', fait':''),
+    text:String(+d.slice(8)),onclick:()=>{paSel=d===k?null:d;renderParcours();}}))));
+}
+// la couronne de l'Avent : une bougie de plus allumée chaque dimanche
+function bougies(n){
+  const g=$('#pa-bougies'); if(!g)return; g.innerHTML='';
+  [10,23,36,49].forEach((x,i)=>{
+    g.insertAdjacentHTML('beforeend',`<rect class="bougie" x="${x}" y="${i%2?18:14}" width="6" height="${i%2?24:28}" rx="1"/>`+(i<n?`<path class="flamme" d="M${x+3} ${i%2?8:4}c2 3 3 4.5 3 6a3 3 0 0 1-6 0c0-1.5 1-3 3-6z"/>`:''));
+  });
+}
 const RUN={
 evenement(arena){
   const ev=evNow()||NB.evenements[NB.evenements.length-1], Q=ev.questions, n=Q.length;
@@ -4935,6 +5040,50 @@ evenement(arena){
       arena.replaceChildren(qprog(qi,n),el('p',{class:'prompt',text:q.q}),box,fb,next);
     };
     ask();
+  }
+},
+dimanche(arena){
+  const k=pToday(), e=enqOf(k), S=enqState();
+  if(!e){
+    const nx=(NB.enquetes||[]).find(x=>x.dim>k);
+    arena.replaceChildren(stagTalk('idle',nx?`La prochaine enquête ouvre ${fd(new Date(nx.dim+'T12:00:00'),{weekday:'long',day:'numeric',month:'long'})}.`:'Pas d’enquête cette semaine. Reviens dimanche.'));return;
+  }
+  $('#st-name').textContent='Énigme du dimanche · '+e.titre;
+  const fin=new Date(addD(e.dim,6)+'T12:00:00');
+  const corrige=r=>el('div',{class:'answer'},
+    el('span',{class:'label',text:r.ok?`Trouvé avec ${r.n} indice${r.n>1?'s':''}`:'C’était : '+e.options[e.bonne]}),
+    el('span',{class:'fg2',text:e.solution}),el('span',{class:'fg2'},el('b',{text:'À retenir. '}),e.lecon),
+    r.txt?el('details',{},el('summary',{text:'Ta déduction'}),el('p',{class:'fg2',text:r.txt})):null,
+    el('span',{class:'qsource',text:'Source : '+e.src}),contestBtn('dimanche',e.id,e.question));
+  const done=S[e.id]&&S[e.id].c!=null?S[e.id]:null;
+  if(done){const c=corrige(done);
+    arena.replaceChildren(el('p',{class:'fg2',text:`Tu as déjà mené l’enquête de la semaine : ${done.ok?(6-done.n)*20+' points sur 100':'réponse manquée'}. La prochaine ouvre dimanche.`}),
+      el('p',{class:'enq-recit fg2',text:e.recit}),el('p',{class:'prompt',text:e.question}),c);return;}
+  intro(arena,`${e.titre}. Une enquête, cinq indices : le premier est donné, les autres se demandent un à un. Trouvée avec un seul indice, elle vaut 100 points, avec deux 80, et ainsi de suite jusqu’à 20 avec les cinq. Une seule réponse, et tu écris d’abord ta déduction. Tu as jusqu’au ${fd(fin,{weekday:'long',day:'numeric',month:'long'})}.`,null,go);
+  function go(){
+    const cur=S[e.id]=S[e.id]||{n:1}; let choix=null;
+    const ol=el('ol',{class:'enq-ind'}), more=el('button',{class:'btn'}), opts=el('div',{class:'options enq-opts'});
+    const ta=el('textarea',{class:'enq-ta','aria-label':'Ta déduction',placeholder:'Ta déduction, en deux ou trois phrases : qu’est-ce que les indices permettent d’exclure ?',maxlength:'1200'});
+    const note=el('p',{class:'note'}), ok=el('button',{class:'btn primary',text:'Valider ma réponse',disabled:''});
+    const mots=()=>ta.value.trim().split(/\s+/).filter(Boolean).length;
+    const maj=()=>{
+      ol.replaceChildren(...e.indices.slice(0,cur.n).map((t,j)=>el('li',{class:j===cur.n-1&&j?'neuf':null,text:t})));
+      more.hidden=cur.n>=5; more.textContent=`Indice suivant (${cur.n+1} sur 5) · la réponse vaudra alors ${(5-cur.n)*20} points`;
+      const w=mots(); note.textContent=`Ta réponse vaut ${(6-cur.n)*20} points. `+(w<12?`Encore ${12-w} mot${12-w>1?'s':''} de déduction.`:choix==null?'Choisis ta réponse.':'');
+      ok.disabled=!(choix!=null&&w>=12);
+    };
+    more.addEventListener('click',()=>{cur.n++;if(!APERCU)persist();son('clic');maj();});
+    e.options.forEach((o,j)=>opts.append(el('button',{text:o,onclick:ev=>{choix=j;[...opts.children].forEach(b=>b.classList.toggle('sel',b===ev.currentTarget));maj();}})));
+    ta.addEventListener('input',maj);
+    ok.addEventListener('click',()=>{
+      const r={n:cur.n,c:choix,ok:choix===e.bonne,txt:ta.value.trim().slice(0,1200),t:Date.now()}; S[e.id]=r;
+      const sc=r.ok?(6-r.n)*20:0; hit(r.ok);
+      if(APERCU)toast('<span>Aperçu : rien n’est enregistré.</span>');else logResult('dimanche',sc,{eq:e.id,n:r.n});
+      const c=corrige(r);
+      showResult(arena,sc,'points sur 100',r.ok?(r.n<=2?'Belle déduction, et économe en indices.':'Bien raisonné.'):'Relis la solution : chaque indice exclut quelque chose.',()=>RUN.dimanche(arena),c);
+    });
+    arena.replaceChildren(el('p',{class:'enq-recit fg2',text:e.recit}),el('p',{class:'prompt',text:e.question}),ol,more,ta,opts,note,ok);
+    maj();
   }
 },
 calc(arena){

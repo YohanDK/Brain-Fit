@@ -521,6 +521,17 @@ a{color:var(--accent);text-underline-offset:3px}
 .pips li{flex:1;height:5px;border-radius:3px;background:var(--line)}
 .pips li.ok{background:var(--gold)} .pips li.cur{background:var(--accent)}
 .play.done{border-top-color:var(--gold)}
+.quests{gap:6px;padding:14px 20px}
+.quests h2{margin:0}
+.quests ul{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:6px}
+.quests li{display:flex;align-items:center;gap:10px;color:var(--fg2)}
+.quests li i{flex:none;width:20px;height:20px;border-radius:50%;border:2px solid var(--line);display:grid;place-items:center;font-style:normal;font-size:.7rem;color:var(--on-accent)}
+.quests li.ok{color:var(--fg)} .quests li.ok i{background:var(--gold);border-color:var(--gold);animation:pop .4s both}
+.quests.all{border-color:var(--gold);background:linear-gradient(var(--gold-soft),var(--surface) 70%)}
+.recap.seance{gap:10px}
+.seance-list{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:6px;width:100%}
+.seance-list li{display:flex;justify-content:space-between;gap:12px;text-align:left;border-bottom:1px solid var(--line);padding:6px 0}
+.seance-list b{font-family:var(--f-display);color:var(--gold-deep);white-space:nowrap}
 .routine>summary{cursor:pointer;list-style:none;display:flex;align-items:baseline;gap:8px;flex-wrap:wrap}
 .routine>summary::-webkit-details-marker{display:none}
 .routine>summary::before{content:"›";display:inline-block;transition:transform .2s;color:var(--muted)}
@@ -820,6 +831,10 @@ q{quotes:"« " " »" "“" "”"}
       <p class="play-meta" id="play-meta"></p>
       <button class="btn primary big" id="play-go"></button>
       <p class="play-streak" id="play-streak"></p>
+    </div>
+    <div class="panel quests" id="quests" aria-labelledby="quests-h">
+      <div class="row spread" style="flex-wrap:nowrap;align-items:baseline"><h2 class="label" id="quests-h">Quêtes du jour</h2><span class="note" id="quests-n"></span></div>
+      <ul id="quests-list"></ul>
     </div>
     <div class="panel syncwarn" id="syncwarn" hidden>
       <p><b>Connecte-toi pour retrouver tes progrès partout.</b> Avec ton compte Néophyte, ton téléphone et ton ordinateur partagent les mêmes progrès, et le coach est disponible. Sans compte, tout reste sur cet appareil.</p>
@@ -1161,6 +1176,7 @@ q{quotes:"« " " »" "“" "”"}
       <form class="row reel-city" id="city-form"><label class="note" for="city-in">Ta ville, pour le défi du réel</label><input type="text" id="city-in" placeholder="Ta ville" autocomplete="address-level2"><button class="btn mini">Valider</button></form>
       <div class="row"><span class="note">Couleurs</span><div class="seg" id="theme-seg" role="group" aria-label="Thème"><button data-th="light">Claires</button><button data-th="dark">Sombres</button><button data-th="auto">Comme le téléphone</button></div></div>
       <div class="row"><span class="note">Sons</span><div class="seg" id="son-seg" role="group" aria-label="Sons"><button data-son="on">Activés</button><button data-son="off">Coupés</button></div></div>
+      <div class="row"><span class="note">« Sûr à combien ? » après chaque réponse</span><div class="seg" id="conf-seg" role="group" aria-label="Annoncer sa confiance"><button data-conf="on">Oui</button><button data-conf="off">Non</button></div></div>
     </div>
     <div class="panel">
       <div><h2>Mes thèmes</h2><p class="muted note">Jusqu'à trois. Citations, « Ce jour-là », dictées, sujets d'écriture et coach s'en inspirent.</p></div>
@@ -2044,7 +2060,7 @@ function logResult(ex,s,extra){
   // une égide (gel de série) gagnée tous les 7 jours de série (2 au maximum)
   const f=freezeState(), cur=streaks().cur, t=todayKey();
   if(cur>0&&cur%7===0&&!f.earned.includes(t)){f.earned.push(t);if(f.n<2){f.n++;toast(`<span>Série de ${cur} jours : tu gagnes une égide.<small>Comme le bouclier d'Athéna, elle protégera ta série si tu manques un jour.</small></span>`);}}
-  save(); renderToday(); renderExGrid();
+  save(); renderToday(); renderExGrid(); checkQuests();
 }
 
 /* ---------- citations : citation du jour et florilège ---------- */
@@ -2479,6 +2495,33 @@ function renderParcours(){
 }
 $('#pc-bilan').addEventListener('click',()=>{showTab('exercices');openEx('bilan');});
 
+/* ---------- quêtes du jour : trois petits objectifs, un bonus quand les trois sont faits ---------- */
+const PCT=ex=>EX[ex]&&/^%/.test(EX[ex].unit);
+const QUESTS={
+  seance:['Termine ta séance du jour',(k,d)=>routineFor(k,state.settings.minutes).every(x=>d.done[x.ex])],
+  sansfaute:['Réussis un exercice sans faute',k=>state.results.some(r=>r.d===k&&PCT(r.ex)&&r.s>=100)],
+  affilee:['Enchaîne 5 bonnes réponses d’affilée',(k,d)=>!!d.q5],
+  enigme:['Résous l’énigme du jour',(k,d)=>!!d.done.enigme],
+  record:['Bats un de tes records',k=>state.results.some(r=>r.d===k&&r.rec)],
+  eclair:['Marque 12 points à l’Éclair',k=>state.results.some(r=>r.d===k&&r.ex==='eclair'&&r.s>=12)]
+};
+// la séance chaque jour, et deux autres tirées au sort avec la date : les mêmes toute la journée
+function questsOf(k){const r=seeded('neophyte-quetes-'+k);return['seance',...rshuf(r,Object.keys(QUESTS).filter(q=>q!=='seance')).slice(0,2)];}
+function questState(k=todayKey()){const d=day(k);return questsOf(k).map(q=>[q,QUESTS[q][0],!!QUESTS[q][1](k,d)]);}
+const QBONUS=15;
+function checkQuests(){
+  const k=todayKey(), d=day(k), qs=questState(k);
+  if(!d.qall&&qs.every(q=>q[2])){d.qall=1;save();
+    setTimeout(()=>{son('record');laurels();toast(`<span class="xp">+${QBONUS} XP</span><span>Les trois quêtes du jour sont faites</span>`);},900);}
+  renderQuests();
+}
+function renderQuests(){
+  const qs=questState(), n=qs.filter(q=>q[2]).length, box=$('#quests'); if(!box)return;
+  box.classList.toggle('all',n===3);
+  $('#quests-n').textContent=n===3?`Bonus de ${QBONUS} XP gagné`:`${n} / 3 · bonus de ${QBONUS} XP`;
+  $('#quests-list').replaceChildren(...qs.map(([,lab,ok])=>el('li',{class:ok?'ok':null},el('i',{text:ok?'✓':''}),el('span',{text:lab}))));
+}
+
 /* ---------- routine ---------- */
 // la séance du jour en tête d'écran : une seule chose à faire, un seul gros bouton
 function renderPlay(steps,d,nextEx){
@@ -2530,7 +2573,7 @@ function renderToday(){
     const act=e.manual?el('span',{class:'minutes',text:s.m+' min'}):el('div',{class:'row actions'},el('span',{class:'minutes',text:s.m+' min'}),el('button',{class:'btn',text:isDone?'Refaire':'Commencer',onclick:()=>{showTab('exercices');openEx(s.ex);}}));
     ol.append(el('li',{class:'step'+(isDone?' done':'')},tick,el('div',{class:'step-body'},el('span',{class:'step-title',text:e.name}),el('span',{class:'step-meta',text:e.skill+' · '+e.desc})),act));
   }
-  renderPlay(steps,d,nextEx);
+  renderPlay(steps,d,nextEx); renderQuests();
   renderEvent();
   const hb=$('#habits'); hb.replaceChildren();
   for(const[id,t,sub] of HABITS){
@@ -2738,6 +2781,7 @@ function xpByDay(){
   for(const[k,n] of Object.entries(fc))add(k,Math.min(3,n)*5);
   for(const ts of Object.values(state.weeks||{}))if(typeof ts==='number')add(iso(ts),50);
   for(const r of Object.values(state.reel||{}))if(r&&r.d)add(iso(r.d),50);
+  for(const[k,d] of Object.entries(state.days))if(d.qall)add(k,QBONUS);
   return m;
 }
 function xpTotal(m){let t=Object.values(m).reduce((a,b)=>a+b,0);for(const p of Object.values(state.prog||{}))t+=((p.lect||0)+(p.ecrit||0))*20;return t;}
@@ -3477,8 +3521,11 @@ function adaptLevel(ex,score){
 // annoncer « certain » rapporte un peu plus quand on a raison et coûte beaucoup quand on a tort, donc bluffer ne paie pas
 const CONF=[[.5,'50 %'],[.7,'70 %'],[.9,'90 %'],[.98,'Certain']];
 const betPts=(c,ok)=>Math.round(10*(ok*Math.log2(c/.5)+(1-ok)*Math.log2((1-c)/.5)));
-let betRun=0;
+let betRun=0, betN=0;
+// « Sûr à combien ? » : désactivé par défaut pour garder le jeu fluide, à réactiver dans les réglages
+const confOn=()=>state.settings.conf==='on';
 function askConf(onPick,label){
+  if(!confOn()){queueMicrotask(()=>onPick(null));return document.createTextNode('');}
   const row=el('div',{class:'conf'},el('span',{class:'label',text:label||'Sûr à combien ?'}));
   const seg=el('div',{class:'seg',role:'group','aria-label':'Ta confiance'});
   CONF.forEach(([c,t])=>seg.append(el('button',{text:t,onclick:()=>{[...seg.children].forEach(b=>b.disabled=true);row.remove();onPick(c);}})));
@@ -3486,12 +3533,14 @@ function askConf(onPick,label){
   row.append(seg); return row;
 }
 function logConf(ex,c,ok){
+  if(c==null)return null;
+  betN++;
   (state.calib=state.calib||[]).push({t:Date.now(),d:todayKey(),ex,c,ok});
   if(state.calib.length>1500)state.calib=state.calib.slice(-1500);
   const pts=betPts(c,ok); betRun+=pts; return pts;
 }
-const betChip=pts=>el('span',{class:'pari '+(pts>0?'up':pts<0?'down':'flat'),text:'Pari : '+(pts>0?'+':pts<0?'−':'')+Math.abs(pts)});
-function betSummary(){const p=betRun;betRun=0;return ` Pari de la séance : ${p>0?'+':p<0?'−':''}${Math.abs(p)} point${Math.abs(p)>1?'s':''}.`;}
+const betChip=pts=>pts==null?null:el('span',{class:'pari '+(pts>0?'up':pts<0?'down':'flat'),text:'Pari : '+(pts>0?'+':pts<0?'−':'')+Math.abs(pts)});
+function betSummary(){const p=betRun,n=betN;betRun=0;betN=0;if(!n)return'';return ` Pari de la séance : ${p>0?'+':p<0?'−':''}${Math.abs(p)} point${Math.abs(p)>1?'s':''}.`;}
 // « Je conteste » : une réponse douteuse se signale en une phrase ; les signalements sont relus chaque semaine
 function contestBtn(ex,id,enonce){
   const box=el('div',{class:'contest'});
@@ -3523,7 +3572,7 @@ let cleanup=null;
 function stopRun(){if(cleanup){cleanup();cleanup=null;}$('#st-timer').hidden=true;$('#st-bar').hidden=true;}
 function openEx(key){
   stopRun();
-  curEx=key; qmarks=[]; betRun=0; $('#stage').classList.toggle('saison',key==='evenement');
+  curEx=key; qmarks=[]; betRun=0; betN=0; $('#stage').classList.toggle('saison',key==='evenement');
   const e=EX[key]; $('#exgrid').hidden=true; $('#stage').hidden=false; $('#st-skill').textContent=e.skill; $('#st-name').textContent=e.name;
   const o=$('#st-orig'); o.open=false; o.hidden=!ORIG[key]; o.querySelector('p').textContent=ORIG[key]||'';
   RUN[key]($('#arena'));
@@ -3587,6 +3636,7 @@ function qprog(i,n){
 }
 function hit(right){
   right=!!right; qmarks[qcur]=right; combo=right?combo+1:0; son(right?'juste':'faux');
+  if(combo>=5&&!day().q5){day().q5=1;checkQuests();}
   const a=$('#arena'); a.dataset.v=right?'ok':'ko';
   const seg=a.querySelector('.qbar i.cur'); if(seg)seg.className=right?'ok':'ko';
   const c=a.querySelector('.combo');
@@ -3610,10 +3660,41 @@ function showResult(arena,score,unit,msg,again,extra){
   arena.replaceChildren(...[el('div',{class:'result'+(fresh&&last.rec?' record':'')},el('span',{class:'label',text:'Résultat'}),sc,el('span',{class:'fg2',text:unit})),
     gains,stagVerdict(score,unit,fresh&&last.rec),recap,extra,
     msg?el('p',{class:'fg2',text:msg,style:'max-width:50ch'}):null,
-    el('div',{class:'row',style:'justify-content:center'},el('button',{class:'btn primary',text:'Recommencer',onclick:again}),el('button',{class:'btn',text:'Retour à la routine',onclick:()=>{stopRun();$('#stage').hidden=true;$('#exgrid').hidden=false;showTab('aujourdhui');}}))].filter(Boolean));
+    nextButtons(again)].filter(Boolean));
   countUp(sc,score);
   const rec=fresh&&last.rec, perfect=marks.length>1&&marks.every(Boolean);
   if(rec||perfect){son('record');laurels();}else son('fin');
+}
+// pendant la séance du jour, on enchaîne sur l'exercice suivant au lieu de revenir à l'accueil
+function seanceNext(){
+  const k=todayKey(), d=day(k), steps=routineFor(k,state.settings.minutes);
+  if(!steps.some(x=>x.ex===curEx))return null;
+  const nx=steps.find(x=>!d.done[x.ex]);
+  return nx?nx.ex:'fin';
+}
+function backHome(){stopRun();$('#stage').hidden=true;$('#exgrid').hidden=false;showTab('aujourdhui');window.scrollTo(0,0);}
+function nextButtons(again){
+  const nx=seanceNext(), row=el('div',{class:'row',style:'justify-content:center'});
+  if(nx==='fin')row.append(el('button',{class:'btn primary',text:'Voir le bilan de la séance',onclick:()=>seanceRecap($('#arena'))}),el('button',{class:'btn ghost',text:'Recommencer',onclick:again}));
+  else if(nx)row.append(el('button',{class:'btn primary',text:'Suivant : '+EX[nx].name,onclick:()=>openEx(nx)}),el('button',{class:'btn ghost',text:'Recommencer',onclick:again}));
+  else row.append(el('button',{class:'btn primary',text:'Recommencer',onclick:again}),el('button',{class:'btn',text:'Retour à l’accueil',onclick:backHome}));
+  return row;
+}
+// bilan de fin de séance : ce qui a été fait, les XP du jour, les quêtes et la série
+function seanceRecap(arena){
+  stopRun(); $('#st-timer').hidden=true; $('#st-bar').hidden=true;
+  const k=todayKey(), steps=routineFor(k,state.settings.minutes), qs=questState(k), xp=xpByDay()[k]||0, cur=streaks().cur;
+  $('#st-skill').textContent='Séance du jour'; $('#st-name').textContent='Séance terminée'; $('#st-orig').hidden=true;
+  const last=ex=>{const rs=state.results.filter(r=>r.d===k&&r.ex===ex);return rs[rs.length-1];};
+  arena.replaceChildren(
+    el('div',{class:'result record'},el('span',{class:'label',text:'XP gagnés aujourd’hui'}),el('span',{class:'score',text:fmt(xp)})),
+    el('div',{class:'recap wide seance'},el('span',{class:'label',text:'Ta séance'}),
+      el('ul',{class:'seance-list'},...steps.map(x=>{const r=last(x.ex);return el('li',{},el('span',{text:EX[x.ex].name}),el('b',{text:r?fmt(r.s)+(PCT(x.ex)?' %':' '+EX[x.ex].unit):'—'}));})),
+      el('span',{class:'label',text:'Quêtes du jour'}),
+      el('ul',{class:'seance-list'},...qs.map(([,lab,ok])=>el('li',{},el('span',{text:lab}),el('b',{text:ok?'✓':'à faire'}))))),
+    el('p',{class:'fg2',style:'text-align:center',text:cur>1?`Série de ${cur} jours. À demain !`:'Ta série a commencé. À demain !'}),
+    el('div',{class:'row',style:'justify-content:center'},el('button',{class:'btn primary',text:'Retour à l’accueil',onclick:backHome}),el('button',{class:'btn ghost',text:'Un exercice de plus',onclick:()=>{stopRun();$('#stage').hidden=true;$('#exgrid').hidden=false;}})));
+  son('record'); laurels();
 }
 function bestOf(ex){const rs=state.results.filter(r=>r.ex===ex);return rs.length?Math.max(...rs.map(r=>r.s)):null;}
 function recordMsg(ex,s){const b=bestOf(ex);return b===null?'Premier score enregistré. Il servira de point de départ.':s>b?'Nouveau record !':`Ton record est de ${fmt(b)}.`;}
@@ -4601,9 +4682,11 @@ function applyTheme(){
   if(th==='auto')delete document.documentElement.dataset.theme; else document.documentElement.dataset.theme=th;
   $$('#theme-seg button').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.th===th)));
 }
+function renderConf(){$$('#conf-seg button').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.conf===(confOn()?'on':'off'))));}
+$$('#conf-seg button').forEach(b=>b.addEventListener('click',()=>{state.settings.conf=b.dataset.conf;save();renderConf();}));
 function renderSon(){$$('#son-seg button').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.son===(sonOn()?'on':'off'))));}
 $$('#son-seg button').forEach(b=>b.addEventListener('click',()=>{state.settings.son=b.dataset.son;save();renderSon();son('juste');}));
-renderSon();
+renderSon(); renderConf();
 $$('#theme-seg button').forEach(b=>b.addEventListener('click',()=>{try{localStorage.setItem(LS_TH,b.dataset.th);}catch(e){}applyTheme();}));
 applyTheme();
 function renderOrigins(){

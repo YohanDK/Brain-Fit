@@ -1664,8 +1664,8 @@ const EX={
   fluency:{name:'Fluence verbale',skill:'Accès au langage',desc:"Un maximum de mots d'une lettre ou d'une catégorie en 60 secondes.",unit:'mots'},
   enigme:{name:'Énigme du jour',skill:'Défi commun',desc:"Cinq questions, les mêmes pour tout le monde aujourd'hui. Une seule tentative, puis partage ta grille.",unit:'% de bonnes réponses'},
   dimanche:{name:'Énigme du dimanche',skill:'Raisonnement',desc:"Une enquête par semaine, ouverte le dimanche : cinq indices révélés un à un. Écris ta déduction, et réponds avec le moins d'indices possible.",unit:'% des points'},
-  rattrapage:{name:'Rattrapage',skill:'Mémoire des erreurs',desc:"Tes erreurs récentes en orthographe, sophismes et dates reviennent. Réussis-les pour les rayer de ton carnet.",unit:'erreurs rattrapées'},
-  eclair:{name:'Éclair',skill:'Vivacité',desc:"90 secondes de questions mêlées : orthographe, dates, sophismes. Bats ton record.",unit:'bonnes réponses'},
+  rattrapage:{name:'Rattrapage',skill:'Mémoire des erreurs',desc:"Tes erreurs récentes (orthographe, sophismes, dates, citations, ordres de grandeur, erreurs d'IA) reviennent. Réussis-les pour les rayer de ton carnet.",unit:'erreurs rattrapées'},
+  eclair:{name:'Éclair',skill:'Vivacité',desc:"90 secondes de questions mêlées : orthographe, dates, sophismes, citations, calcul, ordres de grandeur. Bats ton record.",unit:'bonnes réponses'},
   evenement:{name:'Événement de saison',skill:'Esprit critique & culture',desc:"Une semaine à thème : vrai, faux ou non prouvé.",unit:'% de bonnes réponses',hidden:true},
   bilan:{name:"Point d'étape",skill:'Bilan',desc:"Seize affirmations en quatre axes, puis six questions pour te mettre à l'épreuve. Le premier sert de point de départ, puis un chaque mois.",unit:'sur 100',hidden:true},
   read:{name:'Lecture profonde',skill:'Attention soutenue',desc:"Lecture sur papier ou liseuse, téléphone dans une autre pièce.",unit:'',manual:true}
@@ -4565,7 +4565,30 @@ function qSoph(r,s){
 const evKey=e=>e[1]*1e4+ +e[0];
 function qChrono(r,a,b){const p=r()<.5?[a,b]:[b,a];
   return{kind:'Chronologie',prompt:'Lequel s’est produit en premier ?',opts:p.map(e=>e[2]),right:evKey(p[0])<evKey(p[1])?0:1,why:p.map(e=>fmtY(e[1])+' : '+e[2]).join(' · '),dates:p.map(e=>e[1]),src:['chrono',[a[2],b[2]]]};}
+// qui l'a dit : deux autres auteurs du florilège en leurres
+function qCit(r,q){const opts=rshuf(r,[q.a,...rshuf(r,QAUTHORS.filter(a=>a!==q.a)).slice(0,2)]);
+  return{kind:'Citation',quote:'« '+q.q+' »',prompt:'Qui l’a dit ?',opts,right:opts.indexOf(q.a),why:q.a+', '+q.s,src:['cit',q.id]};}
+// ordre de grandeur : la bonne valeur et ses voisines à un facteur 10, sans ambiguïté
+const nbFr=v=>v.toLocaleString('fr-FR',{maximumSignificantDigits:2});
+function qFermi(r,f){const k=rpick(r,[0,1,2]), vals=[0,1,2,3].map(i=>f.val*10**(i-k)), opts=vals.map(v=>nbFr(v)+' '+f.unite);
+  return{kind:'Ordre de grandeur',prompt:f.q,opts,right:k,why:f.calc,src:['fermi',f.id]};}
+// l'erreur de l'IA : laquelle de ces phrases est fausse
+const qIA=(r,a)=>({kind:'Erreur de l’IA',quote:a.question,prompt:'Une phrase de la réponse est fausse : laquelle ?',opts:a.phrases,right:a.faute,why:a.expl,src:['ia',a.id]});
+// calcul mental, recalculé par le code : les leurres sont les erreurs classiques (retenue oubliée, ordre des opérations)
+function qCalc(r,niv){
+  let q,v,bad;
+  if(niv===1){const a=r()*40+12|0,b=r()*40+12|0;q=`${a} + ${b} × 2`;v=a+b*2;bad=[(a+b)*2,a+b*2+10,a+b*2-2];}
+  else if(niv===2){const a=r()*8+12|0,b=r()*7+3|0;q=`${a} × ${b}`;v=a*b;bad=[v+10,v-b,v+a];}
+  else{const p=rpick(r,[15,25,35,45]),n=rpick(r,[40,60,80,120,240]);q=`${p} % de ${n}`;v=p*n/100;bad=[v*2,v+5,n-v];}
+  const opts=rshuf(r,[...new Set([v,...bad.filter(x=>x!==v&&x>0)])].slice(0,4)).map(x=>x.toLocaleString('fr-FR'));
+  return{kind:'Calcul mental',prompt:q+' = ?',opts,right:opts.indexOf(v.toLocaleString('fr-FR')),why:`${q} = ${v.toLocaleString('fr-FR')}`+(niv===1?' : la multiplication passe avant l’addition.':'')};
+}
+const QTYPES=['chrono','ortho','soph','cit','fermi','ia','calc'];
 function quickQ(r,type,niv){
+  if(type==='cit')return qCit(r,rpick(r,QUOTES.filter(q=>q.c!=='fausse')));
+  if(type==='fermi')return qFermi(r,rniv(r,NB.fermi,niv));
+  if(type==='ia')return qIA(r,rniv(r,NB.erreursIA,niv));
+  if(type==='calc')return qCalc(r,niv);
   if(type==='ortho')return qOrtho(r,rniv(r,NB.ortho,niv));
   if(type==='soph')return qSoph(r,rniv(r,NB.sophismes,niv));
   // chronologie : deux événements, l'écart se resserre avec le niveau
@@ -4586,6 +4609,9 @@ function errQ(e){
   if(t==='ortho'){const o=NB.ortho.find(x=>x.id===id&&!x.retire);return o?qOrtho(r,o):null;}
   if(t==='soph'){const x=NB.sophismes.find(y=>y.id===id&&!y.retire);return x?qSoph(r,x):null;}
   if(t==='chrono'){const a=EVENTS.find(v=>v[2]===id[0]),b=EVENTS.find(v=>v[2]===id[1]);return a&&b?qChrono(r,a,b):null;}
+  if(t==='cit'){const q=QUOTES.find(x=>x.id===id);return q?qCit(r,q):null;}
+  if(t==='fermi'){const f=NB.fermi.find(x=>x.id===id&&!x.retire);return f?qFermi(r,f):null;}
+  if(t==='ia'){const a=NB.erreursIA.find(x=>x.id===id&&!x.retire);return a?qIA(r,a):null;}
   return null;
 }
 const errsLeft=()=>(state.errs||[]).filter(e=>errQ(e));
@@ -4601,7 +4627,8 @@ function quickAsk(q,onAnswer){
 }
 /* ---------- énigme du jour : la même pour tous, une seule fois par jour, un résultat à partager ---------- */
 const ENIG0='2026-11-02', enigNo=k=>Math.round((new Date(k+'T12:00:00')-new Date(ENIG0+'T12:00:00'))/864e5)+1;
-const ENIG_PLAN=[['chrono',1],['ortho',1],['soph',2],['ortho',3],['chrono',3]];
+// cinq familles différentes chaque jour, tirées avec la date, de la plus facile à la plus difficile
+const enigPlan=r=>rshuf(r,QTYPES).slice(0,5).map((t,i)=>[t,[1,1,2,2,3][i]]);
 function enigShare(k,marks){
   const ok=marks.filter(Boolean).length;
   return`Néophyte · énigme n° ${enigNo(k)}\n${marks.map(m=>m?'🟩':'🟥').join('')} ${ok}/5\n${location.origin+location.pathname.replace(/index\.html$/,'')}`;
@@ -5955,9 +5982,9 @@ enigme(arena){
       el('p',{class:'note',text:'Tout le monde a la même énigme aujourd’hui. La prochaine arrive demain matin.'}));
   };
   if(done){arena.replaceChildren(el('p',{class:'fg2',text:'Tu as déjà résolu l’énigme du jour.'}),card(done.m));return;}
-  intro(arena,"Cinq questions, les mêmes pour tout le monde aujourd'hui : chronologie, orthographe, sophisme. Une seule tentative par jour. À la fin, partage ta grille sans rien dévoiler des réponses.",null,go);
+  intro(arena,"Cinq questions, les mêmes pour tout le monde aujourd'hui, de cinq familles qui changent chaque jour : orthographe, chronologie, sophisme, citation, calcul, ordre de grandeur, erreur de l'IA. Une seule tentative par jour. À la fin, partage ta grille sans rien dévoiler des réponses.",null,go);
   function go(){
-    const r=seeded('neophyte-enigme-'+k), qs=ENIG_PLAN.map(([t,n])=>quickQ(r,t,n)), marks=[]; let qi=0;
+    const r=seeded('neophyte-enigme-'+k), qs=enigPlan(r).map(([t,n])=>quickQ(r,t,n)), marks=[]; let qi=0;
     const ask=()=>{
       const fb=el('div',{class:'answer',hidden:''}), next=el('button',{class:'btn primary',text:qi<4?'Suivante':'Voir ma grille',hidden:''});
       next.addEventListener('click',()=>{qi++;if(qi<5)ask();else finish();});
@@ -6001,17 +6028,19 @@ eclair(arena){
   const seed=D?D.seed:Math.random().toString(36).slice(2,8);
   const aim=defiCible?(defiCible.to?`Ton défi pour ${defiCible.pseudo} : joue ta manche, puis ${defiCible.pseudo} recevra les mêmes questions et ton score. `:'Ton défi pour le cercle : joue ta manche, tes amis recevront les mêmes questions et ton score. '):'';
   intro(arena,aim&&!D?aim+'90 secondes, chaque bonne réponse compte un point.':D?`${D.from} te défie : ${D.score} point${D.score>1?'s':''} en 90 secondes. Tu auras exactement les mêmes questions. À toi de faire mieux.`
-    :"90 secondes de questions mêlées : orthographe, chronologie, sophismes. Réponds vite, mais juste : chaque bonne réponse compte un point. À la fin, revois celles que tu as manquées, ou défie un ami sur les mêmes questions.",null,go);
+    :"90 secondes de questions mêlées : orthographe, chronologie, sophismes, citations, calcul mental, ordres de grandeur, erreurs de l'IA. Réponds vite, mais juste : chaque bonne réponse compte un point. À la fin, revois celles que tu as manquées, ou défie un ami sur les mêmes questions.",null,go);
   function go(){
     const R=seeded('neophyte-eclair-'+seed);
-    let ok=0, n=0, over=false; const missed=[]; combo=0; qmarks=[];
+    let ok=0, n=0, over=false, lastT=null; const missed=[]; combo=0; qmarks=[];
     const count=el('span',{class:'eclair-n',text:'0'}), c=el('span',{class:'combo',hidden:''});
     const zone=el('div',{class:'eclair-q'});
     const ask=()=>{
       if(over)return;
       delete arena.dataset.v;
       zone.style.animation='none'; void zone.offsetWidth; zone.style.animation='';
-      const q=quickQ(R,rpick(R,['ortho','ortho','chrono','chrono','soph']),1+Math.floor(R()*3)); n++; qcur=n;
+      // jamais deux fois de suite la même famille ; l'erreur de l'IA, plus longue à lire, revient moins souvent
+      let t; do t=rpick(R,['ortho','ortho','chrono','chrono','soph','soph','cit','cit','calc','calc','fermi','ia']); while(t===lastT); lastT=t;
+      const q=quickQ(R,t,1+Math.floor(R()*3)); n++; qcur=n;
       zone.replaceChildren(...quickAsk(q,good=>{
         if(good){ok++;count.textContent=fmt(ok);count.classList.remove('bump');void count.offsetWidth;count.classList.add('bump');}else missed.push(q);
         setTimeout(ask,good?380:1100);

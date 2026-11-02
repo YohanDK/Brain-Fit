@@ -568,7 +568,18 @@ a{color:var(--accent);text-underline-offset:3px}
 .cjl>summary::after{content:"›";margin-left:auto;color:var(--muted);transition:transform .2s}
 .cjl[open]>summary::after{transform:rotate(90deg)}
 .cjl[open]{display:flex;flex-direction:column;gap:10px}
-.exgroup>summary{flex-direction:column;gap:2px;position:relative;padding-left:1.1em}
+.exgroup>summary{flex-direction:row;flex-wrap:nowrap;align-items:center;gap:14px;position:relative;padding-left:1.1em}
+.exgroup .famtxt{display:flex;flex-direction:column;gap:2px;min-width:0}
+.famico{width:56px;height:56px;flex:none;border-radius:16px;display:grid;place-items:center;background:var(--gold-soft);color:var(--accent-deep,var(--accent));border:1px solid color-mix(in srgb,var(--gold) 35%,transparent)}
+.famico svg{width:38px;height:38px}
+.exico{width:46px;height:46px;flex:none;border-radius:12px;display:grid;place-items:center;background:var(--accent-soft);color:var(--accent)}
+.exico svg{width:30px;height:30px}
+.famico .g,.exico .g{stroke:var(--gold-deep)}
+.famico .gf,.exico .gf{fill:var(--gold);stroke:var(--gold-deep)}
+.excard{flex-direction:row!important;align-items:flex-start;gap:14px!important}
+.excard .exbody{display:flex;flex-direction:column;gap:4px;min-width:0;flex:1;align-self:stretch}
+.excard.done .exico{background:var(--good-soft);color:var(--good)}
+@media (prefers-reduced-motion:no-preference){.excard .exico{transition:transform .2s}.excard:hover .exico{transform:rotate(-6deg) scale(1.06)}}
 .exgroup>summary::before{position:absolute;left:0;top:.2em}
 .exgroup>summary .note{margin:0}
 .exgroup[open]{display:flex;flex-direction:column;gap:12px}
@@ -3743,11 +3754,48 @@ const EXFAM=[
   ['Hors écran',"Le papier et le silence : là où l'attention se reforme.",['fiche','focus']],
   ['Échauffements',"Des tests classiques de psychologie cognitive, courts et chronométrés. Utiles pour s'échauffer ; l'écriture et le raisonnement comptent davantage.",['calc','span','words','nback','stroop','fluency']]
 ];
+// les illustrations du menu : un trait sobre, une touche d'or (classe g)
+const EXICON={
+  write:'<path d="M24 4c-6 3-11 9-13 16l-1 4 3-2c6-3 10-9 12-16z"/><path d="M10 24L7 28"/><path class="g" d="M5 29h12"/>',
+  ortho:'<text x="3" y="23" font-size="18" font-style="italic" font-family="var(--f-body)" stroke="none" fill="currentColor">Aé</text><path class="g" d="M21 6l3 3 3-3"/><path class="g" d="M5 27q4-2 8 0t8 0"/>',
+  dictee:'<rect x="9" y="6" width="17" height="22" rx="2"/><path d="M13 12h9M13 16h9M13 20h6"/><path class="g" d="M3 13q2 3 0 6M6 11q3 5 0 10"/>',
+  enigme:'<rect x="4" y="9" width="6" height="6" rx="1"/><rect class="gf" x="13" y="9" width="6" height="6" rx="1"/><rect x="22" y="9" width="6" height="6" rx="1"/><rect class="gf" x="4" y="18" width="6" height="6" rx="1"/><rect class="gf" x="13" y="18" width="6" height="6" rx="1"/><rect x="22" y="18" width="6" height="6" rx="1"/>',
+  eclair:'<path class="gf" d="M18 3L7 18h8l-2 11 12-16h-8z"/>',
+  rattrapage:'<path d="M8 5h14a2 2 0 0 1 2 2v20H10a2 2 0 0 1-2-2z"/><path d="M8 25a2 2 0 0 1 2-2h14"/><path class="g" d="M20 12a4.5 4.5 0 1 1-1.3-3.2M19 6v3h-3"/>',
+  probleme:'<path d="M16 4a8 8 0 0 0-5 14c1 1 1.5 2 1.5 3.5h7c0-1.5.5-2.5 1.5-3.5a8 8 0 0 0-5-14z"/><path d="M13 25h6M14 28h4"/><path class="g" d="M16 9v5M16 16.5v.5"/>',
+  erreuria:'<path d="M5 6h22v14H14l-6 5v-5H5z"/><path d="M9 11h14"/><path class="g" d="M9 15.5q1.5-2 3 0t3 0 3 0 3 0"/>',
+  sophismes:'<rect x="4" y="11" width="11" height="8" rx="4"/><rect x="17" y="13" width="11" height="8" rx="4" transform="rotate(14 22 17)"/><path class="g" d="M15 8l1 3M19 7l-1 3M13 23l2-2"/>',
+  graphe:'<path d="M4 27h24"/><path d="M8 27V17M14 27V12M20 27V15"/><path class="g" d="M5 9l7-3 6 4 9-6M23 4h4v4"/>',
+  hypotheses:'<circle cx="7" cy="16" r="2.5"/><path d="M9.5 16H14M14 16l8-8M14 16h8M14 16l8 8"/><circle class="gf" cx="25" cy="7" r="2.5"/><circle cx="25" cy="16" r="2.5"/><circle cx="25" cy="25" r="2.5"/>',
+  fermi:'<path d="M4 22a12 12 0 0 1 24 0"/><path d="M8 22h-1M25 22h-1M16 10v1M9.6 13.6l.7.7M22.4 13.6l-.7.7"/><path class="g" d="M16 22l6-7"/><circle cx="16" cy="22" r="1.6"/>',
+  lecture:'<path d="M4 9q6-3 12 1q6-4 12-1v16q-6-3-12 1q-6-4-12-1z"/><path d="M16 10v16"/><circle class="g" cx="24" cy="7" r="4"/><path class="g" d="M24 5v2l1.4 1"/>',
+  citations:'<text x="16" y="22" text-anchor="middle" font-size="26" font-family="var(--f-body)" stroke="none" fill="currentColor">«»</text><path class="g" d="M6 28q10 3 20 0"/>',
+  chrono:'<path d="M3 18h26"/><circle cx="8" cy="18" r="2.2"/><circle class="gf" cx="16" cy="18" r="2.2"/><circle cx="24" cy="18" r="2.2"/><path d="M8 13V9M16 13V6M24 13v-3"/>',
+  fiche:'<path d="M7 4h13l5 5v19H7z"/><path d="M20 4v5h5"/><path d="M11 14h10M11 18h10M11 22h6"/><path class="g" d="M26 14l-7 9-2 .7.6-2z"/>',
+  focus:'<path d="M9 4h14M9 28h14M10 4c0 7 6 8 6 12s-6 5-6 12M22 4c0 7-6 8-6 12s6 5 6 12"/><path class="gf" d="M12.5 25.5q3.5-3 7 0z"/>',
+  calc:'<rect x="5" y="5" width="22" height="22" rx="3"/><path d="M10 11h4M12 9v4M18 11h4M10 21h4M18 19.5h4M18 22.5h4"/><path class="g" d="M10.5 18.5l3 3M13.5 18.5l-3 3"/>',
+  span:'<rect x="3" y="10" width="8" height="12" rx="1.5"/><rect class="gf0" x="12" y="10" width="8" height="12" rx="1.5"/><rect x="21" y="10" width="8" height="12" rx="1.5"/><path d="M6 14h2.5l-2 5M14.5 14h2.5l-1.3 2.4a1.6 1.6 0 1 1-1.4 2.3M24 14.5l1.4-.8V19"/>',
+  words:'<path d="M6 8h3M6 16h3M6 24h3"/><path d="M12 8h14M12 16h11M12 24h13"/><path class="g" d="M23 21l2 2 4-5"/>',
+  nback:'<rect x="5" y="5" width="22" height="22" rx="2"/><path d="M12.3 5v22M19.7 5v22M5 12.3h22M5 19.7h22"/><rect class="gf" x="13.5" y="6.2" width="5" height="5" rx=".8"/>',
+  stroop:'<text x="16" y="20" text-anchor="middle" font-size="11" font-weight="700" font-family="var(--f-body)" stroke="none" fill="#B23A32">BLEU</text><path class="g" d="M5 26h22"/>',
+  fluency:'<path d="M5 7h22v13H15l-5 5v-5H5z"/><path d="M9 12h3M14 12h4M20 12h3M9 16h5M16 16h5"/><path class="g" d="M24 26l3-3"/>',
+  evenement:'<path class="gf" d="M16 4c3 4 4 6 4 9a4 4 0 0 1-8 0c0-3 1-5 4-9z"/><rect x="12" y="17" width="8" height="12" rx="1"/>'
+};
+const FAMICON={
+  'Écrire':'<path d="M38 6C28 11 20 20 17 31l-1.5 6 4.5-3c9-5 15-13 18-28z"/><path d="M16 37l-5 6"/><path class="g" d="M6 44h20"/><path d="M27 18l4 4"/>',
+  'Défis':'<path class="gf" d="M26 8L16 24h7l-2 14 11-17h-7z"/><path class="g" d="M10 34q-4-8 0-17M38 34q4-8 0-17M10 34q3 4 8 5M38 34q-3 4-8 5"/>',
+  'Raisonner':'<circle cx="20" cy="20" r="11"/><path d="M28 28l11 11"/><path class="g" d="M15 20h10M20 15v10"/>',
+  'Lire et retenir':'<path d="M5 13q9-5 19 2q10-7 19-2v24q-9-5-19 2q-10-7-19-2z"/><path d="M24 15v24"/><path class="g" d="M10 19q5-2 9 1M10 25q5-2 9 1M29 20q4-3 9-1M29 26q4-3 9-1"/>',
+  'Hors écran':'<path d="M24 8v-3"/><path d="M17 13h14l-3-5h-8z"/><rect x="18" y="13" width="12" height="20" rx="2"/><path class="gf" d="M24 17c2.4 3 2.8 6 0 8.5c-2.8-2.5-2.4-5.5 0-8.5z"/><path d="M16 33h16v4H16z"/>',
+  'Échauffements':'<circle cx="24" cy="27" r="14"/><path d="M24 13V9M20 7h8M35 16l2-2"/><path class="g" d="M24 27l6-7"/><path d="M24 18v2M33 27h-2M15 27h2"/>'
+};
+const icoSvg=(body,vb)=>`<svg viewBox="0 0 ${vb} ${vb}" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="${vb>40?2.2:1.7}" stroke-linecap="round" stroke-linejoin="round">${body}</svg>`;
 function renderExGrid(){
   const g=$('#exgrid'), seen=new Set(), card=key=>{const e=EX[key];seen.add(key);
     const rs=state.results.filter(r=>r.ex===key), done=day().done[key];
     const best=rs.length?'Record : '+fmt(Math.max(...rs.map(r=>r.s)))+' '+e.unit:'';
-    return el('button',{class:'excard',onclick:()=>openEx(key)},el('span',{class:'skill',text:e.skill}),el('h3',{text:e.name}),el('p',{text:e.desc}),el('span',{class:'best',text:(done?'✓ Fait aujourd’hui'+(best?' · ':''):'')+best}));};
+    return el('button',{class:'excard'+(done?' done':''),onclick:()=>openEx(key)},el('span',{class:'exico',html:icoSvg(EXICON[key]||EXICON.probleme,32)}),
+      el('span',{class:'exbody'},el('span',{class:'skill',text:e.skill}),el('h3',{text:e.name}),el('p',{text:e.desc}),el('span',{class:'best',text:(done?'✓ Fait aujourd’hui'+(best?' · ':''):'')+best})));};
   const fams=EXFAM.map(([t,d,keys])=>[t,d,keys.filter(k=>EX[k]&&!EX[k].manual&&!EX[k].hidden)]);
   // un exercice ajouté sans famille rejoint les échauffements plutôt que de disparaître
   const rest=Object.keys(EX).filter(k=>!EX[k].manual&&!EX[k].hidden&&!fams.some(f=>f[2].includes(k)));
@@ -3758,7 +3806,7 @@ function renderExGrid(){
   g.replaceChildren(...shown.map(([t,d,keys])=>{
     const nd=keys.filter(k=>day().done[k]).length;
     const det=el('details',{class:'exgroup',open:op.includes(t)?'':null},
-      el('summary',{class:'exgroup-head'},el('h2',{text:t}),el('p',{class:'muted note',text:d+' · '+keys.length+' exercice'+(keys.length>1?'s':'')+(nd?' · '+nd+' fait'+(nd>1?'s':'')+' aujourd’hui':'')})),el('div',{class:'cards'},...keys.map(card)));
+      el('summary',{class:'exgroup-head'},el('span',{class:'famico',html:icoSvg(FAMICON[t]||FAMICON['Raisonner'],48)}),el('span',{class:'famtxt'},el('h2',{text:t}),el('p',{class:'muted note',text:d+' · '+keys.length+' exercice'+(keys.length>1?'s':'')+(nd?' · '+nd+' fait'+(nd>1?'s':'')+' aujourd’hui':'')}))),el('div',{class:'cards'},...keys.map(card)));
     det.addEventListener('toggle',()=>{const o=$$('#exgrid details.exgroup').filter(x=>x.open).map(x=>x.querySelector('h2').textContent);try{localStorage.setItem('neo.exopen',JSON.stringify(o));}catch(e){}});
     return det;}));
 }

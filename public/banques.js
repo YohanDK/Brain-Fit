@@ -558,6 +558,122 @@ B.evenements=[
    ]}
 ];
 
+// Bilan (point d'étape) : un questionnaire en quatre axes, puis une courte mise à l'épreuve.
+// axes : l'ordre compte (affichage). questions : « old » = position dans l'ancien questionnaire de 8 (avant novembre 2026),
+// pour relire les anciens points d'étape ; « inv » = affirmation formulée à l'envers (« Toujours » compte 0).
+// series : trois séries de six questions notées, qui tournent d'un point d'étape à l'autre. Une seule réponse défendable.
+B.bilan={
+  echelle:['Jamais','Rarement','Parfois','Souvent','Toujours'],
+  axes:[
+    {k:'pense',nom:"Penser d'abord",pq:"Chercher, calculer, retenir par toi-même avant de déléguer.",
+     src:"Délestage cognitif : Risko et Gilbert, Trends in Cognitive Sciences, 2016 ; Gerlich, Societies, 2025"},
+    {k:'ecrit',nom:'Écrire soi-même',pq:"Rédiger avec tes mots, du plan jusqu'à la relecture.",
+     src:"Kosmyna et al., « Your Brain on ChatGPT », MIT Media Lab, 2025 (étude préliminaire)"},
+    {k:'verif',nom:'Vérifier',pq:"Garder l'esprit critique, surtout quand la réponse a l'air sûre.",
+     src:"Lee et al., « The Impact of Generative AI on Critical Thinking », CHI 2025"},
+    {k:'reel',nom:'Revenir au réel',pq:"Lire long, compter de tête, lever les yeux de l'écran.",
+     src:"Delgado et al., Educational Research Review, 2018 (lecture sur papier et sur écran)"}
+  ],
+  questions:[
+    {id:'bq01',axe:'pense',old:0,q:"Avant de demander à l'IA, je cherche d'abord par moi-même.",conseil:"Passe par le sas avant l'IA (onglet Coach) pour chaque vraie question."},
+    {id:'bq02',axe:'pense',old:3,q:"Je retiens ce que l'IA m'a expliqué, au point de pouvoir le réexpliquer.",conseil:"Après chaque explication, réexplique-la par écrit et de mémoire (format « Expliquer »)."},
+    {id:'bq03',axe:'pense',old:7,q:"Je saurais faire seul ce que je délègue habituellement à l'IA.",conseil:"Choisis une tâche que tu délègues et refais-la seul cette semaine."},
+    {id:'bq04',axe:'pense',inv:true,q:"Quand une question me résiste, je la pose à l'IA presque aussitôt.",conseil:"Donne-toi cinq minutes de recherche personnelle, montre en main, avant toute question à l'IA."},
+    {id:'bq05',axe:'ecrit',old:1,q:"J'écris mes textes importants sans aucune aide.",conseil:"Une séance d'écriture longue par semaine, sans aide, puis l'avis du coach."},
+    {id:'bq06',axe:'ecrit',q:"Je fais un plan ou un brouillon à moi avant de demander de l'aide.",conseil:"Avant tout texte, trois lignes de plan à la main : l'idée, les arguments, la fin."},
+    {id:'bq07',axe:'ecrit',q:"Quand l'IA m'aide à écrire, je retravaille le texte jusqu'à ce qu'il dise ce que je pense, avec mes mots.",conseil:"Relis à voix haute tout texte aidé : chaque phrase que tu ne dirais pas, réécris-la."},
+    {id:'bq08',axe:'ecrit',inv:true,q:"Il m'arrive d'envoyer un texte rédigé par l'IA sans l'avoir vraiment relu.",conseil:"Règle simple : rien ne part sans une relecture complète, crayon en main si possible."},
+    {id:'bq09',axe:'verif',old:2,q:"Je vérifie les réponses de l'IA : sources, chiffres, raisonnement.",conseil:"« Trouve l'erreur de l'IA » deux fois par semaine."},
+    {id:'bq10',axe:'verif',q:"Je remonte à la source d'origine (étude, texte de loi, chiffre officiel) avant de citer une information.",conseil:"Cette semaine, pour chaque chiffre que tu cites, retrouve d'où il vient."},
+    {id:'bq11',axe:'verif',q:"Je vérifie une réponse qui me donne raison autant qu'une réponse qui me contrarie.",conseil:"Le Détecteur de sophismes, et cherche une fois par semaine le meilleur argument contre ton avis."},
+    {id:'bq12',axe:'verif',inv:true,q:"Quand l'IA répond avec assurance, je la crois sans vérifier.",conseil:"Demande-toi à chaque réponse : qu'est-ce qui me prouve que c'est vrai ?"},
+    {id:'bq13',axe:'reel',old:4,q:"Je lis un livre ou un long texte sans interruption chaque semaine.",conseil:"Les deux lectures intensives du programme de la semaine."},
+    {id:'bq14',axe:'reel',old:5,q:"Je fais de tête les calculs simples du quotidien.",conseil:"Le calcul mental, et le total des courses de tête."},
+    {id:'bq15',axe:'reel',old:6,q:"Je passe du temps loin des écrans à réfléchir, écrire à la main ou discuter.",conseil:"La dictée sur papier, la fiche à imprimer et la séance sans écran."},
+    {id:'bq16',axe:'reel',inv:true,q:"Je regarde mon téléphone par réflexe, même au milieu d'une lecture ou d'une conversation.",conseil:"Pendant ta prochaine lecture, laisse le téléphone dans une autre pièce."}
+  ],
+  series:[
+    [
+      {id:'be01',axe:'pense',q:"Un cahier coûte 3 € de plus qu'un stylo. Ensemble, ils coûtent 4 €. Combien coûte le stylo ?",
+       options:['1 €','0,50 €','1,50 €','0,25 €'],bonne:1,
+       expl:"Stylo x, cahier x + 3 : 2x + 3 = 4, donc x = 0,50 €. La réponse qui vient d'abord (1 €) donnerait un total de 5 €.",
+       src:"Sur le modèle du test de réflexion cognitive (Frederick, Journal of Economic Perspectives, 2005)",vu:'2026-11-02'},
+      {id:'be02',axe:'pense',q:"Un manteau à 80 € est soldé à −30 %. En caisse, on t'accorde encore 10 % sur le prix soldé. Combien le paies-tu ?",
+       options:['48 €','50,40 €','52 €','56 €'],bonne:1,
+       expl:"80 × 0,70 = 56 €, puis 56 × 0,90 = 50,40 €. Deux remises successives ne s'additionnent pas : ce n'est pas −40 %.",
+       src:"Calcul de pourcentages successifs",vu:'2026-11-02'},
+      {id:'be03',axe:'ecrit',q:"Les efforts qu'il a ___ ont fini par payer.",
+       options:['fourni','fournis','fournies'],bonne:1,
+       expl:"Avec avoir, le participe s'accorde avec le COD placé avant : « qu' », mis pour « les efforts », masculin pluriel.",
+       src:"Grevisse et Goosse, Le Bon Usage, accord du participe passé avec avoir",vu:'2026-11-02'},
+      {id:'be04',axe:'ecrit',q:"Quelle phrase est correcte ?",
+       options:['Il faut pallier à ce manque.','Il faut pallier ce manque.','Il faut palier ce manque.'],bonne:1,
+       expl:"« Pallier » se construit sans préposition : on pallie quelque chose. Et il prend deux l (un palier est une plateforme d'escalier).",
+       src:"Académie française, Dire, ne pas dire, « Pallier à »",vu:'2026-11-02'},
+      {id:'be05',axe:'verif',q:"Une IA explique la Lune en quatre phrases. Laquelle est fausse ?",
+       options:["La Lune fait le tour de la Terre en environ 27 jours.","Elle nous montre toujours la même face.","Une éclipse de Soleil a lieu quand la Terre passe entre le Soleil et la Lune.","Le clair de lune est de la lumière du Soleil réfléchie."],bonne:2,
+       expl:"Quand la Terre passe entre le Soleil et la Lune, c'est une éclipse de Lune. Une éclipse de Soleil a lieu quand la Lune passe entre le Soleil et la Terre.",
+       src:"Institut de mécanique céleste et de calcul des éphémérides (IMCCE), « Les éclipses »",vu:'2026-11-02'},
+      {id:'be06',axe:'verif',q:"« Depuis que la ville a installé des caméras, les cambriolages déclarés ont baissé de 20 %. Les caméras font donc reculer la délinquance. » Quel est le principal défaut ?",
+       options:["Une baisse qui suit une mesure ne prouve pas que la mesure en est la cause","20 % est trop peu pour compter","Il attaque ceux qui sont contre les caméras","Aucun : l'argument tient"],bonne:0,
+       expl:"C'est le « post hoc » : après, donc à cause de. Les cambriolages ont pu baisser partout, ou se déplacer ailleurs. Il faudrait comparer avec des villes sans caméras.",
+       src:"Sophisme post hoc ergo propter hoc ; voir Cohen et Nagel, An Introduction to Logic and Scientific Method, 1934",vu:'2026-11-02'}
+    ],
+    [
+      {id:'be07',axe:'pense',q:"Dans une file d'attente, Paul est le 7e en partant du début et le 5e en partant de la fin. Combien de personnes y a-t-il dans la file ?",
+       options:['12','11','13','10'],bonne:1,
+       expl:"6 personnes devant Paul, 4 derrière, plus Paul : 6 + 4 + 1 = 11. Additionner 7 et 5 compte Paul deux fois.",
+       src:"Problème de dénombrement classique",vu:'2026-11-02'},
+      {id:'be08',axe:'pense',q:"Ta voiture consomme 6 litres aux 100 km et le litre coûte 1,80 €. Combien coûte un trajet de 250 km ?",
+       options:['21,60 €','24,30 €','27 €','30 €'],bonne:2,
+       expl:"250 km, c'est 2,5 fois 100 km : 2,5 × 6 = 15 litres, et 15 × 1,80 = 27 €.",
+       src:"Calcul de proportionnalité",vu:'2026-11-02'},
+      {id:'be09',axe:'ecrit',q:"Les heures qu'il a ___ à attendre lui ont semblé longues.",
+       options:['passé','passées','passés'],bonne:1,
+       expl:"Ici, « passer » a un COD : il a passé des heures. Le COD « qu' » (les heures) est placé avant : accord au féminin pluriel.",
+       src:"Grevisse et Goosse, Le Bon Usage, accord du participe passé avec avoir",vu:'2026-11-02'},
+      {id:'be10',axe:'ecrit',q:"Quelle phrase est correcte ?",
+       options:["Il s'est rappelé de son enfance.","Il s'est rappelé son enfance.","Il s'est souvenu son enfance."],bonne:1,
+       expl:"On se rappelle quelque chose, mais on se souvient de quelque chose. « Se rappeler de » mélange les deux constructions.",
+       src:"Académie française, Dire, ne pas dire, « Se rappeler de quelque chose »",vu:'2026-11-02'},
+      {id:'be11',axe:'verif',q:"Une IA explique la cuisson en altitude. Quelle phrase est fausse ?",
+       options:["Au niveau de la mer, l'eau bout à environ 100 °C.","En altitude, la pression de l'air baisse, et l'eau bout à une température plus basse.","C'est pourquoi les pâtes cuisent plus vite en montagne.","Au sommet du mont Blanc, l'eau bout vers 85 °C."],bonne:2,
+       expl:"L'eau bout plus tôt, donc à une température plus basse : les pâtes cuisent plus lentement en montagne, pas plus vite.",
+       src:"Relation entre pression atmosphérique et température d'ébullition (formule de Clausius-Clapeyron)",vu:'2026-11-02'},
+      {id:'be12',axe:'verif',q:"Une publicité affirme : « 9 dentistes sur 10 recommandent ce dentifrice. » Quelle question poser en premier ?",
+       options:["Combien de dentistes ont été interrogés, et comment ont-ils été choisis ?","Le dentifrice a-t-il bon goût ?","La marque est-elle connue ?","Aucune : 90 %, c'est clair"],bonne:0,
+       expl:"Un pourcentage ne vaut que par l'échantillon : 9 sur 10 de dix dentistes choisis par la marque ne prouvent rien. Il faut aussi savoir quelle question leur a été posée.",
+       src:"Huff, How to Lie with Statistics, 1954, chapitre 1 (l'échantillon biaisé)",vu:'2026-11-02'}
+    ],
+    [
+      {id:'be13',axe:'pense',q:"3 robinets identiques remplissent une cuve en 12 minutes. En combien de temps 4 de ces robinets la remplissent-ils ?",
+       options:['16 minutes','10 minutes','9 minutes','8 minutes'],bonne:2,
+       expl:"Il faut 3 × 12 = 36 minutes-robinet. Avec 4 robinets : 36 ÷ 4 = 9 minutes. Plus de robinets, moins de temps : ce n'est pas une proportion directe.",
+       src:"Problème de proportionnalité inverse",vu:'2026-11-02'},
+      {id:'be14',axe:'pense',q:"Certains médecins sont sportifs. Tous les sportifs se lèvent tôt. Que peut-on conclure avec certitude ?",
+       options:["Tous les médecins se lèvent tôt","Certains médecins se lèvent tôt","Certains sportifs ne sont pas médecins","Rien du tout"],bonne:1,
+       expl:"Les médecins qui sont sportifs se lèvent tôt, donc certains médecins se lèvent tôt. On ne sait rien des autres médecins, ni s'il existe des sportifs qui ne sont pas médecins.",
+       src:"Syllogisme (logique d'Aristote, Premiers Analytiques)",vu:'2026-11-02'},
+      {id:'be15',axe:'ecrit',q:"Ces musiciens, je les ai ___ jouer hier soir.",
+       options:['entendu','entendus'],bonne:1,
+       expl:"« Les » (les musiciens) fait l'action de jouer : le participe suivi d'un infinitif s'accorde alors avec le COD placé avant. Comparez : ces airs, je les ai entendu jouer (ce ne sont pas les airs qui jouent).",
+       src:"Grevisse et Goosse, Le Bon Usage, participe passé suivi d'un infinitif",vu:'2026-11-02'},
+      {id:'be16',axe:'ecrit',q:"Quelle phrase dit que seuls les élèves ayant travaillé ont réussi ?",
+       options:["Les élèves qui avaient travaillé ont réussi.","Les élèves, qui avaient travaillé, ont réussi.","Les deux disent la même chose."],bonne:0,
+       expl:"Sans virgules, la relative trie : seuls ceux qui avaient travaillé ont réussi. Entre virgules, elle ajoute un détail sur tous les élèves : tous avaient travaillé, tous ont réussi.",
+       src:"Grevisse et Goosse, Le Bon Usage, relatives déterminatives et explicatives",vu:'2026-11-02'},
+      {id:'be17',axe:'verif',q:"Une IA résume la vie de Napoléon. Quelle phrase est fausse ?",
+       options:["Il naît à Ajaccio en 1769.","Il est sacré empereur à Notre-Dame de Paris en 1804.","Il est définitivement vaincu à Waterloo en 1815.","Il meurt en exil sur l'île d'Elbe en 1821."],bonne:3,
+       expl:"Napoléon meurt en 1821 à Sainte-Hélène, dans l'Atlantique Sud. L'île d'Elbe fut son premier exil, en 1814-1815, dont il s'échappa.",
+       src:"Fondation Napoléon, chronologie",vu:'2026-11-02'},
+      {id:'be18',axe:'verif',q:"« D'après une étude, les gens qui mangent bio vivent plus longtemps. Donc le bio allonge la vie. » Qu'est-ce qui pourrait expliquer ce lien sans que le bio y soit pour rien ?",
+       options:["Ceux qui achètent bio ont souvent plus de revenus et une vie plus saine","Les études se trompent toujours","Le bio coûte plus cher","Rien d'autre ne peut l'expliquer"],bonne:0,
+       expl:"Un troisième facteur (revenus, sport, tabac) peut causer à la fois l'achat de bio et la longévité. C'est pourquoi les études sérieuses tentent d'en tenir compte.",
+       src:"Corrélation et facteur de confusion ; voir Baudry et al., JAMA Internal Medicine, 2018 (étude NutriNet-Santé)",vu:'2026-11-02'}
+    ]
+  ]
+};
+
 
 root.NEO_BANQUES=B;
 })(typeof window!=='undefined'?window:globalThis);

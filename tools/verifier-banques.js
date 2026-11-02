@@ -110,6 +110,34 @@ B.evenements.forEach(ev=>{
   });
 });
 
+// bilan : 4 axes, 4 affirmations par axe dont une à l'envers, anciennes positions 0 à 7 toutes présentes ;
+// des séries de même taille, chaque axe mesuré autant de fois, une seule bonne réponse, chaque question sourcée
+{
+  const BL=B.bilan, axes=new Set(BL.axes.map(a=>a.k));
+  if(BL.echelle.length!==5)err('bilan','échelle de 5 réponses attendue');
+  BL.axes.forEach(a=>{for(const f of ['k','nom','pq','src'])if(!str(a[f]))err('bilan '+(a.k||'?'),`champ « ${f} » vide`);});
+  BL.questions.forEach(q=>{
+    if(!str(q.id))err('bilan','id manquant');else if(ids.has(q.id))err(q.id,'id déjà utilisé');else ids.add(q.id);
+    if(!axes.has(q.axe))err(q.id,`axe inconnu : ${q.axe}`);
+    for(const f of ['q','conseil'])if(!str(q[f]))err(q.id,`champ « ${f} » vide`);
+  });
+  for(const a of axes){const qs=BL.questions.filter(q=>q.axe===a);if(qs.length!==4)err('bilan '+a,`${qs.length} affirmations au lieu de 4`);if(qs.filter(q=>q.inv).length!==1)err('bilan '+a,'une affirmation à l’envers attendue');}
+  const olds=BL.questions.filter(q=>q.old!=null).map(q=>q.old).sort((x,y)=>x-y);
+  if(olds.join()!=='0,1,2,3,4,5,6,7')err('bilan','les 8 anciennes questions doivent garder leur position (old 0 à 7)');
+  const shape=s=>[...axes].map(a=>s.filter(q=>q.axe===a).length).join();
+  BL.series.forEach((se,i)=>{
+    if(shape(se)!==shape(BL.series[0]))err('bilan série '+(i+1),'pas la même répartition par axe que la série 1');
+    se.forEach(q=>{
+      if(!str(q.id))err('bilan','id manquant');else if(ids.has(q.id))err(q.id,'id déjà utilisé');else ids.add(q.id);
+      if(!axes.has(q.axe))err(q.id,`axe inconnu : ${q.axe}`);
+      for(const f of ['q','expl','src'])if(!str(q[f]))err(q.id,`champ « ${f} » vide`);
+      if(!date(q.vu))err(q.id,'vu obligatoire (AAAA-MM-JJ)');
+      if(!Array.isArray(q.options)||q.options.length<2||new Set(q.options).size!==q.options.length)err(q.id,'au moins 2 options, toutes différentes');
+      else if(!Number.isInteger(q.bonne)||q.bonne<0||q.bonne>=q.options.length)err(q.id,'bonne hors des options');
+    });
+  });
+}
+
 // variantes : 500 tirages par modèle, la réponse rédigée doit être celle que l'on retrouve en comptant
 const mids=new Set();
 for(const m of B.modeles){
@@ -128,7 +156,7 @@ for(const m of B.modeles){
 }
 
 const n=k=>B[k].filter(x=>!x.retire).length;
-console.log(`Banques : ${n('problemes')} problèmes, ${n('sophismes')} arguments, ${n('erreursIA')} erreurs d'IA, ${n('fermi')} estimations, ${n('ortho')} phrases, ${n('textes')} textes, ${n('graphiques')} graphiques, ${B.modeles.length} modèles de variantes.`);
+console.log(`Banques : ${n('problemes')} problèmes, ${n('sophismes')} arguments, ${n('erreursIA')} erreurs d'IA, ${n('fermi')} estimations, ${n('ortho')} phrases, ${n('textes')} textes, ${n('graphiques')} graphiques, ${B.modeles.length} modèles de variantes, ${B.bilan.series.length} séries de bilan.`);
 warns.forEach(w=>console.log('Attention · '+w));
 if(errs.length){errs.forEach(e=>console.error('Erreur · '+e));console.error(`${errs.length} erreur(s) : à corriger avant de publier.`);process.exit(1);}
 console.log('Tout est en ordre.');

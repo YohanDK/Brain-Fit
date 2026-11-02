@@ -110,6 +110,49 @@ B.evenements.forEach(ev=>{
   });
 });
 
+// énigmes du dimanche : un dimanche chacune, sans doublon ; un modèle par énigme dans tools/enquetes/modeles.js,
+// énuméré cas par cas : une seule réponse après le cinquième indice, c'est l'option « bonne », et plusieurs encore possibles après le premier
+{
+  const MOD=require(path.join(__dirname,'enquetes','modeles.js')), dims=new Set();
+  (B.enquetes||[]).forEach(e=>{
+    const id=e.id||'enquete'; if(!str(e.id))err(id,'id manquant');else if(ids.has(e.id))err(id,'id déjà utilisé');else ids.add(e.id);
+    if(!date(e.dim)||new Date(e.dim+'T12:00:00').getDay()!==0)err(id,'dim doit être un dimanche (AAAA-MM-JJ)');
+    else if(dims.has(e.dim))err(id,`deux énigmes le même dimanche (${e.dim})`);else dims.add(e.dim);
+    for(const f of ['titre','recit','question','solution','lecon','src'])if(!str(e[f]))err(id,`champ « ${f} » vide`);
+    if(!date(e.vu))err(id,'vu obligatoire (AAAA-MM-JJ)');
+    if(!Array.isArray(e.indices)||e.indices.length!==5||!e.indices.every(str))err(id,'cinq indices attendus');
+    if(!Array.isArray(e.options)||e.options.length<3||new Set(e.options).size!==e.options.length)return err(id,'au moins 3 options, toutes différentes');
+    if(!Number.isInteger(e.bonne)||e.bonne<0||e.bonne>=e.options.length)return err(id,'bonne hors des options');
+    const m=MOD[e.id]; if(!m)return err(id,'pas de modèle dans tools/enquetes/modeles.js');
+    if(m.indices.length!==5)return err(id,'le modèle doit avoir cinq indices');
+    const sp=m.espace(), rep=k=>[...new Set(sp.filter(w=>m.indices.slice(0,k).every(c=>c(w))).map(m.reponse))];
+    const fin=rep(5);
+    if(fin.length!==1)err(id,`après les cinq indices, ${fin.length} réponses possibles : ${fin.join(', ')}`);
+    else if(fin[0]!==e.options[e.bonne])err(id,`le modèle trouve « ${fin[0]} », l'énigme attend « ${e.options[e.bonne]} »`);
+    else if(!e.options.includes(fin[0]))err(id,'la réponse du modèle n’est pas dans les options');
+    if(rep(1).length<2)err(id,'la réponse est déjà certaine au premier indice');
+  });
+}
+
+// parcours de saison : une case par jour compté, des semaines dans l'ordre, une énigme pour chaque dimanche
+(B.parcours||[]).forEach(p=>{
+  const id=p.id||'parcours';
+  if(!str(p.id)||!date(p.du)||!date(p.au)||!(p.du<=p.au))return err(id,'id, du et au (AAAA-MM-JJ, du ≤ au) obligatoires');
+  for(const f of ['titre','court','intro','origine'])if(!str(p[f]))err(id,`champ « ${f} » vide`);
+  if(!Array.isArray(p.badge)||p.badge.length!==2||!p.badge.every(str))err(id,'badge : [nom, condition]');
+  const jours=[]; for(let d=new Date(p.du+'T12:00:00');d<=new Date(p.au+'T12:00:00');d.setDate(d.getDate()+1)){
+    const k=d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');
+    if(p.dimanches||d.getDay()!==0)jours.push(k);
+    if(d.getDay()===0&&!(B.enquetes||[]).some(e=>e.dim===k))err(id,`pas d'énigme pour le dimanche ${k}`);
+  }
+  if(!Array.isArray(p.pas)||p.pas.length!==jours.length)err(id,`${(p.pas||[]).length} cases pour ${jours.length} jours`);
+  (p.pas||[]).forEach((c,i)=>{if(!Array.isArray(c)||!str(c[0]))err(id,`case ${i+1} vide`);});
+  if(!(p.seuil>0&&p.seuil<=jours.length))err(id,'seuil du badge entre 1 et le nombre de jours');
+  const sem=p.semaines||[];
+  if(!sem.length||sem[0].du!==p.du)err(id,'la première semaine commence le premier jour');
+  sem.forEach((s,i)=>{if(!date(s.du)||!str(s.titre)||!str(s.fil))err(id,`semaine ${i+1} : du, titre et fil obligatoires`);if(i&&!(s.du>sem[i-1].du&&s.du<=p.au))err(id,`semaine ${i+1} hors de l'ordre ou du parcours`);});
+});
+
 // bilan : 4 axes, 4 affirmations par axe dont une à l'envers, anciennes positions 0 à 7 toutes présentes ;
 // des séries de même taille, chaque axe mesuré autant de fois, une seule bonne réponse, chaque question sourcée
 {
@@ -156,7 +199,7 @@ for(const m of B.modeles){
 }
 
 const n=k=>B[k].filter(x=>!x.retire).length;
-console.log(`Banques : ${n('problemes')} problèmes, ${n('sophismes')} arguments, ${n('erreursIA')} erreurs d'IA, ${n('fermi')} estimations, ${n('ortho')} phrases, ${n('textes')} textes, ${n('graphiques')} graphiques, ${B.modeles.length} modèles de variantes, ${B.bilan.series.length} séries de bilan.`);
+console.log(`Banques : ${n('problemes')} problèmes, ${n('sophismes')} arguments, ${n('erreursIA')} erreurs d'IA, ${n('fermi')} estimations, ${n('ortho')} phrases, ${n('textes')} textes, ${n('graphiques')} graphiques, ${B.modeles.length} modèles de variantes, ${B.bilan.series.length} séries de bilan, ${(B.enquetes||[]).length} énigmes du dimanche, ${(B.parcours||[]).length} parcours de saison.`);
 warns.forEach(w=>console.log('Attention · '+w));
 if(errs.length){errs.forEach(e=>console.error('Erreur · '+e));console.error(`${errs.length} erreur(s) : à corriger avant de publier.`);process.exit(1);}
 console.log('Tout est en ordre.');

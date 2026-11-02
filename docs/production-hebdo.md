@@ -13,6 +13,7 @@ Par défaut, dix questions :
 | `erreursIA` | 2 | une erreur de fait, une erreur de raisonnement ou de calcul |
 | `ortho` | 2 | les fautes fréquentes, jamais une règle discutée entre grammairiens |
 | `textes` ou `graphiques` | 1 | en alternance d'une semaine à l'autre |
+| `enquetes` | 1 | l'énigme du dimanche d'après le suivant (voir plus bas) |
 
 Varier les thèmes de l'appli (histoire, sciences, philosophie, économie, politique, lettres, sport, nature). Ton sobre, français soigné, aucune question qui prenne parti en politique.
 
@@ -25,6 +26,19 @@ Varier les thèmes de l'appli (histoire, sciences, philosophie, économie, polit
 5. **Lancer** `node tools/verifier-banques.js` : il doit finir par « Tout est en ordre ».
 6. **Ouvrir une pull request** intitulée « Exercices de la semaine du JJ mois », avec un tableau : banque, id, énoncé en une ligne, réponse, source. Signaler en tête ce qui a été écarté à l'étape 4 et pourquoi.
 7. **Ne jamais fusionner** : Yohan relit et fusionne lui-même.
+
+## L'énigme du dimanche
+
+Une par semaine, dans `B.enquetes`, datée du dimanche **d'après le suivant** (le lot du samedi 7 novembre écrit celle du 22), pour que Yohan ait le temps de relire. Un récit, une question, 3 ou 4 options (« On ne peut pas savoir » est un bon piège), cinq indices, la solution rédigée et une leçon d'une phrase.
+
+1. Écrire d'abord le **modèle** dans `tools/enquetes/modeles.js` : l'espace de tous les cas, un prédicat par indice, la réponse d'un cas.
+2. `node tools/enquetes/modeles.js` affiche, après chaque indice, combien de réponses restent possibles. Viser : plusieurs au premier indice, une seule au troisième ou au quatrième, le cinquième confirme. Une énigme qui ne se résout qu'au cinquième indice ne récompense personne.
+3. Le vérificateur refuse une énigme sans modèle, dont la réponse n'est pas unique ou ne correspond pas à l'option « bonne », ou un dimanche de parcours sans énigme.
+4. Varier les familles : qui était où (grille), sincères et menteurs, cadenas à chiffres, ordre de passage, boucles (qui écrit à qui).
+
+## Les parcours de saison
+
+`B.parcours` : l'Avent 2026 (29 novembre-24 décembre, dimanches compris) est en place. Le Carême 2027 (10 février-27 mars, `dimanches:false` : 40 jours sans les dimanches, l'énigme y tient lieu de case) s'écrit en janvier sur le même modèle, avec six énigmes pour les dimanches du 14 février au 21 mars. Le parcours s'annonce à tous la semaine d'avant, sans dévoiler ses cases. Pour le relire avant sa date : `?apercu=AAAA-MM-JJ`, réservé au compte propriétaire (rien n'est enregistré).
 
 ## Les signalements
 

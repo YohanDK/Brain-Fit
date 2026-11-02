@@ -2695,7 +2695,8 @@ function renderDefis(){
   if(circleData.nudges)eb.append(el('div',{class:'row'},sentToday(null,'defi')?el('span',{class:'note',text:'Tu as défié ton cercle aujourd’hui.'}):el('button',{class:'btn',text:'Défier le cercle',onclick:()=>defierEclair(null)}),el('span',{class:'note',text:'Joue ta manche : tes amis recevront tes questions et ton score.'})));
   body.replaceChildren(enig,eb);
 }
-const newCode=()=>{const A='ABCDEFGHJKLMNPQRSTUVWXYZ23456789';return Array.from(crypto.getRandomValues(new Uint8Array(6)),b=>A[b%A.length]).join('');};
+// 8 caractères (cercle-codes.sql) ; 6 si la base n'accepte pas encore les codes longs
+const newCode=(n=8)=>{const A='ABCDEFGHJKLMNPQRSTUVWXYZ23456789';return Array.from(crypto.getRandomValues(new Uint8Array(n)),b=>A[b%A.length]).join('');};
 async function renderCircle(quick){
   const body=$('#circle-body'), c=state.settings.circle;
   if(!ref||!c){$('#amis-inbox').hidden=true;$('#amis-defis').hidden=true;}
@@ -2704,20 +2705,30 @@ async function renderCircle(quick){
     const msg=el('p',{class:'note',role:'status'});
     const pseudo=el('input',{type:'text',placeholder:'Ton pseudo',maxlength:'24','aria-label':'Ton pseudo',value:state.settings.pseudo||''});
     const name=el('input',{type:'text',placeholder:'Nom du cercle',maxlength:'40','aria-label':'Nom du cercle'});
-    const code=el('input',{type:'text',placeholder:'Code reçu',maxlength:'6','aria-label':'Code du cercle',style:'text-transform:uppercase;width:9ch'});
+    const code=el('input',{type:'text',placeholder:'Code reçu',maxlength:'10','aria-label':'Code du cercle',style:'text-transform:uppercase;width:9ch'});
     const ps=()=>{const v=pseudo.value.trim();if(v.length<2){msg.textContent='Choisis d’abord un pseudo (2 lettres au moins).';pseudo.focus();return null;}state.settings.pseudo=v;return v;};
-    const enter=async k=>{state.settings.circle=k;circleSent='';const err=await circlePush(true);
+    // rejoindre passe par rejoindre_cercle (cercle-codes.sql), qui limite les codes faux ; sans ce script, écriture directe comme avant
+    const admit=async k=>{const {data,error}=await sbc().rpc('rejoindre_cercle',{p_code:k,p_pseudo:state.settings.pseudo});
+      if(!error)return data===true?'ok':'unknown';
+      if(error.code==='PGRST202')return 'ok';
+      return /trop/.test(error.message||'')?'tries':'err';};
+    const enter=async(k,joining)=>{
+      if(joining){const a=await admit(k);
+        if(a!=='ok'){msg.textContent=a==='unknown'?'Ce code ne correspond à aucun cercle. Vérifie-le auprès de la personne qui t’a invité.':a==='tries'?'Trop de codes essayés aujourd’hui. Vérifie le code auprès de la personne qui t’a invité, et réessaie demain.':'Impossible de rejoindre le cercle. Réessaie dans un instant.';return false;}}
+      state.settings.circle=k;circleSent='';const err=await circlePush(true);
       if(err){state.settings.circle=null;msg.textContent=err.code==='23503'?'Ce code ne correspond à aucun cercle. Vérifie-le auprès de la personne qui t’a invité.':'Impossible de rejoindre le cercle. Réessaie dans un instant.';return false;}
       save();toast('<span>Bienvenue dans ton cercle !</span>');renderCircle();return true;};
     const create=el('button',{class:'btn primary',text:'Créer un cercle',onclick:async()=>{
       if(circleBusy||!ps())return; circleBusy=true; msg.textContent='Création…';
-      const k=newCode(); const {error}=await sbc().from('circles').insert({code:k,name:name.value.trim()||'Le cercle de '+state.settings.pseudo});
+      const nm=name.value.trim()||'Le cercle de '+state.settings.pseudo;
+      let k=newCode(), {error}=await sbc().from('circles').insert({code:k,name:nm});
+      if(error&&error.code==='23514'){k=newCode(6);({error}=await sbc().from('circles').insert({code:k,name:nm}));}
       if(error)msg.textContent='Création impossible. As-tu bien préparé la base avec cercle.sql ?'; else await enter(k);
       circleBusy=false;}});
     const join=el('button',{class:'btn',text:'Rejoindre',onclick:async()=>{
       const k=code.value.trim().toUpperCase(); if(circleBusy||!ps())return;
-      if(!/^[A-Z0-9]{6}$/.test(k)){msg.textContent='Le code fait 6 caractères.';return;}
-      circleBusy=true; msg.textContent='…'; await enter(k); circleBusy=false;}});
+      if(!/^[A-Z0-9]{6,10}$/.test(k)){msg.textContent='Le code fait 6 ou 8 caractères, lettres et chiffres.';return;}
+      circleBusy=true; msg.textContent='…'; await enter(k,true); circleBusy=false;}});
     body.replaceChildren(stagTalk('idle','Un cercle, c’est quelques proches qui s’entraînent ensemble : un classement, des encouragements et des défis sur les mêmes questions.'),
       el('div',{class:'row circle-form'},pseudo),el('div',{class:'row circle-form'},name,create),el('div',{class:'row circle-form'},code,join),msg);
     return;

@@ -7,15 +7,30 @@
  "points": {},
  "jeux": [
   {
-   "titre": "Federations et Licences sportives par commune CD76 2018",
+   "titre": "Communes et licences sportives par federation CD76 2018",
    "producteur": "Département de la Seine-Maritime",
-   "page": "https://www.data.gouv.fr/datasets/federations-et-licences-sportives-par-commune-cd76-2018",
+   "page": "https://www.data.gouv.fr/datasets/communes-et-licences-sportives-par-federation-cd76-2018",
    "maj": "2021-10-27",
    "fichiers": [
     {
      "titre": "ArcGIS Hub Dataset",
      "format": "web page",
-     "url": "https://www.opendata76.fr/maps/seine-maritime::federations-et-licences-sportives-par-commune-cd76-2018-1"
+     "url": "https://www.opendata76.fr/maps/seine-maritime::communes-et-licences-sportives-par-federation-cd76-2018"
+    },
+    {
+     "titre": "ArcGIS GeoService",
+     "format": "arcgis geoservices rest api",
+     "url": "https://services-eu1.arcgis.com/Nt9PzCzX9tz2k5Lq/arcgis/rest/services/Federations_et_licences_sportives_par_commune_CD76_2018_V4/FeatureServer/0"
+    },
+    {
+     "titre": "GeoJSON",
+     "format": "geojson",
+     "url": "https://www.opendata76.fr/datasets/seine-maritime::communes-et-licences-sportives-par-federation-cd76-2018.geojson?outSR=%7B%22latestWkid%22%3A3857%2C%22wkid%22%3A102100%7D"
+    },
+    {
+     "titre": "CSV",
+     "format": "csv",
+     "url": "https://www.opendata76.fr/datasets/seine-maritime::communes-et-licences-sportives-par-federation-cd76-2018.csv?outSR=%7B%22latestWkid%22%3A3857%2C%22wkid%22%3A102100%7D"
     }
    ]
   },
@@ -48,30 +63,15 @@
    ]
   },
   {
-   "titre": "Communes et licences sportives par federation CD76 2018",
+   "titre": "Federations et Licences sportives par commune CD76 2018",
    "producteur": "Département de la Seine-Maritime",
-   "page": "https://www.data.gouv.fr/datasets/communes-et-licences-sportives-par-federation-cd76-2018",
+   "page": "https://www.data.gouv.fr/datasets/federations-et-licences-sportives-par-commune-cd76-2018",
    "maj": "2021-10-27",
    "fichiers": [
     {
      "titre": "ArcGIS Hub Dataset",
      "format": "web page",
-     "url": "https://www.opendata76.fr/maps/seine-maritime::communes-et-licences-sportives-par-federation-cd76-2018"
-    },
-    {
-     "titre": "ArcGIS GeoService",
-     "format": "arcgis geoservices rest api",
-     "url": "https://services-eu1.arcgis.com/Nt9PzCzX9tz2k5Lq/arcgis/rest/services/Federations_et_licences_sportives_par_commune_CD76_2018_V4/FeatureServer/0"
-    },
-    {
-     "titre": "GeoJSON",
-     "format": "geojson",
-     "url": "https://www.opendata76.fr/datasets/seine-maritime::communes-et-licences-sportives-par-federation-cd76-2018.geojson?outSR=%7B%22latestWkid%22%3A3857%2C%22wkid%22%3A102100%7D"
-    },
-    {
-     "titre": "CSV",
-     "format": "csv",
-     "url": "https://www.opendata76.fr/datasets/seine-maritime::communes-et-licences-sportives-par-federation-cd76-2018.csv?outSR=%7B%22latestWkid%22%3A3857%2C%22wkid%22%3A102100%7D"
+     "url": "https://www.opendata76.fr/maps/seine-maritime::federations-et-licences-sportives-par-commune-cd76-2018-1"
     }
    ]
   },

@@ -1876,7 +1876,22 @@ const PROMPTS=[
 const FERMI=NB.fermi.map(f=>[f.q,f.val,f.unite,f.calc]);
 const WORDS=["piano","lampe","girafe","citron","bateau","montagne","ciseaux","nuage","tambour","fourchette","violon","cerise","valise","phare","tortue","bougie","échelle","marteau","orange","cactus","fusée","chapeau","miroir","horloge","panier","renard","volcan","balai","crayon","dauphin","lune","ancre","tulipe","sifflet","château","pinceau","raquette","gâteau","parapluie","chameau","boussole","clé","oreiller","trompette","fraise","tracteur","hibou","savon","guitare","pyramide","éventail","casserole","papillon","sapin","cerf-volant","moulin","flûte","coquillage","lion","bouteille","sandale","igloo","brouette","perroquet","ananas","cloche","tapis","grenouille","épée","banc"];
 const LETTERS=["P","M","C","B","L","R","S","T","D","F","G","V","A","N"];
-const CATS=["animaux","fruits et légumes","métiers","pays","objets de cuisine","instruments de musique","sports","vêtements","villes de France","prénoms"];
+// noms communs seulement : chaque mot est vérifié dans le dictionnaire (public/mots)
+const CATS=["animaux","fruits et légumes","métiers","oiseaux","objets de cuisine","instruments de musique","sports","vêtements","fleurs et arbres","outils"];
+// dictionnaire français (liste « an-array-of-french-words », licence MIT), une lettre par fichier, chargée à la demande
+const dictKey=s=>s.toLowerCase().replace(/œ/g,'oe').replace(/æ/g,'ae').normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/[^a-z-]/g,'');
+const DICT={};
+function dictLoad(l){
+  l=dictKey(l).charAt(0); if(!/[a-z]/.test(l))return Promise.resolve(null);
+  return DICT[l]||(DICT[l]=fetch('mots/'+l+'.txt').then(r=>r.ok?r.text():Promise.reject()).then(t=>new Set(t.split('\n'))).catch(()=>{delete DICT[l];return null;}));
+}
+// vrai si le mot existe ; null si le dictionnaire n'a pas pu être chargé (hors ligne) : on laisse alors passer
+async function dictHas(raw){
+  const parts=raw.trim().split(/[\s']+/).map(dictKey).filter(w=>w.length>2||raw.trim().split(/\s+/).length===1);
+  if(!parts.length)return false;
+  for(const w of parts){const d=await dictLoad(w);if(!d)return null;if(!d.has(w))return false;}
+  return true;
+}
 const CHALLENGES=[
   ["Une journée entière sans IA","Choisis un jour cette semaine et fais tout à la main : recherches, rédaction, calculs. Note ce qui t'a manqué."],
   ["Un trajet sans GPS","Prépare l'itinéraire sur une carte, puis fais le trajet de mémoire. Ta mémoire spatiale te remerciera."],
@@ -4719,20 +4734,27 @@ words(arena){
 fluency(arena){
   const mode=el('div',{class:'seg',role:'group','aria-label':'Type de consigne'}); let m='letter';
   [['letter','Une lettre'],['cat','Une catégorie']].forEach(([v,t])=>mode.append(el('button',{'aria-pressed':String(v===m),text:t,onclick:e=>{m=v;[...mode.children].forEach(b=>b.setAttribute('aria-pressed',String(b===e.currentTarget)));}})));
-  intro(arena,"60 secondes pour taper un maximum de mots différents. Entrée après chaque mot. En mode lettre : pas de noms propres ni de mots de la même famille (porte, portail).",mode,()=>go(m));
+  intro(arena,"60 secondes pour taper un maximum de mots différents. Entrée après chaque mot : chacun est vérifié dans le dictionnaire. En mode lettre : pas de noms propres ni de mots de la même famille (porte, portail).",mode,()=>go(m));
   function go(m){
     const letter=pick(LETTERS), cat=pick(CATS);
     const words=[]; const chips=el('div',{class:'chips'}); const fb=el('p',{class:'feedback'});
     const inp=el('input',{class:'bigin',type:'text',autocomplete:'off',autocapitalize:'off','aria-label':'Mot',id:'flu-in',style:'width:min(300px,100%)'});
     arena.replaceChildren(m==='letter'?el('div',{class:'bigletter',text:letter}):el('p',{class:'prompt',style:'text-align:center',text:'Catégorie : '+cat}),inp,fb,chips); inp.focus();
     inp.addEventListener('paste',e=>e.preventDefault());
-    inp.addEventListener('keydown',e=>{
+    if(m==='letter')dictLoad(letter);
+    let over=false;
+    inp.addEventListener('keydown',async e=>{
       if(e.key!=='Enter')return; const raw=inp.value.trim(), n=norm(raw); inp.value=''; if(!n)return;
       if(m==='letter'&&!n.startsWith(norm(letter))){fb.className='feedback ko';fb.textContent='Doit commencer par '+letter;return;}
       if(words.some(w=>norm(w)===n)){fb.className='feedback ko';fb.textContent='Déjà dit';return;}
+      const ok=await dictHas(raw);
+      if(over)return;
+      if(ok===false){fb.className='feedback ko';fb.textContent=`« ${raw} » n’est pas dans le dictionnaire`;return;}
+      if(words.some(w=>norm(w)===n))return;
       words.push(raw); chips.append(el('span',{text:raw})); fb.className='feedback ok'; fb.textContent=words.length+(words.length>1?' mots':' mot');
     });
     cleanup=countdown(60,null,()=>{
+      over=true;
       const sc=words.length, msg=recordMsg('fluency',sc);
       logResult('fluency',sc,{m});
       showResult(arena,sc,m==='letter'?`mots en ${letter} en 60 s`:`${cat} en 60 s`,msg+(m==='letter'?' Un adulte trouve en moyenne 12 à 16 mots par lettre en une minute.':' Un adulte cite souvent une vingtaine d’animaux en une minute.'),()=>RUN.fluency(arena));

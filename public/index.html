@@ -351,6 +351,21 @@ table.week td.num{font-family:var(--f-mono)}
 .aibubble .sent[disabled]{cursor:default}
 .aibubble .sent.wrongsent{background:var(--bad-soft);color:var(--bad);text-decoration:underline wavy}
 .aibubble .sent.missed{background:var(--line)}
+.aibubble.typing{cursor:pointer}
+.aibubble .sent.cur::after{content:"▍";color:var(--accent);animation:caret .9s steps(2) infinite}
+@keyframes caret{50%{opacity:0}}
+.aibubble .sent.struck{text-decoration:line-through;text-decoration-color:var(--bad);color:var(--muted)}
+.aibubble .redpen{display:block;margin:6px 0 2px;padding:6px 8px;border:1.5px dashed var(--bad);border-radius:8px;color:var(--bad);font-family:var(--f-body);font-style:italic;outline:none;background:var(--surface)}
+.arena:has(.swipewrap){overflow-x:clip}
+.swipewrap{position:relative;width:min(560px,100%);touch-action:pan-y;user-select:none}
+.swipecard{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:38px 20px 22px;box-shadow:0 6px 18px rgba(0,0,0,.06);cursor:grab;transition:transform .25s ease,opacity .25s;position:relative}
+.swipecard.drag{transition:none;cursor:grabbing}
+.swipecard .quote{border:0;padding:0;margin:0}
+.swipecard .stamp{position:absolute;top:10px;font-family:var(--f-display);font-weight:700;letter-spacing:.08em;font-size:.8rem;padding:3px 8px;border:2px solid;border-radius:6px;opacity:0;text-transform:uppercase}
+.swipecard .stamp.l{left:12px;color:var(--bad);transform:rotate(-8deg)}
+.swipecard .stamp.r{right:12px;color:var(--good);transform:rotate(8deg)}
+.swipehint{display:flex;justify-content:space-between;gap:10px;width:min(560px,100%)}
+.swipehint .btn{flex:1}
 .aibubble .sent.chosen,.options button.chosen{outline:2px solid var(--accent);outline-offset:1px}
 .conf{display:flex;flex-direction:column;align-items:center;gap:6px;width:100%}
 .conf:not([hidden]){animation:rise .3s ease-out}
@@ -1373,7 +1388,7 @@ const EX={
   graphe:{name:'Graphique trompeur',skill:'Lecture des chiffres',desc:"Trois graphiques : trouve ce qui cloche, ou reconnais celui qui est honnête. Puis vois la version juste.",unit:'% de bonnes réponses'},
   erreuria:{name:"Trouve l'erreur de l'IA",skill:'Vigilance critique',desc:"Des réponses d'IA convaincantes, avec une erreur cachée. Trouve la phrase fautive et dis si tu en es sûr.",unit:'% de bonnes réponses'},
   hypotheses:{name:'Hypothèses concurrentes',skill:'Raisonnement',desc:"Un fait surprenant : trouve 5 explications possibles, puis comment les départager.",unit:'% de complétion'},
-  sophismes:{name:'Détecteur de sophismes',skill:'Esprit critique',desc:"Cinq arguments : trouve la faille, ou reconnais celui qui tient debout. Annonce ta confiance avant chaque réponse.",unit:'% de bonnes réponses'},
+  sophismes:{name:'Détecteur de sophismes',skill:'Esprit critique',desc:"Cinq arguments à balayer : à gauche s'il y a une faille, à droite s'il tient debout. Puis nomme le sophisme.",unit:'% de bonnes réponses'},
   fermi:{name:'Estimation',skill:'Raisonnement',desc:"Trois questions de Fermi : trouve l'ordre de grandeur par le raisonnement.",unit:'% de justesse'},
   ortho:{name:'Orthographe & accords',skill:'Langue écrite',desc:"Huit phrases pièges : choisis la bonne forme, ou trouve la faute et répare-la, sans correcteur.",unit:'% de bonnes réponses'},
   dictee:{name:'Dictée sur papier',skill:'Écoute & orthographe',desc:"L'appli dicte à voix haute, tu écris à la main. Correction par photo de ta copie ou par toi-même.",unit:'% de mots justes'},
@@ -3794,6 +3809,17 @@ const betPts=(c,ok)=>Math.round(10*(ok*Math.log2(c/.5)+(1-ok)*Math.log2((1-c)/.5
 let betRun=0, betN=0;
 // « Sûr à combien ? » : désactivé par défaut pour garder le jeu fluide, à réactiver dans les réglages
 const confOn=()=>state.settings.conf==='on';
+// la réponse de « l'IA » s'écrit sous tes yeux ; un toucher affiche tout d'un coup
+function typeOut(box){
+  const ss=[...box.querySelectorAll('.sent')]; if(reduceMotion()||!ss.length)return;
+  const full=ss.map(b=>b.textContent); let i=0,c=0,stop=false;
+  ss.forEach(b=>{b.textContent='';b.disabled=true;}); box.classList.add('typing');
+  const end=()=>{stop=true;ss.forEach((b,k)=>{b.textContent=full[k];b.disabled=false;b.classList.remove('cur');});box.classList.remove('typing');box.removeEventListener('pointerdown',skip);};
+  const skip=e=>{if(!stop){e.preventDefault();end();}};
+  box.addEventListener('pointerdown',skip);
+  const tick=()=>{if(stop||!box.isConnected)return; c+=3; ss[i].classList.add('cur'); if(c>=full[i].length){ss[i].textContent=full[i];ss[i].classList.remove('cur');i++;c=0;if(i>=ss.length){end();return;}}else ss[i].textContent=full[i].slice(0,c);setTimeout(tick,i<ss.length&&c===0?160:18);};
+  setTimeout(tick,250);
+}
 function askConf(onPick,label){
   if(!confOn()){queueMicrotask(()=>onPick(null));return document.createTextNode('');}
   const row=el('div',{class:'conf'},el('span',{class:'label',text:label||'Sûr à combien ?'}));
@@ -4660,6 +4686,11 @@ erreuria(arena){
       const bubble=el('div',{class:'aibubble'}); const fb=el('div',{class:'answer',hidden:''});
       const next=el('button',{class:'btn primary',text:qi<qs.length-1?'Suivante':'Voir le résultat',hidden:''});
       // on désigne la phrase, on annonce sa confiance, puis la correction tombe
+      const fix=()=>{const b=bubble.querySelectorAll('.sent')[bad]; if(!b||b.dataset.fix)return; b.dataset.fix=1;
+        const ed=el('span',{class:'redpen',contenteditable:'true',spellcheck:'false','aria-label':'Ta correction',text:ph[bad]});
+        b.after(ed); b.classList.add('struck'); ed.focus(); try{const r=document.createRange();r.selectNodeContents(ed);getSelection().removeAllRanges();getSelection().addRange(r);}catch(e){}
+        penBtn.replaceWith(el('span',{class:'note',text:'Réécris la phrase pour qu’elle soit juste, puis compare avec l’explication.'}));};
+      const penBtn=el('button',{class:'btn gold mini',text:'Corriger au stylo rouge',onclick:fix});
       ph.forEach((t,i)=>bubble.append(el('button',{class:'sent',text:t,onclick:e=>{
         const me=e.currentTarget;
         [...bubble.children].forEach(b=>{b.disabled=true;});me.classList.add('chosen');
@@ -4668,11 +4699,12 @@ erreuria(arena){
           [...bubble.children].forEach((b,j)=>{if(j===bad)b.classList.add('wrongsent');});
           if(i===bad)ok++;else{me.classList.add('missed');if(!custom)missAgain('aierr',AIERR,qs[qi]);}
           hit(i===bad); const pts=logConf('erreuria',c,i===bad?1:0);
-          fb.replaceChildren(el('span',{class:'label'},i===bad?'Bien vu ':'L\u2019erreur était ailleurs ',betChip(pts)),el('span',{class:'fg2',text:why}),contestBtn('erreuria',id,q+' | '+ph[bad]));fb.hidden=false;next.hidden=false;next.focus();
+          fb.replaceChildren(el('span',{class:'label'},i===bad?'Bien vu ':'L\u2019erreur était ailleurs ',betChip(pts)),el('span',{class:'fg2',text:why}),el('div',{class:'row'},penBtn),contestBtn('erreuria',id,q+' | '+ph[bad]));fb.hidden=false;next.hidden=false;next.focus();
         }));
       }}),document.createTextNode(' ')));
       next.addEventListener('click',()=>{qi++;if(qi<qs.length)ask();else{const sc=ok/qs.length*100;const m=recordMsg('erreuria',sc);logResult('erreuria',sc);const up=custom?'':adaptLevel('erreuria',sc);showResult(arena,Math.round(sc),`% d'erreurs repérées (${ok} sur ${qs.length})`,m+' Applique le même réflexe aux vraies réponses de ton IA : vérifie surtout les chiffres, les dates et la dernière ligne.'+betSummary()+up,()=>RUN.erreuria(arena));}});
       arena.replaceChildren(qprog(qi,qs.length),el('p',{class:'me-q',text:q}),bubble,fb,next);
+      typeOut(bubble);
     };
     ask();
   }
@@ -4735,27 +4767,47 @@ hypotheses(arena){
   }
 },
 sophismes(arena){
-  intro(arena,"Cinq arguments qui ont l'air convaincants. La plupart cachent une faille : choisis le nom du sophisme. Mais certains tiennent debout : reconnais-les, car voir des sophismes partout est aussi une erreur. Savoir les nommer aide à les repérer, y compris dans les réponses d'une IA.",null,go);
+  intro(arena,"Cinq arguments qui ont l'air convaincants. Fais glisser chaque carte : à gauche s'il y a une faille, à droite s'il tient debout. Puis nomme le sophisme. Attention, certains tiennent vraiment debout : reconnais-les, car voir des sophismes partout est aussi une erreur. Savoir les nommer aide à les repérer, y compris dans les réponses d'une IA.",null,go);
   function go(){
     const qs=freshPick('soph',FALLACIES,5,'sophismes'); let qi=0, ok=0;
     const ask=()=>{
       const [txt,right,why]=qs[qi], id=NB.sophismes[FALLACIES.indexOf(qs[qi])].id;
-      const opts=(right===VALABLE?fallacyOptions(right,4):[...fallacyOptions(right,3),right].sort(()=>Math.random()-.5)).concat(VALABLE);
-      const box=el('div',{class:'options'}); const fb=el('div',{class:'answer',hidden:''});
+      // d'abord le geste : la carte part à gauche (sophisme) ou à droite (tient debout) ; puis on nomme la faille
+      const opts=right===VALABLE?fallacyOptions(right,4):[...fallacyOptions(right,3),right].sort(()=>Math.random()-.5);
+      const box=el('div',{class:'options',hidden:''}); const fb=el('div',{class:'answer',hidden:''});
       const next=el('button',{class:'btn primary',text:qi<4?'Suivant':'Voir le résultat',hidden:''});
+      const finish=(o,me)=>{
+        box.after(askConf(c=>{
+          if(me)me.classList.remove('chosen');
+          [...box.children].forEach(b=>{if(sameText(b.textContent,right))b.classList.add('right');});
+          if(o===right)ok++;else{if(me)me.classList.add('wrong');missAgain('soph',FALLACIES,qs[qi]);logErr('soph',id);}
+          hit(o===right); const pts=logConf('sophismes',c,o===right?1:0);
+          fb.replaceChildren(el('span',{class:'label'},(o===right?'Exact':right===VALABLE?'Cet argument tient debout':o===VALABLE?'Il y avait une faille : '+right:'C’était : '+right)+' ',betChip(pts)),el('span',{class:'fg2',text:why}),contestBtn('sophismes',id,txt)); fb.hidden=false; next.hidden=false; next.focus();
+        }));
+      };
+      const card=el('div',{class:'swipecard',tabindex:'0','aria-label':'Argument : flèche gauche pour sophisme, flèche droite s’il tient debout'},el('span',{class:'stamp l',text:'Sophisme'}),el('span',{class:'stamp r',text:'Tient debout'}),el('p',{class:'quote',text:'« '+txt+' »'}));
+      const bL=el('button',{class:'btn',text:'← Sophisme'}), bR=el('button',{class:'btn',text:'Tient debout →'}), hint=el('div',{class:'swipehint'},bL,bR);
+      let decided=false;
+      const decide=dir=>{if(decided)return;decided=true;
+        card.style.transform=`translateX(${dir*24}px) rotate(${dir*2}deg)`; card.querySelector(dir<0?'.stamp.l':'.stamp.r').style.opacity=1; hint.remove();
+        if(dir>0){finish(VALABLE,null);return;}
+        if(right===VALABLE){finish('faille',null);return;}
+        box.hidden=false; box.before(el('p',{class:'prompt',style:'text-align:center',text:'Bien vu. Laquelle ?'})); revealNext();};
+      bL.onclick=()=>decide(-1); bR.onclick=()=>decide(1);
+      card.addEventListener('keydown',e=>{if(e.key==='ArrowLeft')decide(-1);if(e.key==='ArrowRight')decide(1);});
+      let x0=null,dx=0;
+      card.addEventListener('pointerdown',e=>{if(decided)return;x0=e.clientX;dx=0;card.classList.add('drag');card.setPointerCapture(e.pointerId);});
+      card.addEventListener('pointermove',e=>{if(x0==null)return;dx=e.clientX-x0;card.style.transform=`translateX(${dx}px) rotate(${dx/18}deg)`;
+        card.querySelector('.stamp.l').style.opacity=Math.max(0,-dx/90);card.querySelector('.stamp.r').style.opacity=Math.max(0,dx/90);});
+      const up=()=>{if(x0==null)return;x0=null;card.classList.remove('drag');if(Math.abs(dx)>80)decide(Math.sign(dx));else{card.style.transform='';card.querySelectorAll('.stamp').forEach(s=>s.style.opacity=0);}};
+      card.addEventListener('pointerup',up);card.addEventListener('pointercancel',up);
       opts.forEach(o=>box.append(el('button',{text:o,onclick:e=>{
         const me=e.currentTarget;
         [...box.children].forEach(b=>{b.disabled=true;});me.classList.add('chosen');
-        box.after(askConf(c=>{
-          me.classList.remove('chosen');
-          [...box.children].forEach(b=>{if(sameText(b.textContent,right))b.classList.add('right');});
-          if(o===right)ok++;else{me.classList.add('wrong');missAgain('soph',FALLACIES,qs[qi]);logErr('soph',id);}
-          hit(o===right); const pts=logConf('sophismes',c,o===right?1:0);
-          fb.replaceChildren(el('span',{class:'label'},(o===right?'Exact':right===VALABLE?'Cet argument tient debout':'C’était : '+right)+' ',betChip(pts)),el('span',{class:'fg2',text:why}),contestBtn('sophismes',id,txt)); fb.hidden=false; next.hidden=false; next.focus();
-        }));
+        finish(o,me);
       }})));
       next.addEventListener('click',()=>{qi++;if(qi<5)ask();else{const s=ok/5*100;const m=recordMsg('sophismes',s);logResult('sophismes',s);const up=adaptLevel('sophismes',s);showResult(arena,s,'% de bonnes réponses ('+ok+' sur 5)',m+' Cette semaine, essaie d’en repérer un dans une conversation, un article ou une réponse d’IA.'+betSummary()+up,()=>RUN.sophismes(arena));}});
-      arena.replaceChildren(qprog(qi,5),el('p',{class:'quote',text:'« '+txt+' »'}),box,fb,next);
+      arena.replaceChildren(qprog(qi,5),el('div',{class:'swipewrap'},card),hint,box,fb,next);
     };
     ask();
   }

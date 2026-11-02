@@ -419,7 +419,9 @@ table.week td.num{font-family:var(--f-mono)}
 .pari{display:inline-block;margin-left:6px;padding:1px 8px;border-radius:99px;font-size:.8rem;font-weight:700;letter-spacing:0;text-transform:none;background:var(--sunk);color:var(--fg2)}
 .pari.up{background:var(--good-soft);color:var(--good)}
 .pari.down{background:var(--bad-soft);color:var(--bad)}
-.contest{display:flex;flex-direction:column;gap:8px;align-items:flex-start}
+.contest{display:flex;flex-direction:column;gap:8px;align-items:flex-start;width:100%}
+.contest-motifs{flex-wrap:wrap}
+.contest-go{color:var(--muted)}
 .btn.small{padding:4px 8px;font-size:.85rem;font-weight:600}
 .lvnote{margin:0}
 /* animations */
@@ -1545,7 +1547,7 @@ var fin=function(){if(e.parentNode)e.remove();};e.addEventListener('click',fin);
     </div>
     <div class="panel" id="retours-panel" hidden>
       <div><h2>Retours des testeurs</h2><p class="muted note">Signalements et réponses contestées, les plus récents d'abord. Visible de toi seul.</p></div>
-      <div class="row"><div class="seg" id="rt-filtre" role="group" aria-label="Quels retours"><button data-f="ouverts" aria-pressed="true">À traiter</button><button data-f="tous" aria-pressed="false">Tous</button></div><button class="btn ghost small" id="rt-maj">Actualiser</button></div>
+      <div class="row"><div class="seg" id="rt-filtre" role="group" aria-label="Quels retours"><button data-f="ouverts" aria-pressed="true">À traiter</button><button data-f="tous" aria-pressed="false">Tous</button></div><button class="btn ghost small" id="rt-maj">Actualiser</button><button class="btn small" id="rt-copie">Copier les questions à corriger</button></div>
       <p class="note" id="rt-msg" role="status"></p>
       <div id="rt-list" class="rt-list"></div>
     </div>
@@ -4688,18 +4690,21 @@ function betSummary(){const p=betRun,n=betN;betRun=0;betN=0;if(!n)return'';retur
 // « Je conteste » : une réponse douteuse se signale en une phrase ; les signalements sont relus chaque semaine
 function contestBtn(ex,id,enonce){
   const box=el('div',{class:'contest'});
-  box.append(el('button',{class:'btn ghost small',text:'Je conteste cette réponse',onclick:()=>{
-    const ta=el('textarea',{'aria-label':'Ce qui te paraît faux',placeholder:'Qu’est-ce qui te paraît faux ou ambigu ?',maxlength:'1000',style:'min-height:70px'});
-    const send=el('button',{class:'btn',text:'Envoyer'});
+  // en un geste : le motif suffit, la précision est facultative
+  box.append(el('button',{class:'btn ghost small contest-go',text:'⚑ Une erreur dans la réponse ?',onclick:()=>{
+    let motif=null;
+    const chips=el('div',{class:'seg contest-motifs',role:'group','aria-label':'Ce qui ne va pas'},...['La réponse est fausse','Deux réponses possibles','Explication confuse','Faute de français','Autre'].map(t=>el('button',{type:'button','aria-pressed':'false',text:t,onclick:e=>{motif=t;[...chips.children].forEach(b=>b.setAttribute('aria-pressed',String(b===e.currentTarget)));send.disabled=false;}})));
+    const ta=el('textarea',{'aria-label':'Préciser (facultatif)',placeholder:'Préciser, si tu veux (facultatif)',maxlength:'1000',style:'min-height:56px'});
+    const send=el('button',{class:'btn',text:'Envoyer',disabled:''});
     send.addEventListener('click',()=>{
-      const m=ta.value.trim(); if(m.length<3){ta.focus();return;}
-      (state.contest=state.contest||[]).push({t:Date.now(),ex,id:String(id||''),q:String(enonce||'').slice(0,600),m:m.slice(0,1000)});
+      const prec=ta.value.trim(), m=(motif||'Autre')+(prec?' : '+prec:''); if(!motif&&!prec){ta.focus();return;}
+      (state.contest=state.contest||[]).push({t:Date.now(),ex:String(ex).slice(0,40),id:String(id||'').slice(0,80),q:String(enonce||'').slice(0,600),m:m.slice(0,1000)});
       if(state.contest.length>100)state.contest=state.contest.slice(-100);
       persist();
       box.replaceChildren(el('p',{class:'note',text:'Merci. Ton signalement sera relu, et la question corrigée ou retirée si tu as raison.'}));
       flushContest();
     });
-    box.replaceChildren(ta,el('div',{class:'row'},send)); ta.focus();
+    box.replaceChildren(chips,ta,el('div',{class:'row'},send));
   }}));
   return box;
 }
@@ -4791,7 +4796,15 @@ function openReport(){
   Promise.race([snapScreen(),new Promise((_,ko)=>setTimeout(()=>ko(new Error('lent')),10000))]).then(b=>{if(thumbNode===thumb)swap(b);}).catch(()=>{if(thumbNode===thumb)swap(null);}).finally(()=>{busy=false;if(document.activeElement===document.body||!box.contains(document.activeElement))ta.focus();});
 }
 // page « Retours » : le propriétaire (alertes_config.proprietaire) lit les signalements des testeurs et les marque traités
-let rtFiltre='ouverts', rtBusy=false, rtAgain=false, rtFocus=false;
+let rtFiltre='ouverts', rtBusy=false, rtAgain=false, rtFocus=false, rtRows=[];
+// la liste des questions signalées, prête à coller dans la conversation avec Claude pour les faire corriger
+$('#rt-copie').addEventListener('click',()=>{
+  const sg=rtRows.filter(r=>r.t==='signalements'&&!r.traite);
+  if(!sg.length){toast('<span>Aucune question signalée à corriger.</span>');return;}
+  const txt=`Questions signalées dans Néophyte (${sg.length}) : vérifie chacune, corrige-la (même id) ou retire-la (retire:true), et dis-moi ce que tu as fait.\n\n`+
+    sg.map((r,i)=>`${i+1}. [${EX[r.exercice]?EX[r.exercice].name:r.exercice} · ${r.question_id||'?'}] ${r.enonce||''}\n   Signalement : ${r.message}`).join('\n\n');
+  shareText(txt);
+});
 async function renderRetours(focus){
   const sb=sbc(), panel=$('#retours-panel');
   if(focus)rtFocus=true;
@@ -4811,6 +4824,7 @@ async function renderRetours(focus){
     msg.textContent=rows.length?`${rows.length} ${rtFiltre==='ouverts'?'à traiter':'retour'+(rows.length>1?'s':'')}.`:(rtFiltre==='ouverts'?'Rien à traiter. Bravo !':'Aucun retour pour l’instant.');
     const urls={}, paths=rows.filter(r=>r.capture).map(r=>r.capture);
     if(paths.length)try{const {data}=await sb.storage.from('retours').createSignedUrls(paths,3600);(data||[]).forEach(x=>{if(x.signedUrl)urls[x.path]=x.signedUrl;});}catch(e){}
+    rtRows=rows;
     list.replaceChildren(...rows.map(r=>{
       const when=new Date(r.created_at).toLocaleString('fr-FR',{weekday:'short',day:'numeric',month:'short',hour:'2-digit',minute:'2-digit'});
       const cx=r.contexte||{}, where=r.t==='retours'?[cx.onglet,cx.exercice&&(EX[cx.exercice]?EX[cx.exercice].name:cx.exercice)].filter(Boolean).join(' › '):'Je conteste · '+(EX[r.exercice]?EX[r.exercice].name:r.exercice);
@@ -5426,7 +5440,7 @@ citations(arena){
         const y=f[id];
         fb.replaceChildren(el('span',{class:'label',text:right?'Exact':'Pas tout à fait'}),el('p',{class:'qtext',style:'font-size:1.15rem',text:'« '+q.q+' »'}),
           el('span',{class:'qauthor'},quoteBy(q)),el('span',{class:'qsource',text:q.s}),el('p',{class:'qnote'},el('b',{text:'À RETENIR'}),document.createTextNode(q.n)),
-          el('span',{class:'note',text:(x?'':'Ajoutée à ton florilège. ')+('Prochaine révision : '+fmtDay(y.n)+'.').replace('..','.')}));
+          el('span',{class:'note',text:(x?'':'Ajoutée à ton florilège. ')+('Prochaine révision : '+fmtDay(y.n)+'.').replace('..','.')}),contestBtn('citations',id,'« '+q.q+' » — '+q.a+' ('+q.s+')'));
         fb.hidden=false; next.hidden=false; next.focus();
       };
       let body;
@@ -5961,7 +5975,7 @@ chrono(arena){
         // après un temps pour voir ses erreurs, la frise se remet d'elle-même dans le bon ordre
         setTimeout(()=>flip(()=>truth.forEach(e=>list.append([...list.children].find(li=>li._ev===e)))),all?0:900);
         fb.replaceChildren(el('span',{class:'label',text:all?'Ordre parfait':`${good} paire${good>1?'s':''} sur ${tot} dans le bon sens`}),
-          el('span',{class:'fg2',text:all?'Chaque événement est à sa place.':'En rouge, ceux qui n’étaient pas à leur place. La frise se remet dans l’ordre.'}));
+          el('span',{class:'fg2',text:all?'Chaque événement est à sa place.':'En rouge, ceux qui n’étaient pas à leur place. La frise se remet dans l’ordre.'}),contestBtn('chrono',truth.map(e=>e[1]).join('|'),truth.map(e=>fmtY(e[1])+' : '+e[2]).join(' · ')));
         fb.hidden=false; next.hidden=false; next.focus({preventScroll:true});
       }});
       next.addEventListener('click',()=>{qi++;if(qi<ROUNDS.length)ask();else{
@@ -5992,7 +6006,7 @@ enigme(arena){
       const fb=el('div',{class:'answer',hidden:''}), next=el('button',{class:'btn primary',text:qi<4?'Suivante':'Voir ma grille',hidden:''});
       next.addEventListener('click',()=>{qi++;if(qi<5)ask();else finish();});
       arena.replaceChildren(qprog(qi,5),...quickAsk(qs[qi],good=>{marks[qi]=good;
-        fb.replaceChildren(el('span',{class:'label',text:good?'Exact':'Raté'}),el('span',{class:'fg2',text:qs[qi].why}));fb.hidden=false;next.hidden=false;next.focus({preventScroll:true});}),fb,next);
+        const qq=qs[qi]; fb.replaceChildren(el('span',{class:'label',text:good?'Exact':'Raté'}),el('span',{class:'fg2',text:qq.why}),contestBtn('enigme',qq.src?qq.src.join(':'):qq.kind,[qq.quote,qq.prompt,'Réponse : '+qq.opts[qq.right]].filter(Boolean).join(' — ')));fb.hidden=false;next.hidden=false;next.focus({preventScroll:true});}),fb,next);
     };
     const finish=()=>{
       state.enigme={d:k,m:marks}; const sc=marks.filter(Boolean).length/5*100; logResult('enigme',sc);
@@ -6014,7 +6028,7 @@ rattrapage(arena){
       next.addEventListener('click',()=>{qi++;if(qi<qs.length)ask();else finish();});
       arena.replaceChildren(qprog(qi,qs.length),...quickAsk(qs[qi],good=>{
         if(good){ok++;cleared.push(errKey(pick8[qi][0],pick8[qi][1]));}
-        fb.replaceChildren(el('span',{class:'label',text:good?'Rattrapée : elle sort du carnet':'Encore ratée : elle reste dans le carnet'}),el('span',{class:'fg2',text:qs[qi].why}));fb.hidden=false;next.hidden=false;next.focus({preventScroll:true});}),fb,next);
+        const qq=qs[qi]; fb.replaceChildren(el('span',{class:'label',text:good?'Rattrapée : elle sort du carnet':'Encore ratée : elle reste dans le carnet'}),el('span',{class:'fg2',text:qq.why}),contestBtn('rattrapage',qq.src?qq.src.join(':'):qq.kind,[qq.quote,qq.prompt,'Réponse : '+qq.opts[qq.right]].filter(Boolean).join(' — ')));fb.hidden=false;next.hidden=false;next.focus({preventScroll:true});}),fb,next);
     };
     const finish=()=>{
       state.errs=(state.errs||[]).filter(e=>!cleared.includes(errKey(e[0],e[1])));

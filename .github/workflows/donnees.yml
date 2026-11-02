@@ -1,0 +1,28 @@
+# Récupère les chiffres officiels de tools/donnees/sources.json (Banque mondiale, Eurostat, OWID, INSEE, data.gouv) et les enregistre sur la même branche.
+name: Importer les données
+
+on:
+  workflow_dispatch:
+  push:
+    branches: ["claude/**"]
+    paths: ["tools/donnees/sources.json", "tools/donnees/importer.js"]
+
+permissions:
+  contents: write
+
+jobs:
+  donnees:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - run: node tools/donnees/importer.js
+      - name: Enregistrer les séries
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add tools/donnees/series
+          git diff --cached --quiet || git commit -m "Chiffres officiels importés"
+          git push

@@ -89,6 +89,19 @@
     if(error)throw error;
   };
 
+  // « Signaler un problème » : la capture va dans le dossier privé « retours » (Storage), le message dans la table retours
+  if(sb)window.bfRetour=async r=>{
+    const s=await session(); if(!s)throw fail('signed_out');
+    let capture=null;
+    if(r.image){
+      capture=s.user.id+'/'+Date.now()+'-'+Math.random().toString(36).slice(2,8)+'.jpg';
+      const {error}=await sb.storage.from('retours').upload(capture,r.image,{contentType:'image/jpeg',upsert:false});
+      if(error)throw error;
+    }
+    const {error}=await sb.from('retours').insert({message:r.message,contexte:r.contexte||{},capture});
+    if(error)throw error;
+  };
+
   window.claude={async use(cap){
     if(cap==='sample')return C.coach?sample:null; // sans coach branché, la page le dit simplement
     if(cap==='db'||cap==='user')return (await session())?(cap==='db'?db:user):null;

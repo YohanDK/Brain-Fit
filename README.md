@@ -11,11 +11,14 @@ Le site s'installe sur le téléphone comme une appli. Avec un compte, les progr
 | `public/` | GitHub Pages | Le site lui-même (une seule page), installable et utilisable hors ligne. |
 | `supabase/setup.sql` | Supabase | La table qui garde tes progrès. Chacun ne voit que les siens. |
 | `supabase/cercle.sql` | Supabase | Les cercles d'amis et leur classement de la semaine, et l'effacement de ses données. |
+| `supabase/defis.sql` | Supabase | Les défis du cercle : énigme du jour et meilleur Éclair de la semaine sous chaque nom. |
+| `supabase/cerf.sql` | Supabase | Le cerf de chacun (pelage, attributs) dans le classement du cercle. |
 | `supabase/signalements.sql` | Supabase | Les signalements « Je conteste » envoyés depuis les corrections. |
 | `public/banques.js` | GitHub Pages | Les problèmes, sophismes, erreurs d'IA, estimations, phrases d'orthographe, textes de lecture et graphiques, avec leur niveau et leur source, et les modèles de variantes. |
 | `tools/verifier-banques.js` | GitHub | Vérifie les banques avant chaque publication : une question mal formée ou un calcul faux bloque la mise en ligne. |
 | `supabase/functions/coach/` | Supabase | Le coach : il reçoit la demande de la page et appelle Claude avec ta clé API, qui reste secrète. |
 | `supabase/functions/account/` | Supabase | Efface un compte et toutes ses données, à la demande de son propriétaire. |
+| `supabase/rappels.sql`, `supabase/functions/rappels/`, `public/rappels.js` | Supabase, GitHub Pages | Les rappels par notification : à l'heure choisie si la séance du jour n'est pas faite, et à 21 h si une série est en danger. |
 | `.github/workflows/pages.yml` | GitHub | Remet le site en ligne à chaque changement. |
 | `.github/workflows/deploy-coach.yml` | GitHub | Remet le coach à jour sur Supabase à chaque changement. |
 
@@ -26,7 +29,7 @@ Le bilan du dimanche se fait tout seul : dès dimanche 18 h, l'appli calcule le 
 ### 1. Supabase : le compte et les données
 
 1. Crée un compte sur [supabase.com](https://supabase.com) (« Continue with GitHub » est le plus simple), puis un projet nommé `brain-fit`, région **Paris (eu-west-3)**. Le mot de passe de la base ne te resservira pas.
-2. Dans le projet, ouvre **SQL Editor**, colle tout le contenu de [`supabase/setup.sql`](supabase/setup.sql), puis clique sur **Run**. Fais de même, dans une nouvelle requête, avec [`supabase/cercle.sql`](supabase/cercle.sql), puis avec [`supabase/signalements.sql`](supabase/signalements.sql).
+2. Dans le projet, ouvre **SQL Editor**, colle tout le contenu de [`supabase/setup.sql`](supabase/setup.sql), puis clique sur **Run**. Fais de même, dans une nouvelle requête, avec [`supabase/cercle.sql`](supabase/cercle.sql), puis avec [`supabase/signalements.sql`](supabase/signalements.sql), [`supabase/defis.sql`](supabase/defis.sql) et [`supabase/cerf.sql`](supabase/cerf.sql).
 3. Dans **Project Settings › API Keys**, copie l'**URL du projet** et la **clé publique** (`publishable`, ou `anon`). Ces deux valeurs peuvent être partagées sans risque : elles vont dans `public/config.js`.
 4. Note l'**identifiant du projet** : ce sont les lettres de l'adresse, `https://<identifiant>.supabase.co`.
 5. Crée un jeton d'accès sur [supabase.com/dashboard/account/tokens](https://supabase.com/dashboard/account/tokens) (nom : `github`). Garde-le pour l'étape 3.
@@ -67,6 +70,14 @@ Pour changer de modèle (par exemple un modèle moins cher), ajoute dans l'ongle
 
 1. Dans Néophyte ouvert dans l'app Claude : **Progrès › Sauvegarde › Copier mes données**.
 2. Dans le nouveau site, connecté : **Réglages (roue dentée en haut) › Sauvegarde › Coller des données**, colle, puis **Fusionner avec mes progrès**. Rien n'est effacé, les deux historiques s'additionnent.
+
+## Rappels par notification
+
+Chacun les active dans **Réglages › Rappels** (un compte est nécessaire : c'est lui qui dit si la séance du jour est faite). Sur iPhone, il faut d'abord installer Néophyte sur l'écran d'accueil (iOS 16.4 ou plus).
+
+Pour les mettre en route : lance [`supabase/rappels.sql`](supabase/rappels.sql) dans **SQL Editor**, vérifie que **Actions › Déployer le coach** est passé (il déploie aussi la fonction `rappels`), puis mets `rappels:true` dans `public/config.js`. Aucune clé à créer : la fonction fabrique ses clés de notification à son premier appel et les garde dans une table privée.
+
+Pour les couper : `rappels:false` dans `config.js` cache le réglage (et désabonne chaque appareil à sa prochaine visite) ; `update public.rappels_config set actif = false;` arrête aussitôt tous les envois. Pour les enlever tout à fait, les trois lignes sont en bas de `rappels.sql`.
 
 ## Coût
 

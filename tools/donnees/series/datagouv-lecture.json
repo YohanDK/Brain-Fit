@@ -1,0 +1,164 @@
+{
+ "id": "datagouv-lecture",
+ "libelle": "data.gouv.fr : lecture et pratiques culturelles",
+ "recupere": "2026-11-02",
+ "source": "data.gouv.fr, recherche « lecture »",
+ "url": "https://www.data.gouv.fr/api/1/datasets/?q=lecture&page_size=8",
+ "points": {},
+ "jeux": [
+  {
+   "titre": "Contrats départementaux lecture",
+   "producteur": "Ministère de la Culture",
+   "page": "https://www.data.gouv.fr/datasets/contrats-departementaux-lecture",
+   "maj": "2025-08-27",
+   "fichiers": [
+    {
+     "titre": "contrats-departementaux-lecture.csv",
+     "format": "csv",
+     "url": "https://static.data.gouv.fr/resources/contrats-departementaux-lecture/20250827-133048/contrats-departementaux-lecture.csv"
+    },
+    {
+     "titre": "contrats-departementaux-lecture.json",
+     "format": "json",
+     "url": "https://static.data.gouv.fr/resources/contrats-departementaux-lecture/20250827-133049/contrats-departementaux-lecture.json"
+    }
+   ]
+  },
+  {
+   "titre": "Nuits de la lecture 2022",
+   "producteur": "Ministère de la Culture",
+   "page": "https://www.data.gouv.fr/datasets/nuits-de-la-lecture-2022",
+   "maj": "2025-08-27",
+   "fichiers": [
+    {
+     "titre": "nuits-de-la-lecture-2022.csv",
+     "format": "csv",
+     "url": "https://static.data.gouv.fr/resources/nuits-de-la-lecture-2022/20250827-133021/nuits-de-la-lecture-2022.csv"
+    },
+    {
+     "titre": "nuits-de-la-lecture-2022.json",
+     "format": "json",
+     "url": "https://static.data.gouv.fr/resources/nuits-de-la-lecture-2022/20250827-133027/nuits-de-la-lecture-2022.json"
+    },
+    {
+     "titre": "nuits-de-la-lecture-2022.geojson",
+     "format": "geojson",
+     "url": "https://static.data.gouv.fr/resources/nuits-de-la-lecture-2022/20250827-133033/nuits-de-la-lecture-2022.geojson"
+    },
+    {
+     "titre": "nuits-de-la-lecture-2022.zip",
+     "format": "zip",
+     "url": "https://static.data.gouv.fr/resources/nuits-de-la-lecture-2022/20250827-133038/nuits-de-la-lecture-2022.zip"
+    }
+   ]
+  },
+  {
+   "titre": "Règlement de la salle de lecture",
+   "producteur": "Conseil général de l'Oise",
+   "page": "https://www.data.gouv.fr/datasets/reglement-de-la-salle-de-lecture-oise",
+   "maj": "2021-11-05",
+   "fichiers": [
+    {
+     "titre": "No name",
+     "format": "pdf",
+     "url": "http://opendata.oise.fr/fileadmin/data/PCC/8-donnee1-reglement-salle-lecture-arrete.pdf"
+    },
+    {
+     "titre": "No name",
+     "format": "pdf",
+     "url": "http://opendata.oise.fr/fileadmin/data/PCC/8-donnee2-reglement-salle-lecture-annexe.pdf"
+    },
+    {
+     "titre": "8-donnee1-reglement-salle-lecture-arrete.pdf",
+     "format": "pdf",
+     "url": "http://opendata.oise.fr/fileadmin/data/PCC/8-donnee1-reglement-salle-lecture-arrete.pdf"
+    },
+    {
+     "titre": "8-donnee2-reglement-salle-lecture-annexe.pdf",
+     "format": "pdf",
+     "url": "http://opendata.oise.fr/fileadmin/data/PCC/8-donnee2-reglement-salle-lecture-annexe.pdf"
+    }
+   ]
+  },
+  {
+   "titre": "Usuels en salle de lecture des Archives départementales",
+   "producteur": "Département des Alpes de Haute-Provence",
+   "page": "https://www.data.gouv.fr/datasets/usuels-salle-lecture-des-archives-departementales",
+   "maj": "2021-03-17",
+   "fichiers": [
+    {
+     "titre": "AD04_liste_usuels",
+     "format": "csv",
+     "url": "https://www.datasud.fr/fr/dataset/datasets/3375/resource/3682/download/"
+    }
+   ]
+  },
+  {
+   "titre": "Fréquentation Instantanée - Salle de lecture- Médiathèque Gambetta Orléans",
+   "producteur": "Orléans Métropole",
+   "page": "https://www.data.gouv.fr/datasets/frequentation-instantanee-salle-de-lecture-mediatheque-gambetta-orleans",
+   "maj": "2026-11-02",
+   "fichiers": [
+    {
+     "titre": "om-territoire-equipements-mediatheque-sallelecture-frequentationinstantanee.csv",
+     "format": "csv",
+     "url": "https://data.orleans-metropole.fr/api/explore/v2.1/catalog/datasets/om-territoire-equipements-mediatheque-sallelecture-frequentationinstantanee/exports/csv?use_labels=true"
+    },
+    {
+     "titre": "om-territoire-equipements-mediatheque-sallelecture-frequentationinstantanee.json",
+     "format": "json",
+     "url": "https://data.orleans-metropole.fr/api/explore/v2.1/catalog/datasets/om-territoire-equipements-mediatheque-sallelecture-frequentationinstantanee/exports/json"
+    }
+   ]
+  },
+  {
+   "titre": "Contrat Territoire Lecture 2022 - Convention de transition avec l'Etat",
+   "producteur": "Communauté d'Agglomération Plaine Vallée",
+   "page": "https://www.data.gouv.fr/datasets/contrat-territoire-lecture-2022-convention-de-transition-avec-letat",
+   "maj": "2022-10-13",
+   "fichiers": [
+    {
+     "titre": "ArcGIS Hub Dataset",
+     "format": "web page",
+     "url": "https://portail-agglo-plainevallee.opendata.arcgis.com/documents/agglo-plainevallee::contrat-territoire-lecture-2022-convention-de-transition-avec-letat"
+    }
+   ]
+  },
+  {
+   "titre": "Délibération Adoption des conventions d'adhésion au Pack Lecture 2023 2026",
+   "producteur": "Communauté d'Agglomération Plaine Vallée",
+   "page": "https://www.data.gouv.fr/datasets/deliberation-adoption-des-conventions-dadhesion-au-pack-lecture-2023-2026",
+   "maj": "2022-10-13",
+   "fichiers": [
+    {
+     "titre": "ArcGIS Hub Dataset",
+     "format": "web page",
+     "url": "https://portail-agglo-plainevallee.opendata.arcgis.com/documents/agglo-plainevallee::délibération-adoption-des-conventions-dadhésion-au-pack-lecture-2023-2026"
+    }
+   ]
+  },
+  {
+   "titre": "Médiathèques du réseau de lecture publique de Haut-Léon Communauté",
+   "producteur": "Haut-Léon Communauté",
+   "page": "https://www.data.gouv.fr/datasets/mediatheques-du-reseau-de-lecture-publique-de-haut-leon-communaute",
+   "maj": "2025-12-17",
+   "fichiers": [
+    {
+     "titre": "hlc:mediatheque",
+     "format": "gpkg",
+     "url": "https://geobretagne.fr/geoserver/hlc/wfs"
+    },
+    {
+     "titre": "mediatheque_hlc_pt",
+     "format": "wms",
+     "url": "https://geobretagne.fr/geoserver/hlc/wms?REQUEST=GetCapabilities&SERVICE=WMS"
+    },
+    {
+     "titre": "hlc:mediatheque_hlc_pt",
+     "format": "wfs",
+     "url": "https://geobretagne.fr/geoserver/hlc/wfs?REQUEST=GetCapabilities&SERVICE=WFS"
+    }
+   ]
+  }
+ ]
+}

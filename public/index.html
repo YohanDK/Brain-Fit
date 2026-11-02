@@ -351,6 +351,21 @@ table.week td.num{font-family:var(--f-mono)}
 .aibubble .sent[disabled]{cursor:default}
 .aibubble .sent.wrongsent{background:var(--bad-soft);color:var(--bad);text-decoration:underline wavy}
 .aibubble .sent.missed{background:var(--line)}
+.aibubble.typing{cursor:pointer}
+.aibubble .sent.cur::after{content:"▍";color:var(--accent);animation:caret .9s steps(2) infinite}
+@keyframes caret{50%{opacity:0}}
+.aibubble .sent.struck{text-decoration:line-through;text-decoration-color:var(--bad);color:var(--muted)}
+.aibubble .redpen{display:block;margin:6px 0 2px;padding:6px 8px;border:1.5px dashed var(--bad);border-radius:8px;color:var(--bad);font-family:var(--f-body);font-style:italic;outline:none;background:var(--surface)}
+.arena:has(.swipewrap){overflow-x:clip}
+.swipewrap{position:relative;width:min(560px,100%);touch-action:pan-y;user-select:none}
+.swipecard{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:38px 20px 22px;box-shadow:0 6px 18px rgba(0,0,0,.06);cursor:grab;transition:transform .25s ease,opacity .25s;position:relative}
+.swipecard.drag{transition:none;cursor:grabbing}
+.swipecard .quote{border:0;padding:0;margin:0}
+.swipecard .stamp{position:absolute;top:10px;font-family:var(--f-display);font-weight:700;letter-spacing:.08em;font-size:.8rem;padding:3px 8px;border:2px solid;border-radius:6px;opacity:0;text-transform:uppercase}
+.swipecard .stamp.l{left:12px;color:var(--bad);transform:rotate(-8deg)}
+.swipecard .stamp.r{right:12px;color:var(--good);transform:rotate(8deg)}
+.swipehint{display:flex;justify-content:space-between;gap:10px;width:min(560px,100%)}
+.swipehint .btn{flex:1}
 .aibubble .sent.chosen,.options button.chosen{outline:2px solid var(--accent);outline-offset:1px}
 .conf{display:flex;flex-direction:column;align-items:center;gap:6px;width:100%}
 .conf:not([hidden]){animation:rise .3s ease-out}
@@ -390,6 +405,10 @@ table.week td.num{font-family:var(--f-mono)}
 .chart .ln{fill:none;stroke-width:2.2}
 .chart .ln.s0{stroke:var(--accent)} .chart .dt.s0{fill:var(--accent)}
 .chart .ln.s1{stroke:var(--gold-deep)} .chart .dt.s1{fill:var(--gold-deep)}
+.chart.still *{animation:none!important;opacity:1!important;stroke-dashoffset:0!important}
+.fixbox{width:min(520px,100%);display:flex;flex-direction:column;gap:4px;padding:10px 12px;border:1px dashed var(--gold);border-radius:10px;background:var(--gold-soft)}
+.fixrange{width:100%;accent-color:var(--gold-deep);height:32px}
+.chartcard.fixed figcaption strong{color:var(--good)}
 .chart-leg{display:flex;gap:12px;flex-wrap:wrap;font-size:.85rem}
 .chart-leg .s0{color:var(--accent)} .chart-leg .s1{color:var(--gold-deep)}
 .precis .check{display:flex;gap:8px;align-items:flex-start;text-align:left}
@@ -521,11 +540,39 @@ a{color:var(--accent);text-underline-offset:3px}
 .pips li{flex:1;height:5px;border-radius:3px;background:var(--line)}
 .pips li.ok{background:var(--gold)} .pips li.cur{background:var(--accent)}
 .play.done{border-top-color:var(--gold)}
-.routine>summary{cursor:pointer;list-style:none;display:flex;align-items:baseline;gap:8px;flex-wrap:wrap}
-.routine>summary::-webkit-details-marker{display:none}
-.routine>summary::before{content:"›";display:inline-block;transition:transform .2s;color:var(--muted)}
-.routine[open]>summary::before{transform:rotate(90deg)}
-.routine:not([open]){display:block}
+.quests{gap:6px;padding:14px 20px}
+.quests h2{margin:0}
+.quests ul{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:6px}
+.quests li{display:flex;align-items:center;gap:10px;color:var(--fg2)}
+.quests li i{flex:none;width:20px;height:20px;border-radius:50%;border:2px solid var(--line);display:grid;place-items:center;font-style:normal;font-size:.7rem;color:var(--on-accent)}
+.quests li.ok{color:var(--fg)} .quests li.ok i{background:var(--gold);border-color:var(--gold);animation:pop .4s both}
+.quests.all{border-color:var(--gold);background:linear-gradient(var(--gold-soft),var(--surface) 70%)}
+.recap.seance{gap:10px}
+.seance-list{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:6px;width:100%}
+.seance-list li{display:flex;justify-content:space-between;gap:12px;text-align:left;border-bottom:1px solid var(--line);padding:6px 0}
+.seance-list b{font-family:var(--f-display);color:var(--gold-deep);white-space:nowrap}
+.routine>summary,.fp>summary,.exgroup>summary{cursor:pointer;list-style:none;display:flex;align-items:baseline;gap:8px;flex-wrap:wrap}
+.routine>summary::-webkit-details-marker,.fp>summary::-webkit-details-marker,.exgroup>summary::-webkit-details-marker{display:none}
+.routine>summary::before,.fp>summary::before,.exgroup>summary::before{content:"›";display:inline-block;transition:transform .2s;color:var(--muted)}
+.routine[open]>summary::before,.fp[open]>summary::before,.exgroup[open]>summary::before{transform:rotate(90deg)}
+.routine:not([open]),.fp:not([open]){display:block}
+.fp>summary{flex-wrap:nowrap}
+.fp>summary h2{margin:0;font-size:1.05rem;flex:1;min-width:0}
+.fp>summary .note{white-space:nowrap}
+.cjl>summary .note{white-space:nowrap}
+.fp>summary .note{margin-left:auto}
+.fp[open]>summary{margin-bottom:4px}
+.syncwarn .login[hidden]{display:none}
+.cjl>summary{cursor:pointer;list-style:none;display:flex;align-items:baseline;gap:8px}
+.cjl>summary::-webkit-details-marker{display:none}
+.cjl>summary::after{content:"›";margin-left:auto;color:var(--muted);transition:transform .2s}
+.cjl[open]>summary::after{transform:rotate(90deg)}
+.cjl[open]{display:flex;flex-direction:column;gap:10px}
+.exgroup>summary{flex-direction:column;gap:2px;position:relative;padding-left:1.1em}
+.exgroup>summary::before{position:absolute;left:0;top:.2em}
+.exgroup>summary .note{margin:0}
+.exgroup[open]{display:flex;flex-direction:column;gap:12px}
+@media (prefers-reduced-motion:no-preference){section.view:not([hidden]){animation:fadein .22s ease-out}.fp[open]>summary~*,.exgroup[open]>.cards,.cjl[open]>summary~*{animation:rise .25s ease-out}}
 .event{border:1px solid var(--gold);background:linear-gradient(180deg,var(--gold-soft),var(--surface) 70%);gap:6px;padding:16px 20px}
 .event h3{margin:0;font-size:1.15rem}
 .event p{margin:0}
@@ -590,10 +637,11 @@ a{color:var(--accent);text-underline-offset:3px}
 .seg.themes{justify-content:flex-start}
 .circle-form input{font:inherit;font-size:1rem;padding:6px 10px;border:1px solid var(--line);border-radius:var(--r);background:var(--surface);color:var(--fg);max-width:200px}
 .ranking{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:4px}
-.ranking li{display:grid;grid-template-columns:2ch 1fr auto auto;gap:12px;align-items:baseline;padding:6px 10px;border-radius:var(--r);background:var(--sunk)}
+.ranking li{display:grid;grid-template-columns:2ch 40px 1fr auto auto;gap:10px;align-items:center;padding:6px 10px;border-radius:var(--r);background:var(--sunk)}
 .ranking li.me{background:var(--accent-soft);color:var(--accent-deep)}
 .ranking .rk{font-family:var(--f-display);font-weight:700}
 .ranking .xpw{font-weight:700;color:var(--gold-deep)}
+.ranking .defis{display:block;font-size:.82rem;color:var(--muted)}
 #erase-msg:empty{display:none}
 .reel-city input{font:inherit;font-size:1rem;padding:6px 10px;border:1px solid var(--line);border-radius:var(--r);background:var(--surface);color:var(--fg);max-width:220px}
 .cjl-text{font-size:1.12rem;line-height:1.45;max-width:60ch;text-wrap:pretty}
@@ -606,6 +654,43 @@ a{color:var(--accent);text-underline-offset:3px}
 .frise li::before{content:"";position:absolute;left:-25px;top:6px;width:12px;height:12px;border-radius:50%;background:var(--gold);box-shadow:0 0 0 2px var(--surface)}
 .frise li.miss::before{background:var(--bad)}
 .frise b{font-family:var(--f-display);margin-right:8px}
+/* frise à remettre dans l'ordre */
+.sortwrap{display:flex;flex-direction:column;align-items:stretch;gap:6px;width:min(520px,100%)}
+.sortwrap .send{font-size:.78rem;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);text-align:center}
+.sorter{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:8px}
+.sitem{display:grid;grid-template-columns:auto 1fr auto;align-items:center;gap:8px;padding:8px 8px 8px 4px;text-align:left;font-size:.96rem;border:1px solid var(--line);border-left:3px solid var(--gold);border-radius:9px;background:var(--surface);line-height:1.35;transition:transform .22s ease,background .2s,border-color .2s,box-shadow .2s}
+.sitem .grip{display:grid;place-items:center;width:30px;height:40px;color:var(--muted);cursor:grab;touch-action:none;border-radius:6px}
+.sitem .grip:hover{color:var(--gold-deep);background:var(--gold-soft)}
+.sitem.drag{transition:none;z-index:2;position:relative;box-shadow:0 8px 24px rgba(0,0,0,.14);border-color:var(--accent);background:var(--surface)}
+.sitem.drag .grip{cursor:grabbing}
+.sbtns{display:flex;flex-direction:column;gap:2px}
+.sbtns button{border:1px solid var(--line);background:var(--bg);color:var(--fg2);border-radius:6px;width:34px;height:26px;padding:0;font-size:.7rem;line-height:1}
+.sbtns button:hover:not([disabled]){border-color:var(--accent);color:var(--accent)}
+.sorter li:first-child .up,.sorter li:last-child .down{visibility:hidden}
+.sorter.locked .grip{visibility:hidden;cursor:default}
+.sitem.ok{background:var(--good-soft);border-color:var(--good)}
+.sitem.ko{background:var(--bad-soft);border-color:var(--bad);animation:shake .4s ease-in-out}
+.sitem .sdate{font-family:var(--f-display);white-space:nowrap;animation:rise .4s both ease-out}
+.sitem.ok .sdate{color:var(--good)} .sitem.ko .sdate{color:var(--bad)}
+/* chasse à la faute : chaque mot se touche */
+.quote.hunt{line-height:2}
+.tok{font:inherit;color:inherit;background:none;border:0;border-bottom:1px dotted var(--line);border-radius:4px;padding:1px 2px;margin:0 -2px;cursor:pointer;transition:background .15s,border-color .15s}
+.tok:hover:not([disabled]){background:var(--accent-soft);border-bottom-color:var(--accent)}
+.tok[disabled]{cursor:default;border-bottom-color:transparent}
+.tok.found{background:var(--gold-soft);color:var(--gold-deep);text-decoration:underline wavy var(--bad)}
+.tok.right{background:var(--good-soft);color:var(--good);font-weight:700;animation:right .45s ease-out}
+.tok.wrong{background:var(--bad-soft);color:var(--bad);animation:shake .4s ease-in-out}
+.tok.missed{background:var(--bad-soft);color:var(--bad);font-weight:700;text-decoration:underline wavy}
+/* énigme du jour et éclair */
+.enig{gap:12px}
+.enig-grid{display:flex;gap:8px;justify-content:center}
+.enig-grid span{width:40px;height:40px;border-radius:8px;animation:pop .45s both cubic-bezier(.3,1.6,.6,1)}
+.enig-grid .ok{background:var(--good)} .enig-grid .ko{background:var(--bad)}
+@keyframes pop{from{transform:scale(.3);opacity:0}to{transform:none;opacity:1}}
+.eclair-head{justify-content:center;gap:10px;align-items:baseline}
+.eclair-n{font-family:var(--f-display);font-size:2rem;color:var(--gold-deep);min-width:2ch;text-align:center}
+.eclair-n.bump{animation:bump .45s ease-out}
+.eclair-q{display:flex;flex-direction:column;align-items:center;gap:12px;width:100%;animation:rise .25s both ease-out}
 .frise li:nth-child(2){animation-delay:.08s}.frise li:nth-child(3){animation-delay:.16s}.frise li:nth-child(4){animation-delay:.24s}.frise li:nth-child(5){animation-delay:.32s}.frise li:nth-child(6){animation-delay:.4s}.frise li:nth-child(n+7){animation-delay:.48s}
 .orig summary{cursor:pointer;color:var(--fg2);font-size:.95rem}
 .orig p{color:var(--fg2);max-width:68ch;margin-top:8px}
@@ -707,6 +792,20 @@ details.fold>summary::-webkit-details-marker{display:none}
 details.fold>summary::before{content:"›";display:inline-block;transition:transform .2s;color:var(--muted)}
 details.fold[open]>summary::before{transform:rotate(90deg)}
 details.fold[open]{display:flex;flex-direction:column;gap:10px}
+.stag.big{width:96px;height:96px;cursor:default}
+.attrs{list-style:none;margin:6px 0 0;padding:0;display:flex;flex-direction:column;gap:8px}
+.attrs li{display:flex;align-items:center;gap:12px;padding:8px 10px;border:1px solid var(--line);border-radius:10px}
+.attrs li>div{flex:1;min-width:0;display:flex;flex-direction:column}
+.attrs li .stag.mini{width:40px;height:32px;cursor:default}
+.attrs li.locked .stag.mini{filter:grayscale(1);opacity:.35}
+.ranking .rk-stag{width:40px;height:40px;cursor:default;flex:none}
+.pips3{display:inline-flex;gap:3px;margin-left:8px;vertical-align:middle}
+.pips3 i{width:8px;height:8px;border-radius:50%;border:1px solid var(--line);display:inline-block}
+.pips3 i.g1{background:#B07A45;border-color:#B07A45}.pips3 i.g2{background:#B9BCC2;border-color:#9A9EA6}.pips3 i.g3{background:var(--gold);border-color:var(--gold-deep)}
+.mini-bar{display:block;height:4px;border-radius:2px;background:var(--line);margin-top:4px;overflow:hidden}
+.mini-bar i{display:block;height:100%;background:var(--gold)}
+.pelages button{display:inline-flex;align-items:center;gap:6px}
+.pelages .sw{width:12px;height:12px;border-radius:50%;background:var(--sw);border:1px solid var(--line);display:inline-block}
 .stag{width:78px;height:78px;padding:0;border:0;background:none;cursor:pointer;flex:none;-webkit-tap-highlight-color:transparent}
 .stag svg{width:100%;height:100%;display:block;overflow:visible}
 .stag:focus-visible{outline:2px solid var(--gold);outline-offset:2px;border-radius:50%}
@@ -720,6 +819,57 @@ details.fold[open]{display:flex;flex-direction:column;gap:10px}
 @keyframes zz{50%{transform:translateY(-3px);opacity:.5}}
 .stag .spark{transform-box:fill-box;transform-origin:center;animation:twinkle 1.8s ease-in-out infinite}
 @keyframes twinkle{50%{opacity:.35;transform:scale(.8)}}
+/* cérémonie de niveau */
+.ceremony{position:fixed;inset:0;z-index:60;display:grid;place-items:center;padding:16px;background:rgba(20,18,14,.45);animation:fadein .3s ease-out}
+.ceremony.out{opacity:0;transition:opacity .3s}
+/* signaler un problème */
+.rt-list{display:flex;flex-direction:column;gap:12px}
+.rt-item{border:1px solid var(--line);border-radius:10px;padding:12px;display:flex;flex-direction:column;gap:6px}
+.rt-item.done{opacity:.6}
+.rt-item .rt-meta{font-size:.8rem;color:var(--fg2)}
+.rt-item .rt-msg{white-space:pre-wrap;margin:0}
+.rt-item img{max-width:100%;max-height:420px;object-fit:contain;align-self:flex-start;border:1px solid var(--line);border-radius:6px;cursor:zoom-in}
+.rt-item details{font-size:.8rem;color:var(--fg2)}
+.cer-card.rp-card{align-items:stretch;text-align:left;width:min(440px,100%);max-height:calc(100vh - 32px);overflow-y:auto;border-color:var(--line)}
+.rp-shot{display:flex;gap:12px;align-items:flex-start}
+.rp-shot img{width:96px;max-height:170px;object-fit:cover;object-position:top;border:1px solid var(--line);border-radius:6px;background:var(--bg)}
+.rp-shot .rp-none{width:96px;height:120px;display:grid;place-items:center;border:1px dashed var(--line);border-radius:6px;color:var(--fg2);font-size:.75rem;text-align:center;padding:4px}
+.rp-shot .rp-acts{display:flex;flex-direction:column;align-items:flex-start;gap:4px}
+.rp-card textarea{min-height:90px}
+@keyframes fadein{from{opacity:0}}
+.cer-card{background:var(--surface);border:1px solid var(--gold);border-radius:var(--r);padding:24px 22px;display:flex;flex-direction:column;align-items:center;gap:8px;text-align:center;width:min(360px,100%);box-shadow:0 18px 50px rgba(0,0,0,.25);animation:rise .45s ease-out both}
+.cer-card h2{margin:0;font-size:1.3rem}
+.cer-stag{width:150px;height:150px;cursor:default;margin-bottom:4px}
+.cer-stag .antlers.old{animation:oldant 1.6s ease-in .5s forwards}
+@keyframes oldant{to{opacity:0}}
+.cer-stag .antlers.grow path{stroke-dasharray:1;stroke-dashoffset:1;animation:growant 1.6s ease-out .6s forwards}
+@keyframes growant{to{stroke-dashoffset:0}}
+.cer-stag .antlers.grow{filter:drop-shadow(0 0 4px var(--gold-hi))}
+@media (prefers-reduced-motion: reduce){.cer-stag .antlers.old{opacity:0}.cer-stag .antlers.grow path{stroke-dashoffset:0}}
+/* chemin de la séance */
+.trail{position:relative;width:min(420px,calc(100% - 40px));height:70px;margin:8px 20px 0}
+.trail-line{position:absolute;left:0;right:0;bottom:12px;border-top:2px dashed var(--gold)}
+.trail i{position:absolute;bottom:6px;width:14px;height:14px;margin-left:-7px;border-radius:50%;background:var(--surface);border:2px solid var(--line)}
+.trail i.ok{background:var(--gold);border-color:var(--gold)} .trail i.cur{border-color:var(--accent);box-shadow:0 0 0 4px var(--accent-soft)}
+.trail-stag{position:absolute;bottom:18px;width:46px;height:46px;margin-left:-23px;cursor:default}
+.trail-stag.go{transition:left 1.1s cubic-bezier(.45,0,.3,1)}
+.trail-stag.go svg{animation:bounds 1.1s ease-in-out}
+@keyframes bounds{25%{transform:translateY(-14px) rotate(-6deg)}50%{transform:translateY(0)}75%{transform:translateY(-10px) rotate(-4deg)}100%{transform:none}}
+.trail-next{margin:6px 0 0;font-size:1.3rem}
+/* saisons */
+.stag .acc .flamme{transform-box:fill-box;transform-origin:50% 100%;animation:flicker 1.6s ease-in-out infinite}
+@keyframes flicker{50%{transform:scaleY(.86) rotate(3deg)}}
+.stag .acc.star{transform-box:fill-box;transform-origin:center;animation:twinkle 2.4s ease-in-out infinite}
+/* le petit cerf des exercices */
+.qstag{width:34px;height:34px;cursor:default;margin:-6px 0 -4px}
+.qstag svg{transform-origin:50% 90%}
+.qstag.nod svg{animation:nod .7s ease-in-out}
+@keyframes nod{25%{transform:translateY(3px) rotate(2deg)}50%{transform:translateY(-1px)}75%{transform:translateY(2px) rotate(-1deg)}}
+.qstag.droop svg{animation:droop .9s ease-in-out}
+@keyframes droop{20%{transform:translateX(-2px) rotate(-5deg)}40%{transform:translateX(2px) rotate(5deg)}60%{transform:translateX(-1px) rotate(-3deg)}100%{transform:translateY(2px)}}
+.qstag.fete svg{animation:fete 1.2s ease-out}
+@keyframes fete{20%{transform:translateY(-9px) scale(1.12)}45%{transform:translateY(0) scale(1.05) rotate(-6deg)}70%{transform:rotate(4deg) scale(1.08)}100%{transform:none}}
+.qstag.fete .antlers{filter:drop-shadow(0 0 3px var(--gold-hi))}
 @media (prefers-reduced-motion: reduce){.stag svg,.stag *{animation:none!important}}
 .stagtalk{display:flex;align-items:flex-end;gap:10px;text-align:left;width:min(520px,100%)}
 .stag.mini{width:58px;height:58px;cursor:default}
@@ -730,9 +880,25 @@ details.fold[open]{display:flex;flex-direction:column;gap:10px}
 q{quotes:"« " " »" "“" "”"}
 .seg{flex-wrap:wrap;max-width:100%}
 .cloze{display:inline-block;min-width:6ch;border-bottom:2px solid var(--gold);text-align:center;font-style:normal;color:var(--gold-deep)}
+/* écran d'ouverture (téléphone, une fois par lancement) : le cerf dessine ses bois, puis le nom apparaît */
+.splash{position:fixed;inset:0;z-index:100;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;background:var(--bg);animation:sp-out .45s ease-in 1.55s forwards}
+.splash .sp-stag{width:132px;height:132px;overflow:visible}
+.splash .sp-stag>*:not(.sp-ant){opacity:0;animation:sp-in .5s ease-out .1s forwards}
+.splash .sp-ant path{stroke-dasharray:1;stroke-dashoffset:1;animation:sp-draw .75s ease-out .45s forwards}
+.splash .sp-name{font-family:var(--f-display);font-size:2rem;font-weight:700;letter-spacing:.06em;margin:0;color:var(--fg);opacity:0;animation:sp-in .5s ease-out .9s forwards}
+.splash .sp-name span{color:var(--gold)}
+@keyframes sp-in{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+@keyframes sp-draw{to{stroke-dashoffset:0}}
+@keyframes sp-out{to{opacity:0;visibility:hidden;pointer-events:none}}
+@media (prefers-reduced-motion:reduce){.splash{display:none}}
 </style>
 </head>
 <body>
+<div class="splash" id="splash" aria-hidden="true"><svg class="sp-stag" viewBox="0 0 100 100" aria-hidden="true"><g class="antlers sp-ant" fill="none" stroke="var(--antler)" stroke-width="3.4" stroke-linecap="round"><path pathLength="1" d="M44.0 37.0C39.0 27.0 19.0 19.0 20.0 6.0"/><path pathLength="1" d="M38.9 30.6q-2.3 -2.7 -5.8 -3.9"/><path pathLength="1" d="M34.7 26.9q1.1 -6.0 2.7 -8.6"/><path pathLength="1" d="M30.3 23.1q1.1 -6.0 2.7 -8.6"/><path pathLength="1" d="M26.1 19.2q1.1 -6.0 2.7 -8.6"/><path pathLength="1" d="M22.7 15.0q1.1 -6.0 2.7 -8.6"/><path pathLength="1" d="M20.5 10.5q1.1 -6.0 2.7 -8.6"/><path pathLength="1" d="M56.0 37.0C61.0 27.0 81.0 19.0 80.0 6.0"/><path pathLength="1" d="M61.1 30.6q2.3 -2.7 5.8 -3.9"/><path pathLength="1" d="M65.3 26.9q-1.1 -6.0 -2.7 -8.6"/><path pathLength="1" d="M69.7 23.1q-1.1 -6.0 -2.7 -8.6"/><path pathLength="1" d="M73.9 19.2q-1.1 -6.0 -2.7 -8.6"/><path pathLength="1" d="M77.3 15.0q-1.1 -6.0 -2.7 -8.6"/><path pathLength="1" d="M79.5 10.5q-1.1 -6.0 -2.7 -8.6"/></g><path d="M39 72C36 84 28 92 16 100H84C72 92 64 84 61 72Z" fill="var(--stag-deep)"/><path d="M44 80C44 88 46 94 50 100C54 94 56 88 56 80Z" fill="var(--stag-light)"/><g class="ear ear-l"><ellipse cx="33" cy="44" rx="10" ry="4.2" transform="rotate(-28 40 44)" fill="var(--stag)"/><ellipse cx="34" cy="44" rx="6" ry="2" transform="rotate(-28 40 44)" fill="var(--stag-light)"/></g><g class="ear ear-r"><ellipse cx="67" cy="44" rx="10" ry="4.2" transform="rotate(28 60 44)" fill="var(--stag)"/><ellipse cx="66" cy="44" rx="6" ry="2" transform="rotate(28 60 44)" fill="var(--stag-light)"/></g><path d="M50 34C59 34 64 40 64 47C64 56 58 66 56 74C55 79 53 82 50 82C47 82 45 79 44 74C42 66 36 56 36 47C36 40 41 34 50 34Z" fill="var(--stag)"/><path d="M50 38C53 38 54 42 53 46C52 50 51 52 50 52C49 52 48 50 47 46C46 42 47 38 50 38Z" fill="var(--stag-light)" opacity=".55"/><ellipse cx="50" cy="75" rx="6.2" ry="7" fill="var(--stag-light)"/><ellipse cx="50" cy="79" rx="4.4" ry="2.9" fill="var(--stag-dark)"/><g class="sp-eye"><circle cx="43.5" cy="52" r="2.9" fill="var(--stag-dark)"/><circle cx="44.4" cy="51" r=".9" fill="#fff"/></g><g class="sp-eye"><circle cx="56.5" cy="52" r="2.9" fill="var(--stag-dark)"/><circle cx="57.4" cy="51" r=".9" fill="#fff"/></g></svg><p class="sp-name">Néo<span>phyte</span></p></div>
+<script>(function(){var e=document.getElementById('splash'),go=false;
+try{go=matchMedia('(max-width:700px)').matches&&!matchMedia('(prefers-reduced-motion:reduce)').matches&&!sessionStorage.getItem('brainfit.splash');sessionStorage.setItem('brainfit.splash','1');}catch(x){}
+if(!go){e.remove();return;}
+var fin=function(){if(e.parentNode)e.remove();};e.addEventListener('click',fin);setTimeout(fin,2100);})();</script>
 
 <div class="wrap">
   <header class="top">
@@ -751,6 +917,7 @@ q{quotes:"« " " »" "“" "”"}
         <span class="freeze" id="freeze" title="Égides : chacune protège ta série si tu manques un jour"><svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2l8 3v6c0 5-3.4 9.3-8 11-4.6-1.7-8-6-8-11V5z" opacity=".25"/><path d="M12 2l8 3v6c0 5-3.4 9.3-8 11-4.6-1.7-8-6-8-11V5zm0 2.2L6 6.4V11c0 3.9 2.5 7.4 6 8.9 3.5-1.5 6-5 6-8.9V6.4z"/><circle cx="12" cy="11" r="2.6"/></svg><span class="num" id="freeze-n">1</span></span>
       </div>
       <div class="top-actions">
+        <button class="iconbtn" id="go-report" aria-label="Signaler un problème" title="Signaler un problème" hidden><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 21V4M5 4h11l-2 4 2 4H5"/></svg></button>
         <button class="iconbtn" id="go-biblio" aria-label="Bibliothèque" title="Bibliothèque"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 9l9-5 9 5M5.5 10v8M10 10v8M14 10v8M18.5 10v8M3 20h18"/></svg></button>
         <button class="iconbtn" id="go-settings" aria-label="Réglages" title="Réglages"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/></svg></button>
       </div>
@@ -784,12 +951,18 @@ q{quotes:"« " " »" "“" "”"}
       <button class="btn primary big" id="play-go"></button>
       <p class="play-streak" id="play-streak"></p>
     </div>
+    <div class="panel quests" id="quests" aria-labelledby="quests-h">
+      <div class="row spread" style="flex-wrap:nowrap;align-items:baseline"><h2 class="label" id="quests-h">Quêtes du jour</h2><span class="note" id="quests-n"></span></div>
+      <ul id="quests-list"></ul>
+    </div>
     <div class="panel syncwarn" id="syncwarn" hidden>
-      <p><b>Connecte-toi pour retrouver tes progrès partout.</b> Avec ton compte Néophyte, ton téléphone et ton ordinateur partagent les mêmes progrès, et le coach est disponible. Sans compte, tout reste sur cet appareil.</p>
-      <form class="login" id="login">
+      <p><b>Garde tes progrès sur tous tes appareils.</b> <span class="fg2">Un compte, et le coach s'ouvre aussi.</span></p>
+      <div class="row" id="login-ask"><button class="btn primary" type="button" id="login-show">Se connecter</button><button class="btn ghost" type="button" id="syncwarn-ok">Plus tard</button></div>
+      <form class="login" id="login" hidden>
+        <p class="note">Sans compte, tout reste sur cet appareil.</p>
         <input type="email" id="login-email" autocomplete="username" placeholder="Ton e-mail" aria-label="E-mail" required>
         <input type="password" id="login-pw" autocomplete="current-password" placeholder="Mot de passe" aria-label="Mot de passe" minlength="8" required>
-        <div class="row"><button class="btn primary" id="login-in">Se connecter</button><button class="btn ghost" id="login-new">Créer mon compte</button><button class="btn ghost" type="button" id="syncwarn-ok">Plus tard</button></div>
+        <div class="row"><button class="btn primary" id="login-in">Se connecter</button><button class="btn ghost" id="login-new">Créer mon compte</button></div>
         <p class="note" id="login-msg" role="status"></p>
       </form>
     </div>
@@ -831,18 +1004,17 @@ q{quotes:"« " " »" "“" "”"}
       <details class="fold"><summary><span class="label">À retenir</span></summary><p class="qnote" id="qd-note"></p>
       <div class="row"><button class="btn gold mini" id="qd-add"></button><button class="btn ghost mini" id="qd-write">Écrire dessus</button></div></details>
     </div>
-    <div class="cjl" id="cjl">
-      <div class="row spread" style="flex-wrap:nowrap;align-items:flex-start"><span class="label" id="cjl-label">Ce jour-là</span><button class="btn ghost mini" id="cjl-next" style="flex:none">Un autre</button></div>
+    <details class="cjl" id="cjl">
+      <summary><span class="label" id="cjl-label">Ce jour-là</span><span class="note" id="cjl-hint">devine l'année</span></summary>
       <p class="cjl-text" id="cjl-text"></p>
       <div class="row" id="cjl-ask"><input type="text" id="cjl-in" inputmode="numeric" autocomplete="off" placeholder="Année ?" aria-label="En quelle année ?" style="width:9ch;text-align:center"><span class="fg2" id="cjl-bc" hidden>av. J.-C.</span><button class="btn" id="cjl-go">Deviner</button><button class="btn ghost" id="cjl-show">Voir la date</button></div>
       <div class="cjl-res" id="cjl-res" hidden><span class="cjl-year" id="cjl-year"></span><span class="fg2" id="cjl-fb"></span></div>
+      <div class="row"><button class="btn ghost mini" id="cjl-next">Un autre événement</button></div>
+    </details>
     </div>
-    </div>
-    <div class="panel">
-      <div>
-        <h2>Mes habitudes du jour</h2>
-        <p class="muted">Coche ce que tu as vraiment fait aujourd'hui : c'est ce qui compte le plus.</p>
-      </div>
+    <details class="panel fp" id="habits-fold">
+      <summary><h2>Mes habitudes du jour</h2><span class="note" id="habits-n"></span></summary>
+      <p class="muted">Coche ce que tu as vraiment fait aujourd'hui : c'est ce qui compte le plus.</p>
       <div class="habits" id="habits"></div>
       <div class="row spread talks">
         <div style="min-width:0"><span class="step-title">Discussions intéressantes aujourd'hui</span><br><span class="note">Une vraie conversation d'idées, sans écran entre vous. Objectif : 3.</span></div>
@@ -865,7 +1037,7 @@ q{quotes:"« " " »" "“" "”"}
         <div class="habits" id="scr-habits"></div>
         <div class="row"><button class="btn primary" id="scr-focus">Lancer une séance sans écran</button><span class="note">Lecture, écriture à la main, réflexion : on mesure ta concentration.</span></div>
       </details>
-    </div>
+    </details>
   </section>
 
   <!-- CLASSEMENT -->
@@ -1018,7 +1190,7 @@ q{quotes:"« " " »" "“" "”"}
       <div class="row spread"><h2>Badges</h2><span class="muted" id="badge-count"></span></div>
       <div class="badges" id="badges"></div>
       <button class="btn ghost badges-more" id="badges-more" hidden>Voir tous les badges</button>
-      <p class="note">Pourquoi une série et des XP ? Chez Duolingo, les apprenants qui atteignent 7 jours de série ont 3,6 fois plus de chances de terminer leur cours, et les « gels de série » (ici, les égides) évitent qu'un seul jour manqué fasse tout abandonner. <a href="https://blog.duolingo.com/how-duolingo-streak-builds-habit" target="_blank" rel="noopener">Source</a>. Le but reste le même : que l'envie de penser par toi-même prenne le relais des récompenses.</p>
+      <details class="fold"><summary><span class="note">Pourquoi une série et des XP ?</span></summary><p class="note"> Chez Duolingo, les apprenants qui atteignent 7 jours de série ont 3,6 fois plus de chances de terminer leur cours, et les « gels de série » (ici, les égides) évitent qu'un seul jour manqué fasse tout abandonner. <a href="https://blog.duolingo.com/how-duolingo-streak-builds-habit" target="_blank" rel="noopener">Source</a>. Le but reste le même : que l'envie de penser par toi-même prenne le relais des récompenses.</p></details>
     </div>
     <div class="panel">
       <div class="kpis">
@@ -1028,39 +1200,43 @@ q{quotes:"« " " »" "“" "”"}
         <div class="kpi"><span class="label">Hygiène IA</span><span class="num" id="k-habits">0 %</span><span class="muted">habitudes cochées, 7 j</span></div>
       </div>
     </div>
-    <div class="panel" id="calib-panel">
-      <div><h2>Sûr à combien ?</h2><p class="muted note">Quand tu te dis sûr à 90 %, as-tu raison 9 fois sur 10 ? C'est le réflexe à garder face à une IA qui parle avec aplomb, et l'entraînement des meilleurs prévisionnistes (Tetlock, 2015).</p></div>
+    <details class="panel fp" id="calib-panel">
+      <summary><h2>Sûr à combien ?</h2></summary><div><p class="muted note">Quand tu te dis sûr à 90 %, as-tu raison 9 fois sur 10 ? C'est le réflexe à garder face à une IA qui parle avec aplomb, et l'entraînement des meilleurs prévisionnistes (Tetlock, 2015).</p></div>
       <div class="tablewrap" id="calib"></div>
       <p class="note" id="calib-sum"></p>
-    </div>
-    <div class="panel">
-      <div><h2>Cette semaine en chiffres</h2><p class="muted note">Moyenne de tes scores depuis lundi, comparée à la semaine précédente.</p></div>
+    </details>
+    <h2 class="label prog-more">En détail</h2>
+    <details class="panel fp">
+      <summary><h2>Cette semaine en chiffres</h2></summary>
+      <p class="muted note">Moyenne de tes scores depuis lundi, comparée à la semaine précédente.</p>
       <div class="tablewrap" id="weekly"></div>
-    </div>
-    <div class="panel">
-      <div><h2>Temps d'écran, 14 derniers jours</h2><p class="muted note" id="scr-sub">La ligne pointillée marque ton objectif.</p></div>
-      <div class="bars" id="scr-bars" role="img" aria-label="Temps d'écran par jour" style="grid-template-columns:repeat(14,1fr);gap:4px"></div>
-    </div>
-    <div class="panel">
+    </details>
+    <details class="panel fp">
+      <summary><h2>Par exercice</h2></summary>
+      <div class="excstats" id="excstats"></div>
+    </details>
+    <details class="panel fp">
+      <summary><h2>Carnet d'écriture</h2></summary>
       <div class="row spread">
-        <h2>16 dernières semaines</h2>
-        <div class="legend">moins <i style="background:var(--heat0)"></i><i style="background:var(--heat1)"></i><i style="background:var(--heat2)"></i><i style="background:var(--heat3)"></i><i style="background:var(--heat4)"></i> plus</div>
-      </div>
-      <div class="heatwrap"><div class="heat" id="heat" role="img" aria-label="Calendrier d'activité"></div></div>
-      <p class="note">Chaque case est un jour : sa couleur reflète la part de la routine et des habitudes accomplies.</p>
-    </div>
-    <div class="panel">
-      <div class="row spread">
-        <div><h2>Carnet d'écriture</h2><p class="muted note">Tes textes, du plus récent au plus ancien, avec leurs mesures de style.</p></div>
+        <p class="muted note">Tes textes, du plus récent au plus ancien, avec leurs mesures de style.</p>
         <button class="btn" id="carnet-coach" hidden>Avis du coach sur mon évolution</button>
       </div>
       <div class="coachout" id="carnet-out" hidden></div>
       <div id="carnet" style="display:flex;flex-direction:column;gap:14px"></div>
-    </div>
-    <div class="panel">
-      <h2>Par exercice</h2>
-      <div class="excstats" id="excstats"></div>
-    </div>
+    </details>
+    <details class="panel fp">
+      <summary><h2>Temps d'écran, 14 derniers jours</h2></summary>
+      <p class="muted note" id="scr-sub">La ligne pointillée marque ton objectif.</p>
+      <div class="bars" id="scr-bars" role="img" aria-label="Temps d'écran par jour" style="grid-template-columns:repeat(14,1fr);gap:4px"></div>
+    </details>
+    <details class="panel fp">
+      <summary><h2>16 dernières semaines</h2></summary>
+      <div class="row spread">
+        <div class="legend">moins <i style="background:var(--heat0)"></i><i style="background:var(--heat1)"></i><i style="background:var(--heat2)"></i><i style="background:var(--heat3)"></i><i style="background:var(--heat4)"></i> plus</div>
+      </div>
+      <div class="heatwrap"><div class="heat" id="heat" role="img" aria-label="Calendrier d'activité"></div></div>
+      <p class="note">Chaque case est un jour : sa couleur reflète la part de la routine et des habitudes accomplies.</p>
+    </details>
   </section>
 
   <!-- CONSEILS -->
@@ -1118,12 +1294,21 @@ q{quotes:"« " " »" "“" "”"}
 
   <!-- RÉGLAGES -->
   <section class="view" id="v-reglages" hidden>
+    <div class="panel moncerf" id="moncerf">
+      <div class="row" style="flex-wrap:nowrap;align-items:center;gap:16px"><span class="stag big" id="mc-stag" aria-hidden="true"></span>
+        <div style="min-width:0"><h2>Mon cerf</h2><p class="muted note">Il grandit avec ton niveau. Ses attributs se gagnent par l'effort réel : écrire, lire, poser l'écran.</p></div></div>
+      <form class="row" id="mc-name-f"><label class="note" for="mc-name">Son nom</label><input type="text" id="mc-name" maxlength="20" autocomplete="off" placeholder="Un nom pour ton cerf"><button class="btn mini">Valider</button></form>
+      <div class="row"><button class="btn mini" type="button" id="mc-icon" aria-pressed="false"></button></div>
+      <div class="row"><span class="note">Pelage</span><div class="seg pelages" id="mc-pel" role="group" aria-label="Pelage"></div></div>
+      <div><span class="label">Attributs</span><ul class="attrs" id="mc-attrs"></ul></div>
+    </div>
     <div class="panel">
       <div><h2>Réglages</h2><p class="muted" id="account-line">Progrès enregistrés dans ce navigateur.</p></div>
       <div class="row"><button class="btn" id="login-open" hidden>Se connecter</button><button class="btn ghost" id="logout" hidden>Se déconnecter</button></div>
       <form class="row reel-city" id="city-form"><label class="note" for="city-in">Ta ville, pour le défi du réel</label><input type="text" id="city-in" placeholder="Ta ville" autocomplete="address-level2"><button class="btn mini">Valider</button></form>
       <div class="row"><span class="note">Couleurs</span><div class="seg" id="theme-seg" role="group" aria-label="Thème"><button data-th="light">Claires</button><button data-th="dark">Sombres</button><button data-th="auto">Comme le téléphone</button></div></div>
       <div class="row"><span class="note">Sons</span><div class="seg" id="son-seg" role="group" aria-label="Sons"><button data-son="on">Activés</button><button data-son="off">Coupés</button></div></div>
+      <div class="row"><span class="note">« Sûr à combien ? » après chaque réponse</span><div class="seg" id="conf-seg" role="group" aria-label="Annoncer sa confiance"><button data-conf="on">Oui</button><button data-conf="off">Non</button></div></div>
     </div>
     <div class="panel">
       <div><h2>Mes thèmes</h2><p class="muted note">Jusqu'à trois. Citations, « Ce jour-là », dictées, sujets d'écriture et coach s'en inspirent.</p></div>
@@ -1150,9 +1335,15 @@ q{quotes:"« " " »" "“" "”"}
         <div class="row"><button class="btn" id="import-go">Fusionner avec mes progrès</button><span class="note" id="import-msg"></span></div>
       </div>
     </div>
+    <div class="panel" id="retours-panel" hidden>
+      <div><h2>Retours des testeurs</h2><p class="muted note">Signalements et réponses contestées, les plus récents d'abord. Visible de toi seul.</p></div>
+      <div class="row"><div class="seg" id="rt-filtre" role="group" aria-label="Quels retours"><button data-f="ouverts" aria-pressed="true">À traiter</button><button data-f="tous" aria-pressed="false">Tous</button></div><button class="btn ghost small" id="rt-maj">Actualiser</button></div>
+      <p class="note" id="rt-msg" role="status"></p>
+      <div id="rt-list" class="rt-list"></div>
+    </div>
     <div class="panel" id="privacy">
       <div><h2>Tes données</h2>
-        <p class="fg2" style="max-width:65ch">Avec un compte, Néophyte garde ton e-mail, tes progrès et tes textes chez Supabase, qui héberge sa base de données. Les autres utilisateurs ne peuvent pas les lire ; techniquement, la personne qui gère ce Néophyte y a accès. Si tu rejoins un cercle, ses membres voient seulement ton pseudo, tes XP de la semaine et ta série. Quand tu contestes une réponse, ton message et la question concernée sont envoyés pour être relus ; ils sont effacés avec ton compte. Quand tu parles au coach, ta demande et le résumé de tes progrès sont envoyés à Claude (Anthropic) pour qu'il réponde. Rien n'est vendu, et il n'y a ni publicité ni mesure d'audience.</p></div>
+        <p class="fg2" style="max-width:65ch">Avec un compte, Néophyte garde ton e-mail, tes progrès et tes textes chez Supabase, qui héberge sa base de données. Les autres utilisateurs ne peuvent pas les lire ; techniquement, la personne qui gère ce Néophyte y a accès. Si tu rejoins un cercle, ses membres voient seulement ton pseudo, tes XP de la semaine et ta série. Quand tu contestes une réponse ou signales un problème, ton message, la question ou l'écran concernés (avec la capture si tu la laisses) et le type d'appareil sont envoyés pour être relus ; ils sont effacés avec ton compte. Quand tu parles au coach, ta demande et le résumé de tes progrès (et la photo de ta feuille, si tu lui en confies une) sont envoyés à Claude (Anthropic) pour qu'il réponde. Rien n'est vendu, et il n'y a ni publicité ni mesure d'audience.</p></div>
       <div class="row"><button class="btn ghost" id="erase" hidden>Effacer mon compte</button></div>
       <div id="erase-confirm" class="row" hidden>
         <span class="fg2">Effacer ton compte, tes progrès, tes textes et ta place dans ton cercle ? Ce n'est pas réversible.</span>
@@ -1194,6 +1385,7 @@ q{quotes:"« " " »" "“" "”"}
 <script src="config.js"></script>
 <script src="services.js"></script>
 <script src="banques.js"></script>
+<script src="rappels.js"></script>
 <script>
 (function(){
 "use strict";
@@ -1219,13 +1411,13 @@ const EX={
   graphe:{name:'Graphique trompeur',skill:'Lecture des chiffres',desc:"Trois graphiques : trouve ce qui cloche, ou reconnais celui qui est honnête. Puis vois la version juste.",unit:'% de bonnes réponses'},
   erreuria:{name:"Trouve l'erreur de l'IA",skill:'Vigilance critique',desc:"Des réponses d'IA convaincantes, avec une erreur cachée. Trouve la phrase fautive et dis si tu en es sûr.",unit:'% de bonnes réponses'},
   hypotheses:{name:'Hypothèses concurrentes',skill:'Raisonnement',desc:"Un fait surprenant : trouve 5 explications possibles, puis comment les départager.",unit:'% de complétion'},
-  sophismes:{name:'Détecteur de sophismes',skill:'Esprit critique',desc:"Cinq arguments : trouve la faille, ou reconnais celui qui tient debout. Annonce ta confiance avant chaque réponse.",unit:'% de bonnes réponses'},
+  sophismes:{name:'Détecteur de sophismes',skill:'Esprit critique',desc:"Cinq arguments à balayer : à gauche s'il y a une faille, à droite s'il tient debout. Puis nomme le sophisme.",unit:'% de bonnes réponses'},
   fermi:{name:'Estimation',skill:'Raisonnement',desc:"Trois questions de Fermi : trouve l'ordre de grandeur par le raisonnement.",unit:'% de justesse'},
-  ortho:{name:'Orthographe & accords',skill:'Langue écrite',desc:"Huit phrases pièges : choisis la bonne forme, sans correcteur.",unit:'% de bonnes réponses'},
+  ortho:{name:'Orthographe & accords',skill:'Langue écrite',desc:"Huit phrases pièges : choisis la bonne forme, ou trouve la faute et répare-la, sans correcteur.",unit:'% de bonnes réponses'},
   dictee:{name:'Dictée sur papier',skill:'Écoute & orthographe',desc:"L'appli dicte à voix haute, tu écris à la main. Correction par photo de ta copie ou par toi-même.",unit:'% de mots justes'},
   lecture:{name:'Lecture chronométrée',skill:'Lecture & compréhension',desc:"Lis un texte à ton rythme, puis réponds à deux questions. Vitesse et compréhension mesurées.",unit:'mots/min compris'},
   citations:{name:'Florilège',skill:'Mémoire & culture',desc:"Retiens les citations qui comptent : qui l'a dit, le mot manquant, vraie ou fausse attribution. Répétition espacée.",unit:'% de bonnes réponses'},
-  chrono:{name:'Chronologie',skill:'Culture & repères',desc:"Deux événements : lequel s'est produit en premier ? Six manches, des écarts de plus en plus serrés.",unit:'% de bonnes réponses'},
+  chrono:{name:'Chronologie',skill:'Culture & repères',desc:"Remets les événements dans l'ordre sur une frise, en les faisant glisser. Trois frises, des écarts de plus en plus serrés.",unit:'% de bonnes réponses'},
   fiche:{name:'Fiche papier',skill:'Hors écran',desc:"Des PDF à imprimer : la fiche du jour qui mélange tout, ou un cahier entier de problèmes, sophismes, orthographe, estimations, erreurs d'IA ou chronologie. Corrigé à la fin.",unit:'% de bonnes réponses'},
   focus:{name:'Séance sans écran',skill:'Attention soutenue',desc:"Lecture, écriture à la main ou réflexion, minuteur lancé. Si tu quittes la page, c'est une interruption.",unit:'minutes'},
   calc:{name:'Calcul mental',skill:'Vitesse de traitement',desc:"Un maximum d'opérations justes en 60 secondes, sans calculatrice.",unit:'bonnes réponses'},
@@ -1234,12 +1426,18 @@ const EX={
   nback:{name:'N-back',skill:'Concentration',desc:"Signale quand la case allumée est la même que N étapes plus tôt.",unit:'% de précision'},
   stroop:{name:'Stroop',skill:'Attention & inhibition',desc:"Donne la couleur de l'encre, pas le mot écrit. 30 secondes.",unit:'points'},
   fluency:{name:'Fluence verbale',skill:'Accès au langage',desc:"Un maximum de mots d'une lettre ou d'une catégorie en 60 secondes.",unit:'mots'},
+  enigme:{name:'Énigme du jour',skill:'Défi commun',desc:"Cinq questions, les mêmes pour tout le monde aujourd'hui. Une seule tentative, puis partage ta grille.",unit:'% de bonnes réponses'},
+  rattrapage:{name:'Rattrapage',skill:'Mémoire des erreurs',desc:"Tes erreurs récentes en orthographe, sophismes et dates reviennent. Réussis-les pour les rayer de ton carnet.",unit:'erreurs rattrapées'},
+  eclair:{name:'Éclair',skill:'Vivacité',desc:"90 secondes de questions mêlées : orthographe, dates, sophismes. Bats ton record.",unit:'bonnes réponses'},
   evenement:{name:'Événement de saison',skill:'Esprit critique & culture',desc:"Une semaine à thème : vrai, faux ou non prouvé.",unit:'% de bonnes réponses',hidden:true},
   bilan:{name:"Point d'étape",skill:'Parcours',desc:"Huit questions pour mesurer ton autonomie face à l'IA. Le premier sert de point de départ, puis un chaque mois.",unit:'sur 100',hidden:true},
   read:{name:'Lecture profonde',skill:'Attention soutenue',desc:"Lecture sur papier ou liseuse, téléphone dans une autre pièce.",unit:'',manual:true}
 };
 // d'où vient chaque exercice : affiché sous le titre du plateau et dans la Bibliothèque
 const ORIG={
+  rattrapage:"Revenir sur ses erreurs juste avant de les oublier est l'une des méthodes d'apprentissage les mieux établies : c'est l'effet de test (Roediger et Karpicke, 2006) combiné à la répétition espacée. Une erreur rattrapée sort du carnet ; une erreur ratée de nouveau y reste.",
+  enigme:"Le principe vient de Wordle (Josh Wardle, 2021) : une seule grille par jour, la même pour tous, et un résultat qu'on partage en petits carrés de couleur sans rien dévoiler. Ici, les questions viennent des banques de Néophyte.",
+  eclair:"Un sprint chronométré, comme les manches rapides des jeux de culture générale. Répondre vite oblige à reconnaître une règle ou un repère sans tout recalculer : c'est le signe qu'il est vraiment acquis.",
   write:"L'écriture libre (freewriting) vient de Peter Elbow, Writing Without Teachers (1973) : écrire sans s'arrêter ni se corriger, pour que la pensée se forme en écrivant. Le format « Expliquer » reprend la technique dite de Feynman : si tu ne sais pas l'expliquer simplement, tu ne l'as pas compris. La « Disputatio » reprend la forme des articles de la Somme théologique de saint Thomas d'Aquin (XIIIe siècle), héritée de la dispute pratiquée dans les universités médiévales : objections, argument en sens contraire, réponse, réponse à chaque objection. Et ce que l'on produit soi-même se retient mieux que ce que l'on lit : c'est l'effet de génération (Slamecka et Graf, 1978). L'« Homme d'acier » applique les règles d'Anatol Rapoport, popularisées par Daniel Dennett (Intuition Pumps, 2013) : reformuler la position adverse si bien que son défenseur vous en remercie, avant de la critiquer. Le « Résumer » se vérifie idée par idée : garder la thèse et ses appuis, c'est ce qui distingue un résumé d'un extrait.",
   probleme:"La plupart de ces énigmes viennent du test de réflexion cognitive de Shane Frederick (2005) : la raquette et la balle, les machines, les nénuphars. Elles opposent la réponse intuitive, le « système 1 » de Daniel Kahneman, au calcul réfléchi, le « système 2 ». S'y ajoutent la tâche de sélection de Peter Wason (1966, les quatre cartes), l'oubli du taux de base étudié par Kahneman et Tversky, et le problème de Monty Hall. Une fois tous vus, des variantes changent les nombres et l'histoire : la réponse est recalculée par le code, et l'on ne peut plus réussir de mémoire. Le niveau suit la règle des 85 % : on apprend le mieux en réussissant environ quatre fois sur cinq (Wilson et al., 2019).",
   erreuria:"Un format conçu pour Néophyte, à partir d'un constat : plus on fait confiance à l'IA, moins on vérifie (Lee et al., CHI 2025). Il reprend le réflexe des vérificateurs professionnels étudié par Sam Wineburg et Sarah McGrew à Stanford : ne jamais juger un texte à son aisance. Les réponses piégées ont été écrites pour l'application, et le coach peut en inventer de nouvelles.",
@@ -1563,7 +1761,16 @@ const DICTEES=[
   {id:'vendanges',th:'nature',l:4,ti:'Les vendanges',a:null,tx:"Les vendanges qu'ont faites cette année les vignerons du village ont dépassé toutes les espérances. Les grappes, mûries par un soleil que l'on n'avait plus vu depuis des lustres, se sont laissé cueillir sans peine. Les vendangeurs se sont succédé du matin au soir ; certains, harassés, se sont assoupis à l'ombre des ceps. On a goûté le vin nouveau dès la Saint-Martin : quelque deux cents bouteilles ont été vidées, et les plus sceptiques se sont plu à reconnaître qu'il était excellent.",
    p:[["qu'ont faites","Le COD « qu' » (les vendanges) est placé avant avoir : accord, même quand le sujet est inversé."],["mûries","Mûrir garde l'accent de mûr (orthographe traditionnelle) ; accord avec « les grappes »."],["vu","Le COD « que » reprend « un soleil » : masculin singulier."],["se sont laissé","Laissé suivi d'un infinitif reste invariable (règle de 1990)."],["se sont succédé","Succéder à quelqu'un : « se » est complément indirect, pas d'accord."],["assoupis","S'assoupir est essentiellement pronominal : accord avec le sujet."],["quelque deux cents","Quelque, devant un nombre, signifie « environ » : invariable. Deux cents prend un s, car aucun nombre ne le suit."],["se sont plu","Le participe de plaire reste invariable, même à la forme pronominale."]]},
   {id:'ecrans',th:'philo sciences',l:4,ti:'La pensée lente',a:null,tx:"Combien d'heures avons-nous passées devant nos écrans ces dernières années ? Les études que j'ai consultées sont formelles : notre attention s'est émiettée. Pourtant, il suffit de quelques semaines pour qu'elle se reconstruise. Les carnets qu'on a noircis à la main, les livres qu'on a lus d'une traite, les conversations qu'on a eues sans téléphone : voilà les remèdes qu'on nous a souvent conseillé d'essayer. Quoi qu'on en dise, la pensée a besoin de lenteur.",
-   p:[["passées","Le COD « combien d'heures » est placé avant avoir : accord au féminin pluriel."],["consultées","Le COD « que » (les études) est placé avant : accord."],["s'est émiettée","Verbe pronominal : accord avec le sujet « notre attention »."],["se reconstruise","Après « pour que », subjonctif."],["noircis","Le COD « qu' » (les carnets) est placé avant : accord au masculin pluriel."],["eues","Le COD « qu' » (les conversations) est placé avant : eues, au féminin pluriel."],["conseillé","Le COD de « conseiller » est « d'essayer » : le participe reste invariable."],["Quoi qu'on","En deux mots : « quelle que soit la chose que »."]]}
+   p:[["passées","Le COD « combien d'heures » est placé avant avoir : accord au féminin pluriel."],["consultées","Le COD « que » (les études) est placé avant : accord."],["s'est émiettée","Verbe pronominal : accord avec le sujet « notre attention »."],["se reconstruise","Après « pour que », subjonctif."],["noircis","Le COD « qu' » (les carnets) est placé avant : accord au masculin pluriel."],["eues","Le COD « qu' » (les conversations) est placé avant : eues, au féminin pluriel."],["conseillé","Le COD de « conseiller » est « d'essayer » : le participe reste invariable."],["Quoi qu'on","En deux mots : « quelle que soit la chose que »."]]},
+  // textes classiques repris à l'identique de fr.wikisource.org (tools/wikisource)
+  {id:"cigale",th:"lettres",l:2,ti:"La Cigale et la Fourmi",a:"Jean de La Fontaine, Fables, livre I (1668)",tx:"La cigale, ayant chanté\nTout l'été,\nSe trouva fort dépourvue\nQuand la bise fut venue :\nPas un seul petit morceau\nDe mouche ou de vermisseau.\nElle alla crier famine\nChez la fourmi, sa voisine,\nLa priant de lui prêter\nQuelque grain pour subsister\nJusqu'à la saison nouvelle.",p:[["ayant chanté","Avec avoir et sans COD placé avant, le participe reste invariable."],["été","Nom masculin terminé par -é : l'été."],["dépourvue","Participe employé comme adjectif : accord avec « la cigale »."],["fut venue","Avec être, accord avec le sujet « la bise »."],["morceau","Nom en -eau."],["vermisseau","Même terminaison en -eau."],["priant","Participe présent : invariable."],["prêter","Accent circonflexe sur le e ; infinitif après « de »."],["Quelque grain","Quelque, au singulier devant un nom singulier : « un peu de grain »."]]},
+  {id:"automne",th:"lettres",l:2,ti:"Chanson d'automne",a:"Paul Verlaine, Poèmes saturniens (1866)",tx:"Les sanglots longs\nDes violons\nDe l'automne\nBlessent mon cœur\nD'une langueur\nMonotone.\nTout suffocant\nEt blême, quand\nSonne l'heure,\nJe me souviens\nDes jours anciens\nEt je pleure ;\nEt je m'en vais\nAu vent mauvais\nQui m'emporte\nDeçà, delà,\nPareil à la\nFeuille morte.",p:[["sanglots","Nom en -ot, pluriel en -s."],["Blessent","Le sujet est « les sanglots » : pluriel en -ent."],["cœur","Le o et le e sont liés : œ."],["langueur","Nom féminin en -eur, sans e final (sauf heure, demeure…)."],["blême","Accent circonflexe sur le e."],["anciens","Accord avec « les jours »."],["Deçà","Cédille sous le c devant a, et accent grave sur le a."],["delà","Accent grave sur le a."],["morte","Accord avec « feuille »."]]},
+  {id:"seguin",th:"lettres nature",l:2,ti:"La chèvre de M. Seguin",a:"Alphonse Daudet, Lettres de mon moulin (1869)",tx:"M. Seguin n'avait jamais eu de bonheur avec ses chèvres. Il les perdait toutes de la même façon : un beau matin, elles cassaient leur corde, s'en allaient dans la montagne, et là-haut le loup les mangeait. Ni les caresses de leur maître, ni la peur du loup, rien ne les retenait. C'était, paraît-il, des chèvres indépendantes, voulant à tout prix le grand air et la liberté.",p:[["chèvres","Accent grave : une chèvre, des chèvres."],["toutes","Tout s'accorde avec « les » (les chèvres) : toutes."],["cassaient","Imparfait, troisième personne du pluriel : -aient."],["là-haut","Là avec un accent, et un trait d'union."],["maître","Accent circonflexe sur le i (« maitre » est admis depuis 1990)."],["paraît-il","Inversion du sujet : trait d'union ; accent circonflexe sur le i devant le t (« parait » est admis depuis 1990)."],["indépendantes","Adjectif accordé avec « chèvres » : féminin pluriel."],["voulant","Participe présent : invariable."]]},
+  {id:"derniere1",th:"lettres histoire",l:3,ti:"La dernière classe",a:"Alphonse Daudet, Contes du lundi (1873)",tx:"Ce matin-là, j'étais très en retard pour aller à l'école, et j'avais grand-peur d'être grondé, d'autant que M. Hamel nous avait dit qu'il nous interrogerait sur les participes, et je n'en savais pas le premier mot. Un moment l'idée me vint de manquer la classe et de prendre ma course à travers champs. Le temps était si chaud, si clair ! On entendait les merles siffler à la lisière du bois, et dans le pré Rippert, derrière la scierie, les Prussiens qui faisaient l'exercice.",p:[["matin-là","Trait d'union entre le nom et « là »."],["grand-peur","Locution ancienne : « grand » reste invariable devant ce nom féminin."],["grondé","Participe après « être » : accord avec « je », ici un garçon."],["interrogerait","Futur dans le passé (conditionnel) : -ait."],["n'en savais pas","Négation complète : ne… pas, avec en."],["vint","Passé simple de venir : il vint."],["à travers champs","Locution figée : champs au pluriel."],["siffler","Infinitif après un verbe de perception (entendre)."]]},
+  {id:"derniere2",th:"lettres histoire",l:4,ti:"La plus belle langue du monde",a:"Alphonse Daudet, Contes du lundi (1873)",tx:"Alors, d'une chose à l'autre, M. Hamel se mit à nous parler de la langue française, disant que c'était la plus belle langue du monde, la plus claire, la plus solide : qu'il fallait la garder entre nous et ne jamais l'oublier, parce que, quand un peuple tombe esclave, tant qu'il tient bien sa langue, c'est comme s'il tenait la clef de sa prison…",p:[["mit","Passé simple de mettre : il mit."],["française","Adjectif de nationalité : minuscule."],["disant","Participe présent : invariable."],["fallait","Falloir, verbe impersonnel : il fallait, avec deux l."],["l'oublier","Infinitif après « ne jamais »."],["parce que","En deux mots (à distinguer de « par ce que »)."],["quand","Conjonction de temps, avec un d (à distinguer de « quant à »)."],["tant qu'il","« Tant que » : aussi longtemps que."],["clef","Graphie ancienne, toujours correcte, de « clé »."]]},
+  {id:"dormeur",th:"lettres histoire",l:3,ti:"Le Dormeur du val",a:"Arthur Rimbaud, Poésies (1870)",tx:"C'est un trou de verdure où chante une rivière\nAccrochant follement aux herbes des haillons\nD'argent, où le soleil, de la montagne fière,\nLuit ; c'est un petit val qui mousse de rayons.\nUn soldat jeune, bouche ouverte, tête nue\nEt la nuque baignant dans le frais cresson bleu,\nDort : il est étendu dans l'herbe, sous la nue,\nPâle dans son lit vert où la lumière pleut.\nLes pieds dans les glaïeuls, il dort. Souriant comme\nSourirait un enfant malade, il fait un somme.\nNature, berce-le chaudement : il a froid !\nLes parfums ne font pas frissonner sa narine ;\nIl dort dans le soleil, la main sur sa poitrine\nTranquille. Il a deux trous rouges au côté droit.",p:[["où","Où, relatif de lieu, prend un accent grave."],["Accrochant","Participe présent : invariable."],["follement","Adverbe formé sur « folle » : deux l."],["haillons","Nom en -on, pluriel en -s."],["Luit","Présent de luire : il luit."],["ouverte","Accord avec « bouche »."],["étendu","Participe après « être » : accord avec « il »."],["glaïeuls","Tréma sur le i."],["berce-le","Impératif suivi d'un pronom : trait d'union."],["frissonner","Deux s et deux n."]]},
+  {id:"albatros",th:"lettres nature",l:3,ti:"L'Albatros",a:"Charles Baudelaire, Les Fleurs du mal (1861)",tx:"Souvent, pour s'amuser, les hommes d'équipage\nPrennent des albatros, vastes oiseaux des mers,\nQui suivent, indolents compagnons de voyage,\nLe navire glissant sur les gouffres amers.\nÀ peine les ont-ils déposés sur les planches,\nQue ces rois de l'azur, maladroits et honteux,\nLaissent piteusement leurs grandes ailes blanches\nComme des avirons traîner à côté d'eux.",p:[["s'amuser","Verbe pronominal à l'infinitif."],["équipage","Un seul p."],["Prennent","Prendre au présent, troisième personne du pluriel : deux n."],["indolents","Accord avec les albatros, sujet de « suivent »."],["glissant","Participe présent : invariable."],["ont-ils","Inversion du sujet : trait d'union."],["déposés","Le COD « les » (les albatros) est placé avant avoir : accord au masculin pluriel."],["maladroits","Accord avec « ces rois »."],["traîner","Accent circonflexe sur le i (« trainer » est admis depuis 1990)."]]},
+  {id:"bataille",th:"lettres histoire",l:4,ti:"Après la bataille",a:"Victor Hugo, La Légende des siècles (1859)",tx:"Mon père, ce héros au sourire si doux,\nSuivi d'un seul housard qu'il aimait entre tous\nPour sa grande bravoure et pour sa haute taille,\nParcourait à cheval, le soir d'une bataille,\nLe champ couvert de morts sur qui tombait la nuit.\nIl lui sembla dans l'ombre entendre un faible bruit.\nC'était un Espagnol de l'armée en déroute\nQui se traînait sanglant sur le bord de la route,\nRâlant, brisé, livide, et mort plus qu'à moitié,\nEt qui disait : « À boire ! à boire par pitié ! »",p:[["héros","H aspiré : « ce héros », sans élision ; s final même au singulier."],["Suivi","Participe accordé avec « mon père »."],["housard","Ancienne forme de « hussard »."],["Parcourait","Parcourir prend un seul r à l'imparfait."],["couvert","Accord avec « le champ »."],["sembla","Passé simple des verbes en -er : il sembla."],["Espagnol","Nom de peuple : majuscule."],["traînait","Accent circonflexe sur le i (« trainait » est admis depuis 1990)."],["sanglant","Adjectif accordé avec « qui » (l'Espagnol)."],["moitié","Nom féminin en -tié, sans e final."]]}
 ];
 const HABITS=[
   ['think',"J'ai réfléchi seul au moins 5 minutes avant de demander à l'IA","Même une ébauche de réponse suffit."],
@@ -1736,7 +1943,22 @@ const PROMPTS=[
 const FERMI=NB.fermi.map(f=>[f.q,f.val,f.unite,f.calc]);
 const WORDS=["piano","lampe","girafe","citron","bateau","montagne","ciseaux","nuage","tambour","fourchette","violon","cerise","valise","phare","tortue","bougie","échelle","marteau","orange","cactus","fusée","chapeau","miroir","horloge","panier","renard","volcan","balai","crayon","dauphin","lune","ancre","tulipe","sifflet","château","pinceau","raquette","gâteau","parapluie","chameau","boussole","clé","oreiller","trompette","fraise","tracteur","hibou","savon","guitare","pyramide","éventail","casserole","papillon","sapin","cerf-volant","moulin","flûte","coquillage","lion","bouteille","sandale","igloo","brouette","perroquet","ananas","cloche","tapis","grenouille","épée","banc"];
 const LETTERS=["P","M","C","B","L","R","S","T","D","F","G","V","A","N"];
-const CATS=["animaux","fruits et légumes","métiers","pays","objets de cuisine","instruments de musique","sports","vêtements","villes de France","prénoms"];
+// noms communs seulement : chaque mot est vérifié dans le dictionnaire (public/mots)
+const CATS=["animaux","fruits et légumes","métiers","oiseaux","objets de cuisine","instruments de musique","sports","vêtements","fleurs et arbres","outils"];
+// dictionnaire français (liste « an-array-of-french-words », licence MIT), une lettre par fichier, chargée à la demande
+const dictKey=s=>s.toLowerCase().replace(/œ/g,'oe').replace(/æ/g,'ae').normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/[^a-z-]/g,'');
+const DICT={};
+function dictLoad(l){
+  l=dictKey(l).charAt(0); if(!/[a-z]/.test(l))return Promise.resolve(null);
+  return DICT[l]||(DICT[l]=fetch('mots/'+l+'.txt').then(r=>r.ok?r.text():Promise.reject()).then(t=>new Set(t.split('\n'))).catch(()=>{delete DICT[l];return null;}));
+}
+// vrai si le mot existe ; null si le dictionnaire n'a pas pu être chargé (hors ligne) : on laisse alors passer
+async function dictHas(raw){
+  const parts=raw.trim().split(/[\s']+/).map(dictKey).filter(w=>w.length>2||raw.trim().split(/\s+/).length===1);
+  if(!parts.length)return false;
+  for(const w of parts){const d=await dictLoad(w);if(!d)return null;if(!d.has(w))return false;}
+  return true;
+}
 const CHALLENGES=[
   ["Une journée entière sans IA","Choisis un jour cette semaine et fais tout à la main : recherches, rédaction, calculs. Note ce qui t'a manqué."],
   ["Un trajet sans GPS","Prépare l'itinéraire sur une carte, puis fais le trajet de mémoire. Ta mémoire spatiale te remerciera."],
@@ -2003,7 +2225,7 @@ function logResult(ex,s,extra){
   // une égide (gel de série) gagnée tous les 7 jours de série (2 au maximum)
   const f=freezeState(), cur=streaks().cur, t=todayKey();
   if(cur>0&&cur%7===0&&!f.earned.includes(t)){f.earned.push(t);if(f.n<2){f.n++;toast(`<span>Série de ${cur} jours : tu gagnes une égide.<small>Comme le bouclier d'Athéna, elle protégera ta série si tu manques un jour.</small></span>`);}}
-  save(); renderToday(); renderExGrid();
+  save(); renderToday(); renderExGrid(); checkQuests();
 }
 
 /* ---------- citations : citation du jour et florilège ---------- */
@@ -2055,7 +2277,8 @@ const evDate=md=>fd(new Date(2024,+md.slice(0,2)-1,+md.slice(2)),{day:'numeric',
 function renderThemes(){
   const m=myThemes();
   for(const id of ['#themes-seg','#themes-seg2'])$(id).replaceChildren(...THEMES.map(([k,v])=>el('button',{'aria-pressed':String(m.includes(k)),text:v,onclick:()=>toggleTheme(k)})));
-  $('#themes-ask').hidden=!!state.settings.themesSet;
+  const dd=state.days[todayKey()];
+  $('#themes-ask').hidden=!!state.settings.themesSet||!(dd&&Object.values(dd.done||{}).some(Boolean))||!$('#syncwarn').hidden;
 }
 function toggleTheme(k){
   let m=myThemes();
@@ -2076,14 +2299,38 @@ function weekXp(){const m=gamiCtx.xp||xpByDay(), wk=weekStart(todayKey());let n=
 async function circlePush(force){
   const c=state.settings.circle, id=ref&&await myUserId(); if(!c||!id||!state.settings.pseudo)return;
   const row={code:c,user_id:id,pseudo:state.settings.pseudo,week:weekStart(todayKey()),xp:weekXp(),streak:streaks().cur,updated_at:new Date().toISOString()};
-  const key=JSON.stringify([c,row.week,row.xp,row.streak,row.pseudo]); if(key===circleSent&&!force)return;
-  const {error}=await sbc().from('circle_members').upsert(row); if(!error)circleSent=key; return error;
+  // énigme du jour et meilleur Éclair de la semaine (colonnes ajoutées par defis.sql)
+  const k=todayKey(), en=state.enigme&&state.enigme.d===k?state.enigme.m.filter(Boolean).length:null, wk=row.week;
+  const ecl=Math.max(0,...state.results.filter(r=>r.ex==='eclair'&&r.d>=wk).map(r=>r.s));
+  const extra={enig_day:en==null?null:k,enig:en,eclair_week:wk,eclair:ecl,cerf:cerfShape()};
+  const key=JSON.stringify([c,row.week,row.xp,row.streak,row.pseudo,extra]); if(key===circleSent&&!force)return;
+  let {error}=await sbc().from('circle_members').upsert({...row,...extra});
+  // base pas encore mise à jour : sans le cerf (cerf.sql), puis sans les défis (defis.sql)
+  if(error&&/column|schema cache/i.test(error.message||'')){const{cerf:_,...ex2}=extra;({error}=await sbc().from('circle_members').upsert({...row,...ex2}));}
+  if(error&&/column|schema cache/i.test(error.message||''))({error}=await sbc().from('circle_members').upsert(row));
+  if(!error)circleSent=key; return error;
 }
 async function circleLoad(){
   const c=state.settings.circle; if(!c||!ref){circleData=null;return;}
-  const [m,ci]=await Promise.all([sbc().from('circle_members').select('user_id,pseudo,week,xp,streak').eq('code',c),sbc().from('circles').select('name').eq('code',c).maybeSingle()]);
+  let [m,ci]=await Promise.all([sbc().from('circle_members').select('user_id,pseudo,week,xp,streak,enig_day,enig,eclair_week,eclair,cerf').eq('code',c),sbc().from('circles').select('name').eq('code',c).maybeSingle()]);
+  if(m.error)m=await sbc().from('circle_members').select('user_id,pseudo,week,xp,streak,enig_day,enig,eclair_week,eclair').eq('code',c);
+  if(m.error)m=await sbc().from('circle_members').select('user_id,pseudo,week,xp,streak').eq('code',c);
   if(m.error)return; const wk=weekStart(todayKey()), me=await myUserId();
   circleData={name:ci.data?ci.data.name:'',rows:(m.data||[]).map(r=>({...r,xp:String(r.week)===wk?r.xp:0,me:r.user_id===me})).sort((a,b)=>b.xp-a.xp||b.streak-a.streak)};
+}
+// le cerf d'un ami, tel qu'il l'a habillé ; une donnée venue d'ailleurs est filtrée avant d'être dessinée
+function friendStag(c){
+  const ok=c&&typeof c==='object', l=ok&&Number.isInteger(c.l)?Math.min(40,Math.max(1,c.l)):1, a={};
+  if(ok&&c.a&&typeof c.a==='object')for(const x of ATTRS){const g=c.a[x[0]];if(Number.isInteger(g)&&g>=1&&g<=3)a[x[0]]=g;}
+  const pk=ok&&Object.prototype.hasOwnProperty.call(PELAGES,c.p)?c.p:'fauve';
+  return[l,'idle',{p:pk==='blanc'&&l<5?'fauve':pk,a,l}];
+}
+// sous chaque nom : l'énigme du jour et le meilleur Éclair de la semaine
+function defiLine(r){
+  const k=todayKey(), parts=[];
+  if(r.enig_day&&String(r.enig_day)===k&&r.enig!=null)parts.push(`énigme ${r.enig}/5`);
+  if(r.eclair&&String(r.eclair_week)===weekStart(k))parts.push(`Éclair ${r.eclair}`);
+  return parts.length?el('small',{class:'defis',text:parts.join(' · ')}):null;
 }
 const newCode=()=>{const A='ABCDEFGHJKLMNPQRSTUVWXYZ23456789';return Array.from(crypto.getRandomValues(new Uint8Array(6)),b=>A[b%A.length]).join('');};
 async function renderCircle(){
@@ -2122,7 +2369,7 @@ async function renderCircle(){
   body.replaceChildren(
     el('div',{class:'row spread'},el('span',{},el('b',{text:circleData.name}),document.createTextNode(' · code '),el('b',{text:c})),el('div',{class:'row'},invite,leave)),
     el('span',{class:'label',text:'Semaine '+isoWeek(todayKey())+' · XP de la semaine'}),
-    el('ol',{class:'ranking'},...circleData.rows.map((r,i)=>el('li',{class:r.me?'me':null},el('span',{class:'rk',text:String(i+1)}),el('span',{text:r.pseudo+(r.me?' (toi)':'')}),el('span',{class:'xpw',text:fmt(r.xp)+' XP'}),el('span',{class:'fg2',text:r.streak+' j'})))),
+    el('ol',{class:'ranking'},...circleData.rows.map((r,i)=>el('li',{class:r.me?'me':null},el('span',{class:'rk',text:String(i+1)}),el('span',{class:'stag rk-stag','aria-hidden':'true',html:stagSVG(...friendStag(r.me?cerfShape():r.cerf))}),el('span',{},document.createTextNode(r.pseudo+(r.me?' (toi)':'')),defiLine(r)),el('span',{class:'xpw',text:fmt(r.xp)+' XP'}),el('span',{class:'fg2',text:r.streak+' j'})))),
     circleData.rows.length<2?stagTalk('idle','Tu es seul pour l’instant : invite un proche avec le bouton « Inviter ».')
       :!circleData.rows[0].xp?stagTalk('idle','La semaine commence : le premier qui s’entraîne prend la tête.')
       :circleData.rows[0].me?stagTalk('proud','Tu mènes le cercle cette semaine. Tiens bon jusqu’à dimanche !'):stagTalk('idle',`${circleData.rows[0].pseudo} mène cette semaine. Une séance de plus peut tout changer.`));
@@ -2273,20 +2520,47 @@ async function pdfKit(){
   const clean=s=>String(s).replace(/[’‘]/g,"'").replace(/[“”]/g,'"').replace(/≈\s?/g,'env. ').replace(/×/g,'x').replace(/→/g,'->').replace(/−/g,'-').replace(/π/g,'pi').replace(/⁹/g,'^9').replace(/⁷/g,'^7').replace(/⁵/g,'^5').replace(/[\u00A0\u202F\u2009]/g,' ').replace(/…/g,'...')
     .replace(/[^\x00-\xFF€‚ƒ„†‡ˆ‰Š‹ŒŽ•–—˜™š›œžŸ]/g,c=>c.normalize('NFD').replace(/[^\x00-\xFF]/g,''));
   const need=h=>{if(y+h>BOT){doc.addPage();y=M;}};
-  const text=(s,o={})=>{const size=o.size||11, lh=size*.43;doc.setFont(o.font||'times',o.style||'normal');doc.setFontSize(size);doc.setTextColor(o.grey?110:20);
+  const text=(s,o={})=>{const size=o.size||11, lh=size*.43;doc.setFont(o.font||'times',o.style||'normal');doc.setFontSize(size);if(o.color)doc.setTextColor(...o.color);else doc.setTextColor(o.grey?110:20);
     const lines=doc.splitTextToSize(clean(s),TW-(o.indent||0));need(Math.min(lines.length,3)*lh);
     for(const ln of lines){need(lh);doc.text(ln,M+(o.indent||0),y+lh*.78);y+=lh;}y+=o.gap??1.6;};
   const lines=(n,gap=8.5)=>{doc.setDrawColor(200);doc.setLineWidth(.2);for(let i=0;i<n;i++){need(gap);y+=gap;doc.line(M,y,W-M,y);}y+=3;};
-  const h=s=>{need(18);y+=4;text(s,{size:13,style:'bold',font:'helvetica',gap:2.5});};
-  return {doc,text,lines,h,need,page:()=>{doc.addPage();y=M;},room:()=>Math.floor((BOT-y-3)/8.5)};
+  const h=s=>{need(18);y+=4;text(s,{size:13.5,style:'bold',color:PDF_LAPIS,gap:2.5});};
+  // en-tête de la première page : le cerf, la marque en or, le titre en lapis, un filet doré
+  const head=async(title,sub,score)=>{
+    const img=await stagPng().catch(()=>null), x0=img?M+22:M;
+    if(img)doc.addImage(img,'JPEG',M-1,y-2,20,20);
+    doc.setFont('times','bold');doc.setFontSize(9);doc.setTextColor(...PDF_GOLD);doc.text('N É O P H Y T E',x0,y+3.5);
+    doc.setFontSize(20);doc.setTextColor(...PDF_LAPIS);doc.text(clean(title),x0,y+11.5);
+    doc.setFont('times','italic');doc.setFontSize(10);doc.setTextColor(110);doc.text(clean(PDF_MOTTO),x0,y+16.5);
+    y+=21; doc.setDrawColor(...PDF_GOLD);doc.setLineWidth(.6);doc.line(M,y,W-M,y);doc.setLineWidth(.2);doc.line(M,y+1.2,W-M,y+1.2);y+=4.5;
+    text(sub,{size:10.5,grey:1,gap:1});
+    if(score)text(score,{size:10.5,grey:1,gap:3});
+  };
+  // pied de chaque page : filet doré, marque et numéro
+  const finish=()=>{
+    const n=doc.getNumberOfPages();
+    for(let i=1;i<=n;i++){doc.setPage(i);doc.setDrawColor(...PDF_GOLD);doc.setLineWidth(.3);doc.line(M,297-11,W-M,297-11);
+      doc.setFont('times','normal');doc.setFontSize(8.5);doc.setTextColor(130);doc.text(clean('Néophyte · '+PDF_MOTTO),M,297-7);doc.text(`${i} / ${n}`,W-M,297-7,{align:'right'});}
+    return doc.output('blob');
+  };
+  return {doc,text,lines,h,head,finish,need,page:()=>{doc.addPage();y=M;},room:()=>Math.floor((BOT-y-3)/8.5)};
+}
+// couleurs de Néophyte pour l'imprimé (thème clair), et le cerf du niveau atteint, dessiné en image
+const PDF_LAPIS=[58,93,191], PDF_GOLD=[176,138,48], PDF_MOTTO="Garder l'esprit vif à l'heure de l'IA";
+const STAG_PRINT={'--stag':'#B07D4E','--stag-deep':'#94653C','--stag-dark':'#4A3018','--stag-light':'#F3E6D2','--antler':'#7E6040','--gold':'#B08A30','--muted':'#736D63','--f-body':'Georgia, serif'};
+async function stagPng(){
+  const PEL=(PELAGES[cerf().pel]||[])[1]||{};
+  let svg=stagSVG(gamiCtx.level||1,'idle').replace(/var\((--[a-z-]+)\)/g,(m,k)=>PEL[k]||STAG_PRINT[k]||'#4A3018');
+  if(!/xmlns=/.test(svg))svg=svg.replace('<svg','<svg xmlns="http://www.w3.org/2000/svg"');
+  const im=new Image(); im.src='data:image/svg+xml;charset=utf-8,'+encodeURIComponent(svg); await im.decode();
+  // fond blanc et JPEG : quelques dizaines de Ko au lieu de plusieurs centaines
+  const c=document.createElement('canvas'), g=c.getContext('2d'); c.width=c.height=300; g.fillStyle='#fff'; g.fillRect(0,0,300,300); g.drawImage(im,0,0,300,300);
+  return c.toDataURL('image/jpeg',.9);
 }
 async function makeFichePdf(F){
   const K=await pdfKit(), {doc,text,lines,h}=K;
   const date=fd(new Date(),{day:'numeric',month:'long',year:'numeric'});
-  text('NÉOPHYTE',{size:9,font:'helvetica',style:'bold',grey:1,gap:.5});
-  text(`Fiche papier n° ${F.n}`,{size:20,style:'bold',gap:1});
-  text(`${date} · Sans écran, sans IA, un stylo. 30 à 40 minutes. Le corrigé est à la fin : ne le regarde qu'une fois tout fini.`,{size:10.5,grey:1,gap:1});
-  text('Commencé à : ________     Fini à : ________     Score : ____ / 15',{size:10.5,grey:1,gap:3});
+  await K.head(`Fiche papier n° ${F.n}`,`${date} · Sans écran, sans IA, un stylo. 30 à 40 minutes. Le corrigé est à la fin : ne le regarde qu'une fois tout fini.`,'Commencé à : ________     Fini à : ________     Score : ____ / 15');
   h('1. Problèmes  (3 points)'); F.probs.forEach((p,i)=>{text(`${String.fromCharCode(97+i)}) ${p[0]}`);lines(2);});
   h("2. Estimations  (2 points) — l'ordre de grandeur, calcul détaillé"); F.fermi.forEach((q,i)=>{text(`${String.fromCharCode(97+i)}) ${q[0]}`);lines(2);});
   h('3. Sophismes  (3 points) — nomme la faille, ou écris « Argument valable »'); text('Au choix : '+F.names.join(' · '),{size:10,grey:1,gap:2.5});
@@ -2307,7 +2581,7 @@ async function makeFichePdf(F){
   text('4. Orthographe',{style:'bold'}); F.ortho.forEach((o,i)=>text(`${String.fromCharCode(97+i)}) ${o[1][o[2]]} : ${o[3]}`,{size:10}));
   text('5. Chronologie',{style:'bold'}); [...F.ev].sort((a,b)=>a[1]-b[1]||a[0].localeCompare(b[0])).forEach((e,i)=>text(`${i+1}. ${fmtY(e[1])} : ${e[2]}`,{size:10}));
   text('Compte un point par réponse juste, puis note ton score dans Néophyte (Exercices › Fiche papier).',{size:10,grey:1});
-  return doc.output('blob');
+  return K.finish();
 }
 /* cahiers thématiques à imprimer : une série d'un seul exercice, un coup de pouce, puis le corrigé */
 const CAHIERS={
@@ -2335,10 +2609,7 @@ function cahierData(kind){
 async function makeCahierPdf(C){
   const K=await pdfKit(), {text,lines,h}=K, c=CAHIERS[C.kind], L=i=>String.fromCharCode(97+i);
   const date=fd(new Date(),{day:'numeric',month:'long',year:'numeric'});
-  text('NÉOPHYTE',{size:9,font:'helvetica',style:'bold',grey:1,gap:.5});
-  text(c.t,{size:20,style:'bold',gap:1});
-  text(`${date} · Sans écran, sans IA, un stylo. Le corrigé est à la fin : ne le regarde qu'une fois tout fini.`,{size:10.5,grey:1,gap:1});
-  text(`Commencé à : ________     Fini à : ________     Score : ____ / ${c.n}`,{size:10.5,grey:1,gap:3});
+  await K.head(c.t,`${date} · Sans écran, sans IA, un stylo. Le corrigé est à la fin : ne le regarde qu'une fois tout fini.`,`Commencé à : ________     Fini à : ________     Score : ____ / ${c.n}`);
   if(C.kind==='probleme'){
     h('Problèmes — écris ta réponse et ton raisonnement');
     text("Méfie-toi de la première réponse qui vient : ces problèmes sont faits pour piéger l'intuition. Bloqué ? Le coup de pouce est avant le corrigé.",{size:10,grey:1,gap:3});
@@ -2368,7 +2639,7 @@ async function makeCahierPdf(C){
     K.page(); h('Corrigé'); C.items.forEach((ev,k)=>{text(`Frise ${k+1}`,{style:'bold',size:10});[...ev].sort((a,b)=>a[1]-b[1]||a[0].localeCompare(b[0])).forEach((e,i)=>text(`${i+1}. ${fmtY(e[1])} : ${e[2]}`,{size:10}));});
   }
   text(`Compte un point par réponse juste, puis note ton score dans Néophyte (Exercices › Fiche papier).`,{size:10,grey:1});
-  return K.doc.output('blob');
+  return K.finish();
 }
 // enregistre un fichier : par le service de téléchargement quand il existe, sinon téléchargement direct
 async function saveFile(name,blob){
@@ -2438,6 +2709,39 @@ function renderParcours(){
 }
 $('#pc-bilan').addEventListener('click',()=>{showTab('exercices');openEx('bilan');});
 
+/* ---------- quêtes du jour : trois petits objectifs, un bonus quand les trois sont faits ---------- */
+const PCT=ex=>EX[ex]&&/^%/.test(EX[ex].unit);
+const QUESTS={
+  seance:['Termine ta séance du jour',(k,d)=>routineFor(k,state.settings.minutes).every(x=>d.done[x.ex])],
+  sansfaute:['Réussis un exercice sans faute',k=>state.results.some(r=>r.d===k&&PCT(r.ex)&&r.s>=100)],
+  affilee:['Enchaîne 5 bonnes réponses d’affilée',(k,d)=>!!d.q5],
+  enigme:['Résous l’énigme du jour',(k,d)=>!!d.done.enigme],
+  record:['Bats un de tes records',k=>state.results.some(r=>r.d===k&&r.rec)],
+  ratt:['Rattrape une de tes erreurs',(k,d)=>(d.ratt||0)>0],
+  eclair:['Marque 12 points à l’Éclair',k=>state.results.some(r=>r.d===k&&r.ex==='eclair'&&r.s>=12)]
+};
+// la séance chaque jour, et deux autres tirées au sort avec la date : les mêmes toute la journée
+function questsOf(k){
+  // tirées une fois dans la journée puis gardées ; le rattrapage n'est proposé que s'il y a des erreurs à rattraper
+  const d=state.days[k]; if(d&&d.qs&&d.qs.every(q=>QUESTS[q]))return d.qs;
+  const r=seeded('neophyte-quetes-'+k), ok=q=>q!=='seance'&&(q!=='ratt'||(state.errs||[]).some(e=>e[2]<k)); // erreurs d'avant aujourd'hui : le tirage ne bouge pas dans la journée
+  const qs=['seance',...rshuf(r,Object.keys(QUESTS).filter(ok)).slice(0,2)]; if(d)d.qs=qs; return qs;
+}
+function questState(k=todayKey()){const d=state.days[k]||{done:{},habits:{}};return questsOf(k).map(q=>[q,QUESTS[q][0],!!QUESTS[q][1](k,d)]);}
+const QBONUS=15;
+function checkQuests(){
+  const k=todayKey(), d=day(k), qs=questState(k);
+  if(!d.qall&&qs.every(q=>q[2])){d.qall=1;save();
+    setTimeout(()=>{son('record');laurels();toast(`<span class="xp">+${QBONUS} XP</span><span>Les trois quêtes du jour sont faites</span>`);},900);}
+  renderQuests();
+}
+function renderQuests(){
+  const qs=questState(), n=qs.filter(q=>q[2]).length, box=$('#quests'); if(!box)return;
+  box.classList.toggle('all',n===3);
+  $('#quests-n').textContent=n===3?`Bonus de ${QBONUS} XP gagné`:`${n} / 3 · bonus de ${QBONUS} XP`;
+  $('#quests-list').replaceChildren(...qs.map(([,lab,ok])=>el('li',{class:ok?'ok':null},el('i',{text:ok?'✓':''}),el('span',{text:lab}))));
+}
+
 /* ---------- routine ---------- */
 // la séance du jour en tête d'écran : une seule chose à faire, un seul gros bouton
 function renderPlay(steps,d,nextEx){
@@ -2489,14 +2793,15 @@ function renderToday(){
     const act=e.manual?el('span',{class:'minutes',text:s.m+' min'}):el('div',{class:'row actions'},el('span',{class:'minutes',text:s.m+' min'}),el('button',{class:'btn',text:isDone?'Refaire':'Commencer',onclick:()=>{showTab('exercices');openEx(s.ex);}}));
     ol.append(el('li',{class:'step'+(isDone?' done':'')},tick,el('div',{class:'step-body'},el('span',{class:'step-title',text:e.name}),el('span',{class:'step-meta',text:e.skill+' · '+e.desc})),act));
   }
-  renderPlay(steps,d,nextEx);
+  renderPlay(steps,d,nextEx); renderQuests();
   renderEvent();
   const hb=$('#habits'); hb.replaceChildren();
   for(const[id,t,sub] of HABITS){
     const cb=el('input',{type:'checkbox',id:'h-'+id}); cb.checked=!!d.habits[id];
-    cb.addEventListener('change',()=>{d.habits[id]=cb.checked;save();renderProgress();});
+    cb.addEventListener('change',()=>{d.habits[id]=cb.checked;save();renderProgress();habitsCount();});
     hb.append(el('label',{class:'habit',for:'h-'+id},cb,el('span',{},document.createTextNode(t),el('small',{text:sub}))));
   }
+  habitsCount();
   const dayNum=Math.floor(new Date(k+'T12:00:00').getTime()/864e5), r=RULES[dayNum%RULES.length];
   $('#rule-title').textContent=r[0]; $('#rule-text').textContent=r[1];
   const wk=weekStart(k), wn=Math.floor(new Date(wk+'T12:00:00').getTime()/(7*864e5)), ch=CHALLENGES[wn%CHALLENGES.length], chDone=!!state.weeks[wk];
@@ -2542,6 +2847,7 @@ function applyFreezes(){
 // calibration : pour chaque confiance annoncée, la part de réponses justes
 function renderCalib(){
   const cs=state.calib||[], box=$('#calib'), sum=$('#calib-sum');
+  $('#calib-panel').hidden=!cs.length&&!confOn();
   if(!cs.length){box.replaceChildren(el('p',{class:'muted',text:"Pas encore de réponse avec confiance annoncée. Elle se demande dans « Trouve l'erreur de l'IA », le détecteur de sophismes et le problème du jour."}));sum.textContent='';return;}
   const tbl=el('table',{class:'week'}), head=el('tr');
   ['Tu annonces','Tu réussis','Réponses',''].forEach(h=>head.append(el('th',{text:h})));
@@ -2649,6 +2955,8 @@ $('#import-go').addEventListener('click',()=>{
   $('#import-msg').textContent=n?`Progrès fusionnés : ${n} exercice${n>1?'s':''} ajouté${n>1?'s':''}.`:'Progrès fusionnés : ces exercices étaient déjà là.';
 });
 $('#syncwarn-ok').addEventListener('click',()=>{try{sessionStorage.setItem('brainfit.later','1');}catch(e){}$('#syncwarn').hidden=true;});
+function openLogin(){$('#login').hidden=false;$('#login-ask').hidden=true;}
+$('#login-show').addEventListener('click',()=>{openLogin();$('#login-email').focus();});
 // compte Néophyte : e-mail et mot de passe, gardés par Supabase
 $('#login').addEventListener('submit',async e=>{
   e.preventDefault();
@@ -2697,6 +3005,7 @@ function xpByDay(){
   for(const[k,n] of Object.entries(fc))add(k,Math.min(3,n)*5);
   for(const ts of Object.values(state.weeks||{}))if(typeof ts==='number')add(iso(ts),50);
   for(const r of Object.values(state.reel||{}))if(r&&r.d)add(iso(r.d),50);
+  for(const[k,d] of Object.entries(state.days))if(d.qall)add(k,QBONUS);
   return m;
 }
 function xpTotal(m){let t=Object.values(m).reduce((a,b)=>a+b,0);for(const p of Object.values(state.prog||{}))t+=((p.lect||0)+(p.ecrit||0))*20;return t;}
@@ -2764,7 +3073,7 @@ function gami(silent){
   if(stage>(state.stage||1)){if(!silent)toast(`<span>Étape ${stage} du parcours : ${STAGES[stage-1][0]}<small>${STAGES[stage-1][1]}</small></span>`,'big');state.stage=stage;changed=true;setTimeout(renderToday,0);}
   const today=m[t]||0, d=state.days[t];
   if(today>=goal&&!(d&&d.goalHit)){day().goalHit=true;changed=true;if(!silent){toast(`<span>Objectif du jour atteint ! <small>${today} XP aujourd'hui. Ta série continue.</small></span>`,'big');confetti();stagJump();}}
-  if(level>(state.lastLevel||1)){if(!silent){toast(`<span>Niveau ${roman(level)} : ${levelName(level)}<small>${fmt(total)} XP au total.</small></span>`,'big');setTimeout(()=>stagSay('Niveau '+roman(level)+' ! Regarde mes bois : ils ont poussé.'),400);}state.lastLevel=level;changed=true;}
+  if(level>(state.lastLevel||1)){if(!silent)setTimeout(()=>antlerCeremony(level,total),600);state.lastLevel=level;changed=true;}
   state.badges=state.badges||{};
   for(const[id,name,desc,ok] of badgeDefs(gamiCtx))if(ok&&!state.badges[id]){state.badges[id]=Date.now();changed=true;if(!silent)toast(`<span>Badge débloqué : ${name}<small>${desc}</small></span>`);}
   if(changed)persist();
@@ -2772,7 +3081,117 @@ function gami(silent){
   if(!$('#v-progres').hidden)renderXpPanel();
 }
 // cerf vu de face, façon « rencontre de cerf » héraldique ; les bois grandissent avec le niveau
-function stagSVG(L,mood){
+/* ---------- le cerf suit les saisons et le calendrier liturgique ---------- */
+// date de Pâques (algorithme de Meeus, calendrier grégorien)
+function paques(y){const a=y%19,b=Math.floor(y/100),c=y%100,d=Math.floor(b/4),e=b%4,f=Math.floor((b+8)/25),g=Math.floor((b-f+1)/3),h=(19*a+b-d-g+15)%30,i=Math.floor(c/4),k=c%4,l=(32+2*e+2*i-h-k)%7,m=Math.floor((a+11*h+22*l)/451),mo=Math.floor((h+l-7*m+114)/31),da=(h+l-7*m+114)%31+1;return iso(new Date(y,mo-1,da));}
+function saison(k=todayKey()){
+  const y=+k.slice(0,4), md=k.slice(5), P=paques(y);
+  if(k>=addDays(P,-46)&&k<addDays(P,-7))return'careme';          // du mercredi des Cendres aux Rameaux
+  if(k>=addDays(P,-7)&&k<P)return'rameaux';                       // semaine sainte : le rameau
+  if(md>='12-24'||md<='01-06')return'noel';                       // de la veille de Noël à l'Épiphanie
+  if(md>='10-31'&&md<='11-08')return'toussaint';
+  if(md>='12-01'||md<='02-28')return'hiver';
+  if(md>='09-22'&&md<='11-30')return'automne';
+  return'';
+}
+const SAISON_SVG={
+  hiver:`<g class="acc"><path d="M38 70Q50 78 62 70L62.5 75.5Q50 83 37.5 75.5Z" fill="#8E2F2B"/><path d="M55 77l3 13 5-1-2-12.5z" fill="#7A2623"/><path d="M57 86.5l5-1M56.4 83.5l5-1" stroke="#B5524C" stroke-width="1"/></g>`,
+  careme:`<g class="acc"><path d="M38.5 70.5Q50 76 61.5 70.5L61 74Q50 79 39 74Z" fill="#5E3F86"/><path d="M41 74l-2.4 24h5.4l1.6-23z" fill="#5E3F86"/><path d="M59 74l2.4 24h-5.4l-1.6-23z" fill="#5E3F86"/><path d="M41.3 90h3M42.8 88.5v3M55.7 90h3M57.2 88.5v3" stroke="var(--gold-hi)" stroke-width="1.1"/></g>`,
+  rameaux:`<g class="acc" fill="#5B7A3A"><path d="M66 96Q72 80 80 70" fill="none" stroke="#5B7A3A" stroke-width="1.6"/><ellipse cx="70" cy="86" rx="5" ry="1.8" transform="rotate(-50 70 86)"/><ellipse cx="74" cy="80" rx="5" ry="1.8" transform="rotate(-40 74 80)"/><ellipse cx="77.5" cy="74.5" rx="4.5" ry="1.6" transform="rotate(-35 77.5 74.5)"/><ellipse cx="68" cy="81" rx="4.5" ry="1.6" transform="rotate(-80 68 81)"/><ellipse cx="72" cy="75" rx="4.2" ry="1.5" transform="rotate(-75 72 75)"/></g>`,
+  noel:`<g class="acc star"><path d="M50 6l2.2 5 5.3.5-4 3.6 1.2 5.3-4.7-2.8-4.7 2.8 1.2-5.3-4-3.6 5.3-.5z" fill="var(--gold)"/></g>`,
+  toussaint:`<g class="acc"><rect x="83" y="80" width="6" height="18" rx="1" fill="#F4EEDD" stroke="var(--line)" stroke-width=".6"/><path class="flamme" d="M86 70c2.4 3 2.6 6 0 8.5c-2.6-2.5-2.4-5.5 0-8.5z" fill="var(--gold)"/></g>`,
+  automne:`<g class="acc leaf" transform="translate(5 5)"><path d="M20 14c3-4 8-4 10 0c-1 1-1 2 0 3c-3 1-4 3-5 5c-2-2-4-2-6-1c1-2 1-4-1-5c1 0 2-1 2-2z" fill="#C0702E"/><path d="M21 19l7-4" stroke="#8A4A1C" stroke-width=".7"/></g>`
+};
+/* ---------- mon cerf : un nom, un pelage, des attributs gagnés ---------- */
+const PELAGES={
+  fauve:['Fauve',null],
+  roux:['Roux',{'--stag':'#B8643A','--stag-deep':'#94482A','--stag-light':'#F6E2CF'}],
+  brun:['Brun',{'--stag':'#7E5634','--stag-deep':'#5E3E24','--stag-light':'#E9D6BE'}],
+  cendre:['Cendré',{'--stag':'#9A8E80','--stag-deep':'#776B5E','--stag-light':'#EFEAE2'}],
+  blanc:['Blanc',{'--stag':'#EDE6DA','--stag-deep':'#D2C7B6','--stag-light':'#FFFFFF','--antler':'#B49A6E'},'Atteindre le niveau V : le cerf blanc des légendes',c=>c.level>=5]
+};
+// trois paliers par attribut : le dessin s'enrichit, puis se dore
+const ATTRS=[
+  // id, nom, unité, seuils des 3 paliers, compteur, dessin(palier)
+  ['plume','La plume','textes écrits sans IA',[15,50,150],()=>state.results.filter(r=>r.ex==='write').length,g=>{
+    const f=g>=3?'#E9C766':'#F6F0E2', st=g>=3?'#9A7420':'#8A7A5A';
+    return `<g class="acc"><path d="M66 50Q76 37 89 25Q85 41 69 51Z" fill="${f}" stroke="${st}" stroke-width=".7"/><path d="M66.5 51L87 27.5" stroke="${st}" stroke-width=".7"/>`+
+      (g>=2?`<path d="M71 45.5l3.6-1.2M74 41.8l3.8-1M77 38.2l3.6-.9M80 34.6l3.2-.7M70.6 48.4l-1.4 3.4" stroke="${st}" stroke-width=".5" fill="none"/><path d="M66.5 51l-1.6 2.4" stroke="#1E2A5A" stroke-width="1.6" stroke-linecap="round"/>`:'')+'</g>';}],
+  ['lunettes','Les lunettes','lectures (chronométrées ou profondes)',[15,50,150],()=>state.results.filter(r=>r.ex==='lecture').length+Object.values(state.days).filter(d=>d.done&&d.done.read).length,g=>{
+    const c=g>=2?'#A8822A':'#3A2A1A';
+    return `<g class="acc" fill="none" stroke="${c}" stroke-width="${g>=2?1.4:1.2}"><circle cx="43.5" cy="52" r="4.8" fill="rgba(255,255,255,.18)"/><circle cx="56.5" cy="52" r="4.8" fill="rgba(255,255,255,.18)"/><path d="M48.3 51.4q1.7-1.5 3.4 0M38.7 51l-3.2-1.6M61.3 51l3.2-1.6"/>`+
+      (g>=3?`<path d="M61.6 53.5q3 9 -1 17" stroke="#C9A440" stroke-width=".7" stroke-dasharray="1.2 .8"/>`:'')+'</g>';}],
+  ['lanterne','La lanterne','séances hors écran',[10,40,100],()=>offlineCount(),g=>{
+    const m=g>=2?'#A8822A':'#3A2A1A';
+    return `<g class="acc lant">`+(g>=3?`<circle cx="85" cy="84.5" r="10" fill="#F6D98A" opacity=".35"/>`:'')+`<path d="M85 74v-3" stroke="${m}" stroke-width="1"/><path d="M79.5 78h11l-2-3.5h-7z" fill="${m}"/><rect x="80.5" y="78" width="9" height="13" rx="1.6" fill="#F6D98A" stroke="${m}" stroke-width="1"/>`+
+      (g>=2?`<path d="M83 78v13M87 78v13" stroke="${m}" stroke-width=".5"/>`:'')+`<path class="flamme" d="M85 80.5c1.5 2 1.7 3.7 0 5.2c-1.7-1.5-1.5-3.2 0-5.2z" fill="#E08A2A"/><rect x="79.8" y="91" width="10.4" height="2.4" fill="${m}"/></g>`;}],
+  ['livre','Le livre','citations dans ton florilège',[20,60,150],()=>Object.keys(state.flori||{}).length,g=>{
+    const cv=g>=3?'#A8822A':g>=2?'#8E2F2B':'#5A4630', pg=g>=3?'#FBF3DC':'#F6F0E2';
+    return `<g class="acc" stroke="${cv}" stroke-width="${g>=2?1.1:.8}"><path d="M8 88q6-3.4 11 0v9q-5-3.4-11 0z" fill="${pg}"/><path d="M19 88q5-3.4 11 0v9q-6-3.4-11 0z" fill="${pg}"/><path d="M10 90.5q4-1.6 7.5 0M10 93q4-1.6 7.5 0M21 90.5q4-1.6 7.5 0M21 93q4-1.6 7.5 0" fill="none" stroke-width=".5"/>`+
+      (g>=2?`<path d="M23 88.6v8.6l1.4-1.4 1.4 1.4v-8.6" fill="#8E2F2B" stroke="none"/>`:'')+'</g>';}],
+  ['laurier','La couronne de laurier','jours de série (meilleure)',[30,100,365],()=>gamiCtx.best||0,g=>{
+    const c=g>=3?'#C9A440':'#5B7A3A', n=g>=2?7:5; let o=`<g class="acc" fill="${c}">`;
+    for(const sd of[-1,1])for(let i=0;i<n;i++){const x=(50+sd*(3.6+i*(14.5/n))).toFixed(1), y=(35+i*i*(10/(n*n))*1.7).toFixed(1);o+=`<ellipse cx="${x}" cy="${y}" rx="${n>5?2.9:3.3}" ry="1.4" transform="rotate(${sd*(8+i*(52/n))} ${x} ${y})"/>`;}
+    return o+`<circle cx="50" cy="34.6" r="1.3" fill="${g>=3?'#8E2F2B':'#8C6A2C'}"/></g>`;}]
+];
+// le palier atteint (0 à 3) et la suite
+const attrGrade=a=>{const n=a[4]();return a[3].filter(t=>n>=t).length;};
+const cerf=()=>{const c=state.cerf||(state.cerf={nom:'',pel:'fauve',port:[]});c.port=c.port||[];if(Array.isArray(c.won)||!c.won)c.won={};return c;};
+// la forme partageable du cerf (cercle, icône) : pelage, niveau, attributs portés avec leur palier
+function cerfShape(){const c=cerf(), a={};for(const x of ATTRS){const g=attrGrade(x);if(g&&c.port.includes(x[0]))a[x[0]]=g;}
+  const p=PELAGES[c.pel]; return{p:p&&(!p[3]||p[3](gamiCtx))?c.pel:'fauve',a,l:gamiCtx.level||1};}
+function cerfStyle(sh){const p=PELAGES[(sh||cerfShape()).p]; return p&&p[1]?Object.entries(p[1]).map(([k,v])=>k+':'+v).join(';'):'';}
+function cerfAcc(sh){
+  const a=(sh||cerfShape()).a||{}; let o='';
+  for(const x of ATTRS){const g=+a[x[0]]; if(!(g>=1&&g<=3))continue; if(x[0]==='lanterne'&&saison()==='toussaint')continue; o+=x[5](g);}
+  return o;
+}
+// un palier tout juste franchi : le cerf le porte aussitôt et le dit
+function checkAttrs(){
+  const c=cerf(); let nu=null;
+  for(const a of ATTRS){const g=attrGrade(a);if(g>(c.won[a[0]]||0)){c.won[a[0]]=g;if(!c.port.includes(a[0]))c.port.push(a[0]);nu=[a,g];}}
+  if(nu){persist();stagKey='';cerfIcon();}
+  if(nu&&state.results.length>1)toast(`<span>${nu[1]>1?'Ton cerf passe au palier '+roman(nu[1])+' : ':'Ton cerf a gagné '}${nu[0][1].toLowerCase()}</span><span class="note">Réglages · Mon cerf</span>`);
+  return nu;
+}
+function renderCerf(){
+  const c=cerf();
+  $('#mc-stag').innerHTML=stagSVG(gamiCtx.level||1,'proud');
+  if(document.activeElement!==$('#mc-name'))$('#mc-name').value=c.nom||'';
+  $('#mc-icon').setAttribute('aria-pressed',String(!!c.icon)); $('#mc-icon').textContent=c.icon?'Icône : ton cerf':'Faire de mon cerf l’icône';
+  $('#mc-pel').replaceChildren(...Object.entries(PELAGES).map(([k,p])=>{const ok=!p[3]||p[3](gamiCtx);
+    return el('button',{'aria-pressed':String(c.pel===k),disabled:ok?null:'',title:ok?p[0]:p[2],style:'--sw:'+((p[1]||{})['--stag']||'#B07D4E'),onclick:()=>{c.pel=k;save();stagKey='';renderStag();renderCerf();cerfIcon();}},el('i',{class:'sw'}),document.createTextNode(p[0]+(ok?'':' · niveau V')));}));
+  $('#mc-attrs').replaceChildren(...ATTRS.map(a=>{const n=a[4](), g=attrGrade(a), nx=a[3][g], prev=g?a[3][g-1]:0, on=g&&c.port.includes(a[0]);
+    const pips=el('span',{class:'pips3','aria-label':`Palier ${g} sur 3`},...[1,2,3].map(i=>el('i',{class:i<=g?'on g'+i:''})));
+    return el('li',{class:g?'':'locked'},el('span',{class:'stag mini','aria-hidden':'true',html:attrIcon(a,Math.max(1,g))}),
+      el('div',{},el('b',{},document.createTextNode(a[1]),pips),
+        el('span',{class:'note',text:nx?`${g?'Palier suivant':'Premier palier'} : ${fmt(nx)} ${a[2]} · ${fmt(n)} sur ${fmt(nx)}`:`Palier d’or : ${fmt(n)} ${a[2]}`}),
+        nx?el('span',{class:'mini-bar'},el('i',{style:`width:${Math.min(100,(n-prev)/(nx-prev)*100)}%`})):null),
+      g?el('button',{class:'btn mini'+(on?' gold':''),'aria-pressed':String(on),text:on?'Porté':'Porter',onclick:()=>{c.port=on?c.port.filter(x=>x!==a[0]):[...c.port,a[0]];save();stagKey='';renderStag();renderCerf();cerfIcon();}}):el('span',{class:'note',text:'À gagner'}));}));
+}
+const attrIcon=(a,g)=>`<svg viewBox="${a[0]==='plume'?'60 20 34 34':a[0]==='lunettes'?'32 40 36 24':a[0]==='lanterne'?'72 66 26 30':a[0]==='livre'?'4 80 30 20':'34 26 32 18'}">${a[5](g)}</svg>`;
+// le cerf en image : les couleurs du thème résolues, pour l'icône de l'appli
+function stagImage(sh,size){
+  const cs=getComputedStyle(document.documentElement), pel=(PELAGES[sh.p]||[])[1]||{};
+  const svg=stagSVG(sh.l,'idle',sh).replace(/ style="[^"]*"/,'').replace(/var\((--[a-z-]+)\)/g,(m,k)=>pel[k]||cs.getPropertyValue(k).trim()||'#4A3018');
+  return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${size} ${size}"><rect width="${size}" height="${size}" rx="${size*.22}" fill="#FBF7EE"/><svg x="${size*.06}" y="${size*.08}" width="${size*.88}" height="${size*.88}" viewBox="0 0 100 100">${svg.replace(/^<svg[^>]*>/,'').replace(/<\/svg>\s*$/,'')}</svg></svg>`;
+}
+let iconUrl=null, iconTried=false;
+function cerfIcon(){
+  const c=cerf(); if(!c.icon)return;
+  try{
+    const src=stagImage(cerfShape(),180), url='data:image/svg+xml;charset=utf-8,'+encodeURIComponent(src);
+    document.querySelectorAll('link[rel="icon"]').forEach(l=>{l.href=url;l.type='image/svg+xml';});
+    // l'icône d'écran d'accueil de l'iPhone veut une image PNG
+    const img=new Image(); img.onload=()=>{try{const cv=document.createElement('canvas');cv.width=cv.height=180;cv.getContext('2d').drawImage(img,0,0,180,180);const png=cv.toDataURL('image/png');const t=document.querySelector('link[rel="apple-touch-icon"]');if(t)t.href=png;iconUrl=png;}catch(e){}}; img.src=url;
+  }catch(e){}
+}
+$('#mc-icon').addEventListener('click',()=>{const c=cerf();c.icon=!c.icon;save();renderCerf();
+  if(c.icon){cerfIcon();toast('<span>Ton cerf devient l’icône. Sur iPhone : Partager, puis « Sur l’écran d’accueil ».</span>');}
+  else{document.querySelector('link[rel="icon"][type="image/svg+xml"]').href='icon.svg';const pn=document.querySelector('link[rel="icon"][sizes]');if(pn)pn.href='icon-192.png';document.querySelector('link[rel="apple-touch-icon"]').href='icon-180.png';}});
+$('#mc-name-f').addEventListener('submit',e=>{e.preventDefault();cerf().nom=$('#mc-name').value.trim().slice(0,20);save();renderCerf();
+  const n=cerf().nom;$('#stag').setAttribute('aria-label',(n||'Ton cerf')+' : touche-le pour qu’il te parle');toast(`<span>${n?'Ton cerf s’appelle désormais '+n.replace(/[<&]/g,'')+'.':'Nom effacé.'}</span>`);});
+function stagSVG(L,mood,sh){
   const f=n=>n.toFixed(1), s=Math.min(1,.5+.05*L), tines=Math.min(6,1+Math.floor(L/2));
   const bez=(p,t)=>{const u=1-t;return[0,1].map(i=>u*u*u*p[0][i]+3*u*u*t*p[1][i]+3*u*t*t*p[2][i]+t*t*t*p[3][i]);};
   let ant='';
@@ -2792,7 +3211,8 @@ function stagSVG(L,mood){
   const brows=mood==='worried'?`<path d="M40 47.5l6 1.6M60 47.5l-6 1.6" stroke="var(--stag-dark)" stroke-width="1.4" stroke-linecap="round"/>`:'';
   const extra=mood==='sleepy'?`<g class="zz" fill="var(--muted)" font-family="var(--f-body)" font-style="italic"><text x="70" y="40" font-size="9">z</text><text x="77" y="31" font-size="7">z</text></g>`
     :mood==='proud'?`<g class="spark" fill="var(--gold)"><path d="M14 30l1.5 3.5 3.5 1.5-3.5 1.5-1.5 3.5-1.5-3.5-3.5-1.5 3.5-1.5z"/><path d="M86 22l1.2 2.8 2.8 1.2-2.8 1.2-1.2 2.8-1.2-2.8-2.8-1.2 2.8-1.2z"/></g>`:'';
-  return `<svg viewBox="0 0 100 100" aria-hidden="true">
+  const cs=cerfStyle(sh);
+  return `<svg viewBox="0 0 100 100" aria-hidden="true"${cs?` style="${cs}"`:''}>
 <g class="antlers" fill="none" stroke="var(--antler)" stroke-width="3.4" stroke-linecap="round">${ant}</g>
 <path d="M39 72C36 84 28 92 16 100H84C72 92 64 84 61 72Z" fill="var(--stag-deep)"/>
 <path d="M44 80C44 88 46 94 50 100C54 94 56 88 56 80Z" fill="var(--stag-light)"/>
@@ -2802,7 +3222,7 @@ function stagSVG(L,mood){
 <path d="M50 38C53 38 54 42 53 46C52 50 51 52 50 52C49 52 48 50 47 46C46 42 47 38 50 38Z" fill="var(--stag-light)" opacity=".55"/>
 <ellipse cx="50" cy="75" rx="6.2" ry="7" fill="var(--stag-light)"/>
 <ellipse cx="50" cy="79" rx="4.4" ry="2.9" fill="var(--stag-dark)"/>
-${eye(43.5)}${eye(56.5)}${brows}${extra}
+${eye(43.5)}${eye(56.5)}${brows}${extra}${SAISON_SVG[saison()]||''}${cerfAcc(sh)}
 </svg>`;
 }
 let stagKey='', stagI=0, stagTimer=null;
@@ -2814,8 +3234,23 @@ function stagMood(){
   return'idle';
 }
 function renderStag(){
-  const L=gamiCtx.level, m=stagMood(), k=L+m; if(k===stagKey)return; stagKey=k;
+  const L=gamiCtx.level, m=stagMood(), k=L+m+saison(); if(k===stagKey)return; stagKey=k;
   $('#stag').innerHTML=stagSVG(L,m);
+}
+// passage de niveau : les anciens bois s'effacent pendant que la nouvelle ramure se dessine
+function antlerCeremony(L,total){
+  if(document.querySelector('.ceremony'))return;
+  const old=stagSVG(Math.max(1,L-1),'proud'), nu=stagSVG(L,'proud');
+  const grow=nu.match(/<g class="antlers"[^>]*>([\s\S]*?)<\/g>/)[1].replace(/<path /g,'<path pathLength="1" ');
+  const svg=old.replace('<g class="antlers"','<g class="antlers grow" fill="none" stroke="var(--antler)" stroke-width="3.4" stroke-linecap="round">'+grow+'</g><g class="antlers old"');
+  const close=()=>{box.classList.add('out');setTimeout(()=>box.remove(),300);stagKey='';renderStag();};
+  const box=el('div',{class:'ceremony',role:'dialog','aria-modal':'true','aria-label':'Nouveau niveau',onclick:e=>{if(e.target===box)close();}},
+    el('div',{class:'cer-card'},el('span',{class:'stag cer-stag',html:svg}),
+      el('span',{class:'label',text:'Nouveau niveau'}),el('h2',{text:`Niveau ${roman(L)} : ${levelName(L)}`}),
+      el('p',{class:'fg2',text:`${fmt(total)} XP au total. Tes bois ont gagné un andouiller.`}),
+      el('button',{class:'btn primary',text:'Continuer',onclick:close})));
+  document.body.append(box); son('niveau'); setTimeout(()=>{laurels();},900);
+  setTimeout(()=>box.querySelector('.btn').focus(),50);
 }
 function stagJump(){const b=$('#stag');b.classList.remove('joy');void b.offsetWidth;b.classList.add('joy');}
 // le cerf ailleurs dans l'appli : une humeur, une phrase
@@ -2840,7 +3275,9 @@ function stagLines(){
   const t=todayKey(), d=state.days[t]||{}, goal=state.settings.xpGoal||60, xp=gamiCtx.xp[t]||0, cur=streaks().cur, L=gamiCtx.level;
   const due=floriDue().length, steps=(due||(d.done||{}).citations?[{ex:'citations'}]:[]).concat(routineFor(t,state.settings.minutes)), next=steps.find(s=>!(d.done||{})[s.ex]), tines=Math.min(6,1+Math.floor(L/2));
   const pool=Object.keys(state.flori||{}).map(id=>QBY[id]).filter(Boolean), q=pool.length?pick(pool):quoteOfDay(t,0), r=RULES[Math.floor(Date.now()/864e5)%RULES.length];
+  const nom=cerf().nom;
   return[
+    ...(nom&&stagI===0?[`C'est moi, ${nom}. Touche-moi encore, j'ai des choses à te dire.`]:[]),
     d.goalHit?`Objectif du jour atteint, ${xp} XP. Je suis fier de toi.`:`Encore ${goal-xp} XP pour l'objectif du jour.`+(next?` Prochaine étape : ${EX[next.ex].name}.`:''),
     cur>0?`${cur} jour${cur>1?'s':''} d'affilée. Un cerf ne recule pas.`:"Une seule étape aujourd'hui suffit pour relancer ta série.",
     due?`${due} citation${due>1?'s':''} à revoir dans ton florilège.`:`« ${q.q} » (${q.a})`,
@@ -2854,7 +3291,7 @@ function stagLines(){
 $('#stag').addEventListener('click',()=>{stagJump();const ls=stagLines();stagSay(ls[stagI++%ls.length]);});
 $('#stag-bubble').addEventListener('click',e=>{e.currentTarget.hidden=true;});
 function renderHud(){
-  renderStag();
+  checkAttrs(); if(!iconTried){iconTried=true;cerfIcon();} renderStag();
   const t=todayKey(), goal=state.settings.xpGoal||60, today=gamiCtx.xp[t]||0, L=gamiCtx.level;
   $('#xp-today').textContent=today; $('#xp-goal').textContent='/ '+goal+' XP';
   $('#ring-fg').setAttribute('stroke-dasharray',Math.min(100,today/goal*100)+' 100');
@@ -3193,6 +3630,12 @@ function renderProgram(){
     row('2 lectures intensives','30 minutes ou plus, livre ou article long, téléphone ailleurs. Clique un rond quand c’est fait.',dots(pr.lect||0,2,'lect')),
     row('1 séance d’écriture longue','30 minutes sur un sujet qui te tient à cœur, sans aucune aide. Ensuite, avis du coach.',dots(pr.ecrit||0,1,'ecrit')));
   const n=day().talks||0; $('#talk-n').textContent=n+'/3'; $('#talk-n').style.color=n>=3?'var(--good)':'';
+  habitsCount();
+}
+// le pli des habitudes résume la journée en une ligne
+function habitsCount(){
+  const d=state.days[todayKey()]||{}, h=HABITS.filter(x=>(d.habits||{})[x[0]]).length, t=d.talks||0;
+  $('#habits-n').textContent=`${h} sur ${HABITS.length}`+(t?` · ${t} discussion${t>1?'s':''}`:'');
 }
 $('#talk-plus').addEventListener('click',()=>{const d=day();d.talks=Math.min(9,(d.talks||0)+1);save();renderProgram();});
 $('#talk-minus').addEventListener('click',()=>{const d=day();d.talks=Math.max(0,(d.talks||0)-1);save();renderProgram();});
@@ -3267,6 +3710,7 @@ sasUpdate();
 
 const TABS=['aujourdhui','classement','exercices','coach','progres','conseils','reglages'];
 function showTab(t){
+  if(t==='retours'){t='reglages';renderRetours(true);}
   if(t==='exercices'&&$('#stage').hidden)$('#exgrid').hidden=false;
   if(!TABS.includes(t))t='aujourdhui';
   $$('.tabs button').forEach(b=>b.setAttribute('aria-selected',String(b.dataset.tab===t)));
@@ -3275,14 +3719,17 @@ function showTab(t){
   if(t==='conseils'||t==='reglages')$('#go-'+(t==='conseils'?'biblio':'settings')).setAttribute('aria-current','page');
   if(t==='progres'){renderProgress();renderCarnet();renderXpPanel();renderScreenChart();}
   if(t==='classement')renderCircle();
-  if(t==='reglages')$('#city-in').value=city();
+  if(t==='reglages'){$('#city-in').value=city();renderRetours();renderCerf();}
   if(t==='coach'){renderSas();renderCoach();renderWeekBilan();renderTutor();}
   if(location.hash!=='#'+t)try{history.replaceState(null,'','#'+t);}catch(e){}
 }
 $('#city-form').addEventListener('submit',e=>{e.preventDefault();state.settings.city=$('#city-in').value.trim().slice(0,60);save();renderReel();toast('<span>Ville enregistrée.</span>');});
 $('#go-biblio').addEventListener('click',()=>{showTab('conseils');window.scrollTo(0,0);});
 $('#go-settings').addEventListener('click',()=>{showTab('reglages');window.scrollTo(0,0);});
-$('#login-open').addEventListener('click',()=>{try{sessionStorage.removeItem('brainfit.later');}catch(e){}$('#syncwarn').hidden=false;showTab('aujourdhui');window.scrollTo(0,0);$('#login-email').focus();});
+// le bouton « Signaler un problème » reste visible pendant la phase de test (BF_CONFIG.retours dans config.js)
+$('#go-report').hidden=!window.bfRetour||!(window.BF_CONFIG||{}).retours;
+$('#go-report').addEventListener('click',openReport);
+$('#login-open').addEventListener('click',()=>{try{sessionStorage.removeItem('brainfit.later');}catch(e){}$('#syncwarn').hidden=false;openLogin();showTab('aujourdhui');window.scrollTo(0,0);$('#login-email').focus();});
 $$('.tabs button').forEach(b=>b.addEventListener('click',()=>{const same=b.getAttribute('aria-selected')==='true';showTab(b.dataset.tab);if(!same)window.scrollTo(0,0);}));
 window.addEventListener('hashchange',()=>showTab(location.hash.slice(1)));
 
@@ -3290,6 +3737,7 @@ window.addEventListener('hashchange',()=>showTab(location.hash.slice(1)));
 // les familles d'exercices, de la plus importante à la plus légère
 const EXFAM=[
   ['Écrire',"Le cœur de l'entraînement : penser en écrivant, sans aide.",['write','ortho','dictee']],
+  ['Défis',"Une énigme commune à tous chaque jour, et un sprint contre ton propre record.",['enigme','eclair','rattrapage']],
   ['Raisonner',"Débusquer l'erreur, le sophisme et la réponse trop rapide.",['probleme','erreuria','sophismes','graphe','hypotheses','fermi']],
   ['Lire et retenir',"Lire vraiment, puis garder en mémoire ce qui compte.",['lecture','citations','chrono']],
   ['Hors écran',"Le papier et le silence : là où l'attention se reforme.",['fiche','focus']],
@@ -3304,8 +3752,15 @@ function renderExGrid(){
   // un exercice ajouté sans famille rejoint les échauffements plutôt que de disparaître
   const rest=Object.keys(EX).filter(k=>!EX[k].manual&&!EX[k].hidden&&!fams.some(f=>f[2].includes(k)));
   fams[fams.length-1][2].push(...rest);
-  g.replaceChildren(...fams.filter(f=>f[2].length).map(([t,d,keys])=>el('section',{class:'exgroup'},
-    el('div',{class:'exgroup-head'},el('h2',{text:t}),el('p',{class:'muted note',text:d})),el('div',{class:'cards'},...keys.map(card)))));
+  // une seule famille ouverte au départ ; on retient celles que tu ouvres
+  let op=null; try{op=JSON.parse(localStorage.getItem('neo.exopen')||'null');}catch(e){}
+  const shown=fams.filter(f=>f[2].length); if(!Array.isArray(op))op=[shown[0][0]];
+  g.replaceChildren(...shown.map(([t,d,keys])=>{
+    const nd=keys.filter(k=>day().done[k]).length;
+    const det=el('details',{class:'exgroup',open:op.includes(t)?'':null},
+      el('summary',{class:'exgroup-head'},el('h2',{text:t}),el('p',{class:'muted note',text:d+' · '+keys.length+' exercice'+(keys.length>1?'s':'')+(nd?' · '+nd+' fait'+(nd>1?'s':'')+' aujourd’hui':'')})),el('div',{class:'cards'},...keys.map(card)));
+    det.addEventListener('toggle',()=>{const o=$$('#exgrid details.exgroup').filter(x=>x.open).map(x=>x.querySelector('h2').textContent);try{localStorage.setItem('neo.exopen',JSON.stringify(o));}catch(e){}});
+    return det;}));
 }
 // tirage sans lassitude : les questions les moins récemment vues passent en premier
 // ex : l'exercice dont le niveau oriente le tirage ; à fraîcheur égale, les questions de ton niveau passent devant
@@ -3347,11 +3802,11 @@ function precisCheck(src,text){
 function chartSVG(g){
   const W=340, H=220, L=44, R=g.s.some(x=>x.axe==='d')?44:12, T=14, B=34, w=W-L-R, h=H-T-B;
   const cut=a=>g.fenetre?a.slice(g.fenetre[0],g.fenetre[1]+1):a, cum=a=>{let t=0;return a.map(v=>t+=v);};
-  const xs=cut(g.x), xn=g.xnum?cut(g.xnum):null, ser=g.s.map(x=>({...x,v:cut(g.cumul?cum(x.v):x.v)}));
+  const ck=g.cumul===true?1:+g.cumul||0, xs=cut(g.x), xn=g.xnum?cut(g.xnum):null, ser=g.s.map(x=>({...x,v:cut(ck?cum(x.v).map((c,i)=>x.v[i]+(c-x.v[i])*ck):x.v)}));
   const nice=st=>{const p=Math.pow(10,Math.floor(Math.log10(st))),k=st/p;return(k<=1?1:k<=2?2:k<=2.5?2.5:k<=5?5:10)*p;};
   const scale=(a,b)=>{const st=nice((b-a)/4);return{a,b,st,y:v=>T+h-(v-a)/(b-a)*h};};
   const S1=scale(g.ymin,g.ymax), S2=g.ymax2!=null?scale(g.ymin2,g.ymax2):null;
-  const n=xs.length, px=i=>g.type==='barres'?L+w*(i+.5)/n:xn&&g.prop?L+12+(w-24)*(xn[i]-xn[0])/(xn[n-1]-xn[0]):L+12+(w-24)*(n>1?i/(n-1):.5);
+  const pk=g.prop===true?1:+g.prop||0, n=xs.length, px=i=>{if(g.type==='barres')return L+w*(i+.5)/n;const reg=L+12+(w-24)*(n>1?i/(n-1):.5);return xn&&pk?reg+(L+12+(w-24)*(xn[i]-xn[0])/(xn[n-1]-xn[0])-reg)*pk:reg;};
   const f=v=>fmt(Math.round(v*100)/100+0), esc=t=>String(t).replace(/&/g,'&amp;').replace(/</g,'&lt;');
   let o=`<svg viewBox="0 0 ${W} ${H}" class="chart" role="img" aria-label="${esc(g.titre)}">`;
   const ticks=(Sc,side)=>{for(let v=Math.ceil(Sc.a/Sc.st-1e-9)*Sc.st;v<=Sc.b+1e-9;v+=Sc.st){const y=Sc.y(v);if(side==='g')o+=`<line x1="${L}" x2="${W-R}" y1="${y}" y2="${y}" class="grid"/>`;o+=`<text x="${side==='g'?L-6:W-R+6}" y="${y+4}" text-anchor="${side==='g'?'end':'start'}" class="${side==='d'?'tk s1':'tk'}">${f(v)}</text>`;}};
@@ -3365,10 +3820,31 @@ function chartSVG(g){
   let lastX=-1e9; xs.forEach((t,i)=>{const x=px(i);if(x-lastX<String(t).length*6+6)return;lastX=x;o+=`<text x="${x}" y="${H-B+16}" text-anchor="middle" class="tk">${esc(t)}</text>`;});
   return o+'</svg>';
 }
+// le piège redressé à la main : t va de 0 (le graphique trompeur) à 1 (la version honnête)
+function chartAt(g,t){
+  const c=g.corr, lp=(a,b)=>a+(b-a)*t, o=Object.assign({},g);
+  if(c.ymin!=null)o.ymin=lp(g.ymin,c.ymin); if(c.ymax!=null)o.ymax=lp(g.ymax,c.ymax);
+  if(c.s)o.s=g.s.map((x,k)=>({...x,v:x.v.map((v,i)=>lp(v,c.s[k].v[i]))}));
+  if(c.cumul===false)o.cumul=1-t; if(c.prop)o.prop=t;
+  if(c.fenetre===null&&g.fenetre){const N=g.x.length-1;o.fenetre=[Math.round(g.fenetre[0]*(1-t)),Math.round(lp(g.fenetre[1],N))];}
+  if(t>=.5){if(c.unite)o.unite=c.unite;if(c.legende!==undefined)o.legende=c.legende;}
+  return o;
+}
+function chartFix(card,g,onDone){
+  const svg=card.querySelector('div'), cap=card.querySelector('figcaption'), title=g.corr.titre||'Les mêmes chiffres, montrés honnêtement';
+  const r=el('input',{type:'range',min:'0',max:'100',value:'0',class:'fixrange','aria-label':'Redresser le graphique'});
+  let done=false;
+  r.addEventListener('input',()=>{const t=+r.value/100, o=chartAt(g,t);
+    svg.innerHTML=chartSVG(o); svg.firstChild.classList.add('still');
+    cap.replaceChildren(el('strong',{text:t>=.98?title:g.titre}),o.unite?el('span',{class:'note',text:o.unite}):null);
+    card.classList.toggle('fixed',t>=.98);
+    if(t>=.98&&!done){done=true;son('juste');if(onDone)onDone();}});
+  return el('div',{class:'fixbox'},el('span',{class:'label',text:'À toi : redresse-le'}),r,el('div',{class:'row spread note'},el('span',{text:'le piège'}),el('span',{text:'la vérité'})));
+}
 function chartCard(g){
-  const leg=g.s.length>1?el('div',{class:'chart-leg'},...g.s.map((x,k)=>el('span',{class:'s'+k,text:x.nom+(x.axe==='d'?' (axe de droite)':' (axe de gauche)')}))):null;
+  const leg=g.s.length>1?el('div',{class:'chart-leg'},...g.s.map((x,k)=>el('span',{class:'s'+k,text:x.nom+(g.s.some(y=>y.axe==='d')?(x.axe==='d'?' (axe de droite)':' (axe de gauche)'):'')}))):null;
   const c=el('figure',{class:'chartcard'},el('figcaption',{},el('strong',{text:g.titre}),g.unite?el('span',{class:'note',text:g.unite}):null),leg,el('div',{html:chartSVG(g)}));
-  c.append(el('span',{class:'note',text:(g.legende?g.legende+' ':'')+'Données fictives, pour l’exercice.'}));
+  c.append(el('span',{class:'note',text:(g.legende?g.legende+' ':'')+(g.reel?'Source : '+g.src+'.':'Données fictives, pour l’exercice.')}));
   return c;
 }
 /* ---------- sophismes : des leurres qui ne soient pas aussi de bonnes réponses ---------- */
@@ -3376,6 +3852,69 @@ const VALABLE='Argument valable', FAM=new Map(Object.entries(NB.familles).flatMa
 function fallacyOptions(right,n){
   const near=x=>FAM.has(right)&&FAM.get(x)===FAM.get(right);
   return [...new Set(NB.sophismes.filter(s=>!s.retire).map(s=>s.nom))].filter(x=>x!==right&&x!==VALABLE&&!near(x)).sort(()=>Math.random()-.5).slice(0,n);
+}
+/* ---------- questions éclair : une question courte tirée des banques, avec un tirage reproductible ---------- */
+// générateur pseudo-aléatoire à graine : la même date donne la même énigme à tout le monde
+const seeded=str=>{let h=1779033703^str.length;for(let i=0;i<str.length;i++){h=Math.imul(h^str.charCodeAt(i),3432918353);h=h<<13|h>>>19;}
+  return()=>{h=Math.imul(h^h>>>16,2246822507);h=Math.imul(h^h>>>13,3266489909);h^=h>>>16;return(h>>>0)/4294967296;};};
+const rpick=(r,a)=>a[Math.floor(r()*a.length)], rshuf=(r,a)=>{a=[...a];for(let i=a.length-1;i>0;i--){const j=Math.floor(r()*(i+1));[a[i],a[j]]=[a[j],a[i]];}return a;};
+// un tirage dans une banque, en visant un niveau (1 à 3) quand la banque en a
+const rniv=(r,bank,niv)=>{const ok=bank.filter(x=>!x.retire), lv=niv?ok.filter(x=>x.niv===niv):[];return rpick(r,lv.length?lv:ok);};
+const qOrtho=(r,o)=>({kind:'Orthographe',quote:o.phrase,prompt:'Quelle forme ?',opts:o.choix,right:o.bonne,why:o.regle,src:['ortho',o.id]});
+function qSoph(r,s){
+  const near=x=>FAM.has(s.nom)&&FAM.get(x)===FAM.get(s.nom);
+  const pool=[...new Set(NB.sophismes.filter(x=>!x.retire).map(x=>x.nom))].filter(x=>x!==s.nom&&x!==VALABLE&&!near(x)).sort();
+  const opts=rshuf(r,[s.nom,...rshuf(r,pool).slice(0,s.nom===VALABLE?3:2)]).concat(s.nom===VALABLE?[]:[VALABLE]);
+  return{kind:'Sophisme',quote:'« '+s.arg+' »',prompt:'Quelle faille ?',opts,right:opts.indexOf(s.nom),why:s.expl,src:['soph',s.id]};
+}
+const evKey=e=>e[1]*1e4+ +e[0];
+function qChrono(r,a,b){const p=r()<.5?[a,b]:[b,a];
+  return{kind:'Chronologie',prompt:'Lequel s’est produit en premier ?',opts:p.map(e=>e[2]),right:evKey(p[0])<evKey(p[1])?0:1,why:p.map(e=>fmtY(e[1])+' : '+e[2]).join(' · '),dates:p.map(e=>e[1]),src:['chrono',[a[2],b[2]]]};}
+function quickQ(r,type,niv){
+  if(type==='ortho')return qOrtho(r,rniv(r,NB.ortho,niv));
+  if(type==='soph')return qSoph(r,rniv(r,NB.sophismes,niv));
+  // chronologie : deux événements, l'écart se resserre avec le niveau
+  const [lo,hi]=niv===3?[3,30]:niv===2?[30,150]:[150,3000];
+  for(let t=0;t<300;t++){const a=rpick(r,EVENTS), bs=EVENTS.filter(b=>Math.abs(b[1]-a[1])>=lo&&Math.abs(b[1]-a[1])<=hi);
+    if(bs.length)return qChrono(r,a,rpick(r,bs));}
+}
+/* ---------- rattrapage : les erreurs récentes reviennent jusqu'à ce qu'elles soient réussies ---------- */
+// carnet d'erreurs : [type, id, date] ; une erreur réussie en rattrapage sort du carnet
+const errKey=(t,id)=>t+':'+(Array.isArray(id)?id.join('|'):id);
+function logErr(t,id){
+  const E=(state.errs=state.errs||[]), k=errKey(t,id);
+  if(E.some(e=>errKey(e[0],e[1])===k))return;
+  E.push([t,id,todayKey()]); if(E.length>200)E.splice(0,E.length-200);
+}
+function errQ(e){
+  const [t,id]=e, r=Math.random;
+  if(t==='ortho'){const o=NB.ortho.find(x=>x.id===id&&!x.retire);return o?qOrtho(r,o):null;}
+  if(t==='soph'){const x=NB.sophismes.find(y=>y.id===id&&!y.retire);return x?qSoph(r,x):null;}
+  if(t==='chrono'){const a=EVENTS.find(v=>v[2]===id[0]),b=EVENTS.find(v=>v[2]===id[1]);return a&&b?qChrono(r,a,b):null;}
+  return null;
+}
+const errsLeft=()=>(state.errs||[]).filter(e=>errQ(e));
+// affiche une question et rend la main avec la réponse ; renvoie les éléments à placer dans l'arène
+function quickAsk(q,onAnswer){
+  const box=el('div',{class:'options'+(q.kind==='Chronologie'?' chrono':'')});
+  q.opts.forEach((o,i)=>box.append(el('button',{text:o,onclick:e=>{
+    [...box.children].forEach((b,j)=>{b.disabled=true;if(q.dates)b.prepend(el('b',{text:fmtY(q.dates[j])+' · '}));if(j===q.right)b.classList.add('right');});
+    if(i!==q.right){e.currentTarget.classList.add('wrong');if(q.src&&curEx!=='rattrapage')logErr(...q.src);}
+    hit(i===q.right); onAnswer(i===q.right);
+  }})));
+  return[el('span',{class:'label',text:q.kind}),q.quote?el('p',{class:'quote',text:q.quote}):null,el('p',{class:'prompt',style:'text-align:center',text:q.prompt}),box].filter(Boolean);
+}
+/* ---------- énigme du jour : la même pour tous, une seule fois par jour, un résultat à partager ---------- */
+const ENIG0='2026-11-02', enigNo=k=>Math.round((new Date(k+'T12:00:00')-new Date(ENIG0+'T12:00:00'))/864e5)+1;
+const ENIG_PLAN=[['chrono',1],['ortho',1],['soph',2],['ortho',3],['chrono',3]];
+function enigShare(k,marks){
+  const ok=marks.filter(Boolean).length;
+  return`Néophyte · énigme n° ${enigNo(k)}\n${marks.map(m=>m?'🟩':'🟥').join('')} ${ok}/5\n${location.origin+location.pathname.replace(/index\.html$/,'')}`;
+}
+async function shareText(txt){
+  try{if(navigator.share){await navigator.share({text:txt});return;}}catch(e){if(e&&e.name==='AbortError')return;}
+  try{await navigator.clipboard.writeText(txt);toast('<span>Résultat copié<small>Colle-le dans un message.</small></span>');}
+  catch(e){toast('<span>Copie impossible ici<small>'+txt.split('\n').slice(0,2).join(' · ')+'</small></span>');}
 }
 /* ---------- niveaux, confiance et contestation ---------- */
 const META=new Map([[NB.graphiques,NB.graphiques],[PROBLEMS,NB.problemes],[FALLACIES,NB.sophismes],[AIERR,NB.erreursIA],[FERMI,NB.fermi],[ORTHO,NB.ortho]]);
@@ -3393,8 +3932,22 @@ function adaptLevel(ex,score){
 // annoncer « certain » rapporte un peu plus quand on a raison et coûte beaucoup quand on a tort, donc bluffer ne paie pas
 const CONF=[[.5,'50 %'],[.7,'70 %'],[.9,'90 %'],[.98,'Certain']];
 const betPts=(c,ok)=>Math.round(10*(ok*Math.log2(c/.5)+(1-ok)*Math.log2((1-c)/.5)));
-let betRun=0;
+let betRun=0, betN=0;
+// « Sûr à combien ? » : désactivé par défaut pour garder le jeu fluide, à réactiver dans les réglages
+const confOn=()=>state.settings.conf==='on';
+// la réponse de « l'IA » s'écrit sous tes yeux ; un toucher affiche tout d'un coup
+function typeOut(box){
+  const ss=[...box.querySelectorAll('.sent')]; if(reduceMotion()||!ss.length)return;
+  const full=ss.map(b=>b.textContent); let i=0,c=0,stop=false;
+  ss.forEach(b=>{b.textContent='';b.disabled=true;}); box.classList.add('typing');
+  const end=()=>{stop=true;ss.forEach((b,k)=>{b.textContent=full[k];b.disabled=false;b.classList.remove('cur');});box.classList.remove('typing');box.removeEventListener('pointerdown',skip);};
+  const skip=e=>{if(!stop){e.preventDefault();end();}};
+  box.addEventListener('pointerdown',skip);
+  const tick=()=>{if(stop||!box.isConnected)return; c+=3; ss[i].classList.add('cur'); if(c>=full[i].length){ss[i].textContent=full[i];ss[i].classList.remove('cur');i++;c=0;if(i>=ss.length){end();return;}}else ss[i].textContent=full[i].slice(0,c);setTimeout(tick,i<ss.length&&c===0?160:18);};
+  setTimeout(tick,250);
+}
 function askConf(onPick,label){
+  if(!confOn()){queueMicrotask(()=>onPick(null));return document.createTextNode('');}
   const row=el('div',{class:'conf'},el('span',{class:'label',text:label||'Sûr à combien ?'}));
   const seg=el('div',{class:'seg',role:'group','aria-label':'Ta confiance'});
   CONF.forEach(([c,t])=>seg.append(el('button',{text:t,onclick:()=>{[...seg.children].forEach(b=>b.disabled=true);row.remove();onPick(c);}})));
@@ -3402,12 +3955,14 @@ function askConf(onPick,label){
   row.append(seg); return row;
 }
 function logConf(ex,c,ok){
+  if(c==null)return null;
+  betN++;
   (state.calib=state.calib||[]).push({t:Date.now(),d:todayKey(),ex,c,ok});
   if(state.calib.length>1500)state.calib=state.calib.slice(-1500);
   const pts=betPts(c,ok); betRun+=pts; return pts;
 }
-const betChip=pts=>el('span',{class:'pari '+(pts>0?'up':pts<0?'down':'flat'),text:'Pari : '+(pts>0?'+':pts<0?'−':'')+Math.abs(pts)});
-function betSummary(){const p=betRun;betRun=0;return ` Pari de la séance : ${p>0?'+':p<0?'−':''}${Math.abs(p)} point${Math.abs(p)>1?'s':''}.`;}
+const betChip=pts=>pts==null?null:el('span',{class:'pari '+(pts>0?'up':pts<0?'down':'flat'),text:'Pari : '+(pts>0?'+':pts<0?'−':'')+Math.abs(pts)});
+function betSummary(){const p=betRun,n=betN;betRun=0;betN=0;if(!n)return'';return ` Pari de la séance : ${p>0?'+':p<0?'−':''}${Math.abs(p)} point${Math.abs(p)>1?'s':''}.`;}
 // « Je conteste » : une réponse douteuse se signale en une phrase ; les signalements sont relus chaque semaine
 function contestBtn(ex,id,enonce){
   const box=el('div',{class:'contest'});
@@ -3433,13 +3988,141 @@ async function flushContest(){
   for(const r of (state.contest||[]))if(!r.sent){try{await window.bfSignaler(r);r.sent=1;sent=true;}catch(e){break;}}
   if(sent)persist();
 }
+// « Signaler un problème » (phase de test) : une capture de l'écran et un commentaire, relus dans Supabase (table et dossier « retours »)
+let h2cP=null;
+function loadH2C(){
+  if(window.html2canvas)return Promise.resolve(window.html2canvas);
+  return h2cP||(h2cP=new Promise((ok,ko)=>{
+    const sc=el('script',{src:'https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js',integrity:'sha384-ZZ1pncU3bQe8y31yfZdMFdSpttDoPmOZg2wguVK9almUodir1PghgT0eY7Mrty8H',crossorigin:'anonymous'});
+    sc.onload=()=>ok(window.html2canvas); sc.onerror=()=>{h2cP=null;ko(new Error('capture'));};
+    document.head.append(sc);
+  }));
+}
+// une image (capture ou fichier) réduite à 1600 px et compressée en JPEG : quelques centaines de Ko
+function shrinkShot(src){
+  const w=src.naturalWidth||src.width, h=src.naturalHeight||src.height, k=Math.min(1,1600/Math.max(w,h,1));
+  const c=document.createElement('canvas'); c.width=Math.max(1,Math.round(w*k)); c.height=Math.max(1,Math.round(h*k));
+  const g=c.getContext('2d'); g.fillStyle='#fff'; g.fillRect(0,0,c.width,c.height); g.drawImage(src,0,0,c.width,c.height);
+  return new Promise((ok,ko)=>c.toBlob(b=>b?ok(b):ko(new Error('capture')),'image/jpeg',.82));
+}
+async function snapScreen(){
+  const h2c=await loadH2C();
+  const c=await h2c(document.body,{x:window.scrollX,y:window.scrollY,width:window.innerWidth,height:window.innerHeight,scale:Math.min(window.devicePixelRatio||1,2),
+    backgroundColor:getComputedStyle(document.body).backgroundColor,logging:false,useCORS:true,
+    ignoreElements:e=>e.id==='confetti'||e.id==='toasts'||e.classList.contains('rp-wrap')});
+  return shrinkShot(c);
+}
+async function fileShot(f){
+  const u=URL.createObjectURL(f);
+  try{const im=new Image(); im.src=u; await im.decode(); return await shrinkShot(im);}finally{URL.revokeObjectURL(u);}
+}
+function reportContext(){
+  const ex=curEx&&!$('#stage').hidden?curEx:null;
+  return {onglet:(location.hash||'#aujourdhui').slice(1,40),exercice:ex,question:ex?($('#arena').innerText||'').trim().slice(0,400):null,
+    ecran:`${window.innerWidth}×${window.innerHeight} @${window.devicePixelRatio||1}`,theme:document.documentElement.dataset.theme||'auto',
+    appli:matchMedia('(display-mode: standalone)').matches,enligne:navigator.onLine,navigateur:navigator.userAgent.slice(0,300),heure:new Date().toString().slice(0,90)};
+}
+function openReport(){
+  if(document.querySelector('.rp-wrap'))return;
+  const ctx=reportContext(); let shot=null, busy=true;
+  const close=()=>{box.classList.add('out');setTimeout(()=>box.remove(),300);document.removeEventListener('keydown',onKey);$('#go-report').focus();};
+  const onKey=e=>{if(e.key==='Escape')close();};
+  const thumb=el('div',{class:'rp-none',text:'Capture…'});
+  const file=el('input',{type:'file',accept:'image/*',hidden:''});
+  const drop=el('button',{class:'btn ghost small',text:'Retirer la capture',hidden:''});
+  const pick=el('button',{class:'btn ghost small',text:'Choisir une autre image'});
+  const ta=el('textarea',{'aria-label':'Ce qui ne va pas',placeholder:'Que s’est-il passé ? Qu’attendais-tu à la place ?',maxlength:'2000'});
+  const send=el('button',{class:'btn primary',text:'Envoyer'});
+  const msg=el('p',{class:'note',role:'status'});
+  let thumbNode=thumb;
+  const swap=b=>{const cur=thumbNode; shot=b; drop.hidden=!b;
+    if(cur.tagName==='IMG')URL.revokeObjectURL(cur.src);
+    const n=b?el('img',{src:URL.createObjectURL(b),alt:'Capture jointe'}):el('div',{class:'rp-none',text:'Sans capture'});
+    cur.replaceWith(n); thumbNode=n;};
+  drop.addEventListener('click',()=>swap(null));
+  pick.addEventListener('click',()=>file.click());
+  const takeFile=async f=>{if(!f||!/^image\//.test(f.type))return; try{swap(await fileShot(f));}catch(e){msg.textContent='Image illisible : essaie une capture en PNG ou JPEG.';}};
+  file.addEventListener('change',()=>takeFile(file.files[0]));
+  ta.addEventListener('paste',e=>{const it=[...(e.clipboardData?.items||[])].find(i=>i.type.startsWith('image/'));if(it){e.preventDefault();takeFile(it.getAsFile());}});
+  send.addEventListener('click',async()=>{
+    const m=ta.value.trim(); if(m.length<3){ta.focus();msg.textContent='Dis en une phrase ce qui ne va pas.';return;}
+    if(busy){msg.textContent='Capture en cours, un instant…';return;}
+    if(!window.bfRetour){msg.textContent='Envoi indisponible sur cette version.';return;}
+    send.disabled=true; msg.textContent='Envoi…';
+    try{
+      await window.bfRetour({message:m.slice(0,2000),contexte:ctx,image:shot});
+      box.querySelector('.cer-card').replaceChildren(el('h2',{text:'Merci !'}),el('p',{class:'fg2',text:'Ton signalement est bien arrivé. Il sera relu, et tu verras la correction dans une prochaine version.'}),el('div',{class:'row'},el('button',{class:'btn primary',text:'Fermer',onclick:close})));
+      box.querySelector('.cer-card .btn').focus();
+    }catch(e){
+      send.disabled=false;
+      msg.textContent=e&&e.code==='signed_out'?'Connecte-toi d’abord (Réglages › compte) : l’envoi passe par ton compte.':/trop/.test(e&&e.message||'')?'Tu as déjà envoyé beaucoup de signalements aujourd’hui : reprends demain.':'L’envoi n’a pas abouti. Vérifie ta connexion et réessaie.';
+    }
+  });
+  const box=el('div',{class:'ceremony rp-wrap',role:'dialog','aria-modal':'true','aria-labelledby':'rp-title',onclick:e=>{if(e.target===box)close();}},
+    el('div',{class:'cer-card rp-card',tabindex:'-1'},
+      el('h2',{id:'rp-title',text:'Signaler un problème'}),
+      el('p',{class:'fg2',text:'Une capture de ton écran est jointe. Vérifie qu’elle ne montre rien que tu veux garder pour toi, ou retire-la.'}),
+      el('div',{class:'rp-shot'},thumb,el('div',{class:'rp-acts'},drop,pick,file,el('span',{class:'note',text:'Tu peux aussi coller une image dans le texte.'}))),
+      ta,el('div',{class:'row'},send,el('button',{class:'btn ghost',text:'Annuler',onclick:close})),msg));
+  document.body.append(box); document.addEventListener('keydown',onKey); box.firstChild.focus();
+  // le clavier n'apparaît qu'une fois la capture prise, pour ne pas rétrécir l'écran capturé
+  Promise.race([snapScreen(),new Promise((_,ko)=>setTimeout(()=>ko(new Error('lent')),10000))]).then(b=>{if(thumbNode===thumb)swap(b);}).catch(()=>{if(thumbNode===thumb)swap(null);}).finally(()=>{busy=false;if(document.activeElement===document.body||!box.contains(document.activeElement))ta.focus();});
+}
+// page « Retours » : le propriétaire (alertes_config.proprietaire) lit les signalements des testeurs et les marque traités
+let rtFiltre='ouverts', rtBusy=false, rtAgain=false, rtFocus=false;
+async function renderRetours(focus){
+  const sb=sbc(), panel=$('#retours-panel');
+  if(focus)rtFocus=true;
+  if(!sb)return;
+  if(rtBusy){rtAgain=true;return;}
+  rtBusy=true;
+  try{
+    let own=false;
+    try{const s=await sb.auth.getSession();if(s.data.session){const r=await sb.rpc('est_proprietaire');own=r.data===true;}}catch(e){}
+    panel.hidden=!own; if(!own)return;
+    if(rtFocus){rtFocus=false;setTimeout(()=>panel.scrollIntoView({behavior:'smooth',block:'start'}),60);}
+    const msg=$('#rt-msg'), list=$('#rt-list'); msg.textContent='Chargement…';
+    const q=(t,cols)=>{let r=sb.from(t).select(cols).order('created_at',{ascending:false}).limit(50);if(rtFiltre==='ouverts')r=r.eq('traite',false);return r;};
+    const [a,b]=await Promise.all([q('retours','id,message,contexte,capture,created_at,traite'),q('signalements','id,exercice,question_id,enonce,message,created_at,traite')]);
+    if(a.error){msg.textContent='Lecture impossible : '+(a.error.message||'erreur');list.replaceChildren();return;}
+    const rows=[...(a.data||[]).map(r=>({...r,t:'retours'})),...(b.data||[]).map(r=>({...r,t:'signalements'}))].sort((x,y)=>y.created_at.localeCompare(x.created_at));
+    msg.textContent=rows.length?`${rows.length} ${rtFiltre==='ouverts'?'à traiter':'retour'+(rows.length>1?'s':'')}.`:(rtFiltre==='ouverts'?'Rien à traiter. Bravo !':'Aucun retour pour l’instant.');
+    const urls={}, paths=rows.filter(r=>r.capture).map(r=>r.capture);
+    if(paths.length)try{const {data}=await sb.storage.from('retours').createSignedUrls(paths,3600);(data||[]).forEach(x=>{if(x.signedUrl)urls[x.path]=x.signedUrl;});}catch(e){}
+    list.replaceChildren(...rows.map(r=>{
+      const when=new Date(r.created_at).toLocaleString('fr-FR',{weekday:'short',day:'numeric',month:'short',hour:'2-digit',minute:'2-digit'});
+      const cx=r.contexte||{}, where=r.t==='retours'?[cx.onglet,cx.exercice&&(EX[cx.exercice]?EX[cx.exercice].name:cx.exercice)].filter(Boolean).join(' › '):'Je conteste · '+(EX[r.exercice]?EX[r.exercice].name:r.exercice);
+      const done=el('button',{class:'btn small'+(r.traite?' ghost':''),text:r.traite?'Rouvrir':'Marquer traité'});
+      const item=el('div',{class:'rt-item'+(r.traite?' done':'')},
+        el('span',{class:'rt-meta',text:when+(where?' · '+where:'')}),
+        el('p',{class:'rt-msg',text:r.message}),
+        r.enonce?el('p',{class:'note',text:'Question : '+r.enonce}):null,
+        r.capture?(urls[r.capture]?el('a',{href:urls[r.capture],target:'_blank',rel:'noopener'},el('img',{src:urls[r.capture],alt:'Capture envoyée',loading:'lazy'})):el('p',{class:'note',text:'Capture jointe, illisible pour l’instant.'})):null,
+        r.t==='retours'&&(cx.question||cx.navigateur)?el('details',{},el('summary',{text:'Détails'}),el('p',{text:[cx.question&&'Écran : '+cx.question,cx.ecran&&'Taille : '+cx.ecran,cx.navigateur&&'Navigateur : '+cx.navigateur,cx.appli?'Appli installée':null].filter(Boolean).join('\n'),style:'white-space:pre-wrap'})):null,
+        el('div',{class:'row'},done));
+      done.addEventListener('click',async()=>{
+        done.disabled=true;
+        const {error}=await sb.from(r.t).update({traite:!r.traite}).eq('id',r.id);
+        if(error){done.disabled=false;toast('<span>Impossible de modifier ce retour.</span>');return;}
+        r.traite=!r.traite;
+        if(rtFiltre==='ouverts'&&r.traite)item.remove(); else{item.classList.toggle('done',r.traite);done.textContent=r.traite?'Rouvrir':'Marquer traité';done.className='btn small'+(r.traite?' ghost':'');done.disabled=false;}
+      });
+      return item;
+    }));
+  }finally{rtBusy=false;if(rtAgain){rtAgain=false;renderRetours();}}
+}
+$$('#rt-filtre button').forEach(b=>b.addEventListener('click',()=>{rtFiltre=b.dataset.f;$$('#rt-filtre button').forEach(x=>x.setAttribute('aria-pressed',String(x===b)));renderRetours();}));
+$('#rt-maj').addEventListener('click',()=>renderRetours());
 // une question ratée repasse devant toutes les autres à la prochaine séance
 function missAgain(bank,arr,item){const i=arr.indexOf(item);if(i>=0)((state.seen=state.seen||{})[bank]||(state.seen[bank]={}))[i]=-1;}
 let cleanup=null;
+// un défi reçu par lien : ?defi=graine.score.pseudo
+let DEFI=(()=>{try{const v=new URLSearchParams(location.search).get('defi');if(!v)return null;const m=v.match(/^([a-z0-9]{4,12})\.(\d{1,3})\.(.{1,24})$/i);return m?{seed:m[1],score:+m[2],from:m[3].trim()||'Un ami'}:null;}catch(e){return null;}})();
+function launchDefi(){if(!DEFI)return;try{history.replaceState(null,'',location.pathname+location.hash);}catch(e){}showTab('exercices');openEx('eclair');}
 function stopRun(){if(cleanup){cleanup();cleanup=null;}$('#st-timer').hidden=true;$('#st-bar').hidden=true;}
 function openEx(key){
   stopRun();
-  curEx=key; qmarks=[]; betRun=0; $('#stage').classList.toggle('saison',key==='evenement');
+  curEx=key; qmarks=[]; betRun=0; betN=0; $('#stage').classList.toggle('saison',key==='evenement');
   const e=EX[key]; $('#exgrid').hidden=true; $('#stage').hidden=false; $('#st-skill').textContent=e.skill; $('#st-name').textContent=e.name;
   const o=$('#st-orig'); o.open=false; o.hidden=!ORIG[key]; o.querySelector('p').textContent=ORIG[key]||'';
   RUN[key]($('#arena'));
@@ -3455,7 +4138,7 @@ function countdown(sec,onTick,onEnd){
 }
 function intro(arena,text,controls,onStart){
   const lv=LVBANK[curEx]?el('p',{class:'note lvnote',text:`Niveau ${lvl(curEx)} sur 3. Il s'ajuste à tes résultats pour que tu réussisses environ 4 fois sur 5 : assez pour avancer, assez dur pour progresser.`}):null;
-  arena.replaceChildren(el('p',{class:'fg2',text,style:'max-width:52ch'}),lv,controls||null,el('button',{class:'btn primary',text:'Commencer',onclick:onStart}));
+  arena.replaceChildren(el('p',{class:'fg2',text,style:'max-width:52ch'}),...[lv,controls].filter(Boolean),el('button',{class:'btn primary',text:'Commencer',onclick:onStart}));
 }
 /* ---------- sons : fabriqués dans le navigateur, sans fichier, donc aussi hors ligne ---------- */
 let AC=null;
@@ -3495,19 +4178,40 @@ let curEx=null, qmarks=[], qcur=0, combo=0;
 const FLAME='<svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2c1 4-3 6-3 10a3 3 0 0 0 6 0c0-1-.5-2-1-3 3 1 5 4 5 7a7 7 0 0 1-14 0c0-6 7-8 7-14z"/></svg>';
 function qprog(i,n){
   if(i===0){qmarks=[];combo=0;}
-  qcur=i; const ar=$('#arena'); delete ar.dataset.v; ar.classList.remove('qin'); void ar.offsetWidth; ar.classList.add('qin');
+  qcur=i; const ar=$('#arena'); delete ar.dataset.v;
+  if(i>0){const top=$('#stage').getBoundingClientRect().top; if(top<0)window.scrollBy({top:top-8,behavior:reduceMotion()?'auto':'smooth'});} ar.classList.remove('qin'); void ar.offsetWidth; ar.classList.add('qin');
   const bar=el('div',{class:'qbar',role:'progressbar','aria-valuemin':'1','aria-valuemax':String(n),'aria-valuenow':String(i+1),'aria-label':`Question ${i+1} sur ${n}`});
   for(let j=0;j<n;j++)bar.append(el('i',{class:j<i?(qmarks[j]?'ok':'ko'):j===i?'cur':null}));
   const c=el('span',{class:'combo',hidden:combo<2?'':null}); if(combo>=2)c.innerHTML=FLAME+combo+' d’affilée';
-  return el('div',{class:'qhead'},bar,el('span',{class:'qcount',text:`${i+1}/${n}`}),c);
+  return el('div',{class:'qhead'},qstag(),bar,el('span',{class:'qcount',text:`${i+1}/${n}`}),c);
+}
+// le petit cerf des exercices : il hoche la tête, baisse les oreilles, ou se redresse au 5 d'affilée
+const qstag=()=>el('span',{class:'stag qstag','aria-hidden':'true',html:stagSVG(gamiCtx.level||1,'idle')});
+function stagReact(right){
+  const st=$('#arena').querySelector('.qstag'); if(!st)return;
+  clearTimeout(st._t); const L=gamiCtx.level||1, fete=right&&combo>=5&&combo%5===0;
+  st.innerHTML=stagSVG(L,fete?'proud':right?'idle':'worried');
+  st.classList.remove('nod','droop','fete'); void st.offsetWidth; st.classList.add(fete?'fete':right?'nod':'droop');
+  st._t=setTimeout(()=>{st.classList.remove('nod','droop','fete');st.innerHTML=stagSVG(L,'idle');},fete?1800:1100);
 }
 function hit(right){
   right=!!right; qmarks[qcur]=right; combo=right?combo+1:0; son(right?'juste':'faux');
+  if(combo>=5&&!day().q5){day().q5=1;checkQuests();}
   const a=$('#arena'); a.dataset.v=right?'ok':'ko';
   const seg=a.querySelector('.qbar i.cur'); if(seg)seg.className=right?'ok':'ko';
   const c=a.querySelector('.combo');
   if(c){c.hidden=combo<2; if(combo>=2){c.innerHTML=FLAME+combo+' d’affilée'; c.classList.remove('bump'); void c.offsetWidth; c.classList.add('bump');}}
+  stagReact(right); revealNext();
   try{if(navigator.vibrate)navigator.vibrate(right?12:[25,40,25]);}catch(e){}
+}
+function revealNext(){
+  setTimeout(()=>{
+    const a=$('#arena'); if(!a||$('#stage').hidden)return;
+    const bs=[...a.querySelectorAll('button.primary,.answer,.feedback')].filter(b=>b.offsetParent&&!b.disabled);
+    const b=bs[bs.length-1]; if(!b)return;
+    const r=b.getBoundingClientRect(), nav=$('.tabs'), nb=nav&&getComputedStyle(nav).position==='fixed'&&nav.getBoundingClientRect().top>innerHeight/2?nav.offsetHeight:0, lim=innerHeight-nb-12;
+    if(r.bottom>lim)window.scrollBy({top:Math.min(r.bottom-lim,Math.max(0,r.top-80)),behavior:reduceMotion()?'auto':'smooth'});
+  },90);
 }
 function countUp(node,to){
   const reduce=window.matchMedia&&matchMedia('(prefers-reduced-motion: reduce)').matches;
@@ -3526,10 +4230,60 @@ function showResult(arena,score,unit,msg,again,extra){
   arena.replaceChildren(...[el('div',{class:'result'+(fresh&&last.rec?' record':'')},el('span',{class:'label',text:'Résultat'}),sc,el('span',{class:'fg2',text:unit})),
     gains,stagVerdict(score,unit,fresh&&last.rec),recap,extra,
     msg?el('p',{class:'fg2',text:msg,style:'max-width:50ch'}):null,
-    el('div',{class:'row',style:'justify-content:center'},el('button',{class:'btn primary',text:'Recommencer',onclick:again}),el('button',{class:'btn',text:'Retour à la routine',onclick:()=>{stopRun();$('#stage').hidden=true;$('#exgrid').hidden=false;showTab('aujourdhui');}}))].filter(Boolean));
+    nextButtons(again)].filter(Boolean));
   countUp(sc,score);
   const rec=fresh&&last.rec, perfect=marks.length>1&&marks.every(Boolean);
   if(rec||perfect){son('record');laurels();}else son('fin');
+}
+// pendant la séance du jour, on enchaîne sur l'exercice suivant au lieu de revenir à l'accueil
+function seanceNext(){
+  const k=todayKey(), d=day(k), steps=routineFor(k,state.settings.minutes);
+  if(!steps.some(x=>x.ex===curEx))return null;
+  const nx=steps.find(x=>!d.done[x.ex]);
+  return nx?nx.ex:'fin';
+}
+function backHome(){stopRun();$('#stage').hidden=true;$('#exgrid').hidden=false;showTab('aujourdhui');window.scrollTo(0,0);}
+// hors séance : l'exercice suivant dans l'ordre des familles, en sautant ceux déjà faits aujourd'hui
+function exNext(){
+  const all=EXFAM.flatMap(f=>f[2]).filter(k=>EX[k]&&RUN[k]), i=all.indexOf(curEx), done=day(todayKey()).done||{};
+  const order=[...all.slice(i+1),...all.slice(0,Math.max(0,i))];
+  return order.find(k=>!done[k])||order[0]||null;
+}
+function nextButtons(again){
+  const nx=seanceNext(), row=el('div',{class:'row',style:'justify-content:center'});
+  const encore=el('button',{class:'btn ghost',text:'Encore',onclick:again});
+  if(nx==='fin')row.append(el('button',{class:'btn primary',text:'Voir le bilan de la séance',onclick:()=>seanceRecap($('#arena'))}),encore);
+  else if(nx)row.append(el('button',{class:'btn primary',text:'Suivant : '+EX[nx].name,onclick:()=>seanceTrail(nx)}),encore);
+  else{const k=exNext();row.append(...[k?el('button',{class:'btn primary',text:'Suivant : '+EX[k].name,onclick:()=>openEx(k)}):null,el('button',{class:k?'btn':'btn primary',text:'Encore',onclick:again})].filter(Boolean));}
+  return row;
+}
+// entre deux exercices, le cerf bondit sur le chemin de la séance jusqu'à l'étape suivante
+function seanceTrail(nx){
+  const arena=$('#arena'), steps=routineFor(todayKey(),state.settings.minutes), j=steps.findIndex(x=>x.ex===nx), from=Math.max(0,j-1);
+  if(reduceMotion()||j<0){openEx(nx);return;}
+  stopRun(); $('#st-skill').textContent='Séance du jour'; $('#st-name').textContent='En route'; $('#st-orig').hidden=true; delete arena.dataset.v;
+  const pos=i=>steps.length>1?i/(steps.length-1)*100:50;
+  const st=el('span',{class:'stag trail-stag','aria-hidden':'true',html:stagSVG(gamiCtx.level||1,'proud'),style:`left:${pos(from)}%`});
+  const trail=el('div',{class:'trail'},el('div',{class:'trail-line'}),...steps.map((x,i)=>el('i',{class:i<j?'ok':i===j?'cur':'',style:`left:${pos(i)}%`})),st);
+  arena.replaceChildren(el('span',{class:'label',text:`Étape ${j+1} sur ${steps.length}`}),trail,el('h3',{class:'trail-next',text:EX[nx].name}),el('p',{class:'fg2',text:EX[nx].skill}));
+  requestAnimationFrame(()=>requestAnimationFrame(()=>{st.classList.add('go');st.style.left=pos(j)+'%';}));
+  setTimeout(()=>{if(arena.contains(trail))openEx(nx);},1500);
+}
+// bilan de fin de séance : ce qui a été fait, les XP du jour, les quêtes et la série
+function seanceRecap(arena){
+  stopRun(); $('#st-timer').hidden=true; $('#st-bar').hidden=true;
+  const k=todayKey(), steps=routineFor(k,state.settings.minutes), qs=questState(k), xp=xpByDay()[k]||0, cur=streaks().cur;
+  $('#st-skill').textContent='Séance du jour'; $('#st-name').textContent='Séance terminée'; $('#st-orig').hidden=true;
+  const last=ex=>{const rs=state.results.filter(r=>r.d===k&&r.ex===ex);return rs[rs.length-1];};
+  arena.replaceChildren(
+    el('div',{class:'result record'},el('span',{class:'label',text:'XP gagnés aujourd’hui'}),el('span',{class:'score',text:fmt(xp)})),
+    el('div',{class:'recap wide seance'},el('span',{class:'label',text:'Ta séance'}),
+      el('ul',{class:'seance-list'},...steps.map(x=>{const r=last(x.ex);return el('li',{},el('span',{text:EX[x.ex].name}),el('b',{text:r?fmt(r.s)+(PCT(x.ex)?' %':' '+EX[x.ex].unit):'—'}));})),
+      el('span',{class:'label',text:'Quêtes du jour'}),
+      el('ul',{class:'seance-list'},...qs.map(([,lab,ok])=>el('li',{},el('span',{text:lab}),el('b',{text:ok?'✓':'à faire'}))))),
+    stagTalk('proud',cur>1?`Séance terminée, et ${cur} jours d’affilée. Je me repose ici jusqu’à demain.`:'Séance terminée. Ta série a commencé : je t’attends demain.'),
+    el('div',{class:'row',style:'justify-content:center'},el('button',{class:'btn primary',text:'Retour à l’accueil',onclick:backHome}),el('button',{class:'btn ghost',text:'Un exercice de plus',onclick:()=>{stopRun();$('#stage').hidden=true;$('#exgrid').hidden=false;}})));
+  son('record'); laurels();
 }
 function bestOf(ex){const rs=state.results.filter(r=>r.ex===ex);return rs.length?Math.max(...rs.map(r=>r.s)):null;}
 function recordMsg(ex,s){const b=bestOf(ex);return b===null?'Premier score enregistré. Il servira de point de départ.':s>b?'Nouveau record !':`Ton record est de ${fmt(b)}.`;}
@@ -3745,9 +4499,30 @@ write(arena){
     ta.addEventListener('paste',e=>{e.preventDefault();fb.textContent='Le collage est désactivé ici : écris avec tes propres mots.';setTimeout(()=>fb.textContent='',2500);});
     ta.addEventListener('drop',e=>e.preventDefault());
     const fin=el('button',{class:'btn primary',text:'Terminer',onclick:()=>finish()});
+    // écrire sur papier : le coach transcrit la photo de la feuille, sans rien corriger, puis tout continue comme au clavier
+    let hand=false;
+    const photo=el('input',{type:'file',accept:'image/*',capture:'environment',hidden:''});
+    const pbtn=el('button',{class:'btn ghost small',text:'J’écris sur papier : photographier ma feuille'});
+    const handRow=el('div',{class:'row hand-row',hidden:''},pbtn,photo);
+    (async()=>{const sm=await sampler();const lim=sm&&sm.limits?await sm.limits().catch(()=>null):null;if(lim&&lim.images)handRow.hidden=false;})();
+    pbtn.addEventListener('click',()=>photo.click());
+    photo.addEventListener('change',async()=>{
+      const f=photo.files&&photo.files[0]; photo.value=''; if(!f)return;
+      pbtn.disabled=true; fin.disabled=true; fb.textContent='Le coach lit ta feuille…';
+      try{
+        const sm=await sampler(), img=await shrinkPhoto(f);
+        const r=await sm.json(`La photo montre un texte écrit à la main, en français, sur ce sujet : « ${(mode==='resume'?src[0]:prompt).slice(0,400)} ». Transcris-le fidèlement, mot pour mot, en gardant ses fautes d'orthographe, de grammaire et de ponctuation : ne corrige rien, ne complète rien, ne reformule rien. Garde les retours à la ligne entre paragraphes. Ignore les mots barrés. Un mot que tu ne parviens pas à lire s'écrit [?]. Réponds uniquement en JSON : {"lisible": boolean, "texte": string, "illisibles": number}.`,{images:[img],modelTier:'complex',cache:false});
+        if(!r||r.lisible===false||!r.texte||!String(r.texte).trim()){fb.textContent='Le coach n’arrive pas à lire la feuille. Reprends la photo bien à plat, en pleine lumière.';return;}
+        const tx=String(r.texte).trim().slice(0,12000);
+        ta.value=ta.value.trim()&&mode!=='revise'?ta.value.trim()+'\n\n'+tx:tx; hand=true;
+        ta.dispatchEvent(new Event('input'));
+        fb.textContent=(r.illisibles>0||/\[\?\]/.test(tx))?'Relis la transcription : remplace chaque [?] par le bon mot, puis clique sur Terminer.':'Relis la transcription et corrige les erreurs de lecture (pas les tiennes !), puis clique sur Terminer.';
+      }catch(e){fb.textContent=e&&COACH_ERR[e.code]!=null?COACH_ERR[e.code]:'La lecture de la photo a échoué. Réessaie, ou recopie ton texte.';}
+      finally{pbtn.disabled=false; fin.disabled=false;}
+    });
     arena.style.alignItems='stretch';
-    arena.replaceChildren(el('span',{class:'label',text:WMODES[mode].label}),el('p',{class:'prompt',text:mode==='resume'?'Résume de mémoire : '+src[0]:prompt}),
-      mode==='disput'?el('p',{class:'note dplan',text:'Il semble que… · En sens contraire… · Je réponds que… · Réponse aux objections'}):null,ta,el('div',{class:'row spread'},el('div',{class:'row'},wc,fb),fin));
+    arena.replaceChildren(...[el('span',{class:'label',text:WMODES[mode].label}),el('p',{class:'prompt',text:mode==='resume'?'Résume de mémoire : '+src[0]:prompt}),
+      mode==='disput'?el('p',{class:'note dplan',text:'Il semble que… · En sens contraire… · Je réponds que… · Réponse aux objections'}):null,ta,el('div',{class:'row spread'},el('div',{class:'row'},wc,fb),fin),handRow].filter(Boolean));
     count(); ta.focus();
     const total=mode==='resume'?5:mins;
     const stopT=countdown(total*60,null,()=>{fb.textContent='Temps écoulé. Termine ta phrase puis clique sur Terminer.';});
@@ -3756,18 +4531,19 @@ write(arena){
       const n=count();
       if(n<(limit?10:15)){fb.textContent=`Écris au moins ${limit?10:15} mots pour enregistrer la séance.`;return;}
       if(limit&&n>limit){fb.textContent=`Coupe ton résumé à ${limit} mots : choisir l'essentiel fait partie de l'exercice.`;return;}
+      if(/\[\?\]/.test(ta.value)){fb.textContent='Remplace d’abord chaque [?] par le mot que tu as écrit.';return;}
       if(mode==='revise'&&ta.value.trim()===orig.text.trim()){fb.textContent='Modifie ton texte avant de terminer : coupe, précise, réorganise.';return;}
       stopT(); arena.style.alignItems='';
       try{localStorage.removeItem('brainfit.draft');}catch(e){}
       const text=ta.value.trim(), el_m=Math.max(.5,(Date.now()-started)/60000), st=textStats(text,el_m);
       const m=recordMsg('write',n); logResult('write',n,{w:mode});
       if(mode==='revise')orig.rev=Date.now();
-      texts.push({t:Date.now(),mode,prompt,text:text.slice(0,4000),words:st.words,avgSent:st.avgSent,variety:st.variety,wpm:mode==='revise'?0:st.wpm}); saveTexts();
+      texts.push({t:Date.now(),mode,prompt,text:text.slice(0,4000),words:st.words,avgSent:st.avgSent,variety:st.variety,wpm:mode==='revise'||hand?0:st.wpm,hand:hand?1:undefined}); saveTexts();
       const rv=mode==='revise', dq=mode==='disput'?DISPUT.find(d=>DQ(d)===prompt):null;
       const thom=dq?el('div',{class:'answer'},el('span',{class:'label',text:dq[1]?'Ce que répond saint Thomas':'Une piste chez saint Thomas'}),el('span',{class:'fg2',text:dq[2]}),dq[1]?el('span',{class:'note',text:dq[1]}):null):null;
       showResult(arena,n,rv?'mots dans ta version révisée':'mots écrits sans aide',m+(rv?` Version d'origine : ${orig.words} mots, ${orig.avgSent} mots/phrase. Les deux versions sont dans ton carnet.`:dq?' Compare avec ta réponse : où es-tu d’accord, où diverges-tu, et pourquoi ?':" Ton texte est rangé dans ton carnet (onglet Progrès). Relis-le demain : qu'ajouterais-tu, que couperais-tu ?"),()=>RUN.write(arena),thom);
       arena.insertBefore(el('div',{class:'row',style:'justify-content:center;gap:18px'},
-        rv?null:statChip(st.wpm,'mots / min'),statChip(st.avgSent,'mots / phrase'),statChip(st.variety+' %','vocabulaire varié')),arena.children[2]);
+        rv||hand?null:statChip(st.wpm,'mots / min'),statChip(st.avgSent,'mots / phrase'),statChip(st.variety+' %','vocabulaire varié')),arena.children[2]);
       const extra=mode==='resume'?`\n\nTexte source qu'il devait résumer :\n---\n${src[1]}\n---`:mode==='revise'?`\n\nVersion d'origine, qu'il vient de réviser :\n---\n${orig.text}\n---\nCompare les deux versions : dis précisément ce que la révision a amélioré et ce qui reste à travailler.`:'';
       if(mode==='resume')arena.append(precisCheck(src,text));
       if(mode==='acier')arena.append(acierCheck());
@@ -3775,7 +4551,7 @@ write(arena){
         const info=el('p',{class:'note'});
         arena.append(el('div',{class:'coachbox'},el('button',{class:'btn',text:'Disputer avec ton IA',title:'Copie ton texte avec une consigne : ton IA examine ton article et t’oppose une nouvelle objection, sans le réécrire',onclick:()=>copyText(DISPUT_AI+'\n\n'+prompt+'\n\nMon texte :\n'+text,info,'Copié. Colle-le dans ton IA : elle examine ton article et t’oppose une nouvelle objection, sans rien réécrire.')}),info));
       }
-      arena.append(coachBlock('Avis du coach sur mon texte',()=>coachRules()+`\n\nExercice d'écriture « ${WMODES[mode].label} ». Consigne : « ${mode==='resume'?'Résumer de mémoire en 60 mots max : '+src[0]:prompt} ». Il a écrit sans aide en ${Math.round(el_m)} minutes.${extra}\n\nSon texte :\n---\n${text.slice(0,12000)}\n---\n\nCritères pour ce format : ${WMODES[mode].crit}.\nDonne-lui un retour d'entraîneur d'écriture, en 180 mots maximum :\n- 2 points forts précis (cite ses mots) ;\n- 2 axes d'amélioration selon les critères, chacun avec une piste qu'il appliquera lui-même, sans réécrire ses phrases ;\n- une note sur 10 pour ce format, justifiée en une phrase ;\n- une question qui l'oblige à approfondir.`));
+      arena.append(coachBlock('Avis du coach sur mon texte',()=>coachRules()+`\n\nExercice d'écriture « ${WMODES[mode].label} ». Consigne : « ${mode==='resume'?'Résumer de mémoire en 60 mots max : '+src[0]:prompt} ». Il a écrit sans aide en ${Math.round(el_m)} minutes${hand?', à la main sur papier ; le texte ci-dessous est la transcription de sa feuille, relue par lui':''}.${extra}\n\nSon texte :\n---\n${text.slice(0,12000)}\n---\n\nCritères pour ce format : ${WMODES[mode].crit}.\nDonne-lui un retour d'entraîneur d'écriture, en 180 mots maximum :\n- 2 points forts précis (cite ses mots) ;\n- 2 axes d'amélioration selon les critères, chacun avec une piste qu'il appliquera lui-même, sans réécrire ses phrases ;\n- une note sur 10 pour ce format, justifiée en une phrase ;\n- une question qui l'oblige à approfondir.`));
     }
   }
 },
@@ -3836,7 +4612,7 @@ citations(arena){
   }
 },
 ortho(arena){
-  intro(arena,"Huit phrases, un mot manquant. Choisis la bonne forme sans réfléchir trop longtemps, puis lis la règle. Ce sont les pièges que les correcteurs automatiques nous font oublier.",null,go);
+  intro(arena,"Huit phrases. Pour certaines, un mot manque : choisis la bonne forme. Pour d'autres, relis comme un correcteur : touche le mot fautif s'il y en a un, puis répare-le. Ce sont les pièges que les correcteurs automatiques nous font oublier.",null,go);
   function go(){
     const seen=new Map(); state.results.filter(r=>r.ex==='ortho'&&r.miss).forEach(r=>r.miss.forEach(i=>seen.set(i,(seen.get(i)||0)+1)));
     // les erreurs passées reviennent en priorité (répétition espacée simple)
@@ -3844,18 +4620,57 @@ ortho(arena){
     const order=[...ORTHO.keys()].filter(i=>!NB.ortho[i].retire).sort((a,b)=>(seen.get(b)||0)-(seen.get(a)||0)||Math.random()-.5);
     const qs=[...order.slice(0,3),...order.slice(3).sort(()=>Math.random()-.5).sort((a,b)=>dist(a)-dist(b)).slice(0,5)].sort(()=>Math.random()-.5);
     let qi=0, ok=0, miss=[];
+    // la moitié des phrases se lit comme une copie à corriger : trouver la faute, puis la réparer
+    const hunt=new Set([...Array(8).keys()].sort(()=>Math.random()-.5).slice(0,4));
     const ask=()=>{
-      const [ph,opts,right,why]=ORTHO[qs[qi]];
+      const [ph,opts,right,why]=ORTHO[qs[qi]], idx=qs[qi];
       const box=el('div',{class:'options'}), fb=el('div',{class:'answer',hidden:''});
       const next=el('button',{class:'btn primary',text:qi<7?'Suivante':'Voir le résultat',hidden:''});
-      opts.forEach((o,i)=>box.append(el('button',{text:o,onclick:e=>{
-        [...box.children].forEach((b,j)=>{b.disabled=true;if(j===right)b.classList.add('right');});
-        if(i===right)ok++;else{e.currentTarget.classList.add('wrong');miss.push(qs[qi]);}
-        hit(i===right);
-        fb.replaceChildren(el('span',{class:'label',text:i===right?'Exact':'La bonne forme : '+opts[right]}),el('span',{class:'fg2',text:why}),contestBtn('ortho',NB.ortho[qs[qi]].id,ph));fb.hidden=false;next.hidden=false;next.focus();
+      const conclude=(good,label)=>{
+        if(good)ok++;else{miss.push(idx);logErr('ortho',NB.ortho[idx].id);}
+        hit(good);
+        fb.replaceChildren(el('span',{class:'label',text:label||(good?'Exact':'La bonne forme : '+opts[right])}),el('span',{class:'fg2',text:why}),contestBtn('ortho',NB.ortho[idx].id,ph));fb.hidden=false;next.hidden=false;next.focus({preventScroll:true});
+      };
+      const pickForm=(onDone,skip=-1)=>opts.forEach((o,i)=>i!==skip&&box.append(el('button',{text:o,'data-i':i,onclick:e=>{
+        [...box.children].forEach(b=>{b.disabled=true;if(+b.dataset.i===right)b.classList.add('right');});
+        if(i!==right)e.currentTarget.classList.add('wrong');
+        onDone(i===right);
       }})));
       next.addEventListener('click',()=>{qi++;if(qi<8)ask();else{const sc=ok/8*100;const m=recordMsg('ortho',sc);logResult('ortho',sc,{miss});const up=adaptLevel('ortho',sc);showResult(arena,Math.round(sc),`% de bonnes réponses (${ok} sur 8)`,m+(miss.length?' Les phrases ratées reviendront en priorité lors des prochaines séances.':'')+up,()=>RUN.ortho(arena));}});
-      arena.replaceChildren(qprog(qi,8),el('p',{class:'quote',text:ph}),box,fb,next);
+      if(!hunt.has(qi)){
+        pickForm(good=>conclude(good));
+        arena.replaceChildren(qprog(qi,8),el('p',{class:'quote',text:ph}),box,fb,next);
+        return;
+      }
+      // chasse à la faute : trois fois sur quatre, une mauvaise forme est glissée dans la phrase
+      const wrongs=opts.map((o,i)=>i).filter(i=>i!==right), put=Math.random()<.75?pick(wrongs):right, faulty=put!==right;
+      const [pre,post]=ph.split('___'), sent=el('p',{class:'quote hunt'}), toks=[];
+      const tok=(w,isSlot)=>{const b=el('button',{type:'button',class:'tok',text:w,onclick:()=>tap(b,isSlot)});toks.push(b);return b;};
+      const words=t=>t.split(/(\s+)/).map(w=>/^\s+$/.test(w)||!w?document.createTextNode(w):tok(w,false));
+      const slot=tok(opts[put],true);
+      sent.append(...words(pre),slot,...words(post));
+      const none=el('button',{class:'btn',type:'button',text:'Pas de faute',onclick:()=>tap(null,false)});
+      const ask2=el('p',{class:'prompt',style:'text-align:center',hidden:''});
+      const tap=(b,isSlot)=>{
+        toks.forEach(t=>t.disabled=true); none.disabled=true;
+        if(b===null){ // « pas de faute »
+          if(!faulty){slot.classList.add('right');return conclude(true,'Exact : la phrase est juste');}
+          slot.classList.add('missed'); none.classList.add('wrong'); return conclude(false,'Il y avait une faute : '+opts[put]+' → '+opts[right]);
+        }
+        if(isSlot&&faulty){ // faute trouvée : reste à la réparer
+          none.remove();
+          // deux formes possibles : trouver la faute, c'est déjà savoir la réparer
+          if(opts.length===2){slot.textContent=opts[right];slot.classList.add('right');return conclude(true,'Faute trouvée : '+opts[put]+' → '+opts[right]);}
+          slot.classList.add('found'); son('clic');
+          ask2.textContent='Bien vu. Par quoi la remplacer ?'; ask2.hidden=false;
+          pickForm(good=>{slot.textContent=opts[right];slot.classList.remove('found');slot.classList.add(good?'right':'missed');conclude(good,good?'Faute trouvée et corrigée':'Faute trouvée, mais la bonne forme est : '+opts[right]);},put);
+          return;
+        }
+        b.classList.add('wrong');
+        if(faulty){slot.classList.add('missed');return conclude(false,'La faute était ailleurs : '+opts[put]+' → '+opts[right]);}
+        slot.classList.add('right'); return conclude(false,'Cette phrase était juste');
+      };
+      arena.replaceChildren(qprog(qi,8),el('p',{class:'prompt',style:'text-align:center',text:'Une faute ? Touche le mot fautif.'}),sent,el('div',{class:'row',style:'justify-content:center'},none),ask2,box,fb,next);
     };
     ask();
   }
@@ -3868,7 +4683,7 @@ lecture(arena){
     const th=state.settings.themes||[], mine=fresh.filter(x=>{const t=NB.textes.find(y=>y.titre===x[0]);return t&&th.some(k=>t.th.split(' ').includes(k));});
     const src=pick(mine.length?mine:fresh.length?fresh:SOURCES), words=(src[1].match(/\S+/g)||[]).length, start=performance.now();
     arena.style.alignItems='stretch';
-    arena.replaceChildren(el('h3',{text:src[0]}),el('p',{class:'fg2',text:src[1],style:'max-width:65ch;text-align:left;font-size:1.05rem'}),el('div',{class:'row'},el('button',{class:'btn primary',text:'Terminé',onclick:quiz})));
+    arena.replaceChildren(el('h3',{text:src[0]}),el('p',{class:'fg2',text:src[1],style:'max-width:65ch;text-align:left;font-size:1.05rem;white-space:pre-line'}),el('div',{class:'row'},el('button',{class:'btn primary',text:'Terminé',onclick:quiz})));
     cleanup=()=>{arena.style.alignItems='';};
     function quiz(){
       arena.style.alignItems='';
@@ -3997,6 +4812,11 @@ erreuria(arena){
       const bubble=el('div',{class:'aibubble'}); const fb=el('div',{class:'answer',hidden:''});
       const next=el('button',{class:'btn primary',text:qi<qs.length-1?'Suivante':'Voir le résultat',hidden:''});
       // on désigne la phrase, on annonce sa confiance, puis la correction tombe
+      const fix=()=>{const b=bubble.querySelectorAll('.sent')[bad]; if(!b||b.dataset.fix)return; b.dataset.fix=1;
+        const ed=el('span',{class:'redpen',contenteditable:'true',spellcheck:'false','aria-label':'Ta correction',text:ph[bad]});
+        b.after(ed); b.classList.add('struck'); ed.focus(); try{const r=document.createRange();r.selectNodeContents(ed);getSelection().removeAllRanges();getSelection().addRange(r);}catch(e){}
+        penBtn.replaceWith(el('span',{class:'note',text:'Réécris la phrase pour qu’elle soit juste, puis compare avec l’explication.'}));};
+      const penBtn=el('button',{class:'btn gold mini',text:'Corriger au stylo rouge',onclick:fix});
       ph.forEach((t,i)=>bubble.append(el('button',{class:'sent',text:t,onclick:e=>{
         const me=e.currentTarget;
         [...bubble.children].forEach(b=>{b.disabled=true;});me.classList.add('chosen');
@@ -4005,11 +4825,12 @@ erreuria(arena){
           [...bubble.children].forEach((b,j)=>{if(j===bad)b.classList.add('wrongsent');});
           if(i===bad)ok++;else{me.classList.add('missed');if(!custom)missAgain('aierr',AIERR,qs[qi]);}
           hit(i===bad); const pts=logConf('erreuria',c,i===bad?1:0);
-          fb.replaceChildren(el('span',{class:'label'},i===bad?'Bien vu ':'L\u2019erreur était ailleurs ',betChip(pts)),el('span',{class:'fg2',text:why}),contestBtn('erreuria',id,q+' | '+ph[bad]));fb.hidden=false;next.hidden=false;next.focus();
+          fb.replaceChildren(el('span',{class:'label'},i===bad?'Bien vu ':'L\u2019erreur était ailleurs ',betChip(pts)),el('span',{class:'fg2',text:why}),el('div',{class:'row'},penBtn),contestBtn('erreuria',id,q+' | '+ph[bad]));fb.hidden=false;next.hidden=false;next.focus();
         }));
       }}),document.createTextNode(' ')));
       next.addEventListener('click',()=>{qi++;if(qi<qs.length)ask();else{const sc=ok/qs.length*100;const m=recordMsg('erreuria',sc);logResult('erreuria',sc);const up=custom?'':adaptLevel('erreuria',sc);showResult(arena,Math.round(sc),`% d'erreurs repérées (${ok} sur ${qs.length})`,m+' Applique le même réflexe aux vraies réponses de ton IA : vérifie surtout les chiffres, les dates et la dernière ligne.'+betSummary()+up,()=>RUN.erreuria(arena));}});
       arena.replaceChildren(qprog(qi,qs.length),el('p',{class:'me-q',text:q}),bubble,fb,next);
+      typeOut(bubble);
     };
     ask();
   }
@@ -4032,13 +4853,16 @@ graphe(arena){
           [...box.children].forEach(b=>{if(sameText(b.textContent,right))b.classList.add('right');});
           if(o===right)ok++;else{me.classList.add('wrong');missAgain('graphe',G,g);}
           hit(o===right); const pts=logConf('graphe',c,o===right?1:0);
-          fb.replaceChildren(el('span',{class:'label'},(o===right?'Exact':g.piege==='honnete'?'Ce graphique est honnête':'Le piège : '+right)+' ',betChip(pts)),el('span',{class:'fg2',text:g.expl}),
-            g.corr?el('span',{class:'label',text:'La version honnête'}):null,g.corr?chartCard(Object.assign({},g,{titre:'Les mêmes chiffres, montrés honnêtement'},g.corr)):null,contestBtn('graphe',g.id,g.titre));
+          const expl=el('span',{class:'fg2',text:g.expl});
+          if(g.corr){expl.hidden=true;card.after(chartFix(card,g,()=>{expl.hidden=false;revealNext();}));}
+          fb.replaceChildren(el('span',{class:'label'},(o===right?'Exact':g.piege==='honnete'?'Ce graphique est honnête':'Le piège : '+right)+' ',betChip(pts)),
+            g.corr?el('span',{class:'note',text:'Fais glisser le curseur sous le graphique jusqu’au bout pour voir les mêmes chiffres montrés honnêtement.'}):null,expl,contestBtn('graphe',g.id,g.titre));
           fb.hidden=false; next.hidden=false; next.focus();
         }));
       }})));
       next.addEventListener('click',()=>{qi++;if(qi<3)ask();else{const sc=ok/3*100;const m=recordMsg('graphe',sc);logResult('graphe',sc);const up=adaptLevel('graphe',sc);showResult(arena,Math.round(sc),`% de bonnes réponses (${ok} sur 3)`,m+' Devant un graphique qui circule, trois questions : où commence l’axe, quelle période, combien au départ ?'+betSummary()+up,()=>RUN.graphe(arena));}});
-      arena.replaceChildren(qprog(qi,3),chartCard(g),el('p',{class:'prompt',style:'text-align:center',text:'Qu’est-ce qui cloche ?'}),box,fb,next);
+      const card=chartCard(g);
+      arena.replaceChildren(qprog(qi,3),card,el('p',{class:'prompt',style:'text-align:center',text:'Qu’est-ce qui cloche ?'}),box,fb,next);
     };
     ask();
   }
@@ -4069,27 +4893,47 @@ hypotheses(arena){
   }
 },
 sophismes(arena){
-  intro(arena,"Cinq arguments qui ont l'air convaincants. La plupart cachent une faille : choisis le nom du sophisme. Mais certains tiennent debout : reconnais-les, car voir des sophismes partout est aussi une erreur. Savoir les nommer aide à les repérer, y compris dans les réponses d'une IA.",null,go);
+  intro(arena,"Cinq arguments qui ont l'air convaincants. Fais glisser chaque carte : à gauche s'il y a une faille, à droite s'il tient debout. Puis nomme le sophisme. Attention, certains tiennent vraiment debout : reconnais-les, car voir des sophismes partout est aussi une erreur. Savoir les nommer aide à les repérer, y compris dans les réponses d'une IA.",null,go);
   function go(){
     const qs=freshPick('soph',FALLACIES,5,'sophismes'); let qi=0, ok=0;
     const ask=()=>{
       const [txt,right,why]=qs[qi], id=NB.sophismes[FALLACIES.indexOf(qs[qi])].id;
-      const opts=(right===VALABLE?fallacyOptions(right,4):[...fallacyOptions(right,3),right].sort(()=>Math.random()-.5)).concat(VALABLE);
-      const box=el('div',{class:'options'}); const fb=el('div',{class:'answer',hidden:''});
+      // d'abord le geste : la carte part à gauche (sophisme) ou à droite (tient debout) ; puis on nomme la faille
+      const opts=right===VALABLE?fallacyOptions(right,4):[...fallacyOptions(right,3),right].sort(()=>Math.random()-.5);
+      const box=el('div',{class:'options',hidden:''}); const fb=el('div',{class:'answer',hidden:''});
       const next=el('button',{class:'btn primary',text:qi<4?'Suivant':'Voir le résultat',hidden:''});
+      const finish=(o,me)=>{
+        box.after(askConf(c=>{
+          if(me)me.classList.remove('chosen');
+          [...box.children].forEach(b=>{if(sameText(b.textContent,right))b.classList.add('right');});
+          if(o===right)ok++;else{if(me)me.classList.add('wrong');missAgain('soph',FALLACIES,qs[qi]);logErr('soph',id);}
+          hit(o===right); const pts=logConf('sophismes',c,o===right?1:0);
+          fb.replaceChildren(el('span',{class:'label'},(o===right?'Exact':right===VALABLE?'Cet argument tient debout':o===VALABLE?'Il y avait une faille : '+right:'C’était : '+right)+' ',betChip(pts)),el('span',{class:'fg2',text:why}),contestBtn('sophismes',id,txt)); fb.hidden=false; next.hidden=false; next.focus();
+        }));
+      };
+      const card=el('div',{class:'swipecard',tabindex:'0','aria-label':'Argument : flèche gauche pour sophisme, flèche droite s’il tient debout'},el('span',{class:'stamp l',text:'Sophisme'}),el('span',{class:'stamp r',text:'Tient debout'}),el('p',{class:'quote',text:'« '+txt+' »'}));
+      const bL=el('button',{class:'btn',text:'← Sophisme'}), bR=el('button',{class:'btn',text:'Tient debout →'}), hint=el('div',{class:'swipehint'},bL,bR);
+      let decided=false;
+      const decide=dir=>{if(decided)return;decided=true;
+        card.style.transform=`translateX(${dir*24}px) rotate(${dir*2}deg)`; card.querySelector(dir<0?'.stamp.l':'.stamp.r').style.opacity=1; hint.remove();
+        if(dir>0){finish(VALABLE,null);return;}
+        if(right===VALABLE){finish('faille',null);return;}
+        box.hidden=false; box.before(el('p',{class:'prompt',style:'text-align:center',text:'Bien vu. Laquelle ?'})); revealNext();};
+      bL.onclick=()=>decide(-1); bR.onclick=()=>decide(1);
+      card.addEventListener('keydown',e=>{if(e.key==='ArrowLeft')decide(-1);if(e.key==='ArrowRight')decide(1);});
+      let x0=null,dx=0;
+      card.addEventListener('pointerdown',e=>{if(decided)return;x0=e.clientX;dx=0;card.classList.add('drag');card.setPointerCapture(e.pointerId);});
+      card.addEventListener('pointermove',e=>{if(x0==null)return;dx=e.clientX-x0;card.style.transform=`translateX(${dx}px) rotate(${dx/18}deg)`;
+        card.querySelector('.stamp.l').style.opacity=Math.max(0,-dx/90);card.querySelector('.stamp.r').style.opacity=Math.max(0,dx/90);});
+      const up=()=>{if(x0==null)return;x0=null;card.classList.remove('drag');if(Math.abs(dx)>80)decide(Math.sign(dx));else{card.style.transform='';card.querySelectorAll('.stamp').forEach(s=>s.style.opacity=0);}};
+      card.addEventListener('pointerup',up);card.addEventListener('pointercancel',up);
       opts.forEach(o=>box.append(el('button',{text:o,onclick:e=>{
         const me=e.currentTarget;
         [...box.children].forEach(b=>{b.disabled=true;});me.classList.add('chosen');
-        box.after(askConf(c=>{
-          me.classList.remove('chosen');
-          [...box.children].forEach(b=>{if(sameText(b.textContent,right))b.classList.add('right');});
-          if(o===right)ok++;else{me.classList.add('wrong');missAgain('soph',FALLACIES,qs[qi]);}
-          hit(o===right); const pts=logConf('sophismes',c,o===right?1:0);
-          fb.replaceChildren(el('span',{class:'label'},(o===right?'Exact':right===VALABLE?'Cet argument tient debout':'C’était : '+right)+' ',betChip(pts)),el('span',{class:'fg2',text:why}),contestBtn('sophismes',id,txt)); fb.hidden=false; next.hidden=false; next.focus();
-        }));
+        finish(o,me);
       }})));
       next.addEventListener('click',()=>{qi++;if(qi<5)ask();else{const s=ok/5*100;const m=recordMsg('sophismes',s);logResult('sophismes',s);const up=adaptLevel('sophismes',s);showResult(arena,s,'% de bonnes réponses ('+ok+' sur 5)',m+' Cette semaine, essaie d’en repérer un dans une conversation, un article ou une réponse d’IA.'+betSummary()+up,()=>RUN.sophismes(arena));}});
-      arena.replaceChildren(qprog(qi,5),el('p',{class:'quote',text:'« '+txt+' »'}),box,fb,next);
+      arena.replaceChildren(qprog(qi,5),el('div',{class:'swipewrap'},card),hint,box,fb,next);
     };
     ask();
   }
@@ -4128,20 +4972,27 @@ words(arena){
 fluency(arena){
   const mode=el('div',{class:'seg',role:'group','aria-label':'Type de consigne'}); let m='letter';
   [['letter','Une lettre'],['cat','Une catégorie']].forEach(([v,t])=>mode.append(el('button',{'aria-pressed':String(v===m),text:t,onclick:e=>{m=v;[...mode.children].forEach(b=>b.setAttribute('aria-pressed',String(b===e.currentTarget)));}})));
-  intro(arena,"60 secondes pour taper un maximum de mots différents. Entrée après chaque mot. En mode lettre : pas de noms propres ni de mots de la même famille (porte, portail).",mode,()=>go(m));
+  intro(arena,"60 secondes pour taper un maximum de mots différents. Entrée après chaque mot : chacun est vérifié dans le dictionnaire. En mode lettre : pas de noms propres ni de mots de la même famille (porte, portail).",mode,()=>go(m));
   function go(m){
     const letter=pick(LETTERS), cat=pick(CATS);
     const words=[]; const chips=el('div',{class:'chips'}); const fb=el('p',{class:'feedback'});
     const inp=el('input',{class:'bigin',type:'text',autocomplete:'off',autocapitalize:'off','aria-label':'Mot',id:'flu-in',style:'width:min(300px,100%)'});
     arena.replaceChildren(m==='letter'?el('div',{class:'bigletter',text:letter}):el('p',{class:'prompt',style:'text-align:center',text:'Catégorie : '+cat}),inp,fb,chips); inp.focus();
     inp.addEventListener('paste',e=>e.preventDefault());
-    inp.addEventListener('keydown',e=>{
+    if(m==='letter')dictLoad(letter);
+    let over=false;
+    inp.addEventListener('keydown',async e=>{
       if(e.key!=='Enter')return; const raw=inp.value.trim(), n=norm(raw); inp.value=''; if(!n)return;
       if(m==='letter'&&!n.startsWith(norm(letter))){fb.className='feedback ko';fb.textContent='Doit commencer par '+letter;return;}
       if(words.some(w=>norm(w)===n)){fb.className='feedback ko';fb.textContent='Déjà dit';return;}
+      const ok=await dictHas(raw);
+      if(over)return;
+      if(ok===false){fb.className='feedback ko';fb.textContent=`« ${raw} » n’est pas dans le dictionnaire`;return;}
+      if(words.some(w=>norm(w)===n))return;
       words.push(raw); chips.append(el('span',{text:raw})); fb.className='feedback ok'; fb.textContent=words.length+(words.length>1?' mots':' mot');
     });
     cleanup=countdown(60,null,()=>{
+      over=true;
       const sc=words.length, msg=recordMsg('fluency',sc);
       logResult('fluency',sc,{m});
       showResult(arena,sc,m==='letter'?`mots en ${letter} en 60 s`:`${cat} en 60 s`,msg+(m==='letter'?' Un adulte trouve en moyenne 12 à 16 mots par lettre en une minute.':' Un adulte cite souvent une vingtaine d’animaux en une minute.'),()=>RUN.fluency(arena));
@@ -4194,36 +5045,168 @@ fermi(arena){
   }
 },
 chrono(arena){
-  intro(arena,"Deux événements par manche : lequel s'est produit en premier ? Six manches, de plusieurs siècles d'écart à la même année. Les dates s'affichent après chaque réponse : c'est là que les repères se fixent.",null,go);
+  intro(arena,"Trois frises à remettre dans l'ordre, du plus ancien au plus récent. Fais glisser les événements par la poignée, ou utilise les flèches. Les écarts se resserrent à chaque manche. Les dates s'affichent quand tu valides : c'est là que les repères se fixent.",null,go);
   function go(){
-    // écart en années visé à chaque manche, du plus large au plus serré
-    const GAPS=[[200,3000],[80,200],[30,80],[12,30],[3,12],[0,2]], used=new Set(), key=e=>e[1]*1e4+ +e[0];
-    let qi=0, ok=0; const seen=[];
-    const pair=([lo,hi])=>{
-      for(let t=0;t<300;t++){
-        const a=pick(EVENTS); if(used.has(a))continue;
-        const bs=EVENTS.filter(b=>b!==a&&!used.has(b)&&b[0]+b[1]!==a[0]+a[1]&&Math.abs(b[1]-a[1])>=lo&&Math.abs(b[1]-a[1])<=hi);
-        if(bs.length){const b=pick(bs);used.add(a);used.add(b);return Math.random()<.5?[a,b]:[b,a];}
+    // manches : nombre d'événements, écart minimal entre deux dates, étendue maximale de la frise
+    const ROUNDS=[[4,60,2500],[4,15,400],[5,2,120]], used=new Set(), key=e=>e[1]*1e4+ +e[0];
+    let qi=0, sum=0, perfect=0; const seen=[];
+    const draw=([n,lo,span])=>{
+      for(let t=0;t<400;t++){
+        const set=[pick(EVENTS)]; if(used.has(set[0]))continue;
+        for(let u=0;u<200&&set.length<n;u++){
+          const c=pick(EVENTS);
+          if(used.has(c)||set.includes(c)||set.some(e=>Math.abs(e[1]-c[1])<lo))continue;
+          const ys=[...set,c].map(e=>e[1]); if(Math.max(...ys)-Math.min(...ys)<=span)set.push(c);
+        }
+        if(set.length===n){set.forEach(e=>used.add(e));return set;}
       }
       return null;
     };
     const ask=()=>{
-      const p=pair(GAPS[qi])||pair([1,3000]), first=key(p[0])<key(p[1])?0:1, gap=Math.abs(p[0][1]-p[1][1]);
-      const box=el('div',{class:'options chrono'}), fb=el('div',{class:'answer',hidden:''});
-      const next=el('button',{class:'btn primary',text:qi<5?'Manche suivante':'Voir le résultat',hidden:''});
-      p.forEach((e,i)=>box.append(el('button',{text:e[2],onclick:ev=>{
-        [...box.children].forEach((b,j)=>{b.disabled=true;b.prepend(el('b',{text:fmtY(p[j][1])+' · '}));if(j===first)b.classList.add('right');});
-        if(i===first)ok++;else ev.currentTarget.classList.add('wrong');
-        hit(i===first); seen.push([p[0],i===first],[p[1],i===first]);
-        fb.replaceChildren(el('span',{class:'label',text:i===first?'Exact':'Raté'}),el('span',{class:'fg2',text:gap===0?`La même année : le ${evDate(p[first][0])}, puis le ${evDate(p[1-first][0])}.`:`${fmt(gap)} an${gap>1?'s':''} d'écart.`}));
-        fb.hidden=false; next.hidden=false; next.focus();
-      }})));
-      next.addEventListener('click',()=>{qi++;if(qi<6)ask();else{const sc=ok/6*100;const m=recordMsg('chrono',sc);logResult('chrono',sc);// tous les événements de la séance, remis dans l'ordre : les manches ratées sont signalées
+      const [n]=ROUNDS[qi], evs=draw(ROUNDS[qi])||draw([n,1,5000]);
+      // un mélange qui n'est jamais déjà dans le bon ordre
+      let order; do{order=[...evs].sort(()=>Math.random()-.5);}while(order.every((e,i)=>i===0||key(order[i-1])<key(e)));
+      const list=el('ol',{class:'sorter','aria-label':'Événements à classer, du plus ancien au plus récent'});
+      const fb=el('div',{class:'answer',hidden:''});
+      const next=el('button',{class:'btn primary',text:qi<ROUNDS.length-1?'Frise suivante':'Voir le résultat',hidden:''});
+      const move=(li,d)=>{const sib=d<0?li.previousElementSibling:li.nextElementSibling;if(!sib)return;flip(()=>d<0?list.insertBefore(li,sib):list.insertBefore(sib,li));son('clic');const f=li.querySelector(d<0?'.up':'.down');(getComputedStyle(f).visibility==='hidden'?li.querySelector(d<0?'.down':'.up'):f).focus();};
+      // FLIP : les éléments glissent vers leur nouvelle place au lieu de sauter
+      const flip=fn=>{const items=[...list.children],before=new Map(items.map(x=>[x,x.getBoundingClientRect().top]));fn();
+        items.forEach(x=>{if(x.classList.contains('drag'))return;const d=before.get(x)-x.getBoundingClientRect().top;if(!d)return;x.style.transition='none';x.style.transform=`translateY(${d}px)`;requestAnimationFrame(()=>{x.style.transition='';x.style.transform='';});});};
+      order.forEach(e=>{
+        const grip=el('span',{class:'grip','aria-hidden':'true',html:'<svg width="14" height="20" viewBox="0 0 14 20" fill="currentColor"><circle cx="4" cy="4" r="1.6"/><circle cx="10" cy="4" r="1.6"/><circle cx="4" cy="10" r="1.6"/><circle cx="10" cy="10" r="1.6"/><circle cx="4" cy="16" r="1.6"/><circle cx="10" cy="16" r="1.6"/></svg>'});
+        const li=el('li',{class:'sitem'},grip,el('span',{class:'stext',text:e[2]}),
+          el('span',{class:'sbtns'},el('button',{class:'up',type:'button','aria-label':'Monter : '+e[2],text:'▲',onclick:()=>move(li,-1)}),el('button',{class:'down',type:'button','aria-label':'Descendre : '+e[2],text:'▼',onclick:()=>move(li,1)})));
+        li._ev=e;
+        // glisser-déposer à la souris ou au doigt, par la poignée (le reste de la carte laisse défiler la page)
+        grip.addEventListener('pointerdown',pd=>{
+          if(list.classList.contains('locked'))return;
+          pd.preventDefault(); li.classList.add('drag'); // on écoute la fenêtre : déplacer l'élément dans la page lui ferait perdre la capture du pointeur
+          let startY=pd.clientY+scrollY, top=li.getBoundingClientRect().top+scrollY, last=pd, timer=0;
+          // près du bord de l'écran, la page défile toute seule pour atteindre le haut ou le bas de la frise
+          const edge=()=>{const y=last.clientY, d=y<90?-1:y>innerHeight-90?1:0;if(d){scrollBy(0,d*8);mv(last);}timer=d?requestAnimationFrame(edge):0;};
+          const mv=pm=>{
+            last=pm; if(!timer)timer=requestAnimationFrame(edge);
+            const dy=pm.clientY+scrollY-startY; li.style.transform=`translateY(${dy}px)`;
+            const r=li.getBoundingClientRect(), mid=r.top+r.height/2, p=li.previousElementSibling, nx=li.nextElementSibling;
+            const swap=(fn)=>{const vis=top+dy;li.style.transform='';flip(fn);const nt=li.getBoundingClientRect().top+scrollY;startY=pm.clientY+scrollY-(vis-nt);top=nt;li.style.transform=`translateY(${vis-nt}px)`;son('clic');};
+            if(p){const pr=p.getBoundingClientRect();if(mid<pr.top+pr.height/2)return swap(()=>list.insertBefore(li,p));}
+            if(nx){const nr=nx.getBoundingClientRect();if(mid>nr.top+nr.height/2)return swap(()=>list.insertBefore(nx,li));}
+          };
+          const up=()=>{cancelAnimationFrame(timer);timer=-1;removeEventListener('pointermove',mv);removeEventListener('pointerup',up);removeEventListener('pointercancel',up);li.classList.remove('drag');li.style.transform='';};
+          addEventListener('pointermove',mv); addEventListener('pointerup',up); addEventListener('pointercancel',up);
+        });
+        list.append(li);
+      });
+      const check=el('button',{class:'btn primary',text:'Valider l’ordre',onclick:()=>{
+        check.remove(); list.classList.add('locked'); list.querySelectorAll('button').forEach(b=>b.disabled=true);
+        const mine=[...list.children].map(li=>li._ev), truth=[...mine].sort((a,b)=>key(a)-key(b));
+        // note : la part des paires d'événements rangées dans le bon sens
+        let good=0,tot=0; for(let i=0;i<mine.length;i++)for(let j=i+1;j<mine.length;j++){tot++;if(key(mine[i])<key(mine[j]))good++;}
+        const sc=good/tot, all=sc===1; sum+=sc; if(all)perfect++;
+        let nl=0; for(let i=0;i<mine.length&&nl<2;i++)for(let j=i+1;j<mine.length&&nl<2;j++)if(key(mine[i])>key(mine[j])){logErr('chrono',[mine[i][2],mine[j][2]]);nl++;}
+        [...list.children].forEach((li,i)=>{const ok=li._ev===truth[i];li.classList.add(ok?'ok':'ko');li.querySelector('.sbtns').replaceWith(el('b',{class:'sdate',text:fmtY(li._ev[1])}));seen.push([li._ev,ok]);});
+        hit(all);
+        // après un temps pour voir ses erreurs, la frise se remet d'elle-même dans le bon ordre
+        setTimeout(()=>flip(()=>truth.forEach(e=>list.append([...list.children].find(li=>li._ev===e)))),all?0:900);
+        fb.replaceChildren(el('span',{class:'label',text:all?'Ordre parfait':`${good} paire${good>1?'s':''} sur ${tot} dans le bon sens`}),
+          el('span',{class:'fg2',text:all?'Chaque événement est à sa place.':'En rouge, ceux qui n’étaient pas à leur place. La frise se remet dans l’ordre.'}));
+        fb.hidden=false; next.hidden=false; next.focus({preventScroll:true});
+      }});
+      next.addEventListener('click',()=>{qi++;if(qi<ROUNDS.length)ask();else{
+        const scr=sum/ROUNDS.length*100; const m=recordMsg('chrono',scr); logResult('chrono',scr);
         const frise=el('div',{class:'recap wide'},el('span',{class:'label',text:'Ta frise du jour'}),el('ol',{class:'frise'},...seen.sort((a,b)=>key(a[0])-key(b[0])).map(([e,good])=>el('li',{class:good?null:'miss'},el('b',{text:fmtY(e[1])}),document.createTextNode(e[2])))));
-        showResult(arena,Math.round(sc),`% de bonnes réponses (${ok} sur 6)`,m+' Pour retenir une date, accroche-la à une autre que tu connais déjà : avant ou après la Révolution, combien de temps après la chute de Rome.',()=>RUN.chrono(arena),frise);}});
-      arena.replaceChildren(qprog(qi,6),el('p',{class:'prompt',style:'text-align:center',text:'Lequel s’est produit en premier ?'}),box,fb,next);
+        showResult(arena,Math.round(scr),`% de paires bien rangées (${perfect} frise${perfect>1?'s':''} parfaite${perfect>1?'s':''} sur ${ROUNDS.length})`,m+' Pour retenir une date, accroche-la à une autre que tu connais déjà : avant ou après la Révolution, combien de temps après la chute de Rome.',()=>RUN.chrono(arena),frise);}});
+      arena.replaceChildren(qprog(qi,ROUNDS.length),el('p',{class:'prompt',style:'text-align:center',text:'Du plus ancien au plus récent'}),
+        el('div',{class:'sortwrap'},el('span',{class:'send',text:'Plus ancien'}),list,el('span',{class:'send',text:'Plus récent'})),check,fb,next);
     };
     ask();
+  }
+},
+enigme(arena){
+  const k=todayKey(), done=state.enigme&&state.enigme.d===k?state.enigme:null;
+  const card=marks=>{
+    const ok=marks.filter(Boolean).length;
+    return el('div',{class:'recap enig'},el('span',{class:'label',text:'Énigme n° '+enigNo(k)}),
+      el('div',{class:'enig-grid','aria-label':ok+' bonnes réponses sur 5'},...marks.map((m,i)=>el('span',{class:m?'ok':'ko',style:`animation-delay:${i*.12}s`}))),
+      el('p',{class:'fg2',text:ok===5?'Sans faute. Bravo.':ok>=3?'Belle énigme.':'Demain, une autre chance.'}),
+      el('div',{class:'row',style:'justify-content:center'},el('button',{class:'btn primary',text:'Partager mon résultat',onclick:()=>shareText(enigShare(k,marks))})),
+      el('p',{class:'note',text:'Tout le monde a la même énigme aujourd’hui. La prochaine arrive demain matin.'}));
+  };
+  if(done){arena.replaceChildren(el('p',{class:'fg2',text:'Tu as déjà résolu l’énigme du jour.'}),card(done.m));return;}
+  intro(arena,"Cinq questions, les mêmes pour tout le monde aujourd'hui : chronologie, orthographe, sophisme. Une seule tentative par jour. À la fin, partage ta grille sans rien dévoiler des réponses.",null,go);
+  function go(){
+    const r=seeded('neophyte-enigme-'+k), qs=ENIG_PLAN.map(([t,n])=>quickQ(r,t,n)), marks=[]; let qi=0;
+    const ask=()=>{
+      const fb=el('div',{class:'answer',hidden:''}), next=el('button',{class:'btn primary',text:qi<4?'Suivante':'Voir ma grille',hidden:''});
+      next.addEventListener('click',()=>{qi++;if(qi<5)ask();else finish();});
+      arena.replaceChildren(qprog(qi,5),...quickAsk(qs[qi],good=>{marks[qi]=good;
+        fb.replaceChildren(el('span',{class:'label',text:good?'Exact':'Raté'}),el('span',{class:'fg2',text:qs[qi].why}));fb.hidden=false;next.hidden=false;next.focus({preventScroll:true});}),fb,next);
+    };
+    const finish=()=>{
+      state.enigme={d:k,m:marks}; const sc=marks.filter(Boolean).length/5*100; logResult('enigme',sc);
+      if(sc===100){son('record');laurels();}else son('fin');
+      arena.replaceChildren(card(marks));
+    };
+    ask();
+  }
+},
+rattrapage(arena){
+  const left=errsLeft();
+  if(!left.length){arena.replaceChildren(stagTalk('proud','Ton carnet d’erreurs est vide. Les questions que tu manqueras à l’orthographe, aux sophismes, à la chronologie, à l’énigme ou à l’Éclair viendront ici.'),
+    el('div',{class:'row',style:'justify-content:center'},el('button',{class:'btn primary',text:'Retour aux exercices',onclick:()=>{stopRun();$('#stage').hidden=true;$('#exgrid').hidden=false;}})));return;}
+  intro(arena,`${left.length} erreur${left.length>1?'s':''} dans ton carnet. Elles reviennent, les plus anciennes d'abord, jusqu'à huit par séance. Réussis-en une et elle disparaît ; rate-la et elle reste.`,null,go);
+  function go(){
+    const pick8=left.slice(0,8), qs=pick8.map(errQ); let qi=0, ok=0; const cleared=[];
+    const ask=()=>{
+      const fb=el('div',{class:'answer',hidden:''}), next=el('button',{class:'btn primary',text:qi<qs.length-1?'Suivante':'Voir le résultat',hidden:''});
+      next.addEventListener('click',()=>{qi++;if(qi<qs.length)ask();else finish();});
+      arena.replaceChildren(qprog(qi,qs.length),...quickAsk(qs[qi],good=>{
+        if(good){ok++;cleared.push(errKey(pick8[qi][0],pick8[qi][1]));}
+        fb.replaceChildren(el('span',{class:'label',text:good?'Rattrapée : elle sort du carnet':'Encore ratée : elle reste dans le carnet'}),el('span',{class:'fg2',text:qs[qi].why}));fb.hidden=false;next.hidden=false;next.focus({preventScroll:true});}),fb,next);
+    };
+    const finish=()=>{
+      state.errs=(state.errs||[]).filter(e=>!cleared.includes(errKey(e[0],e[1])));
+      if(cleared.length)day().ratt=(day().ratt||0)+cleared.length;
+      const m=recordMsg('rattrapage',ok); logResult('rattrapage',ok,{n:qs.length});
+      const rest=errsLeft().length;
+      showResult(arena,ok,`erreur${ok>1?'s':''} rattrapée${ok>1?'s':''} sur ${qs.length}`,m+(rest?` Il reste ${rest} erreur${rest>1?'s':''} dans ton carnet.`:' Ton carnet est vide. Bravo.'),()=>RUN.rattrapage(arena));
+    };
+    ask();
+  }
+},
+eclair(arena){
+  const D=DEFI; DEFI=null;
+  const seed=D?D.seed:Math.random().toString(36).slice(2,8);
+  intro(arena,D?`${D.from} te défie : ${D.score} point${D.score>1?'s':''} en 90 secondes. Tu auras exactement les mêmes questions. À toi de faire mieux.`
+    :"90 secondes de questions mêlées : orthographe, chronologie, sophismes. Réponds vite, mais juste : chaque bonne réponse compte un point. À la fin, revois celles que tu as manquées, ou défie un ami sur les mêmes questions.",null,go);
+  function go(){
+    const R=seeded('neophyte-eclair-'+seed);
+    let ok=0, n=0, over=false; const missed=[]; combo=0; qmarks=[];
+    const count=el('span',{class:'eclair-n',text:'0'}), c=el('span',{class:'combo',hidden:''});
+    const zone=el('div',{class:'eclair-q'});
+    const ask=()=>{
+      if(over)return;
+      delete arena.dataset.v;
+      zone.style.animation='none'; void zone.offsetWidth; zone.style.animation='';
+      const q=quickQ(R,rpick(R,['ortho','ortho','chrono','chrono','soph']),1+Math.floor(R()*3)); n++; qcur=n;
+      zone.replaceChildren(...quickAsk(q,good=>{
+        if(good){ok++;count.textContent=fmt(ok);count.classList.remove('bump');void count.offsetWidth;count.classList.add('bump');}else missed.push(q);
+        setTimeout(ask,good?380:1100);
+      }));
+    };
+    arena.replaceChildren(el('div',{class:'qhead eclair-head'},qstag(),el('span',{class:'fg2',text:'Bonnes réponses'}),count,c),zone);
+    ask();
+    cleanup=countdown(90,null,()=>{
+      over=true; const m=recordMsg('eclair',ok); logResult('eclair',ok,{n});
+      const rev=missed.length?el('div',{class:'recap wide'},el('span',{class:'label',text:'À revoir'}),...missed.slice(0,6).map(q=>el('div',{class:'answer'},el('span',{class:'label',text:q.kind==='Chronologie'?q.kind:q.kind+' · '+q.opts[q.right]}),q.kind==='Orthographe'?el('p',{class:'quote',style:'margin:0;font-size:1rem',text:q.quote.replace('___',q.opts[q.right])}):null,el('span',{class:'fg2',text:q.why})))):null;
+      const vs=D?(ok>D.score?`Tu bats ${D.from} : ${ok} contre ${D.score}. `:ok===D.score?`Égalité parfaite avec ${D.from}. `:`${D.from} garde l’avantage : ${D.score} contre ${ok}. `):'';
+      showResult(arena,ok,`bonnes réponses en 90 s (${n} questions)`,vs+m,()=>RUN.eclair(arena),rev);
+      const who=(state.settings.pseudo||'').trim()||'Un ami', url=location.origin+location.pathname.replace(/index\.html$/,'')+'?defi='+encodeURIComponent(seed+'.'+ok+'.'+who.slice(0,24));
+      const txt=`${who} te défie sur Néophyte : ${ok} point${ok>1?'s':''} en 90 secondes à l’Éclair. Mêmes questions pour toi. Tu fais mieux ?\n${url}`;
+      const btn=el('button',{class:'btn',text:D?'Renvoyer le défi':'Défier un ami',onclick:()=>shareText(txt)});
+      const rows=arena.querySelectorAll(':scope > .row'); (rows[rows.length-1]||arena).append(btn);
+    });
   }
 },
 dictee(arena){
@@ -4380,9 +5363,11 @@ function applyTheme(){
   if(th==='auto')delete document.documentElement.dataset.theme; else document.documentElement.dataset.theme=th;
   $$('#theme-seg button').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.th===th)));
 }
+function renderConf(){$$('#conf-seg button').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.conf===(confOn()?'on':'off'))));}
+$$('#conf-seg button').forEach(b=>b.addEventListener('click',()=>{state.settings.conf=b.dataset.conf;save();renderConf();}));
 function renderSon(){$$('#son-seg button').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.son===(sonOn()?'on':'off'))));}
 $$('#son-seg button').forEach(b=>b.addEventListener('click',()=>{state.settings.son=b.dataset.son;save();renderSon();son('juste');}));
-renderSon();
+renderSon(); renderConf();
 $$('#theme-seg button').forEach(b=>b.addEventListener('click',()=>{try{localStorage.setItem(LS_TH,b.dataset.th);}catch(e){}applyTheme();}));
 applyTheme();
 function renderOrigins(){
@@ -4392,6 +5377,7 @@ function renderAll(){
   renderThemes();renderQuoteDay();renderCjl();renderFlori();renderGoal();renderProgram();renderScreens();renderToday();renderExGrid();
   if(!$('#v-progres').hidden){renderProgress();renderCarnet();}
   if(!$('#v-classement').hidden)renderCircle();
+  if(!$('#v-reglages').hidden)renderRetours();
   $('#erase').hidden=!ref; $('#login-open').hidden=!!ref||!window.bfSupabase;
   if(!$('#v-coach').hidden){renderSas();renderWeekBilan();renderTutor();}
 }
@@ -4429,8 +5415,9 @@ function welcomeNeeded(){
 function closeWelcome(login){
   try{localStorage.setItem(LS_WELCOME,'1');}catch(e){}
   $('#welcome').hidden=true; document.body.style.overflow='';
-  if(login){try{sessionStorage.removeItem('brainfit.later');}catch(e){}$('#syncwarn').hidden=false;showTab('aujourdhui');window.scrollTo(0,0);setTimeout(()=>$('#login-email').focus(),50);}
+  if(login){try{sessionStorage.removeItem('brainfit.later');}catch(e){}$('#syncwarn').hidden=false;openLogin();showTab('aujourdhui');window.scrollTo(0,0);setTimeout(()=>$('#login-email').focus(),50);}
   else{try{sessionStorage.setItem('brainfit.later','1');}catch(e){}$('#syncwarn').hidden=true;showTab('aujourdhui');window.scrollTo(0,0);}
+  if(DEFI)setTimeout(launchDefi,200);
 }
 if(welcomeNeeded()){
   $('#wl-em').innerHTML=stagSVG(1,'proud'); $('#welcome').hidden=false; document.body.style.overflow='hidden';
@@ -4450,6 +5437,7 @@ $$('#biblio-toc button').forEach(b=>b.addEventListener('click',()=>goPanel('cons
 initCarnetCoach();
 applyFreezes(); gami(true);
 renderTips(); renderOrigins(); renderAll(); showTab(location.hash.slice(1)); setSync('local'); weekBilanNotice();
+if(DEFI&&$('#welcome').hidden)setTimeout(launchDefi,300);
 // on dévoile la page une fois le compte vérifié, ou au plus tard après 0,8 s
 Promise.race([initStore(),new Promise(r=>setTimeout(r,800))]).finally(()=>document.documentElement.classList.remove('boot'));
 if('serviceWorker' in navigator)navigator.serviceWorker.register('sw.js').catch(()=>{});

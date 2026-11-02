@@ -1,0 +1,9 @@
+{
+ "id": "datagouv-lecture",
+ "libelle": "data.gouv.fr : lecture et pratiques culturelles",
+ "recupere": "2026-11-02",
+ "source": "data.gouv.fr, recherche « pratiques culturelles lecture »",
+ "url": "https://www.data.gouv.fr/api/1/datasets/?q=pratiques+culturelles+lecture&page_size=8",
+ "points": {},
+ "jeux": []
+}

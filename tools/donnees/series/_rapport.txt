@@ -1,0 +1,19 @@
+Récupéré le 2026-11-02
+ok pop-fr : FRA 2025-1960 (66 pts, dernier 47412964) ; WLD 2025-1960 (66 pts, dernier 3021512598)
+ok esperance-vie : FRA 2024-1960 (65 pts, dernier 69.87) ; WLD 2024-1960 (65 pts, dernier 50.94)
+ok fecondite : FRA 2024-1960 (65 pts, dernier 2.85) ; WLD 2024-1960 (65 pts, dernier 4.69)
+ok pib-hab : FRA 2025-1960 (66 pts, dernier 10776) ; WLD 2025-1960 (66 pts, dernier 3667)
+ok co2-hab : FRA 2024-1970 (55 pts, dernier 9.02) ; WLD 2024-1970 (55 pts, dernier 4.14)
+ok urbains : FRA 2025-1960 (66 pts, dernier 61.68) ; WLD 2025-1960 (66 pts, dernier 34.23)
+ok internet : FRA 2024-1990 (35 pts, dernier 0.05) ; WLD 2025-2005 (21 pts, dernier 15.6)
+ok forets : FRA 2024-1990 (35 pts, dernier 26.79) ; WLD 2023-1992 (32 pts, dernier 33.01)
+ok mortalite-infantile : FRA 2024-1960 (65 pts, dernier 23.7) ; WLD 2024-1990 (35 pts, dernier 64)
+ok chomage : EU27_2020 2009-2025 (17 pts, dernier 6) ; FR 2003-2025 (23 pts, dernier 7.7)
+ok inflation : EU27_2020 2001-2025 (25 pts, dernier 2.5) ; FR 1996-2025 (30 pts, dernier 0.9)
+ok renouvelables : EU27_2020 2004-2025 (22 pts, dernier 26.2) ; FR 2004-2025 (22 pts, dernier 23.9)
+ok esperance-vie-long : FRA 1816-2023 (208 pts, dernier 83.33) ; OWID_WRL 1770-2023 (81 pts, dernier 73.17)
+ok pauvrete-extreme : OWID_WRL -10000-2026 (264 pts, dernier 9.79)
+ok alphabetisation : OWID_WRL 1975-2024 (50 pts, dernier 87.74)
+ok insee : 163 jeux
+ok datagouv-lecture : 0 jeux
+ok datagouv-sport : 6 jeux

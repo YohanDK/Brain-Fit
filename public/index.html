@@ -422,6 +422,11 @@ table.week td.num{font-family:var(--f-mono)}
 .pari.down{background:var(--bad-soft);color:var(--bad)}
 .contest{display:flex;flex-direction:column;gap:8px;align-items:flex-start}
 .btn.small{padding:4px 8px;font-size:.85rem;font-weight:600}
+.hyp-refs{display:flex;flex-direction:column;gap:8px;width:100%}
+.hyp-ref{display:flex;gap:10px;align-items:flex-start;text-align:left;padding:10px 12px;border:1px solid var(--line);border-radius:9px;background:var(--surface);cursor:pointer;width:100%}
+.hyp-ref input{margin-top:4px;flex:none}
+.hyp-ref span{display:flex;flex-direction:column;gap:2px}
+.hyp-ref:has(input:checked){border-color:var(--gold-deep);background:var(--gold-soft)}
 .lvnote{margin:0}
 /* animations */
 #arena.qin>*:not(.qhead){animation:rise .38s cubic-bezier(.2,.7,.3,1) both}
@@ -1635,7 +1640,7 @@ const EX={
   probleme:{name:'Problème du jour',skill:'Raisonnement',desc:"Un problème piège. Écris ton raisonnement, puis compare avec la solution et l'avis du coach.",unit:'% de réussite'},
   graphe:{name:'Graphique trompeur',skill:'Lecture des chiffres',desc:"Trois graphiques : trouve ce qui cloche, ou reconnais celui qui est honnête. Puis vois la version juste.",unit:'% de bonnes réponses'},
   erreuria:{name:"Trouve l'erreur de l'IA",skill:'Vigilance critique',desc:"Des réponses d'IA convaincantes, avec une erreur cachée. Trouve la phrase fautive et dis si tu en es sûr.",unit:'% de bonnes réponses'},
-  hypotheses:{name:'Hypothèses concurrentes',skill:'Raisonnement',desc:"Un fait surprenant : trouve 5 explications possibles, puis comment les départager.",unit:'% de complétion'},
+  hypotheses:{name:'Hypothèses concurrentes',skill:'Raisonnement',desc:"Un fait surprenant : trouve 5 explications vraiment différentes, puis comment les départager. Une liste de référence mesure leur variété.",unit:'% de qualité'},
   sophismes:{name:'Détecteur de sophismes',skill:'Esprit critique',desc:"Cinq arguments à balayer : à gauche s'il y a une faille, à droite s'il tient debout. Puis nomme le sophisme.",unit:'% de bonnes réponses'},
   fermi:{name:'Estimation',skill:'Raisonnement',desc:"Trois questions de Fermi : trouve l'ordre de grandeur par le raisonnement.",unit:'% de justesse'},
   ortho:{name:'Orthographe & accords',skill:'Langue écrite',desc:"Huit phrases pièges : choisis la bonne forme, ou trouve la faute et répare-la, sans correcteur.",unit:'% de bonnes réponses'},
@@ -2070,32 +2075,8 @@ function textStats(s,mins){
 const ORTHO=NB.ortho.map(o=>[o.phrase,o.choix,o.bonne,o.regle]);
 const QUIZ=Object.fromEntries(NB.textes.map(t=>[t.titre,t.quiz]));
 const AIERR=NB.erreursIA.map(a=>[a.question,a.phrases,a.faute,a.expl]);
-const SCENARIOS=[
-  "Les ventes d'un glacier de bord de mer ont chuté de 30 % en juillet par rapport à l'an dernier.",
-  "Un collègue d'habitude bavard n'a rien dit de toute la réunion.",
-  "Les élèves d'une école ont de meilleures notes depuis qu'on a mis des plantes dans les classes.",
-  "Un site web perd soudain la moitié de ses visiteurs du jour au lendemain.",
-  "Les personnes qui font du sport vivent plus longtemps en moyenne.",
-  "Une ville voit ses accidents de vélo augmenter après avoir créé de nouvelles pistes cyclables.",
-  "Les hôpitaux réputés pour avoir les meilleurs chirurgiens ont parfois un taux de mortalité plus élevé.",
-  "Une application passe de 4,5 à 3 étoiles de moyenne en un mois.",
-  "Les pays qui consomment le plus de chocolat ont le plus de prix Nobel par habitant.",
-  "Une entreprise qui a instauré le télétravail voit sa productivité mesurée augmenter de 15 %.",
-  "Un restaurant toujours plein se retrouve à moitié vide, alors que ses prix n'ont pas changé.",
-  "Les enfants qui prennent un petit-déjeuner ont de meilleurs résultats scolaires.",
-  "Les ventes de parapluies d'un magasin ont doublé en mai, alors qu'il a moins plu que l'an dernier.",
-  "Un élève brillant obtient soudain de mauvaises notes dans toutes les matières.",
-  "Les plaintes pour cambriolage baissent dans un quartier, mais les habitants disent se sentir moins en sécurité.",
-  "Un même médicament semble plus efficace dans un hôpital que dans un autre.",
-  "Les ventes de livres papier augmentent chez les 15-25 ans.",
-  "Dans une entreprise, les arrêts maladie sont deux fois plus nombreux le lundi.",
-  "Les candidats reçus en entretien le matin sont plus souvent recrutés que ceux de l'après-midi.",
-  "Une ligne de bus devenue gratuite attire moins de voyageurs que prévu.",
-  "Un quartier où l'on a installé des caméras voit les vols de vélos augmenter.",
-  "Les élèves assis au premier rang ont de meilleures notes.",
-  "Le nombre de diagnostics d'une maladie double en dix ans.",
-  "Un village perd sa boulangerie, et la fréquentation de son café baisse aussi."
-];
+// les faits surprenants et leurs listes de référence vivent dans banques.js (B.hypotheses)
+const SCENARIOS=NB.hypotheses.map(h=>h.fait);
 const LEVELS={rct:'Expérience randomisée',obs:'Observation',svy:'Enquête',mod:'Modèle théorique',rev:'Synthèse'};
 const LESSONS=[
   ["Réussir avec l'IA n'est pas apprendre","Avec l'IA, on produit mieux et plus vite. Mais ce que l'on retient, et ce que l'on sait refaire seul ensuite, baisse souvent.",[
@@ -3473,7 +3454,7 @@ function badgeDefs(ctx){
     ['dictee5','Copiste','5 dictées écrites sur papier',n('dictee').length>=5],
     ['fiche4','Hors ligne','4 fiches papier remplies',n('fiche').length>=4],
     ['etape3','Affranchi','Atteindre l’étape 3 du parcours',(ctx.stage||1)>=3],
-    ['hyp','Enquêteur','Hypothèses concurrentes complètes à 100 %',max('hypotheses')>=100],
+    ['hyp','Enquêteur','Hypothèses concurrentes à 100 % : quatre familles d’explications et un bon test',max('hypotheses')>=100],
     ['cjl7','Chroniqueur','L’année de « Ce jour-là » trouvée à 10 ans près, 7 fois',Object.values(state.days).filter(d=>d.cjl&&Math.abs(d.cjl.g-d.cjl.y)<=10).length>=7],
     ['chrono','Annaliste','6 sur 6 en chronologie',max('chrono')>=100],
     ['focus25','Concentré','25 min sans écran ni interruption',n('focus').some(r=>r.s>=25&&!r.int)],
@@ -5656,10 +5637,28 @@ hypotheses(arena){
       const hs=ins.map(x=>x.value.trim()).filter(v=>v.length>=6);
       if(hs.length<2){fb.textContent='Propose au moins 2 explications.';return;}
       stopT(); arena.style.alignItems='';
-      const t=test.value.trim(), score=Math.min(100,hs.length*16+(t.length>=15?20:0));
-      const m=recordMsg('hypotheses',score); logResult('hypotheses',score,{sc});
-      showResult(arena,score,`% de complétion (${hs.length} explications${t.length>=15?' + un test':''})`,m+' Ce qui compte : des explications vraiment différentes, et un moyen concret de les départager.',()=>RUN.hypotheses(arena));
+      const t=test.value.trim(), H=NB.hypotheses.find(h=>h.fait===sc);
+      // la liste de référence : on coche ce qu'on avait vraiment trouvé ; le score compte les familles différentes, pas les cases
+      const chk=lab=>{const c=el('input',{type:'checkbox'});return[c,el('label',{class:'hyp-ref'},c,el('span',{},...lab))];};
+      const refs=H.ref.map(([f,txt])=>{const [c,l]=chk([el('small',{class:'label',text:NB.familles[f]}),document.createTextNode(txt)]);return{f,c,l};});
+      const [autreC,autreL]=chk([document.createTextNode('Une autre explication solide, absente de cette liste, d’une famille que je n’ai pas cochée')]);
+      const [testC,testL]=chk([el('small',{class:'label',text:'Pour départager'}),document.createTextNode(H.test)]);
+      testL.append(el('span',{class:'note',text:t?' Coche si ton idée va dans ce sens.':' Tu n’as rien proposé.'}));
+      if(!t)testC.disabled=true;
+      const voir=el('button',{class:'btn primary',text:'Voir mon score'});
+      arena.replaceChildren(el('p',{class:'quote',text:sc}),
+        el('div',{class:'answer'},el('span',{class:'label',text:'Tes explications'}),el('ol',{class:'fg2',style:'margin:0;padding-left:1.3em'},...hs.map(h=>el('li',{text:h}))),t?el('p',{class:'fg2',style:'margin:0'},el('b',{text:'Pour départager : '}),t):null),
+        el('p',{class:'fg2',style:'max-width:56ch',text:'Voici des explications de référence, chacune rangée dans sa famille. Coche honnêtement celles que tu avais trouvées, même dites autrement.'}),
+        el('div',{class:'hyp-refs'},...refs.map(r=>r.l),autreL),testL,voir);
+      voir.addEventListener('click',()=>{
+        const fams=new Set(refs.filter(r=>r.c.checked).map(r=>r.f)); if(autreC.checked)fams.add('autre');
+        const nf=fams.size, score=Math.min(4,nf)*20+(testC.checked?20:0);
+        const manq=[...new Set(H.ref.map(r=>r[0]))].filter(f=>!fams.has(f)).map(f=>NB.familles[f].toLowerCase());
+        const m=recordMsg('hypotheses',score); logResult('hypotheses',score,{sc,fam:nf});
+        showResult(arena,score,`% de qualité (${nf} famille${nf>1?'s':''} d’explications${testC.checked?' + un bon test':''})`,
+          m+(manq.length?` La prochaine fois, pense aussi : ${manq.slice(0,3).join(', ')}.`:' Toutes les familles de la liste y sont.')+' Quatre familles différentes valent mieux que cinq variantes de la même idée.',()=>RUN.hypotheses(arena));
       arena.append(coachBlock('Avis du coach sur mes hypothèses',()=>coachRules()+`\n\nExercice « hypothèses concurrentes ». Fait : « ${sc} »\n\nSes explications :\n${hs.map((h,i)=>`${i+1}. ${h}`).join('\n')}\n\nCe qui les départagerait selon lui : ${t||'(rien proposé)'}\n\nÉvalue en 150 mots maximum : la diversité réelle des explications (causes différentes ou variantes de la même ?), la plus solide et la plus fragile, UNE piste importante qu'il n'a pas envisagée (formulée comme une question, sans donner la réponse toute faite), et la qualité de son test.`));
+      });
     });
   }
 },

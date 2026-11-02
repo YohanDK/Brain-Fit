@@ -13,6 +13,7 @@ Le site s'installe sur le téléphone comme une appli. Avec un compte, les progr
 | `supabase/cercle.sql` | Supabase | Les cercles d'amis et leur classement de la semaine, et l'effacement de ses données. |
 | `supabase/defis.sql` | Supabase | Les défis du cercle : énigme du jour et meilleur Éclair de la semaine sous chaque nom. |
 | `supabase/cerf.sql` | Supabase | Le cerf de chacun (pelage, attributs) dans le classement du cercle. |
+| `supabase/amis.sql` | Supabase | L'onglet Amis : classement depuis le début, encouragements (bravo, courage) et défis à l'Éclair envoyés dans le cercle. |
 | `supabase/signalements.sql` | Supabase | Les signalements « Je conteste » envoyés depuis les corrections. |
 | `public/banques.js` | GitHub Pages | Les problèmes, sophismes, erreurs d'IA, estimations, phrases d'orthographe, textes de lecture et graphiques, avec leur niveau et leur source, et les modèles de variantes. |
 | `tools/verifier-banques.js` | GitHub | Vérifie les banques avant chaque publication : une question mal formée ou un calcul faux bloque la mise en ligne. |

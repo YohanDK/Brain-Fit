@@ -713,8 +713,32 @@ a{color:var(--accent);text-underline-offset:3px}
 .seg.themes{justify-content:flex-start}
 .circle-form input{font:inherit;font-size:1rem;padding:6px 10px;border:1px solid var(--line);border-radius:var(--r);background:var(--surface);color:var(--fg);max-width:200px}
 .ranking{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:4px}
-.ranking li{display:grid;grid-template-columns:2ch 40px 1fr auto auto;gap:10px;align-items:center;padding:6px 10px;border-radius:var(--r);background:var(--sunk)}
+.ranking li{border-radius:var(--r);background:var(--sunk)}
 .ranking li.me{background:var(--accent-soft);color:var(--accent-deep)}
+.rk-row{display:grid;grid-template-columns:2ch 40px 1fr auto auto;gap:10px;align-items:center;padding:6px 10px;width:100%;border:0;background:none;color:inherit;font:inherit;text-align:left;cursor:pointer;border-radius:var(--r)}
+.rk-row:hover{background:rgba(0,0,0,.03)}
+.rk-row[aria-expanded="true"] .rk-name{font-weight:700}
+.rk-name{min-width:0;overflow-wrap:anywhere}
+.ami-card{display:grid;grid-template-columns:96px 1fr;gap:6px 14px;align-items:center;padding:4px 12px 12px;animation:rise .3s both ease-out}
+.ami-facts{display:flex;flex-direction:column;gap:2px;min-width:0}
+.ami-facts .fg2{font-size:.92rem}
+.ami-acts{grid-column:1/-1;gap:8px}
+.nudges{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:6px}
+.nudge{display:grid;grid-template-columns:40px 1fr;gap:4px 12px;align-items:center;padding:8px 10px;border-radius:var(--r);background:var(--sunk)}
+.nudge.k-defi{background:var(--gold-soft)}
+.nudge-t{display:flex;flex-direction:column;min-width:0}
+.nudge-t small{font-size:.8rem}
+.nudge-a{grid-column:2;gap:6px}
+.amis-defis{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.defi-box{display:flex;flex-direction:column;gap:8px;padding:12px;border:1px solid var(--line);border-radius:var(--r)}
+.mini-rank{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:2px}
+.mini-rank li{display:grid;grid-template-columns:32px 1fr auto;gap:8px;align-items:center;padding:2px 6px;border-radius:var(--r)}
+.mini-rank li.me{background:var(--accent-soft)}
+.mini-rank .stag.rk-stag{width:32px;height:32px}
+@media (max-width:620px){.amis-defis{grid-template-columns:1fr}.ami-card{grid-template-columns:72px 1fr}.ami-card .stag.big{width:72px;height:72px}}
+.tabs button.dot{position:relative}
+.tabs button.dot::after{content:"";position:absolute;top:6px;right:8px;width:8px;height:8px;border-radius:50%;background:var(--gold);box-shadow:0 0 0 2px var(--surface)}
+.sect-h{margin:14px 4px -4px}
 .ranking .rk{font-family:var(--f-display);font-weight:700}
 .ranking .xpw{font-weight:700;color:var(--gold-deep)}
 .ranking .defis{display:block;font-size:.82rem;color:var(--muted)}
@@ -774,6 +798,7 @@ a{color:var(--accent);text-underline-offset:3px}
 .cat.fausse{color:var(--bad)}
 .btn.mini{padding:4px 8px;font-size:.95rem;color:var(--muted)}
 .btn.gold.mini{color:var(--gold-deep);padding:4px 12px}
+.btn.primary.mini{color:var(--on-accent);padding:4px 12px}
 .flori{display:flex;flex-direction:column}
 .flori .fi{padding:12px 0;border-top:1px solid var(--line);display:flex;flex-direction:column;gap:4px}
 .flori .fi:first-child{border-top:0}
@@ -890,7 +915,7 @@ details.fold[open]{display:flex;flex-direction:column;gap:10px}
 .attrs li>div{flex:1;min-width:0;display:flex;flex-direction:column}
 .attrs li .stag.mini{width:40px;height:32px;cursor:default}
 .attrs li.locked .stag.mini{filter:grayscale(1);opacity:.35}
-.ranking .rk-stag{width:40px;height:40px;cursor:default;flex:none}
+.stag.rk-stag{width:40px;height:40px;cursor:default;flex:none}
 .pips3{display:inline-flex;gap:3px;margin-left:8px;vertical-align:middle}
 .pips3 i{width:8px;height:8px;border-radius:50%;border:1px solid var(--line);display:inline-block}
 .pips3 i.g1{background:#B07A45;border-color:#B07A45}.pips3 i.g2{background:#B9BCC2;border-color:#9A9EA6}.pips3 i.g3{background:var(--gold);border-color:var(--gold-deep)}
@@ -1027,7 +1052,7 @@ var fin=function(){if(e.parentNode)e.remove();};e.addEventListener('click',fin);
 
   <nav class="tabs" role="tablist" aria-label="Sections">
     <button role="tab" data-tab="aujourdhui" aria-selected="true"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3v2M12 19v2M4.2 4.2l1.4 1.4M18.4 18.4l1.4 1.4M3 12h2M19 12h2M4.2 19.8l1.4-1.4M18.4 5.6l1.4-1.4M12 8a4 4 0 1 0 0 8a4 4 0 1 0 0-8"/></svg><span>Aujourd'hui</span></button>
-    <button role="tab" data-tab="classement" aria-selected="false"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 20h18M4.5 20v-6h5v6M9.5 20V9h5v11M14.5 20v-8h5v8"/><path d="M12 3.5l.9 1.8 2 .3-1.45 1.4.35 2-1.8-.95-1.8.95.35-2L9.1 5.6l2-.3z"/></svg><span>Classement</span></button>
+    <button role="tab" data-tab="amis" aria-selected="false"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="9" cy="8" r="3.2"/><path d="M3 20c0-3.6 2.7-6 6-6s6 2.4 6 6"/><circle cx="16.5" cy="9" r="2.6"/><path d="M15.6 14.2c3.2-.4 5.4 1.9 5.4 5.3"/></svg><span>Amis</span></button>
     <button role="tab" data-tab="exercices" aria-selected="false"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6.5 6.5v11M17.5 6.5v11M3.5 9.5v5M20.5 9.5v5M6.5 12h11"/></svg><span>Exercices</span></button>
     <button role="tab" data-tab="coach" aria-selected="false"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 5h16v11H10l-4 4v-4H4z"/></svg><span>Coach</span></button>
     <button role="tab" data-tab="progres" aria-selected="false"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 20v-6M12 20V5M19 20v-10M3 20h18"/></svg><span>Bilan</span></button>
@@ -1132,40 +1157,19 @@ var fin=function(){if(e.parentNode)e.remove();};e.addEventListener('click',fin);
     </details>
   </section>
 
-  <!-- CLASSEMENT -->
-  <section class="view" id="v-classement" hidden>
+  <!-- AMIS -->
+  <section class="view" id="v-amis" hidden>
+    <div class="panel amis-inbox" id="amis-inbox" hidden>
+      <div class="row spread" style="flex-wrap:nowrap;align-items:baseline"><h2 class="label">Pour toi</h2><span class="note" id="amis-inbox-n"></span></div>
+      <ul class="nudges" id="amis-inbox-list"></ul>
+    </div>
     <div class="panel" id="circle-panel">
-      <div><h2>Mon cercle</h2><p class="muted note">Un classement de la semaine entre proches. Seuls ton pseudo, tes XP de la semaine et ta série sont partagés, et seulement avec les membres de ton cercle.</p></div>
+      <div><h2>Mon cercle</h2><p class="muted note">Entre proches, sous un pseudo. Seuls ton pseudo, ton cerf, tes XP, ta série et tes scores aux défis sont partagés, et seulement avec les membres de ton cercle.</p></div>
       <div id="circle-body" style="display:flex;flex-direction:column;gap:10px"></div>
     </div>
-    <div class="panel goal">
-      <span class="label">Mon objectif du moment</span>
-      <div id="goal-view" class="row spread" hidden>
-        <div style="min-width:0;display:flex;flex-direction:column;gap:2px"><p class="big" id="goal-text"></p><span class="note" id="goal-since"></span></div>
-        <button class="btn ghost" id="goal-edit">Modifier</button>
-      </div>
-      <form id="goal-form" class="row" style="flex-wrap:nowrap">
-        <input type="text" id="goal-in" placeholder="Ex. : écrire des argumentaires plus clairs d'ici décembre" style="flex:1;min-width:0" autocomplete="off">
-        <button class="btn primary" type="submit">Fixer</button>
-      </form>
-      <p class="note">Ton coach en tient compte dans ses bilans. Il peut aussi t'en proposer un.</p>
-    </div>
-    <div class="panel">
-      <div>
-        <h2>Programme de la semaine</h2>
-        <p class="muted">Comme à la salle : des séances longues, régulières, qui font transpirer.</p>
-      </div>
-      <div class="prog" id="prog"></div>
-    </div>
-    <div class="panel">
-      <span class="label">Défi de la semaine</span>
-      <div class="challenge" id="challenge"></div>
-    </div>
-    <div class="panel" id="reel">
-      <div class="row spread" style="flex-wrap:nowrap;align-items:flex-start"><span class="label">Défi du réel</span><button class="btn ghost mini" id="reel-next" style="flex:none">Un autre</button></div>
-      <div class="challenge" id="reel-box"></div>
-      <div class="row reel-city"><span class="note" id="reel-city-txt"></span><button class="btn ghost mini" id="reel-city-edit"></button></div>
-      <form class="row reel-city" id="reel-city-form" hidden><input type="text" id="reel-city-in" placeholder="Ta ville" aria-label="Ta ville" autocomplete="address-level2"><button class="btn mini">Valider</button></form>
+    <div class="panel" id="amis-defis" hidden>
+      <div><h2>Défis du cercle</h2><p class="muted note">Les mêmes questions pour tous. Joue d'abord, compare ensuite.</p></div>
+      <div id="amis-defis-body" class="amis-defis"></div>
     </div>
   </section>
 
@@ -1277,6 +1281,36 @@ var fin=function(){if(e.parentNode)e.remove();};e.addEventListener('click',fin);
     <div class="panel" id="wbilan">
       <div><h2>Bilan de la semaine</h2><p class="muted" id="wb-week"></p></div>
       <div class="wb" id="wb-body"></div>
+    </div>
+    <h2 class="label sect-h" id="ma-semaine">Ma semaine</h2>
+    <div class="panel goal">
+      <span class="label">Mon objectif du moment</span>
+      <div id="goal-view" class="row spread" hidden>
+        <div style="min-width:0;display:flex;flex-direction:column;gap:2px"><p class="big" id="goal-text"></p><span class="note" id="goal-since"></span></div>
+        <button class="btn ghost" id="goal-edit">Modifier</button>
+      </div>
+      <form id="goal-form" class="row" style="flex-wrap:nowrap">
+        <input type="text" id="goal-in" placeholder="Ex. : écrire des argumentaires plus clairs d'ici décembre" style="flex:1;min-width:0" autocomplete="off">
+        <button class="btn primary" type="submit">Fixer</button>
+      </form>
+      <p class="note">Ton coach en tient compte dans ses bilans. Il peut aussi t'en proposer un.</p>
+    </div>
+    <div class="panel">
+      <div>
+        <h2>Programme de la semaine</h2>
+        <p class="muted">Comme à la salle : des séances longues, régulières, qui font transpirer.</p>
+      </div>
+      <div class="prog" id="prog"></div>
+    </div>
+    <div class="panel">
+      <span class="label">Défi de la semaine</span>
+      <div class="challenge" id="challenge"></div>
+    </div>
+    <div class="panel" id="reel">
+      <div class="row spread" style="flex-wrap:nowrap;align-items:flex-start"><span class="label">Défi du réel</span><button class="btn ghost mini" id="reel-next" style="flex:none">Un autre</button></div>
+      <div class="challenge" id="reel-box"></div>
+      <div class="row reel-city"><span class="note" id="reel-city-txt"></span><button class="btn ghost mini" id="reel-city-edit"></button></div>
+      <form class="row reel-city" id="reel-city-form" hidden><input type="text" id="reel-city-in" placeholder="Ta ville" aria-label="Ta ville" autocomplete="address-level2"><button class="btn mini">Valider</button></form>
     </div>
     <div class="panel" id="parcours">
       <div><h2>Mon parcours</h2><p class="muted note" id="pc-sub"></p></div>
@@ -1452,7 +1486,7 @@ var fin=function(){if(e.parentNode)e.remove();};e.addEventListener('click',fin);
     </div>
     <div class="panel" id="privacy">
       <div><h2>Tes données</h2>
-        <p class="fg2" style="max-width:65ch">Avec un compte, Néophyte garde ton e-mail, tes progrès et tes textes chez Supabase, qui héberge sa base de données. Les autres utilisateurs ne peuvent pas les lire ; techniquement, la personne qui gère ce Néophyte y a accès. Si tu rejoins un cercle, ses membres voient seulement ton pseudo, tes XP de la semaine et ta série. Quand tu contestes une réponse ou signales un problème, ton message, la question ou l'écran concernés (avec la capture si tu la laisses) et le type d'appareil sont envoyés pour être relus ; ils sont effacés avec ton compte. Quand tu parles au coach, ta demande et le résumé de tes progrès (et la photo de ta feuille, si tu lui en confies une) sont envoyés à Claude (Anthropic) pour qu'il réponde. Rien n'est vendu, et il n'y a ni publicité ni mesure d'audience.</p></div>
+        <p class="fg2" style="max-width:65ch">Avec un compte, Néophyte garde ton e-mail, tes progrès et tes textes chez Supabase, qui héberge sa base de données. Les autres utilisateurs ne peuvent pas les lire ; techniquement, la personne qui gère ce Néophyte y a accès. Si tu rejoins un cercle, ses membres voient seulement ton pseudo, ton cerf, ton niveau, tes XP, ta série, tes scores à l'énigme et à l'Éclair, et les encouragements ou défis que tu leur envoies. Quand tu contestes une réponse ou signales un problème, ton message, la question ou l'écran concernés (avec la capture si tu la laisses) et le type d'appareil sont envoyés pour être relus ; ils sont effacés avec ton compte. Quand tu parles au coach, ta demande et le résumé de tes progrès (et la photo de ta feuille, si tu lui en confies une) sont envoyés à Claude (Anthropic) pour qu'il réponde. Rien n'est vendu, et il n'y a ni publicité ni mesure d'audience.</p></div>
       <div class="row"><button class="btn ghost" id="erase" hidden>Effacer mon compte</button></div>
       <div id="erase-confirm" class="row" hidden>
         <span class="fg2">Effacer ton compte, tes progrès, tes textes et ta place dans ton cercle ? Ce n'est pas réversible.</span>
@@ -2450,51 +2484,161 @@ function toggleTheme(k){
 }
 $('#themes-ok').addEventListener('click',()=>{state.settings.themesSet=true;save();renderThemes();});
 $('#themes-later').addEventListener('click',()=>{state.settings.themesSet=true;save();renderThemes();});
-/* ---------- cercle d'amis : le classement de la semaine entre proches, sous un pseudo ---------- */
+/* ---------- amis : le cercle, son classement, les gestes et les défis entre proches, sous un pseudo ---------- */
 const sbc=()=>window.bfSupabase;
-let circleData=null, circleSent='', circleBusy=false;
+let circleData=null, circleSent='', circleBusy=false, amisOpen=null, defiCible=null, amisPeekAt=0;
 async function myUserId(){try{const {data}=await sbc().auth.getSession();return data.session?data.session.user.id:null;}catch(e){return null;}}
 function weekXp(){const m=gamiCtx.xp||xpByDay(), wk=weekStart(todayKey());let n=0;for(let i=0;i<7;i++)n+=m[addDays(wk,i)]||0;return n;}
-// envoie ses chiffres de la semaine au cercle, seulement s'ils ont changé
+const colErr=e=>e&&/column|schema cache/i.test(e.message||'');
+// envoie ses chiffres au cercle, seulement s'ils ont changé
 async function circlePush(force){
   const c=state.settings.circle, id=ref&&await myUserId(); if(!c||!id||!state.settings.pseudo)return;
   const row={code:c,user_id:id,pseudo:state.settings.pseudo,week:weekStart(todayKey()),xp:weekXp(),streak:streaks().cur,updated_at:new Date().toISOString()};
-  // énigme du jour et meilleur Éclair de la semaine (colonnes ajoutées par defis.sql)
+  // énigme du jour et meilleur Éclair de la semaine (defis.sql), cerf (cerf.sql), XP depuis le début et niveau (amis.sql)
   const k=todayKey(), en=state.enigme&&state.enigme.d===k?state.enigme.m.filter(Boolean).length:null, wk=row.week;
   const ecl=Math.max(0,...state.results.filter(r=>r.ex==='eclair'&&r.d>=wk).map(r=>r.s));
-  const extra={enig_day:en==null?null:k,enig:en,eclair_week:wk,eclair:ecl,cerf:cerfShape()};
-  const key=JSON.stringify([c,row.week,row.xp,row.streak,row.pseudo,extra]); if(key===circleSent&&!force)return;
-  let {error}=await sbc().from('circle_members').upsert({...row,...extra});
-  // base pas encore mise à jour : sans le cerf (cerf.sql), puis sans les défis (defis.sql)
-  if(error&&/column|schema cache/i.test(error.message||'')){const{cerf:_,...ex2}=extra;({error}=await sbc().from('circle_members').upsert({...row,...ex2}));}
-  if(error&&/column|schema cache/i.test(error.message||''))({error}=await sbc().from('circle_members').upsert(row));
+  const defis={enig_day:en==null?null:k,enig:en,eclair_week:wk,eclair:ecl}, cerf={cerf:cerfShape()}, tot={xp_total:Math.min(1e7,gamiCtx.total||0),niveau:Math.min(99,gamiCtx.level||1)};
+  const key=JSON.stringify([row.code,row.week,row.xp,row.streak,row.pseudo,defis,cerf,tot]); if(key===circleSent&&!force)return;
+  // base pas encore à jour : on retire d'abord ce qu'ajoute amis.sql, puis le cerf, puis les défis
+  let error;
+  for(const r of [{...row,...defis,...cerf,...tot},{...row,...defis,...cerf},{...row,...defis},row]){({error}=await sbc().from('circle_members').upsert(r));if(!colErr(error))break;}
   if(!error)circleSent=key; return error;
 }
 async function circleLoad(){
   const c=state.settings.circle; if(!c||!ref){circleData=null;return;}
-  let [m,ci]=await Promise.all([sbc().from('circle_members').select('user_id,pseudo,week,xp,streak,enig_day,enig,eclair_week,eclair,cerf').eq('code',c),sbc().from('circles').select('name').eq('code',c).maybeSingle()]);
-  if(m.error)m=await sbc().from('circle_members').select('user_id,pseudo,week,xp,streak,enig_day,enig,eclair_week,eclair').eq('code',c);
-  if(m.error)m=await sbc().from('circle_members').select('user_id,pseudo,week,xp,streak').eq('code',c);
+  const base='user_id,pseudo,week,xp,streak', cols=[base+',enig_day,enig,eclair_week,eclair,cerf,xp_total,niveau',base+',enig_day,enig,eclair_week,eclair,cerf',base+',enig_day,enig,eclair_week,eclair',base];
+  const since=new Date(Date.now()-14*864e5).toISOString();
+  let [m,ci,nu]=await Promise.all([sbc().from('circle_members').select(cols[0]).eq('code',c),sbc().from('circles').select('name').eq('code',c).maybeSingle(),
+    sbc().from('circle_nudges').select('id,from_id,to_id,kind,seed,score,day,created_at').eq('code',c).gte('created_at',since).order('created_at',{ascending:false}).limit(150)]);
+  for(let i=1;m.error&&i<cols.length;i++)m=await sbc().from('circle_members').select(cols[i]).eq('code',c);
   if(m.error)return; const wk=weekStart(todayKey()), me=await myUserId();
-  circleData={name:ci.data?ci.data.name:'',rows:(m.data||[]).map(r=>({...r,xp:String(r.week)===wk?r.xp:0,me:r.user_id===me})).sort((a,b)=>b.xp-a.xp||b.streak-a.streak)};
+  const rows=(m.data||[]).map(r=>({...r,xp:String(r.week)===wk?r.xp:0,me:r.user_id===me})).sort((a,b)=>b.xp-a.xp||b.streak-a.streak);
+  circleData={name:ci.data?ci.data.name:'',me,rows,total:rows.some(r=>'xp_total' in r),nudges:nu.error?null:(nu.data||[])};
 }
 // le cerf d'un ami, tel qu'il l'a habillé ; une donnée venue d'ailleurs est filtrée avant d'être dessinée
-function friendStag(c){
+function friendStag(c,mood){
   const ok=c&&typeof c==='object', l=ok&&Number.isInteger(c.l)?Math.min(40,Math.max(1,c.l)):1, a={};
   if(ok&&c.a&&typeof c.a==='object')for(const x of ATTRS){const g=c.a[x[0]];if(Number.isInteger(g)&&g>=1&&g<=3)a[x[0]]=g;}
   const pk=ok&&Object.prototype.hasOwnProperty.call(PELAGES,c.p)?c.p:'fauve';
-  return[l,'idle',{p:pk==='blanc'&&l<5?'fauve':pk,a,l}];
+  return[l,mood||'idle',{p:pk==='blanc'&&l<5?'fauve':pk,a,l}];
 }
-// sous chaque nom : l'énigme du jour et le meilleur Éclair de la semaine
-function defiLine(r){
-  const k=todayKey(), parts=[];
-  if(r.enig_day&&String(r.enig_day)===k&&r.enig!=null)parts.push(`énigme ${r.enig}/5`);
-  if(r.eclair&&String(r.eclair_week)===weekStart(k))parts.push(`Éclair ${r.eclair}`);
+const rowStag=(r,mood)=>stagSVG(...friendStag(r.me?cerfShape():r.cerf,mood));
+const enigOf=r=>r.enig_day&&String(r.enig_day)===todayKey()&&r.enig!=null?r.enig:null;
+const eclairOf=r=>r.eclair&&String(r.eclair_week)===weekStart(todayKey())?r.eclair:0;
+const pseudoOf=id=>{const r=circleData&&circleData.rows.find(x=>x.user_id===id);return r?r.pseudo:'Un ancien membre';};
+// les gestes déjà vus ou relevés, gardés sur l'appareil et dans la sauvegarde
+const amisVu=()=>state.settings.amisVu||(state.settings.amisVu=[]);
+function amisSeen(id){const v=amisVu();if(!v.includes(id)){v.push(id);if(v.length>80)v.splice(0,v.length-80);save();}}
+// ce qui attend l'utilisateur : gestes reçus des 7 derniers jours, pas encore vus
+function amisInbox(){
+  if(!circleData||!circleData.nudges)return[];
+  const me=circleData.me, lim=new Date(Date.now()-7*864e5).toISOString(), vu=amisVu();
+  return circleData.nudges.filter(n=>n.from_id!==me&&(n.to_id===me||n.to_id==null)&&n.created_at>=lim&&!vu.includes(n.id));
+}
+// pastille sur l'onglet Amis quand un geste attend
+function amisBadge(){const b=$('.tabs [data-tab="amis"]'); if(!b)return; const n=amisInbox().length; b.classList.toggle('dot',n>0); b.setAttribute('aria-label',n?`Amis, ${n} nouveauté${n>1?'s':''}`:'Amis');}
+function amisPeek(){if(!ref||!state.settings.circle||Date.now()-amisPeekAt<3e5)return;amisPeekAt=Date.now();circleLoad().then(amisBadge).catch(()=>{});}
+const sentToday=(to,kind)=>!!(circleData&&circleData.nudges&&circleData.nudges.some(n=>n.from_id===circleData.me&&n.to_id===to&&n.kind===kind&&String(n.day)===todayUTC()));
+const todayUTC=()=>new Date().toISOString().slice(0,10);
+// un geste vers un ami (ou tout le cercle si to est vide)
+async function nudge(to,kind,extra){
+  const c=state.settings.circle; if(!c||!ref)return 'off';
+  const {data,error}=await sbc().from('circle_nudges').insert({code:c,to_id:to||null,kind,...(extra||{})}).select('id,from_id,to_id,kind,seed,score,day,created_at').single();
+  if(error)return error.code==='23505'?'twice':'err';
+  if(circleData&&circleData.nudges)circleData.nudges.unshift(data);
+  return 'ok';
+}
+const NUDGE_TXT={bravo:'Bravo envoyé',courage:'Courage envoyé'};
+function nudgeBtn(r,kind,label){
+  const done=sentToday(r.user_id,kind);
+  const b=el('button',{class:'btn'+(done?' ghost':''),text:done?NUDGE_TXT[kind]:label,disabled:done?'':null,onclick:async()=>{
+    b.disabled=true; const res=await nudge(r.user_id,kind);
+    if(res==='ok'||res==='twice'){b.textContent=NUDGE_TXT[kind];b.classList.add('ghost');if(res==='ok')toast(`<span>${kind==='bravo'?'Bravo':'Courage'} envoyé à ${esc(r.pseudo)}.</span>`);}
+    else{b.disabled=false;toast('<span>Envoi impossible pour l’instant.</span>');}}});
+  return b;
+}
+const esc=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+// lancer l'Éclair pour défier quelqu'un (ou tout le cercle) : son score lui sera envoyé à la fin
+function defierEclair(to,pseudo){defiCible={to:to||null,pseudo:pseudo||null};showTab('exercices');openEx('eclair');}
+// relever un défi reçu dans l'appli : mêmes questions que l'ami
+function relever(n){amisSeen(n.id);DEFI={seed:n.seed,score:n.score,from:pseudoOf(n.from_id),fromId:n.from_id};showTab('exercices');openEx('eclair');}
+// à la fin d'un Éclair : envoyer le défi à la personne visée, ou répondre à celle qui nous a défié
+async function eclairDefiDone(seed,ok,D){
+  const to=defiCible?defiCible.to:D&&D.fromId?D.fromId:undefined; const who=defiCible?defiCible.pseudo:D&&D.from; defiCible=null;
+  if(to===undefined)return null;
+  const res=await nudge(to,'defi',{seed,score:ok});
+  return res==='ok'?(to?`Défi envoyé : ${who} verra ton score et tes questions dans l’onglet Amis.`:'Défi envoyé à tout ton cercle.')
+    :res==='twice'?(to?`Tu as déjà lancé un défi à ${who} aujourd’hui.`:'Tu as déjà défié ton cercle aujourd’hui.'):null;
+}
+function renderInbox(){
+  const box=$('#amis-inbox'), list=$('#amis-inbox-list'), items=amisInbox(); box.hidden=!items.length; amisBadge();
+  if(!items.length){list.replaceChildren();return;}
+  $('#amis-inbox-n').textContent=items.length>1?items.length+' nouveautés':'';
+  list.replaceChildren(...items.slice(0,8).map(n=>{
+    const r=circleData.rows.find(x=>x.user_id===n.from_id), who=pseudoOf(n.from_id), all=n.to_id==null;
+    const txt=n.kind==='bravo'?`${who} te dit bravo pour ta semaine.`:n.kind==='courage'?`${who} t’envoie du courage. Une séance, et c’est reparti.`
+      :`${who} ${all?'défie le cercle':'te défie'} à l’Éclair : ${n.score} point${n.score>1?'s':''} en 90 secondes.`;
+    const li=el('li',{class:'nudge k-'+n.kind});
+    const close=()=>{amisSeen(n.id);li.remove();renderInbox();};
+    li.append(el('span',{class:'stag rk-stag','aria-hidden':'true',html:r?rowStag(r,n.kind==='defi'?'idle':'proud'):stagSVG(1,'idle')}),
+      el('span',{class:'nudge-t'},el('span',{text:txt}),el('small',{class:'muted',text:fd(new Date(n.created_at),{weekday:'long',hour:'2-digit',minute:'2-digit'})})),
+      el('span',{class:'row nudge-a'},n.kind==='defi'?el('button',{class:'btn primary mini',text:'Relever',onclick:()=>relever(n)}):null,
+        el('button',{class:'btn ghost mini',text:n.kind==='defi'?'Plus tard':'Merci',onclick:close})));
+    return li;}));
+}
+// la fiche d'un ami, dépliée sous son nom
+function amiCard(r){
+  const L=r.niveau||(r.cerf&&Number.isInteger(r.cerf.l)?r.cerf.l:null), en=enigOf(r), ec=eclairOf(r);
+  const facts=[L?`Niveau ${roman(L)} · ${levelName(L)}`:null,`Série de ${r.streak} jour${r.streak>1?'s':''}`,`${fmt(r.xp)} XP cette semaine`+(r.xp_total?` · ${fmt(r.xp_total)} depuis le début`:''),
+    `Énigme du jour : ${en==null?'pas encore faite':en+'/5'}`,`Éclair de la semaine : ${ec?ec+' points':'pas encore joué'}`].filter(Boolean);
+  const card=el('div',{class:'ami-card'},el('span',{class:'stag big','aria-hidden':'true',html:rowStag(r,r.me?'proud':'idle')}),
+    el('div',{class:'ami-facts'},el('b',{text:r.pseudo+(r.me?' (toi)':'')}),...facts.map(f=>el('span',{class:'fg2',text:f}))));
+  const acts=el('div',{class:'row ami-acts'});
+  if(r.me)acts.append(el('button',{class:'btn ghost',text:'Habiller mon cerf',onclick:()=>{showTab('reglages');$('#mc-stag').scrollIntoView({block:'center'});}}));
+  else if(circleData.nudges){acts.append(nudgeBtn(r,'bravo','Bravo'),nudgeBtn(r,'courage','Courage'),
+    sentToday(r.user_id,'defi')?el('button',{class:'btn ghost',disabled:'',text:'Défi lancé aujourd’hui'}):el('button',{class:'btn primary',text:'Défier à l’Éclair',onclick:()=>defierEclair(r.user_id,r.pseudo)}));}
+  else acts.append(el('span',{class:'note',text:'Les encouragements et défis entre amis arrivent bientôt.'}));
+  card.append(acts); return card;
+}
+function renderRanking(){
+  const gen=circleData.total&&state.settings.amisVue==='general';
+  const rows=gen?[...circleData.rows].sort((a,b)=>(b.xp_total||0)-(a.xp_total||0)||b.streak-a.streak):circleData.rows;
+  return el('ol',{class:'ranking'},...rows.map((r,i)=>{
+    const open=amisOpen===r.user_id;
+    const head=el('button',{class:'rk-row','aria-expanded':String(open),onclick:()=>{amisOpen=open?null:r.user_id;renderCircle(true);}},
+      el('span',{class:'rk',text:String(i+1)}),el('span',{class:'stag rk-stag','aria-hidden':'true',html:rowStag(r)}),
+      el('span',{class:'rk-name'},document.createTextNode(r.pseudo+(r.me?' (toi)':'')),defiLine(r,gen)),
+      el('span',{class:'xpw',text:fmt(gen?r.xp_total||0:r.xp)+' XP'}),el('span',{class:'fg2',text:gen?(r.niveau?'Niv. '+roman(r.niveau):''):r.streak+' j'}));
+    return el('li',{class:r.me?'me':null},head,open?amiCard(r):null);}));
+}
+// sous chaque nom : l'énigme du jour et le meilleur Éclair de la semaine (ou le niveau, au classement général)
+function defiLine(r,gen){
+  const parts=[], en=enigOf(r), ec=eclairOf(r);
+  if(gen&&r.niveau)parts.push(levelName(r.niveau));
+  else{if(en!=null)parts.push(`énigme ${en}/5`);if(ec)parts.push(`Éclair ${ec}`);}
   return parts.length?el('small',{class:'defis',text:parts.join(' · ')}):null;
 }
+// les défis communs : l'énigme du jour (scores cachés tant qu'on ne l'a pas faite) et l'Éclair de la semaine
+function renderDefis(){
+  const box=$('#amis-defis'), body=$('#amis-defis-body'); box.hidden=!circleData||circleData.rows.length<2;
+  if(box.hidden)return;
+  const k=todayKey(), mine=state.enigme&&state.enigme.d===k, played=circleData.rows.filter(r=>!r.me&&enigOf(r)!=null);
+  const line=(r,v)=>el('li',{class:r.me?'me':null},el('span',{class:'stag rk-stag','aria-hidden':'true',html:rowStag(r)}),el('span',{text:r.pseudo+(r.me?' (toi)':'')}),el('b',{text:v}));
+  const enig=el('div',{class:'defi-box'},el('div',{class:'row spread'},el('span',{class:'label',text:'Énigme du jour'}),el('span',{class:'note',text:played.length?`${played.length} ami${played.length>1?'s':''} l’${played.length>1?'ont':'a'} faite`:'Personne encore'})));
+  if(mine){const rs=circleData.rows.filter(r=>r.me||enigOf(r)!=null).sort((a,b)=>(b.me?state.enigme.m.filter(Boolean).length:enigOf(b))-(a.me?state.enigme.m.filter(Boolean).length:enigOf(a)));
+    enig.append(el('ol',{class:'mini-rank'},...rs.map(r=>line(r,(r.me?state.enigme.m.filter(Boolean).length:enigOf(r))+'/5'))));}
+  else enig.append(el('p',{class:'fg2',text:played.length?'Fais-la pour découvrir leurs scores. Une seule tentative, les mêmes questions pour tous.':'Cinq questions, les mêmes pour tous aujourd’hui. Sois le premier.'}),
+    el('div',{class:'row'},el('button',{class:'btn primary',text:'Faire l’énigme',onclick:()=>{showTab('exercices');openEx('enigme');}})));
+  const ecl=circleData.rows.filter(r=>eclairOf(r)>0).sort((a,b)=>eclairOf(b)-eclairOf(a));
+  const eb=el('div',{class:'defi-box'},el('div',{class:'row spread'},el('span',{class:'label',text:'Éclair de la semaine'}),el('span',{class:'note',text:'meilleur score'})));
+  eb.append(ecl.length?el('ol',{class:'mini-rank'},...ecl.map(r=>line(r,eclairOf(r)+' pts'))):el('p',{class:'fg2',text:'Personne n’a encore joué cette semaine.'}));
+  if(circleData.nudges)eb.append(el('div',{class:'row'},sentToday(null,'defi')?el('span',{class:'note',text:'Tu as défié ton cercle aujourd’hui.'}):el('button',{class:'btn',text:'Défier le cercle',onclick:()=>defierEclair(null)}),el('span',{class:'note',text:'Joue ta manche : tes amis recevront tes questions et ton score.'})));
+  body.replaceChildren(enig,eb);
+}
 const newCode=()=>{const A='ABCDEFGHJKLMNPQRSTUVWXYZ23456789';return Array.from(crypto.getRandomValues(new Uint8Array(6)),b=>A[b%A.length]).join('');};
-async function renderCircle(){
+async function renderCircle(quick){
   const body=$('#circle-body'), c=state.settings.circle;
+  if(!ref||!c){$('#amis-inbox').hidden=true;$('#amis-defis').hidden=true;}
   if(!ref){body.replaceChildren(stagTalk('idle','Connecte-toi pour créer un cercle ou en rejoindre un. À plusieurs, on tient mieux.'));return;}
   if(!c){
     const msg=el('p',{class:'note',role:'status'});
@@ -2514,25 +2658,35 @@ async function renderCircle(){
       const k=code.value.trim().toUpperCase(); if(circleBusy||!ps())return;
       if(!/^[A-Z0-9]{6}$/.test(k)){msg.textContent='Le code fait 6 caractères.';return;}
       circleBusy=true; msg.textContent='…'; await enter(k); circleBusy=false;}});
-    body.replaceChildren(el('div',{class:'row circle-form'},pseudo),el('div',{class:'row circle-form'},name,create),el('div',{class:'row circle-form'},code,join),msg);
+    body.replaceChildren(stagTalk('idle','Un cercle, c’est quelques proches qui s’entraînent ensemble : un classement, des encouragements et des défis sur les mêmes questions.'),
+      el('div',{class:'row circle-form'},pseudo),el('div',{class:'row circle-form'},name,create),el('div',{class:'row circle-form'},code,join),msg);
     return;
   }
-  if(!circleData)body.replaceChildren(el('p',{class:'note',text:'Chargement du classement…'}));
-  await circlePush(); await circleLoad();
+  if(!quick||!circleData){
+    if(!circleData)body.replaceChildren(el('p',{class:'note',text:'Chargement du classement…'}));
+    await circlePush(); await circleLoad(); amisPeekAt=Date.now();
+  }
   if(!circleData){body.replaceChildren(el('p',{class:'note',text:'Classement indisponible pour l’instant.'}));return;}
-  const share=`Rejoins mon cercle Néophyte « ${circleData.name} » : ouvre https://yohandk.github.io/Brain-Fit/, crée ton compte, puis onglet Classement, code ${c}.`;
+  const share=`Rejoins mon cercle Néophyte « ${circleData.name} » : ouvre https://yohandk.github.io/Brain-Fit/, crée ton compte, puis onglet Amis, code ${c}.`;
   const invite=el('button',{class:'btn',text:'Inviter',onclick:async()=>{try{if(navigator.share){await navigator.share({text:share});return;}await navigator.clipboard.writeText(share);toast('<span>Invitation copiée : colle-la dans un message.</span>');}catch(e){}}});
-  const leave=el('button',{class:'btn ghost',text:'Quitter le cercle',onclick:async()=>{
+  const leave=el('button',{class:'btn ghost mini',text:'Quitter le cercle',onclick:async()=>{
     if(!leave.dataset.sure){leave.dataset.sure='1';leave.textContent='Vraiment quitter ?';return;}
     const id=await myUserId(); await sbc().from('circle_members').delete().eq('code',c).eq('user_id',id);
     state.settings.circle=null; circleData=null; save(); renderCircle();}});
+  const gen=circleData.total&&state.settings.amisVue==='general';
+  const seg=circleData.total?el('div',{class:'seg',role:'group','aria-label':'Classement'},...[['semaine','Cette semaine'],['general','Depuis le début']].map(([v,t])=>
+    el('button',{'aria-pressed':String((gen?'general':'semaine')===v),text:t,onclick:()=>{state.settings.amisVue=v;save();renderCircle(true);}}))):null;
+  const top=circleData.rows[0];
   body.replaceChildren(
-    el('div',{class:'row spread'},el('span',{},el('b',{text:circleData.name}),document.createTextNode(' · code '),el('b',{text:c})),el('div',{class:'row'},invite,leave)),
-    el('span',{class:'label',text:'Semaine '+isoWeek(todayKey())+' · XP de la semaine'}),
-    el('ol',{class:'ranking'},...circleData.rows.map((r,i)=>el('li',{class:r.me?'me':null},el('span',{class:'rk',text:String(i+1)}),el('span',{class:'stag rk-stag','aria-hidden':'true',html:stagSVG(...friendStag(r.me?cerfShape():r.cerf))}),el('span',{},document.createTextNode(r.pseudo+(r.me?' (toi)':'')),defiLine(r)),el('span',{class:'xpw',text:fmt(r.xp)+' XP'}),el('span',{class:'fg2',text:r.streak+' j'})))),
+    el('div',{class:'row spread'},el('span',{},el('b',{text:circleData.name}),document.createTextNode(' · code '),el('b',{text:c})),invite),
+    el('div',{class:'row spread',style:'align-items:center'},el('span',{class:'label',text:gen?'XP depuis le début':'Semaine '+isoWeek(todayKey())+' · XP de la semaine'}),seg),
+    renderRanking(),
     circleData.rows.length<2?stagTalk('idle','Tu es seul pour l’instant : invite un proche avec le bouton « Inviter ».')
-      :!circleData.rows[0].xp?stagTalk('idle','La semaine commence : le premier qui s’entraîne prend la tête.')
-      :circleData.rows[0].me?stagTalk('proud','Tu mènes le cercle cette semaine. Tiens bon jusqu’à dimanche !'):stagTalk('idle',`${circleData.rows[0].pseudo} mène cette semaine. Une séance de plus peut tout changer.`));
+      :gen?stagTalk('idle','Touche un nom pour voir son cerf, l’encourager ou le défier.')
+      :!top.xp?stagTalk('idle','La semaine commence : le premier qui s’entraîne prend la tête.')
+      :top.me?stagTalk('proud','Tu mènes le cercle cette semaine. Tiens bon jusqu’à dimanche !'):stagTalk('idle',`${top.pseudo} mène cette semaine. Touche son nom pour lui lancer un défi.`),
+    el('div',{class:'row',style:'justify-content:flex-end'},leave));
+  renderInbox(); renderDefis();
 }
 // effacer son compte : tout part, côté serveur comme sur cet appareil
 $('#erase').addEventListener('click',()=>{$('#erase-confirm').hidden=false;});
@@ -2544,7 +2698,7 @@ $('#erase-yes').addEventListener('click',async()=>{
     const {data}=await sb.auth.getSession(), s=data.session;
     const r=await fetch(window.BF_CONFIG.supabaseUrl+'/functions/v1/account',{method:'POST',headers:{Authorization:'Bearer '+s.access_token,apikey:window.BF_CONFIG.supabaseKey}});
     full=r.ok;
-    if(!full){const id=s.user.id;await sb.from('circle_members').delete().eq('user_id',id);await sb.from('docs').delete().eq('user_id',id);}
+    if(!full){const id=s.user.id;await sb.from('circle_nudges').delete().eq('from_id',id);await sb.from('circle_members').delete().eq('user_id',id);await sb.from('docs').delete().eq('user_id',id);}
   }catch(e){}
   try{await sb.auth.signOut();}catch(e){}
   ref=null; tref=null; state=blank(); texts=[];
@@ -3966,9 +4120,10 @@ function renderSas(){
 try{const d=JSON.parse(localStorage.getItem(SAS_LS)||'null');if(d){$('#sas-q').value=d.q||'';$('#sas-mine').value=d.mine||'';$('#sas-learn').value=d.learn||'';sasRate=d.rate||0;sasStart=d.start||null;}}catch(e){}
 sasUpdate();
 
-const TABS=['aujourdhui','classement','exercices','coach','progres','conseils','reglages'];
+const TABS=['aujourdhui','amis','exercices','coach','progres','conseils','reglages'];
 function showTab(t){
   if(t==='retours'){t='reglages';renderRetours(true);}
+  if(t==='classement')t='amis'; // anciens liens
   if(t==='exercices'&&$('#stage').hidden)$('#exgrid').hidden=false;
   if(!TABS.includes(t))t='aujourdhui';
   $$('.tabs button').forEach(b=>b.setAttribute('aria-selected',String(b.dataset.tab===t)));
@@ -3976,7 +4131,7 @@ function showTab(t){
   $('#go-biblio').toggleAttribute('aria-current',t==='conseils'); $('#go-settings').toggleAttribute('aria-current',t==='reglages');
   if(t==='conseils'||t==='reglages')$('#go-'+(t==='conseils'?'biblio':'settings')).setAttribute('aria-current','page');
   if(t==='progres'){renderProgress();renderCarnet();renderXpPanel();renderScreenChart();renderWeekBilan();}
-  if(t==='classement')renderCircle();
+  if(t==='amis')renderCircle();
   if(t==='reglages'){$('#city-in').value=city();renderRetours();renderCerf();}
   if(t==='coach'){renderSas();renderCoach();renderTutor();}
   if(location.hash!=='#'+t)try{history.replaceState(null,'','#'+t);}catch(e){}
@@ -4417,13 +4572,14 @@ function launchDefi(){if(!DEFI)return;try{history.replaceState(null,'',location.
 function stopRun(){if(cleanup){cleanup();cleanup=null;}$('#st-timer').hidden=true;$('#st-bar').hidden=true;}
 function openEx(key){
   stopRun();
+  if(key!=='eclair')defiCible=null;
   curEx=key; qmarks=[]; betRun=0; betN=0; $('#stage').classList.toggle('saison',key==='evenement');
   const e=EX[key]; $('#exgrid').hidden=true; $('#stage').hidden=false; $('#st-skill').textContent=e.skill; $('#st-name').textContent=e.name;
   const o=$('#st-orig'); o.open=false; o.hidden=!ORIG[key]; o.querySelector('p').textContent=ORIG[key]||'';
   RUN[key]($('#arena'));
   $('#stage').scrollIntoView({behavior:'smooth',block:'start'});
 }
-$('#st-close').addEventListener('click',()=>{stopRun();$('#stage').hidden=true;$('#exgrid').hidden=false;});
+$('#st-close').addEventListener('click',()=>{stopRun();defiCible=null;$('#stage').hidden=true;$('#exgrid').hidden=false;});
 function countdown(sec,onTick,onEnd){
   const t=$('#st-timer'), bar=$('#st-bar'); t.hidden=false; bar.hidden=false; const end=Date.now()+sec*1000;
   const f=()=>{const ms=Math.max(0,end-Date.now()), left=Math.ceil(ms/1000);t.textContent=Math.floor(left/60)+':'+String(left%60).padStart(2,'0');
@@ -5473,7 +5629,8 @@ rattrapage(arena){
 eclair(arena){
   const D=DEFI; DEFI=null;
   const seed=D?D.seed:Math.random().toString(36).slice(2,8);
-  intro(arena,D?`${D.from} te défie : ${D.score} point${D.score>1?'s':''} en 90 secondes. Tu auras exactement les mêmes questions. À toi de faire mieux.`
+  const aim=defiCible?(defiCible.to?`Ton défi pour ${defiCible.pseudo} : joue ta manche, puis ${defiCible.pseudo} recevra les mêmes questions et ton score. `:'Ton défi pour le cercle : joue ta manche, tes amis recevront les mêmes questions et ton score. '):'';
+  intro(arena,aim&&!D?aim+'90 secondes, chaque bonne réponse compte un point.':D?`${D.from} te défie : ${D.score} point${D.score>1?'s':''} en 90 secondes. Tu auras exactement les mêmes questions. À toi de faire mieux.`
     :"90 secondes de questions mêlées : orthographe, chronologie, sophismes. Réponds vite, mais juste : chaque bonne réponse compte un point. À la fin, revois celles que tu as manquées, ou défie un ami sur les mêmes questions.",null,go);
   function go(){
     const R=seeded('neophyte-eclair-'+seed);
@@ -5500,7 +5657,13 @@ eclair(arena){
       const who=(state.settings.pseudo||'').trim()||'Un ami', url=location.origin+location.pathname.replace(/index\.html$/,'')+'?defi='+encodeURIComponent(seed+'.'+ok+'.'+who.slice(0,24));
       const txt=`${who} te défie sur Néophyte : ${ok} point${ok>1?'s':''} en 90 secondes à l’Éclair. Mêmes questions pour toi. Tu fais mieux ?\n${url}`;
       const btn=el('button',{class:'btn',text:D?'Renvoyer le défi':'Défier un ami',onclick:()=>shareText(txt)});
-      const rows=arena.querySelectorAll(':scope > .row'); (rows[rows.length-1]||arena).append(btn);
+      const rows=arena.querySelectorAll(':scope > .row'), where=rows[rows.length-1]||arena; where.append(btn);
+      // défi lancé ou relevé depuis l'onglet Amis : le score part tout seul vers l'ami (ou le cercle)
+      const aim=defiCible||(D&&D.fromId);
+      if(aim)eclairDefiDone(seed,ok,D).then(t=>{if(t)where.after(el('p',{class:'note',role:'status',text:t}));}).catch(()=>{});
+      else if(ref&&state.settings.circle&&circleData&&circleData.nudges&&circleData.rows.length>1){
+        const all=el('button',{class:'btn',text:'Défier mon cercle',onclick:async()=>{all.disabled=true;defiCible={to:null};const t=await eclairDefiDone(seed,ok,null);all.replaceWith(el('span',{class:'note',role:'status',text:t||'Envoi impossible pour l’instant.'}));}});
+        where.append(all);}
     });
   }
 },
@@ -5730,7 +5893,7 @@ function renderOrigins(){
 function renderAll(){
   renderThemes();renderQuoteDay();renderCjl();renderFlori();renderGoal();renderProgram();renderScreens();renderToday();renderExGrid();
   if(!$('#v-progres').hidden){renderProgress();renderCarnet();renderWeekBilan();}
-  if(!$('#v-classement').hidden)renderCircle();
+  if(!$('#v-amis').hidden)renderCircle(); else amisPeek();
   if(!$('#v-reglages').hidden)renderRetours();
   $('#erase').hidden=!ref; $('#login-open').hidden=!!ref||!window.bfSupabase;
   if(!$('#v-coach').hidden){renderSas();renderTutor();}
@@ -5740,7 +5903,7 @@ function showGoalProposal(text){
   $('#coach-goal').hidden=!m; if(!m)return;
   const g=m[1].trim().replace(/^[«"\s]+|[»"\s]+$/g,'');
   $('#coach-goal-text').textContent=g;
-  $('#coach-goal-adopt').onclick=()=>{state.goal={text:g.slice(0,300),t:Date.now()};save();renderGoal();$('#coach-goal').hidden=true;$('#coach-review-date').textContent='Objectif adopté : tu le retrouves dans Aujourd\u2019hui.';};
+  $('#coach-goal-adopt').onclick=()=>{state.goal={text:g.slice(0,300),t:Date.now()};save();renderGoal();$('#coach-goal').hidden=true;$('#coach-review-date').textContent='Objectif adopté : tu le retrouves dans Bilan, sous « Ma semaine ».';};
 }
 /* ---------- typographie française : apostrophe courbe, espace insécable avant ; : ! ? » et après « ---------- */
 const NB_TEST=/ [;:!?»]|« |\p{L}'\p{L}/u, NB_SKIP=new Set(['SCRIPT','STYLE','TEXTAREA','INPUT','CODE','PRE']);

@@ -5552,14 +5552,14 @@ lecture(arena){
     cleanup=()=>{arena.style.alignItems='';};
     function quiz(){
       arena.style.alignItems='';
-      const wpm=Math.min(800,Math.round(words/((performance.now()-start)/60000))); const qs=QUIZ[src[0]]; let qi=0, ok=0;
+      const wpm=Math.min(800,Math.round(words/((performance.now()-start)/60000))); const qs=QUIZ[src[0]]; let qi=0, ok=0; const rep=[];
       const ask=()=>{
         const [q,opts]=qs[qi]; const sh=opts.map((o,i)=>[o,i]).sort(()=>Math.random()-.5);
         const box=el('div',{class:'options'});
         sh.forEach(([o,i])=>box.append(el('button',{text:o,onclick:e=>{
           [...box.children].forEach(b=>{b.disabled=true;if(sameText(b.textContent,opts[0]))b.classList.add('right');});
           if(i===0)ok++;else e.currentTarget.classList.add('wrong');
-          hit(i===0);
+          hit(i===0); rep.push((i===0?'✓ ':'✗ ')+q+' → '+opts[0]);
           setTimeout(()=>{qi++;if(qi<qs.length)ask();else done();},900);
         }})));
         arena.replaceChildren(qprog(qi,qs.length),el('p',{class:'prompt',style:'text-align:center',text:q}),box);
@@ -5567,7 +5567,8 @@ lecture(arena){
       const done=()=>{
         const comp=ok/qs.length, eff=Math.round(wpm*comp); const m=recordMsg('lecture',eff);
         logResult('lecture',eff,{src:src[0],wpm,c:Math.round(comp*100)});
-        showResult(arena,eff,'mots par minute compris',`Vitesse : ${wpm} mots/min, compréhension : ${Math.round(comp*100)} %. ${m} Un lecteur adulte lit en général entre 200 et 300 mots/min. Viser la compréhension compte plus que la vitesse.`,()=>RUN.lecture(arena));
+        showResult(arena,eff,'mots par minute compris',`Vitesse : ${wpm} mots/min, compréhension : ${Math.round(comp*100)} %. ${m} Un lecteur adulte lit en général entre 200 et 300 mots/min. Viser la compréhension compte plus que la vitesse.`,()=>RUN.lecture(arena),
+          contestBtn('lecture',(NB.textes.find(t=>t.titre===src[0])||{}).id||src[0],src[0]+' — '+rep.join(' · ')));
       };
       ask();
     }

@@ -4041,11 +4041,18 @@ function seanceNext(){
   return nx?nx.ex:'fin';
 }
 function backHome(){stopRun();$('#stage').hidden=true;$('#exgrid').hidden=false;showTab('aujourdhui');window.scrollTo(0,0);}
+// hors séance : l'exercice suivant dans l'ordre des familles, en sautant ceux déjà faits aujourd'hui
+function exNext(){
+  const all=EXFAM.flatMap(f=>f[2]).filter(k=>EX[k]&&RUN[k]), i=all.indexOf(curEx), done=day(todayKey()).done||{};
+  const order=[...all.slice(i+1),...all.slice(0,Math.max(0,i))];
+  return order.find(k=>!done[k])||order[0]||null;
+}
 function nextButtons(again){
   const nx=seanceNext(), row=el('div',{class:'row',style:'justify-content:center'});
-  if(nx==='fin')row.append(el('button',{class:'btn primary',text:'Voir le bilan de la séance',onclick:()=>seanceRecap($('#arena'))}),el('button',{class:'btn ghost',text:'Recommencer',onclick:again}));
-  else if(nx)row.append(el('button',{class:'btn primary',text:'Suivant : '+EX[nx].name,onclick:()=>seanceTrail(nx)}),el('button',{class:'btn ghost',text:'Recommencer',onclick:again}));
-  else row.append(el('button',{class:'btn primary',text:'Recommencer',onclick:again}),el('button',{class:'btn',text:'Retour à l’accueil',onclick:backHome}));
+  const encore=el('button',{class:'btn ghost',text:'Encore',onclick:again});
+  if(nx==='fin')row.append(el('button',{class:'btn primary',text:'Voir le bilan de la séance',onclick:()=>seanceRecap($('#arena'))}),encore);
+  else if(nx)row.append(el('button',{class:'btn primary',text:'Suivant : '+EX[nx].name,onclick:()=>seanceTrail(nx)}),encore);
+  else{const k=exNext();row.append(...[k?el('button',{class:'btn primary',text:'Suivant : '+EX[k].name,onclick:()=>openEx(k)}):null,el('button',{class:k?'btn':'btn primary',text:'Encore',onclick:again})].filter(Boolean));}
   return row;
 }
 // entre deux exercices, le cerf bondit sur le chemin de la séance jusqu'à l'étape suivante

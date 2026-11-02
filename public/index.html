@@ -639,6 +639,47 @@ a{color:var(--accent);text-underline-offset:3px}
 .etapes li.cur{border-color:var(--accent);color:var(--fg);font-weight:700}
 .crit{display:flex;flex-direction:column;gap:4px}
 .crit .ok{color:var(--good)}
+.bl-head{align-items:flex-start}
+.bl-kpis{grid-template-columns:repeat(3,1fr);margin:4px 0 2px}
+.bl-kpis .kpi .muted{font-size:.82rem;line-height:1.3}
+.bl-axes{display:flex;flex-direction:column;gap:14px;margin-top:6px;padding-top:14px;border-top:1px solid var(--line)}
+.bl-axe{display:flex;flex-direction:column;gap:5px}
+.bl-axe-top{display:flex;justify-content:space-between;align-items:baseline;gap:8px}
+.bl-axe-n{font-family:var(--f-display);font-weight:700;font-size:1.02rem}
+.bl-axe-v{font-family:var(--f-display);font-weight:700;color:var(--accent);font-size:1.15rem}
+.bl-bar{position:relative;height:10px;border-radius:5px;background:var(--sunk)}
+.bl-bar i{display:block;height:100%;border-radius:5px;background:var(--accent);max-width:100%}
+.bl-mark,.bl-mark-l{display:inline-block;width:3px;height:16px;background:var(--gold-deep);border-radius:2px}
+.bl-mark{position:absolute;top:-3px;margin-left:-1.5px}
+.bl-mark-l{height:12px;vertical-align:-1px}
+.bl-legend{margin:0}
+.bl-prio{display:flex;flex-direction:column;gap:6px;background:var(--gold-soft);border-left:3px solid var(--gold);padding:12px 14px;border-radius:0 10px 10px 0}
+.bl-prio p{margin:0;line-height:1.5;font-size:.98rem}
+.bl-prio p b{color:var(--gold-deep)}
+.bl-parts{margin:0;padding-left:1.3em;display:flex;flex-direction:column;gap:8px}
+.bl-parts li{line-height:1.45}
+.bl-parts b{display:block}
+.bl-parts span{color:var(--fg2)}
+.bl-hist summary,.bl-corr summary{cursor:pointer;font-weight:700;color:var(--fg2);padding:4px 0}
+.bl-hist table{margin-top:8px}
+.bl-corr{display:flex;flex-direction:column;gap:10px}
+.bl-corr[open]>.answer{margin-top:10px}
+.bl-corr .answer.ok{box-shadow:inset 4px 0 0 var(--good)}
+.bl-corr .answer.ko{box-shadow:inset 4px 0 0 var(--bad)}
+.bl-cq{margin:0;font-weight:600}
+.bl-prog{display:flex;flex-direction:column;gap:6px}
+.bl-progbar{height:4px;border-radius:2px;background:var(--line);overflow:hidden}
+.bl-progbar i{display:block;height:100%;background:var(--gold);transition:width .3s ease}
+.bl-axh{margin:6px 0 0;font-family:var(--f-display);font-size:1.3rem}
+.bl-axp{margin:0 0 4px}
+.bl-nav{justify-content:space-between;margin-top:6px}
+.bl-nav .btn.primary:only-child{margin-left:auto}
+.bl-guess{display:grid;grid-template-columns:repeat(7,1fr);width:min(420px,100%)}
+.bl-guess button{padding:8px 0;font-size:1.05rem}
+.bl-note{min-height:70px}
+.qrow .seg button[aria-pressed="true"]{background:var(--accent);color:var(--on-accent)}
+#arena .options button[aria-pressed="true"]{border-color:var(--accent);background:var(--accent-soft)}
+@media (max-width:620px){.bl-kpis{grid-template-columns:repeat(3,1fr);gap:8px}.bl-kpis .kpi .num{font-size:1.4rem}}
 .syncwarn{border-color:var(--gold);background:var(--gold-soft)}
 .syncwarn p{max-width:65ch}
 .syncwarn a.btn{text-decoration:none;color:var(--fg)}
@@ -965,7 +1006,7 @@ var fin=function(){if(e.parentNode)e.remove();};e.addEventListener('click',fin);
     <button role="tab" data-tab="classement" aria-selected="false"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 20h18M4.5 20v-6h5v6M9.5 20V9h5v11M14.5 20v-8h5v8"/><path d="M12 3.5l.9 1.8 2 .3-1.45 1.4.35 2-1.8-.95-1.8.95.35-2L9.1 5.6l2-.3z"/></svg><span>Classement</span></button>
     <button role="tab" data-tab="exercices" aria-selected="false"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6.5 6.5v11M17.5 6.5v11M3.5 9.5v5M20.5 9.5v5M6.5 12h11"/></svg><span>Exercices</span></button>
     <button role="tab" data-tab="coach" aria-selected="false"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 5h16v11H10l-4 4v-4H4z"/></svg><span>Coach</span></button>
-    <button role="tab" data-tab="progres" aria-selected="false"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 20v-6M12 20V5M19 20v-10M3 20h18"/></svg><span>Progrès</span></button>
+    <button role="tab" data-tab="progres" aria-selected="false"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 20v-6M12 20V5M19 20v-10M3 20h18"/></svg><span>Bilan</span></button>
   </nav>
 
   <!-- AUJOURD'HUI -->
@@ -1106,10 +1147,6 @@ var fin=function(){if(e.parentNode)e.remove();};e.addEventListener('click',fin);
 
   <!-- COACH -->
   <section class="view" id="v-coach" hidden>
-    <div class="panel" id="wbilan">
-      <div><h2>Bilan de la semaine</h2><p class="muted" id="wb-week"></p></div>
-      <div class="wb" id="wb-body"></div>
-    </div>
     <div class="panel">
       <div>
         <h2>Ton coach</h2>
@@ -1195,12 +1232,19 @@ var fin=function(){if(e.parentNode)e.remove();};e.addEventListener('click',fin);
 
   <!-- PROGRES -->
   <section class="view" id="v-progres" hidden>
+    <div class="panel" id="bilan-pt">
+      <div class="row spread bl-head"><div><h2>Point d'étape</h2><p class="muted note" id="bl-sub"></p></div><button class="btn" id="pc-bilan">Faire le point</button></div>
+      <div id="bl-body"></div>
+    </div>
+    <div class="panel" id="wbilan">
+      <div><h2>Bilan de la semaine</h2><p class="muted" id="wb-week"></p></div>
+      <div class="wb" id="wb-body"></div>
+    </div>
     <div class="panel" id="parcours">
-      <div class="row spread"><div><h2>Mon parcours</h2><p class="muted note" id="pc-sub"></p></div><button class="btn" id="pc-bilan">Faire le point</button></div>
+      <div><h2>Mon parcours</h2><p class="muted note" id="pc-sub"></p></div>
       <ol class="etapes" id="pc-steps"></ol>
       <p class="fg2" id="pc-desc"></p>
       <div class="crit" id="pc-next"></div>
-      <div class="kpis" id="pc-kpis"></div>
       <div class="tablewrap" id="pc-skills"></div>
     </div>
     <div class="panel" id="xp-panel">
@@ -1485,7 +1529,7 @@ const EX={
   rattrapage:{name:'Rattrapage',skill:'Mémoire des erreurs',desc:"Tes erreurs récentes en orthographe, sophismes et dates reviennent. Réussis-les pour les rayer de ton carnet.",unit:'erreurs rattrapées'},
   eclair:{name:'Éclair',skill:'Vivacité',desc:"90 secondes de questions mêlées : orthographe, dates, sophismes. Bats ton record.",unit:'bonnes réponses'},
   evenement:{name:'Événement de saison',skill:'Esprit critique & culture',desc:"Une semaine à thème : vrai, faux ou non prouvé.",unit:'% de bonnes réponses',hidden:true},
-  bilan:{name:"Point d'étape",skill:'Parcours',desc:"Huit questions pour mesurer ton autonomie face à l'IA. Le premier sert de point de départ, puis un chaque mois.",unit:'sur 100',hidden:true},
+  bilan:{name:"Point d'étape",skill:'Bilan',desc:"Seize affirmations en quatre axes, puis six questions pour te mettre à l'épreuve. Le premier sert de point de départ, puis un chaque mois.",unit:'sur 100',hidden:true},
   read:{name:'Lecture profonde',skill:'Attention soutenue',desc:"Lecture sur papier ou liseuse, téléphone dans une autre pièce.",unit:'',manual:true}
 };
 // d'où vient chaque exercice : affiché sous le titre du plateau et dans la Bibliothèque
@@ -1513,7 +1557,7 @@ const ORIG={
   fluency:"La fluence verbale vient des tests d'aptitudes de Louis Thurstone (1938) ; la version par lettre, dite FAS, est un classique de la neuropsychologie. Elle mesure l'accès rapide au vocabulaire, celui dont tu as besoin pour écrire.",
   dictee:"La dictée est un exercice scolaire français depuis le XIXe siècle ; la plus célèbre, attribuée à Prosper Mérimée, aurait été donnée vers 1857 à la cour de Napoléon III. Écrire sous la dictée sollicite à la fois l'écoute, la mémoire de travail et les règles d'accord, sans correcteur. Écrire à la main aiderait aussi à comprendre et à retenir (Mueller et Oppenheimer, 2014), un effet que des réplications plus récentes nuancent. La correction par photo utilise l'IA pour ce qu'elle fait bien : vérifier un travail que tu as fait toi-même.",
   fiche:"Le cahier d'exercices, remis au goût du jour : les questions viennent des mêmes banques vérifiées que l'appli, tes erreurs d'orthographe reviennent en priorité, et les types d'exercices sont mélangés, ce qui fixe mieux les apprentissages que de les enchaîner par blocs (pratique entrelacée, Rohrer et Taylor, 2007). Le corrigé est à part : on cherche d'abord, on vérifie ensuite.",
-  bilan:"Un questionnaire d'autoévaluation inspiré des études sur le délestage cognitif (Risko et Gilbert, 2016 ; Gerlich, 2025) : il mesure ce que tu fais encore par toi-même. L'« autonomie en actes », elle, se calcule sur ce que tu fais réellement depuis 14 jours. Comparer chaque mois au point de départ montre le chemin parcouru."
+  bilan:"Deux mesures qui se complètent. D'abord un questionnaire : seize affirmations en quatre axes (penser d'abord, écrire soi-même, vérifier, revenir au réel), inspirées des travaux sur le délestage cognitif (Risko et Gilbert, 2016 ; Gerlich, 2025) et sur l'esprit critique face à l'IA générative (Lee et al., 2025). Quatre sont formulées à l'envers, pour repérer les réponses données par habitude. Ensuite six questions notées, en trois séries qui tournent d'un mois à l'autre : on ne mesure pas seulement ce que tu dis faire, mais ce que tu sais faire. Enfin, tu estimes ton score avant la correction : l'écart dit si tu te connais bien, une compétence en soi (Kruger et Dunning, 1999). L'« autonomie en actes », elle, se calcule sur ce que tu fais réellement depuis 14 jours."
 };
 /* ---------- éphémérides : [mois-jour, année (négative = av. J.-C.), événement] ----------
    dates sûres et connues ; pour l'Antiquité, la date traditionnelle */
@@ -2704,16 +2748,27 @@ async function saveFile(name,blob){
 }
 
 /* ---------- parcours : point de départ, étapes, autonomie ---------- */
-const BILAN_Q=[
-  ["Avant de demander à l'IA, je cherche d'abord par moi-même.","Passe par le sas avant l'IA (onglet Coach) pour chaque vraie question."],
-  ["J'écris mes textes importants sans aucune aide.","Une séance d'écriture longue par semaine, sans aide, puis l'avis du coach."],
-  ["Je vérifie les réponses de l'IA : sources, chiffres, raisonnement.","« Trouve l'erreur de l'IA » deux fois par semaine."],
-  ["Je retiens ce que l'IA m'a expliqué, au point de pouvoir le réexpliquer.","Après chaque explication, réexplique-la par écrit et de mémoire (format « Expliquer »)."],
-  ["Je lis un livre ou un long texte sans interruption chaque semaine.","Les deux lectures intensives du programme de la semaine."],
-  ["Je fais de tête les calculs simples du quotidien.","Le calcul mental, et le total des courses de tête."],
-  ["Je passe du temps loin des écrans à réfléchir, écrire à la main ou discuter.","La dictée sur papier, la fiche à imprimer et la séance sans écran."],
-  ["Je saurais faire seul ce que je délègue habituellement à l'IA.","Choisis une tâche que tu délègues et refais-la seul cette semaine."]
-];
+// questions et séries d'épreuves : public/banques.js (B.bilan)
+const BL=NB.bilan, BAX=Object.fromEntries(BL.axes.map(a=>[a.k,a]));
+// une réponse de 0 à 4, retournée pour les affirmations à l'envers
+const bqVal=(q,v)=>q.inv?4-v:v;
+// réponses d'un point d'étape rangées comme les questions actuelles ; les anciens (8 questions) n'ont que leurs huit
+function bilanAns(b){return b.v===2?(b.a||[]):BL.questions.map(q=>q.old!=null&&b.a?b.a[q.old]:null);}
+function bilanAxes(b){
+  if(b.d)return b.d;
+  const a=bilanAns(b), out={};
+  for(const x of BL.axes){const v=BL.questions.map((q,i)=>q.axe===x.k&&a[i]!=null?bqVal(q,a[i]):null).filter(v=>v!=null);
+    out[x.k]=v.length?Math.round(v.reduce((p,c)=>p+c,0)/(4*v.length)*100):null;}
+  return out;
+}
+// les deux conseils qui comptent le plus : les affirmations les plus faibles du point d'étape
+function bilanWeak(b,n=2){const a=bilanAns(b), seen=new Set(), out=[];
+  // un conseil par axe : les deux axes où la réponse la plus faible l'est le plus
+  for(const[,i] of BL.questions.map((q,i)=>[a[i]==null?9:bqVal(q,a[i]),i]).filter(x=>x[0]<9).sort((x,y)=>x[0]-y[0]||x[1]-y[1])){const q=BL.questions[i];if(seen.has(q.axe))continue;seen.add(q.axe);out.push(q);if(out.length>=n)break;}
+  return out;}
+const bilanDue=b=>!b||Date.now()-b.t>=30*864e5;
+// jours avec une séance hors écran sur les 14 derniers jours : la mesure « en actes » du retour au réel
+function offDays14(){let n=0;const t=todayKey();for(let i=0;i<14;i++){const d=state.days[addDays(t,-i)];if(d&&d.done&&(OFFLINE.some(x=>d.done[x])||d.done.read))n++;}return n;}
 const STAGES=[
   ['Éveil',"Mesurer d'où tu pars et prendre le pli : un exercice chaque jour, même court. La dictée sur papier arrive le dimanche."],
   ['Reprise',"Retrouver les réflexes : penser avant l'IA, écrire toi-même. La dictée sur papier passe à deux fois par semaine."],
@@ -2742,17 +2797,11 @@ function stageCrit(){
 function stageOf(){const c=stageCrit();let s=1;while(s<4&&c[s].every(([,v,n])=>v>=n))s++;return s;}
 function renderParcours(){
   const B=state.bilans||[], s=gamiCtx.stage||1, t=todayKey(), c=stageCrit();
-  $('#pc-sub').textContent=B.length?`Point de départ le ${fd(new Date(B[0].t),{day:'numeric',month:'long'})} · étape ${s} sur 4`:"Commence par faire ton point de départ : huit questions, trois minutes.";
-  $('#pc-bilan').textContent=B.length?'Refaire le point':'Faire mon point de départ';
+  $('#pc-sub').textContent=`Étape ${s} sur 4 · ${STAGES[s-1][0]}`;
+  renderBilanPt();
   $('#pc-steps').replaceChildren(...STAGES.map(([n],i)=>el('li',{class:i+1<s?'done':i+1===s?'cur':'',text:`${i+1}. ${n}`})));
   $('#pc-desc').textContent=STAGES[s-1][1];
   $('#pc-next').replaceChildren(...(s<4?[el('span',{class:'label',text:`Pour passer à l'étape ${s+1}`}),...c[s].map(([lab,v,n])=>el('span',{class:v>=n?'ok':'fg2',text:(v>=n?'✓ ':'○ ')+lab+(v>=n?'':` · ${fmt(Math.min(v,n))} / ${n}`)}))]:[el('span',{class:'fg2',text:'Dernière étape atteinte. Garde le rythme : refais le point chaque mois.'})]));
-  const last=B[B.length-1], d0=deeds(t), d14=deeds(addDays(t,-14));
-  const kpi=(lab,num,sub)=>el('div',{class:'kpi'},el('span',{class:'label',text:lab}),el('span',{class:'num',text:num}),el('span',{class:'muted',text:sub}));
-  $('#pc-kpis').replaceChildren(
-    kpi('Autonomie déclarée',last?String(last.s):'—',last?(B.length>1?`au départ : ${B[0].s} / 100`:'sur 100, ton point de départ'):'à mesurer'),
-    kpi('Autonomie en actes',String(d0),`sur 100, 14 j · avant : ${d14}`),
-    kpi('Hors écran',String(offlineCount()),'séances au total'));
   // compétences : moyenne des deux premières séances, puis des trois dernières
   const avg=a=>a.reduce((x,y)=>x+y,0)/a.length, rows=[];
   for(const[key,e] of Object.entries(EX)){if(e.manual||e.hidden)continue;const rs=state.results.filter(r=>r.ex===key).map(r=>r.s);if(rs.length<3)continue;
@@ -2763,6 +2812,51 @@ function renderParcours(){
   else tw.append(el('p',{class:'note',text:'Après trois séances d’un même exercice, tu verras ici ton point de départ et ton niveau actuel.'}));
 }
 $('#pc-bilan').addEventListener('click',()=>{showTab('exercices');openEx('bilan');});
+// la carte du point d'étape, en haut de l'onglet Bilan : trois chiffres, quatre axes, l'historique, deux priorités
+function renderBilanPt(){
+  const B=state.bilans||[], last=B[B.length-1], first=B[0], body=$('#bl-body'), btn=$('#pc-bilan'), t=todayKey();
+  const dm=x=>fd(new Date(x),{day:'numeric',month:'long'}).replace(/^1 /,'1er ');
+  const due=bilanDue(last);
+  btn.textContent=B.length?'Refaire le point':'Faire mon point de départ'; btn.className='btn'+(due?' primary':'');
+  if(!last){
+    $('#bl-sub').textContent='Une dizaine de minutes, une fois par mois.';
+    body.replaceChildren(stagTalk('idle','Avant de progresser, il faut savoir d’où l’on part. Fais ton point de départ : il servira de repère à tous les autres.'),
+      el('ol',{class:'bl-parts'},
+        el('li',{},el('b',{text:'Tes habitudes'}),el('span',{text:'Seize affirmations en quatre axes : penser d’abord, écrire soi-même, vérifier, revenir au réel.'})),
+        el('li',{},el('b',{text:'Mise à l’épreuve'}),el('span',{text:'Six questions notées, pour mesurer ce que tu sais faire, pas seulement ce que tu en dis.'})),
+        el('li',{},el('b',{text:'Ton estimation'}),el('span',{text:'Devine ton score avant la correction : te connaître est une compétence.'}))));
+    return;
+  }
+  const next=last.t+30*864e5;
+  $('#bl-sub').textContent=`Dernier le ${dm(last.t)} · `+(due?'c’est le moment de refaire le point':`prochain le ${dm(next)}`);
+  const ax=bilanAxes(last), ax0=bilanAxes(first), eLast=([...B].reverse().find(b=>b.e)||{}).e, eFirst=(B.find(b=>b.e)||{}).e;
+  const sc=e=>e?e.ok.filter(Boolean).length:null;
+  const kpi=(lab,num,sub,cls)=>el('div',{class:'kpi'+(cls?' '+cls:'')},el('span',{class:'label',text:lab}),el('span',{class:'num',text:num}),el('span',{class:'muted',text:sub}));
+  const vs=(a,b)=>a==null||b==null||a===b?'':` (${a>b?'+':'−'}${Math.abs(a-b)})`;
+  const kpis=el('div',{class:'kpis bl-kpis'},
+    kpi('Déclaré',String(last.s),B.length>1?`départ ${first.s}${vs(last.s,first.s)}`:'sur 100 · ton départ'),
+    kpi('Épreuve',eLast?`${sc(eLast)}/${eLast.ok.length}`:'—',eLast?(eFirst&&eFirst!==eLast?`départ ${sc(eFirst)}/${eFirst.ok.length}`:'bonnes réponses'):'au prochain point'),
+    kpi('En actes',String(deeds(t)),'sur 100, 14 jours'));
+  // un axe : la jauge du déclaré, un repère pour le départ, et la mesure faite (épreuve ou jours hors écran)
+  const rows=BL.axes.map(a=>{
+    const v=ax[a.k], v0=ax0[a.k], meas=a.k==='reel'?`${offDays14()} j hors écran sur 14`:eLast?(()=>{const se=BL.series[eLast.k]||[];let ok=0,n=0;se.forEach((q,i)=>{if(q.axe===a.k){n++;if(eLast.ok[i])ok++;}});return n?`épreuve ${ok}/${n}`:'';})():'';
+    const bar=el('div',{class:'bl-bar',role:'img','aria-label':`${a.nom} : ${v==null?'non mesuré':v+' sur 100'}${B.length>1&&v0!=null?`, départ ${v0}`:''}`},el('i',{style:`width:${v||0}%`}));
+    if(B.length>1&&v0!=null)bar.append(el('b',{class:'bl-mark',style:`left:${v0}%`,title:'Point de départ'}));
+    return el('div',{class:'bl-axe'},el('div',{class:'bl-axe-top'},el('span',{class:'bl-axe-n',text:a.nom}),el('span',{class:'bl-axe-v',text:v==null?'—':String(v)})),bar,
+      el('span',{class:'note',text:[a.pq,meas].filter(Boolean).join(' · ')}));
+  });
+  const legend=B.length>1?el('p',{class:'note bl-legend'},el('b',{class:'bl-mark-l'}),document.createTextNode(` Ton point de départ, le ${dm(first.t)}.`)):null;
+  const weak=bilanWeak(last);
+  const prio=el('div',{class:'bl-prio'},el('span',{class:'label',text:'D’ici le prochain point'}),...weak.map(q=>el('p',{},el('b',{text:BAX[q.axe].nom+' · '}),document.createTextNode(q.conseil))));
+  let hist=null;
+  if(B.length>1){
+    const tb=el('tbody',{},...B.slice().reverse().map((b,i)=>el('tr',{},el('td',{text:dm(b.t)+(b===first?' · départ':'')}),el('td',{class:'num',text:String(b.s)}),el('td',{class:'num',text:b.e?`${sc(b.e)}/${b.e.ok.length}`:'—'}))));
+    const hd=el('tr');['Date','Déclaré','Épreuve'].forEach(x=>hd.append(el('th',{text:x})));
+    hist=el('details',{class:'bl-hist'},el('summary',{text:`Tous tes points d’étape (${B.length})`}),el('div',{class:'tablewrap'},el('table',{class:'week'},el('thead',{},hd),tb)));
+  }
+  body.replaceChildren(...[kpis,el('div',{class:'bl-axes'},...rows),legend,prio,hist].filter(Boolean));
+}
+
 
 /* ---------- quêtes du jour : trois petits objectifs, un bonus quand les trois sont faits ---------- */
 const PCT=ex=>EX[ex]&&/^%/.test(EX[ex].unit);
@@ -2833,7 +2927,7 @@ function renderToday(){
   // les citations à réviser s'ajoutent en tête de routine, deux minutes
   if(floriDue().length||d.done.citations)steps.unshift({ex:'citations',m:2});
   // le point de départ, puis un point d'étape chaque mois
-  const lb=(state.bilans||[]).slice(-1)[0]; if(!lb||d.done.bilan||Date.now()-lb.t>30*864e5)steps.unshift({ex:'bilan',m:3});
+  const lb=(state.bilans||[]).slice(-1)[0]; if(!lb||d.done.bilan||Date.now()-lb.t>30*864e5)steps.unshift({ex:'bilan',m:10});
   $('#today-label').textContent=fd(new Date(),{weekday:'long',day:'numeric',month:'long'});
   $$('#dur button').forEach(b=>b.setAttribute('aria-pressed',String(+b.dataset.min===min)));
   const done=steps.filter(s=>d.done[s.ex]).length;
@@ -3339,7 +3433,7 @@ function stagLines(){
     due?`${due} citation${due>1?'s':''} à revoir dans ton florilège.`:`« ${q.q} » (${q.a})`,
     `Mes bois portent ${tines} andouiller${tines>1?'s':''} de chaque côté. Ils grandissent avec ton niveau : encore ${fmt(needFor(L+1)-gamiCtx.total)} XP pour le niveau ${roman(L+1)}.`,
     `Règle du jour : ${r[0].toLowerCase()}.`,
-    (state.bilans||[]).length?`Étape ${gamiCtx.stage||1} sur 4 du parcours : ${STAGES[(gamiCtx.stage||1)-1][0]}. Plus tu avances, plus je t'envoie vers le papier.`:"Commence par ton point de départ : huit questions, trois minutes, en tête de ta routine.",
+    (state.bilans||[]).length?`Étape ${gamiCtx.stage||1} sur 4 du parcours : ${STAGES[(gamiCtx.stage||1)-1][0]}. Plus tu avances, plus je t'envoie vers le papier.`:"Commence par ton point de départ : une dizaine de minutes, en tête de ta routine.",
     d.cjl?`Ce jour-là, en ${fmtY(d.cjl.y)} : ${d.cjl.t}`:"As-tu deviné l'année de l'événement du jour ? Il t'attend sous la citation.",
     STAG_FACTS[Math.floor(Date.now()/864e5)%STAG_FACTS.length]
   ];
@@ -3448,7 +3542,7 @@ function coachSummary(){
   lines.push('Habitudes sur 14 jours :',...hab);
   const sas=(state.sas||[]).filter(x=>Date.now()-x.t<14*864e5);
   lines.push(`Passages par le sas avant l'IA sur 14 jours : ${sas.length}`+(sas.length?`, dont ${sas.filter(x=>x.r===3).length} où il avait l'essentiel avant de demander.`:'.'));
-  lines.push(`Parcours : étape ${gamiCtx.stage||1} sur 4 (${STAGES[(gamiCtx.stage||1)-1][0]}). Points d'étape, autonomie déclarée sur 100 : ${(state.bilans||[]).map(b=>iso(b.t)+' : '+b.s).join(', ')||'aucun'}. Autonomie en actes sur 14 jours : ${deeds(t)}/100. Séances hors écran au total : ${offlineCount()}.`);
+  lines.push(`Parcours : étape ${gamiCtx.stage||1} sur 4 (${STAGES[(gamiCtx.stage||1)-1][0]}). Points d'étape, autonomie déclarée sur 100 : ${(state.bilans||[]).map(b=>iso(b.t)+' : '+b.s+(b.e?` (épreuve ${b.e.ok.filter(Boolean).length}/${b.e.ok.length})`:'')).join(', ')||'aucun'}. Autonomie en actes sur 14 jours : ${deeds(t)}/100. Séances hors écran au total : ${offlineCount()}.`);
   const pw=(state.prog||{})[weekStart(t)]||{}; let tk=0; for(let i=0;i<7;i++){const d=state.days[addDays(t,-i)];if(d)tk+=d.talks||0;}
   lines.push(`Programme de la semaine : ${pw.lect||0}/2 lectures intensives, ${pw.ecrit||0}/1 séance d'écriture longue. Discussions intéressantes sur 7 jours : ${tk} (objectif 21).`);
   const scr=[...Array(7)].map((_,i)=>((state.days[addDays(t,-1-i)]||{}).screen||{}).min).filter(v=>v!=null);
@@ -3602,7 +3696,7 @@ function weekBilanNotice(){
   if(wbShown){state.settings.wbSeen=ws;save();return;}
   if((window.BF_CONFIG||{}).coach||!weekBilan(ws))return;
   wbShown=true; state.settings.wbSeen=ws; save();
-  toast('<span>Ton bilan de la semaine est prêt<small>À lire dans l’onglet Coach.</small></span>');
+  toast('<span>Ton bilan de la semaine est prêt<small>À lire dans l’onglet Bilan.</small></span>');
 }
 function weeklyBilan(){
   if(!(window.BF_CONFIG||{}).coach)return;
@@ -3773,10 +3867,10 @@ function showTab(t){
   TABS.forEach(x=>$('#v-'+x).hidden=x!==t);
   $('#go-biblio').toggleAttribute('aria-current',t==='conseils'); $('#go-settings').toggleAttribute('aria-current',t==='reglages');
   if(t==='conseils'||t==='reglages')$('#go-'+(t==='conseils'?'biblio':'settings')).setAttribute('aria-current','page');
-  if(t==='progres'){renderProgress();renderCarnet();renderXpPanel();renderScreenChart();}
+  if(t==='progres'){renderProgress();renderCarnet();renderXpPanel();renderScreenChart();renderWeekBilan();}
   if(t==='classement')renderCircle();
   if(t==='reglages'){$('#city-in').value=city();renderRetours();renderCerf();}
-  if(t==='coach'){renderSas();renderCoach();renderWeekBilan();renderTutor();}
+  if(t==='coach'){renderSas();renderCoach();renderTutor();}
   if(location.hash!=='#'+t)try{history.replaceState(null,'','#'+t);}catch(e){}
 }
 $('#city-form').addEventListener('submit',e=>{e.preventDefault();state.settings.city=$('#city-in').value.trim().slice(0,60);save();renderReel();toast('<span>Ville enregistrée.</span>');});
@@ -4634,7 +4728,7 @@ write(arena){
       texts.push({t:Date.now(),mode,prompt,text:text.slice(0,4000),words:st.words,avgSent:st.avgSent,variety:st.variety,wpm:mode==='revise'||hand?0:st.wpm,hand:hand?1:undefined}); saveTexts();
       const rv=mode==='revise', dq=mode==='disput'?DISPUT.find(d=>DQ(d)===prompt):null;
       const thom=dq?el('div',{class:'answer'},el('span',{class:'label',text:dq[1]?'Ce que répond saint Thomas':'Une piste chez saint Thomas'}),el('span',{class:'fg2',text:dq[2]}),dq[1]?el('span',{class:'note',text:dq[1]}):null):null;
-      showResult(arena,n,rv?'mots dans ta version révisée':'mots écrits sans aide',m+(rv?` Version d'origine : ${orig.words} mots, ${orig.avgSent} mots/phrase. Les deux versions sont dans ton carnet.`:dq?' Compare avec ta réponse : où es-tu d’accord, où diverges-tu, et pourquoi ?':" Ton texte est rangé dans ton carnet (onglet Progrès). Relis-le demain : qu'ajouterais-tu, que couperais-tu ?"),()=>RUN.write(arena),thom);
+      showResult(arena,n,rv?'mots dans ta version révisée':'mots écrits sans aide',m+(rv?` Version d'origine : ${orig.words} mots, ${orig.avgSent} mots/phrase. Les deux versions sont dans ton carnet.`:dq?' Compare avec ta réponse : où es-tu d’accord, où diverges-tu, et pourquoi ?':" Ton texte est rangé dans ton carnet (onglet Bilan). Relis-le demain : qu'ajouterais-tu, que couperais-tu ?"),()=>RUN.write(arena),thom);
       arena.insertBefore(el('div',{class:'row',style:'justify-content:center;gap:18px'},
         rv||hand?null:statChip(st.wpm,'mots / min'),statChip(st.avgSent,'mots / phrase'),statChip(st.variety+' %','vocabulaire varié')),arena.children[2]);
       const extra=mode==='resume'?`\n\nTexte source qu'il devait résumer :\n---\n${src[1]}\n---`:mode==='revise'?`\n\nVersion d'origine, qu'il vient de réviser :\n---\n${orig.text}\n---\nCompare les deux versions : dis précisément ce que la révision a amélioré et ce qui reste à travailler.`:'';
@@ -5426,27 +5520,86 @@ fiche(arena){
     showResult(arena,v,'bonnes réponses sur '+N,m+' Reprends au propre les questions ratées : elles reviendront dans les prochaines fiches.',()=>RUN.fiche(arena));});
 },
 bilan(arena){
-  const ans=Array(BILAN_Q.length).fill(null), B=state.bilans||[], LBL=['Jamais','Rarement','Parfois','Souvent','Toujours'];
+  // un point d'étape en écrans courts : 4 axes (4 affirmations chacun), 6 questions notées, une estimation, le résultat
+  const B=state.bilans||[], Q=BL.questions, LBL=BL.echelle, kS=B.filter(b=>b.e).length%BL.series.length, SE=BL.series[kS];
+  const ans=Array(Q.length).fill(null), pick=Array(SE.length).fill(null); let guess=null, note='';
+  const N=BL.axes.length+SE.length+1; // écrans comptés dans la barre de progression
   arena.style.alignItems='stretch'; arena.style.textAlign='left'; cleanup=()=>{arena.style.alignItems='';arena.style.textAlign='';};
-  const fin=el('button',{class:'btn primary',text:'Voir mon point',disabled:''}), cnt=el('span',{class:'note'});
-  const upd=()=>{const k=ans.filter(v=>v!=null).length;fin.disabled=k<ans.length;cnt.textContent=`${k} / ${ans.length} réponses`;};
-  const rows=BILAN_Q.map(([q],i)=>{const sg=el('div',{class:'seg',role:'group','aria-label':q});
-    LBL.forEach((l,v)=>sg.append(el('button',{text:l,'aria-pressed':'false',onclick:()=>{ans[i]=v;[...sg.children].forEach((b,j)=>b.setAttribute('aria-pressed',String(j===v)));upd();}})));
-    return el('div',{class:'qrow'},el('span',{text:`${i+1}. ${q}`}),sg);});
-  const note=el('textarea',{style:'min-height:70px','aria-label':'Ta priorité',placeholder:'Ce que tu veux reprendre en main en priorité (facultatif)'});
-  arena.replaceChildren(el('p',{class:'fg2',text:B.length?'Les mêmes questions que la dernière fois. Réponds pour ces dernières semaines, sans regarder tes anciennes réponses.':"Huit questions sur ta façon de faire aujourd'hui. Réponds franchement : ce point de départ servira à mesurer le chemin parcouru."}),...rows,note,el('div',{class:'row'},fin,cnt));
-  upd();
-  fin.addEventListener('click',()=>{
-    const s=Math.round(ans.reduce((a,b)=>a+b,0)/(4*ans.length)*100), prev=B[B.length-1], first=B[0], txt=note.value.trim();
-    state.bilans=B.concat([Object.assign({t:Date.now(),a:ans.slice(),s},txt?{n:txt.slice(0,300)}:{})]); day().done.bilan=true;
+  const prog=(i,part)=>el('div',{class:'bl-prog'},el('span',{class:'label',text:part}),el('div',{class:'bl-progbar',role:'progressbar','aria-valuemin':'0','aria-valuemax':String(N),'aria-valuenow':String(i)},el('i',{style:`width:${i/N*100}%`})));
+  const nav=(back,next,label,ok)=>{const nx=el('button',{class:'btn primary',text:label||'Suivant',onclick:next});if(!ok)nx.disabled=true;
+    return [el('div',{class:'row bl-nav'},back?el('button',{class:'btn ghost',text:'Retour',onclick:back}):null,nx),nx];};
+  const top=()=>{const st=$('#stage');if(st.getBoundingClientRect().top<0)st.scrollIntoView({block:'start'});};
+  function introScr(){
+    arena.replaceChildren(
+      el('p',{class:'fg2',text:B.length?'Les mêmes affirmations que la dernière fois, et de nouvelles questions. Réponds pour ces dernières semaines, sans regarder tes anciennes réponses.':'Ce premier point servira de repère pour mesurer le chemin parcouru. Réponds franchement : personne d’autre que toi ne le voit.'}),
+      el('ol',{class:'bl-parts'},
+        el('li',{},el('b',{text:'Tes habitudes'}),el('span',{text:'Seize affirmations en quatre axes. Certaines sont tournées à l’envers : lis bien chacune.'})),
+        el('li',{},el('b',{text:'Mise à l’épreuve'}),el('span',{text:'Six questions notées, sans aide et sans calculatrice.'})),
+        el('li',{},el('b',{text:'Ton estimation'}),el('span',{text:'Combien penses-tu en avoir réussi ? Puis la correction.'}))),
+      el('p',{class:'note',text:'Environ dix minutes. Tu peux revenir en arrière à tout moment.'}),
+      el('div',{class:'row'},el('button',{class:'btn primary',text:'Commencer',onclick:()=>axeScr(0)})));
+  }
+  function axeScr(j){
+    const ax=BL.axes[j], idx=Q.map((q,i)=>q.axe===ax.k?i:-1).filter(i=>i>=0);
+    const [row,nx]=nav(()=>j?axeScr(j-1):introScr(),()=>j<BL.axes.length-1?axeScr(j+1):testScr(0),null,idx.every(i=>ans[i]!=null));
+    const rows=idx.map(i=>{const sg=el('div',{class:'seg',role:'group','aria-label':Q[i].q});
+      LBL.forEach((l,v)=>sg.append(el('button',{text:l,'aria-pressed':String(ans[i]===v),onclick:()=>{ans[i]=v;[...sg.children].forEach((b,k)=>b.setAttribute('aria-pressed',String(k===v)));nx.disabled=!idx.every(k=>ans[k]!=null);}})));
+      return el('div',{class:'qrow'},el('span',{text:Q[i].q}),sg);});
+    arena.replaceChildren(prog(j,`Tes habitudes · ${j+1} sur ${BL.axes.length}`),el('h3',{class:'bl-axh',text:ax.nom}),el('p',{class:'fg2 bl-axp',text:ax.pq}),...rows,row);
+    top();
+  }
+  function testScr(j){
+    const q=SE[j], box=el('div',{class:'options'});
+    const go=()=>j<SE.length-1?testScr(j+1):guessScr();
+    const [row,nx]=nav(()=>j?testScr(j-1):axeScr(BL.axes.length-1),go,null,pick[j]!=null);
+    q.options.forEach((o,i)=>box.append(el('button',{text:o,'aria-pressed':String(pick[j]===i),class:pick[j]===i?'chosen':'',onclick:()=>{pick[j]=i;[...box.children].forEach((b,k)=>{b.classList.toggle('chosen',k===i);b.setAttribute('aria-pressed',String(k===i));});nx.disabled=false;}})));
+    arena.replaceChildren(prog(BL.axes.length+j,`Mise à l’épreuve · ${j+1} sur ${SE.length}`),el('p',{class:'prompt',text:q.q}),box,el('p',{class:'note',text:'La correction arrive à la fin.'}),row);
+    top();
+  }
+  function guessScr(){
+    const sg=el('div',{class:'seg bl-guess',role:'group','aria-label':'Combien de bonnes réponses ?'});
+    const ta=el('textarea',{class:'bl-note','aria-label':'Ta priorité',placeholder:'Ce que tu veux reprendre en main en priorité (facultatif)'}); ta.value=note; ta.addEventListener('input',()=>{note=ta.value;});
+    const [row,nx]=nav(()=>testScr(SE.length-1),finish,'Voir mon bilan',guess!=null);
+    for(let v=0;v<=SE.length;v++)sg.append(el('button',{text:String(v),'aria-pressed':String(guess===v),onclick:()=>{guess=v;[...sg.children].forEach((b,k)=>b.setAttribute('aria-pressed',String(k===v)));nx.disabled=false;}}));
+    arena.replaceChildren(prog(N-1,'Ton estimation'),el('p',{class:'prompt',text:`Sur ces ${SE.length} questions, combien penses-tu en avoir réussi ?`}),sg,ta,row);
+    top();
+  }
+  function finish(){
+    const vals=Q.map((q,i)=>bqVal(q,ans[i])), s=Math.round(vals.reduce((a,b)=>a+b,0)/(4*vals.length)*100);
+    const ok=SE.map((q,i)=>pick[i]===q.bonne), m=ok.filter(Boolean).length, prev=B[B.length-1], first=B[0], txt=note.trim();
+    const rec=Object.assign({t:Date.now(),v:2,a:ans.slice(),s,e:{k:kS,ok,p:pick.slice()},c:guess},txt?{n:txt.slice(0,300)}:{});
+    rec.d=bilanAxes(rec);
+    state.bilans=B.concat([rec]); day().done.bilan=true;
     toast(`<span class="xp">+20 XP</span><span>Point d'étape enregistré</span>`); save(); renderToday(); stagJump();
-    const weak=ans.map((v,i)=>[v,i]).sort((a,b)=>a[0]-b[0]).slice(0,2).map(([,i])=>BILAN_Q[i][1]);
-    cleanup(); cleanup=null;
-    showResult(arena,s,'sur 100 · autonomie déclarée',(first?`Au départ : ${first.s}. La dernière fois : ${prev.s}. `:'C’est ton point de départ. Refais le point dans un mois pour mesurer le chemin parcouru. ')+'En priorité : '+weak.join(' '),()=>RUN.bilan(arena));
-    arena.append(coachBlock("Avis du coach sur mon point d'étape",()=>coachRules()+`\n\nPoint d'étape « autonomie face à l'IA » (0 = jamais, 4 = toujours) :\n${BILAN_Q.map(([q],i)=>`- ${q} ${ans[i]}/4`).join('\n')}\nScore : ${s}/100${first?` (départ : ${first.s}, dernier : ${prev.s})`:' (premier point)'}.${txt?`\nSa priorité : « ${txt} »`:''}\n\nEn 120 mots maximum : ce qui ressort, la priorité des quatre prochaines semaines, et un geste concret hors écran pour cette semaine.`));
-  });
+    cleanup(); cleanup=null; arena.style.alignItems='stretch'; arena.style.textAlign='left';
+    cleanup=()=>{arena.style.alignItems='';arena.style.textAlign='';};
+    const d0=first?bilanAxes(first):null, gap=guess-m;
+    const lucid=gap===0?'Estimation exacte : tu te connais bien.':gap>0?`Tu pensais en avoir ${guess}, tu en as ${m} : un peu trop confiant. Relis les explications avant de te fier à ta première impression.`:`Tu pensais en avoir ${guess}, tu en as ${m} : tu te sous-estimes. Fais-toi un peu plus confiance.`;
+    const kpi=(lab,num,sub)=>el('div',{class:'kpi'},el('span',{class:'label',text:lab}),el('span',{class:'num',text:num}),el('span',{class:'muted',text:sub}));
+    const axes=el('div',{class:'bl-axes'},...BL.axes.map(a=>{const v=rec.d[a.k], v0=d0?d0[a.k]:null;
+      const bar=el('div',{class:'bl-bar',role:'img','aria-label':`${a.nom} : ${v} sur 100${v0!=null?`, départ ${v0}`:''}`},el('i',{style:`width:${v}%`}));
+      if(v0!=null)bar.append(el('b',{class:'bl-mark',style:`left:${v0}%`,title:'Point de départ'}));
+      return el('div',{class:'bl-axe'},el('div',{class:'bl-axe-top'},el('span',{class:'bl-axe-n',text:a.nom}),el('span',{class:'bl-axe-v',text:String(v)})),bar);}));
+    const weak=bilanWeak(rec);
+    const corr=el('details',{class:'bl-corr'},el('summary',{text:`La correction (${m} sur ${SE.length})`}),...SE.map((q,i)=>el('div',{class:'answer'+(ok[i]?' ok':' ko')},
+      el('span',{class:'label',text:(ok[i]?'✓ ':'✗ ')+BAX[q.axe].nom}),el('p',{class:'bl-cq',text:q.q}),
+      ok[i]?el('b',{text:q.options[q.bonne]}):el('span',{class:'fg2'},document.createTextNode(`Ta réponse : ${pick[i]==null?'aucune':q.options[pick[i]]}`),el('br'),el('b',{text:'Bonne réponse : '+q.options[q.bonne]})),
+      el('span',{class:'fg2',text:q.expl}),el('span',{class:'note',text:'Source : '+q.src}))));
+    arena.replaceChildren(
+      el('div',{class:'result'},el('span',{class:'label',text:first?'Point d’étape':'Point de départ'}),el('span',{class:'score',text:String(s)}),el('span',{class:'fg2',text:'sur 100 · autonomie déclarée'})),
+      stagTalk(s>=70?'proud':s>=45?'idle':'worried',first?`Au départ : ${first.s}. La dernière fois : ${prev.s}. Voici le détail, axe par axe.`:'C’est ton point de départ. Refais le point dans un mois pour mesurer le chemin parcouru.'),
+      el('div',{class:'kpis bl-kpis'},kpi('Épreuve',`${m}/${SE.length}`,'bonnes réponses'),kpi('Ton estimation',`${guess}/${SE.length}`,gap===0?'exacte':gap>0?`+${gap}`:`−${-gap}`),kpi('En actes',String(deeds(todayKey())),'sur 100 · 14 j')),
+      el('p',{class:'fg2',text:lucid}),
+      axes, d0?el('p',{class:'note bl-legend'},el('b',{class:'bl-mark-l'}),document.createTextNode(' Ton point de départ.')):null,
+      el('div',{class:'bl-prio'},el('span',{class:'label',text:'En priorité ce mois-ci'}),...weak.map(q=>el('p',{},el('b',{text:BAX[q.axe].nom+' · '}),document.createTextNode(q.conseil)))),
+      corr,
+      coachBlock("Avis du coach sur mon point d'étape",()=>coachRules()+`\n\nPoint d'étape « autonomie face à l'IA » (0 = jamais, 4 = toujours ; « [envers] » = affirmation négative, où 4 est mauvais) :\n${Q.map((q,i)=>`- [${BAX[q.axe].nom}]${q.inv?' [envers]':''} ${q.q} ${ans[i]}/4`).join('\n')}\nScore déclaré : ${s}/100${first?` (départ : ${first.s}, dernier : ${prev.s})`:' (premier point)'}. Par axe : ${BL.axes.map(a=>a.nom+' '+rec.d[a.k]).join(', ')}.\nMise à l'épreuve : ${m}/${SE.length} (il pensait ${guess}). Ratées : ${SE.filter((q,i)=>!ok[i]).map(q=>`« ${q.q} »`).join(' ; ')||'aucune'}.${txt?`\nSa priorité : « ${txt} »`:''}\n\nEn 120 mots maximum : ce qui ressort (y compris l'écart entre ce qu'il déclare et ce qu'il a réussi), la priorité des quatre prochaines semaines, et un geste concret hors écran pour cette semaine.`),
+      nextButtons(()=>RUN.bilan(arena)));
+    if(m===SE.length){son('record');laurels();}else son('fin');
+    $('#stage').scrollIntoView({block:'start'});
+  }
+  introScr();
 }
-
 };
 
 // thème clair par défaut, même si le téléphone est en mode sombre
@@ -5468,11 +5621,11 @@ function renderOrigins(){
 }
 function renderAll(){
   renderThemes();renderQuoteDay();renderCjl();renderFlori();renderGoal();renderProgram();renderScreens();renderToday();renderExGrid();
-  if(!$('#v-progres').hidden){renderProgress();renderCarnet();}
+  if(!$('#v-progres').hidden){renderProgress();renderCarnet();renderWeekBilan();}
   if(!$('#v-classement').hidden)renderCircle();
   if(!$('#v-reglages').hidden)renderRetours();
   $('#erase').hidden=!ref; $('#login-open').hidden=!!ref||!window.bfSupabase;
-  if(!$('#v-coach').hidden){renderSas();renderWeekBilan();renderTutor();}
+  if(!$('#v-coach').hidden){renderSas();renderTutor();}
 }
 function showGoalProposal(text){
   const m=text&&text.match(/Objectif propos[ée]\s*:\s*(.+)/i);

@@ -256,6 +256,30 @@ select,input[type="text"]{font:inherit;color:var(--fg);background:var(--bg);bord
 .sas-hist{border-top:1px solid var(--line);padding-top:10px}
 .sas-hist .history{margin-top:6px}
 .sas-coach{display:flex;flex-direction:column;gap:8px;align-items:flex-start}
+.sage-head{display:flex;gap:14px;align-items:center}
+.stag.sage{width:96px;height:96px;flex:none;cursor:default}
+.stag.sage svg{width:100%;height:100%}
+.sage-txt{min-width:0;display:flex;flex-direction:column;gap:2px}
+.sage-txt h2{margin:0}
+.sage-say{margin:4px 0 0;font-style:italic;color:var(--fg2);line-height:1.45}
+.sage-ask{display:flex;flex-direction:column;gap:8px}
+.sage-ask .chat:empty{display:none}
+#coach-status:empty{display:none}
+#sage-menu{display:flex;flex-direction:column;gap:8px}
+.sage-cards{display:grid;grid-template-columns:repeat(2,1fr);gap:10px}
+.sage-card{display:flex;flex-direction:column;gap:4px;text-align:left;border:1px solid var(--line);background:var(--surface);border-radius:12px;padding:12px 14px;font:inherit;color:var(--fg);cursor:pointer;transition:border-color .2s,transform .12s}
+.sage-card:hover{border-color:var(--gold)}
+.sage-card:active{transform:scale(.98)}
+.sage-card b{font-family:var(--f-display);font-size:1rem}
+.sage-card span{color:var(--fg2);font-size:.88rem;line-height:1.4}
+.sage-card.wide{grid-column:1/-1}
+#sage-run{display:flex;flex-direction:column;gap:12px}
+#sage-run[hidden]{display:none}
+.sage-q{background:var(--gold-soft);border-left:3px solid var(--gold);border-radius:0 10px 10px 0;padding:10px 14px;line-height:1.5;margin:0}
+.sage-a{margin:0;padding:6px 0 6px 14px;border-left:2px solid var(--line);color:var(--fg2);white-space:pre-wrap;overflow-wrap:anywhere}
+.sage-run-top{display:flex;justify-content:space-between;align-items:center;gap:8px}
+#sage-run textarea{min-height:90px}
+@media (max-width:420px){.sage-cards{grid-template-columns:1fr}.stag.sage{width:80px;height:80px}}
 .coach-rules{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:6px}
 .coach-rules li{padding-left:14px;border-left:2px solid var(--gold);line-height:1.45;color:var(--fg2)}
 .coach-rules b{color:var(--fg)}
@@ -1210,36 +1234,34 @@ var fin=function(){if(e.parentNode)e.remove();};e.addEventListener('click',fin);
     </div>
 
     <div class="panel" id="coach-panel">
-      <div class="row spread" style="align-items:flex-start"><div><h2>Ton coach</h2><p class="muted note" id="coach-state"></p></div></div>
-      <ul class="coach-rules" aria-label="Les règles du coach">
-        <li><b>Après ton effort.</b> Il ne lit que ce que tu as d'abord fait seul : ton texte, ta réponse, ton point d'étape.</li>
-        <li><b>Jamais à ta place.</b> Il pointe, il questionne, il ne rédige ni ne résout pour toi.</li>
-        <li><b>Sur tes chiffres.</b> Il s'appuie sur tes résultats réels et te fixe un seul prochain pas.</li>
-      </ul>
-      <div id="coach-on" hidden>
-        <div class="row">
-          <button class="btn primary" id="coach-review">Préparer ma semaine</button>
-          <span class="note" id="coach-review-date"></span>
-        </div>
-        <div class="coachout" id="coach-review-out" hidden></div>
-        <div class="row" id="coach-goal" hidden><span class="fg2" id="coach-goal-text" style="min-width:0;overflow-wrap:anywhere"></span><button class="btn" id="coach-goal-adopt">Adopter cet objectif</button></div>
+      <div class="sage-head"><span class="stag sage" id="sage-stag" aria-hidden="true"></span>
+        <div class="sage-txt"><h2>Le cerf sage</h2><p class="muted note" id="coach-state"></p><p class="sage-say" id="sage-say"></p></div></div>
+      <div class="sage-ask">
         <div class="chat" id="coach-chat"></div>
         <form class="row" id="coach-form" style="flex-wrap:nowrap">
-          <input type="text" id="coach-q" placeholder="Pose une question à ton coach…" style="flex:1;min-width:0" autocomplete="off">
-          <button class="btn" id="coach-send" type="submit">Envoyer</button>
+          <input type="text" id="coach-q" placeholder="Pose ta question au cerf…" aria-label="Ta question au cerf" style="flex:1;min-width:0" autocomplete="off">
+          <button class="btn primary" id="coach-send" type="submit">Demander</button>
         </form>
         <p class="note" id="coach-status"></p>
       </div>
-      <div id="coach-off">
-        <span class="label">Où il interviendra</span>
-        <ol class="coach-when">
-          <li><b>Dans le sas</b><span>une question qui fait avancer ta propre réponse, sans te la donner.</span></li>
-          <li><b>Après l'écriture</b><span>deux points forts, deux pistes, une note sur 10.</span></li>
-          <li><b>Au point d'étape</b><span>ce que révèle l'écart entre ce que tu déclares et ce que tu réussis.</span></li>
-          <li><b>Le dimanche</b><span>ta semaine relue et trois actions pour la suivante.</span></li>
-        </ol>
-        <p class="note" id="coach-off-why"></p>
+      <div id="sage-menu">
+        <span class="label">Ce que tu peux lui demander</span>
+        <div class="sage-cards" id="sage-cards"></div>
       </div>
+      <div id="sage-run" hidden></div>
+      <div id="coach-on" hidden>
+        <div class="row" hidden><button class="btn primary" id="coach-review">Préparer ma semaine</button></div>
+        <span class="note" id="coach-review-date" hidden></span>
+        <div class="coachout" id="coach-review-out" hidden></div>
+        <div class="row" id="coach-goal" hidden><span class="fg2" id="coach-goal-text" style="min-width:0;overflow-wrap:anywhere"></span><button class="btn" id="coach-goal-adopt">Adopter cet objectif</button></div>
+      </div>
+      <p class="note" id="coach-off-why"></p>
+      <details class="tutor-box"><summary><span>Ses trois règles</span></summary>
+        <ul class="coach-rules" aria-label="Les règles du cerf sage">
+          <li><b>Après ton effort.</b> Il ne lit que ce que tu as d'abord fait seul : ton texte, ta réponse, ton plan.</li>
+          <li><b>Jamais à ta place.</b> Il questionne d'abord ; il ne te montre sa version qu'une fois la tienne écrite.</li>
+          <li><b>Sur tes chiffres.</b> Il s'appuie sur tes résultats réels et te fixe un seul prochain pas.</li>
+        </ul></details>
       <details class="tutor-box" id="tutor-panel"><summary><span>Personnaliser mon coach · <b id="cc-sum"></b></span></summary>
         <div class="cc-opt"><span class="label">Son esprit</span>
           <div class="seg tutorseg" role="group" aria-label="Esprit du tuteur" id="tutor-seg"></div>
@@ -3974,6 +3996,10 @@ $('#coach-review').addEventListener('click',async()=>{
 });
 $('#coach-form').addEventListener('submit',async e=>{
   e.preventDefault(); const q=$('#coach-q').value.trim(); if(!q)return;
+  // tant qu'il ne parle pas, la question passe par le sas : ta réponse d'abord
+  if(!coachOn){$('#sas-q').value=q;$('#coach-q').value='';sasUpdate();sasDraft();
+    $('#coach-status').textContent='Il ne parle pas encore : ta question t’attend dans le sas, juste au-dessus. Écris d’abord ta propre réponse.';
+    $('#sas-panel').scrollIntoView({behavior:'smooth',block:'start'});setTimeout(()=>$('#sas-mine').focus({preventScroll:true}),400);return;}
   $('#coach-q').value=''; $('#coach-send').disabled=true;
   const chat=$('#coach-chat'); chat.append(el('div',{class:'me',text:q}));
   const out=el('div',{class:'coachout'}); chat.append(out);
@@ -4049,21 +4075,122 @@ function coachBlock(label,buildPrompt){
 let coachOn=null, coachWhy='';
 async function coachCheck(){
   const C=window.BF_CONFIG||{}; let ok=false;
-  if(!C.coach&&window.bfSupabase){coachWhy='Il n’est pas encore branché. Tout le reste de Néophyte fonctionne déjà, et il saura tout ce que tu auras fait d’ici là.';}
+  const wait='Il ne parle pas encore : en attendant, ses questions te guident déjà, une à une, et tu réponds ici ou sur papier.';
+  if(!C.coach&&window.bfSupabase){coachWhy=wait;}
   else{const s=await sampler();
-    if(!s)coachWhy='Il n’est pas encore branché. Tout le reste de Néophyte fonctionne déjà.';
+    if(!s)coachWhy=wait;
     else if(!s.limits)ok=true;
     else{let l=null;try{l=await s.limits();}catch(e){}
-      if(l)ok=true;else coachWhy=ref?'Pour l’instant, le coach est réservé au propriétaire de ce Néophyte : chaque réponse a un coût. Tout le reste t’est ouvert.':'Connecte-toi à ton compte pour parler à ton coach.';}}
+      if(l)ok=true;else coachWhy=ref?'Pour l’instant, il ne parle qu’au propriétaire de ce Néophyte : chaque réponse a un coût. Ses questions, elles, te sont ouvertes.':'Connecte-toi à ton compte pour qu’il te réponde. Ses questions, elles, te sont déjà ouvertes.';}}
   coachOn=ok; renderCoachState();
   if(!ok)$$('.coachbox').forEach(b=>b.hidden=true);
   return ok;
 }
 function renderCoachState(){
-  $('#coach-on').hidden=!coachOn; $('#coach-off').hidden=!!coachOn;
-  $('#coach-state').textContent=coachOn===null?'':coachOn?'Prêt à te répondre.':'Bientôt à tes côtés.';
+  $('#coach-on').hidden=!coachOn; $('#coach-off-why').hidden=!!coachOn;
+  $('#coach-state').textContent=coachOn===null?'':coachOn?'Ton coach. Il t’écoute.':'Ton coach. Il apprend encore à parler.';
   $('#coach-off-why').textContent=coachWhy;
   if(typeof sasUpdate==='function')sasUpdate();
+  renderSage();
+}
+/* ---------- le cerf sage : ce qu'on peut lui demander ----------
+   Toujours la même règle : il questionne d'abord, l'utilisateur écrit sa version, et le cerf ne montre la sienne qu'ensuite.
+   Sans coach branché, les questions de la liste guident seules, dans l'ordre. */
+const SAGE_SHAPE={p:'cendre',a:{lunettes:2},l:10};
+const SAGE_SAY=['« Ce que tu cherches seul, tu le gardes. »','Assieds-toi. Par quoi veux-tu commencer ?','Une bonne question vaut mieux qu’une réponse toute faite.','Pense d’abord. Je t’écoute ensuite.','Peu, mais à fond.'];
+const SAGE_MODES=[
+  {k:'plan',t:'Structurer un sujet',d:'Un exposé, une décision, un projet, une lettre. Il te fait bâtir ton plan, puis te montre le sien.',
+   champ:['Quel est ton sujet ?','Ex. : présenter mon projet au conseil municipal'],
+   qs:['Quel est ton but, en une phrase : que doit penser, savoir ou faire ton lecteur à la fin ?','À qui t’adresses-tu, et que sait-il déjà ?','Quelles sont tes trois idées principales ?','Dans quel ordre les places-tu, et pourquoi cet ordre-là ?','Quelle objection, ou quel point faible, faut-il traiter ?','Par quoi commences-tu, et sur quoi finis-tu ?'],
+   fin:['Ton plan','Tes parties dans l’ordre, avec une ligne pour chacune.',20],
+   juge:"Compare son plan à ce qu'il a dit vouloir : 2 forces, 2 faiblesses précises (ordre, manque, redite, but non servi). Puis, sous le titre « Mon plan », donne ton propre plan, titres et une ligne par partie seulement, pour qu'il compare. Termine par une question qui l'aide à améliorer le sien."},
+  {k:'conv',t:'Préparer une conversation',d:'Un entretien, un désaccord, une demande délicate. Il t’aide à entrer dans la tête de l’autre.',
+   champ:['Avec qui, et à quel sujet ?','Ex. : demander une augmentation à ma responsable'],
+   qs:['Que veux-tu obtenir de cette conversation ?','Que pense l’autre, et pourquoi ? Formule sa position de la façon la plus juste possible.','Quels sont tes deux meilleurs arguments ?','Que pourrait-il te répondre, et que répondrais-tu ?','Sur quoi es-tu prêt à céder, et sur quoi non ?'],
+   fin:['Ta première phrase','Comment ouvres-tu la conversation ?',8],
+   juge:"Juge son ouverture : est-elle claire, respectueuse de l'autre, tournée vers son but ? 1 force, 1 piste. Puis, sous le titre « Une autre ouverture », propose une variante en une ou deux phrases, pour qu'il compare et choisisse."},
+  {k:'notion',t:'Comprendre une notion',d:'Tu l’expliques d’abord avec tes mots ; il repère ce qui manque, puis te donne la sienne.',
+   champ:['Quelle notion veux-tu comprendre ?','Ex. : l’inflation, la grâce, une moyenne pondérée'],
+   qs:['Explique-la comme à un ami de douze ans.','Donne un exemple, puis un contre-exemple.','Avec quelle notion voisine pourrait-on la confondre, et en quoi diffère-t-elle ?','Qu’est-ce qui reste flou pour toi ?'],
+   fin:['Ta définition','En deux phrases, avec tes mots.',12],
+   juge:"Dis ce qui est juste dans sa définition, ce qui est faux ou manque (sans complaisance). Puis, sous le titre « Ma définition », donne une définition exacte en deux phrases. Termine par une question qui le pousse à l'appliquer."},
+  {k:'verif',t:'Vérifier une information',d:'Un chiffre, une citation, une affirmation lue ou entendue. Il t’apprend à enquêter.',
+   champ:['Quelle affirmation veux-tu vérifier ?','Ex. : « On n’utilise que 10 % de son cerveau. »'],
+   qs:['D’où vient-elle : qui le dit, et qu’a-t-il à y gagner ?','Que faudrait-il observer pour qu’elle soit vraie ? Et pour qu’elle soit fausse ?','Quelle source d’origine pourrais-tu consulter ?','Y a-t-il un sophisme, ou un chiffre sans point de comparaison ?'],
+   fin:['Ton verdict','Vrai, faux ou non prouvé, et pourquoi.',8],
+   juge:"Évalue sa démarche et son verdict. Puis, sous le titre « Ce que je sais », dis ce qu'on sait réellement de cette affirmation, avec prudence : distingue le certain, le probable et l'inconnu, et indique la source qu'il devrait consulter. N'invente aucune référence ; si tu n'es pas sûr, dis-le."},
+  {k:'semaine',t:'Préparer ma semaine',d:'Il relit tes quatre dernières semaines et te propose trois actions.',wide:true}
+];
+let sageRun=null;
+function renderSage(){
+  $('#sage-stag').innerHTML=stagSVG(SAGE_SHAPE.l,'idle',SAGE_SHAPE);
+  if(!$('#sage-say').textContent)$('#sage-say').textContent=SAGE_SAY[new Date().getDate()%SAGE_SAY.length];
+  const cards=$('#sage-cards');
+  if(!cards.children.length)SAGE_MODES.forEach(m=>cards.append(el('button',{class:'sage-card'+(m.wide?' wide':''),type:'button',onclick:()=>sageStart(m)},el('b',{text:m.t}),el('span',{text:m.d}))));
+}
+function sageClose(){sageRun=null;$('#sage-run').hidden=true;$('#sage-menu').hidden=false;}
+function sageStart(m){
+  if(m.k==='semaine'){
+    if(coachOn){$('#coach-review').click();$('#coach-review-out').scrollIntoView({behavior:'smooth',block:'center'});}
+    else{showTab('progres');setTimeout(()=>{const w=$('#wbilan');if(w)w.scrollIntoView({behavior:'smooth',block:'start'});},50);}
+    return;}
+  sageRun={m,sujet:'',qa:[],step:'sujet'}; $('#sage-menu').hidden=true; $('#sage-run').hidden=false; sageDraw();
+}
+// la prochaine question : celle du cerf s'il parle, sinon la suivante de la liste
+async function sageNext(){
+  const R=sageRun, m=R.m, i=R.qa.length;
+  if(!coachOn){if(i<m.qs.length){R.qa.push({q:m.qs[i],a:''});}else R.step='fin';sageDraw();return;}
+  R.qa.push({q:'…',a:'',wait:true}); sageDraw();
+  const s=await sampler(); let q=null;
+  try{const ctx=coachRules()+`\n\nTu es le cerf sage de Néophyte. Il te demande de l'aider : « ${m.t} ». Son point de départ : « ${R.sujet} ».\n`+(R.qa.length>1?`Vos échanges jusqu'ici :\n${R.qa.slice(0,-1).map(x=>`- Toi : ${x.q}\n  Lui : ${x.a}`).join('\n')}\n`:'')+`\nTa liste de questions pour te guider (adapte-les à ce qu'il a déjà dit, n'en pose jamais deux à la fois) :\n${m.qs.map(x=>'- '+x).join('\n')}\n\nPose-lui la prochaine question, une seule, en 35 mots maximum, sans donner ta réponse ni d'exemple qui la souffle. Si ses réponses suffisent déjà pour qu'il écrive lui-même, réponds seulement : PRÊT`;
+    q=(await s(ctx)).text.trim();}catch(e){q=null;}
+  R.qa.pop();
+  if(!q||/^PR[ÊE]T\b/i.test(q)){if(!q&&i<m.qs.length)R.qa.push({q:m.qs[i],a:''});else R.step='fin';}
+  else R.qa.push({q,a:''});
+  sageDraw();
+}
+function sageDraw(){
+  const R=sageRun; if(!R)return; const m=R.m, box=$('#sage-run');
+  const top=el('div',{class:'sage-run-top'},el('span',{class:'label',text:m.t}),el('button',{class:'btn ghost mini',type:'button',text:'Fermer',onclick:sageClose}));
+  const items=[top];
+  if(R.step==='sujet'){
+    const ta=el('textarea',{'aria-label':m.champ[0],placeholder:m.champ[1],style:'min-height:70px'}); ta.value=R.sujet;
+    const go=el('button',{class:'btn primary',type:'button',text:'Commencer',onclick:()=>{const v=ta.value.trim();if(v.length<3){ta.focus();return;}R.sujet=v;R.step='qa';sageNext();}});
+    items.push(el('p',{class:'sage-q',text:m.champ[0]}),ta,el('div',{class:'row'},go));
+    box.replaceChildren(...items); return;}
+  items.push(el('p',{class:'note',text:'Point de départ : '+R.sujet}));
+  R.qa.forEach((x,j)=>{items.push(el('p',{class:'sage-q'+(x.wait?' coachout wait':''),text:x.wait?'Le cerf réfléchit…':x.q}));
+    if(x.a&&!(R.step==='qa'&&j===R.qa.length-1))items.push(el('p',{class:'sage-a',text:x.a}));});
+  const cur=R.qa[R.qa.length-1];
+  if(R.step==='qa'&&cur&&!cur.wait){
+    const ta=el('textarea',{'aria-label':'Ta réponse',placeholder:'Ta réponse, avec tes mots'}); ta.value=cur.a;
+    ta.addEventListener('input',()=>{cur.a=ta.value;});
+    const nx=el('button',{class:'btn primary',type:'button',text:'Répondre',onclick:()=>{if(!ta.value.trim()){ta.focus();return;}cur.a=ta.value.trim();sageNext();}});
+    const fin=el('button',{class:'btn ghost',type:'button',text:'J’ai assez réfléchi : j’écris',onclick:()=>{cur.a=ta.value.trim();if(!cur.a)R.qa.pop();R.step='fin';sageDraw();}});
+    items.push(ta,el('div',{class:'row'},nx,R.qa.length>=2?fin:null));
+    setTimeout(()=>ta.focus({preventScroll:true}),0);
+  }
+  if(R.step==='fin'||R.step==='done'){
+    const [lab,ph,min]=m.fin, ta=el('textarea',{'aria-label':lab,placeholder:ph}); ta.value=R.mine||'';
+    const n=()=>(ta.value.trim().match(/\S+/g)||[]).length;
+    const info=el('span',{class:'note'}), out=el('div',{class:'coachout',hidden:''});
+    const go=el('button',{class:'btn primary',type:'button',text:coachOn?'Voir l’avis du cerf':'Terminer'});
+    const upd=()=>{const k=n();go.disabled=k<min;info.textContent=k<min?`${k} mot${k>1?'s':''} sur ${min} au moins`:'';};
+    ta.addEventListener('input',()=>{R.mine=ta.value;upd();});
+    // ta version d'abord, toujours : on ne colle pas
+    ta.addEventListener('paste',e=>{e.preventDefault();info.textContent='Le collage est désactivé ici : écris ta propre version.';});
+    go.addEventListener('click',async()=>{
+      R.mine=ta.value.trim(); R.step='done'; ta.readOnly=true; go.disabled=true;
+      day().habits.think=true; save(); renderToday();
+      if(!coachOn){out.hidden=false;out.className='coachout';out.textContent='C’est ta version, construite seul : garde-la. Relis-la demain à tête reposée ; quand le cerf parlera, il te montrera la sienne pour que tu compares.';return;}
+      await askCoach(coachRules()+`\n\nTu es le cerf sage de Néophyte. Il t'a demandé : « ${m.t} ». Point de départ : « ${R.sujet} ».\nVos échanges :\n${R.qa.filter(x=>x.a).map(x=>`- Toi : ${x.q}\n  Lui : ${x.a}`).join('\n')}\n\n${lab}, écrit par lui sans aide :\n---\n${R.mine.slice(0,4000)}\n---\n\n${m.juge} 220 mots maximum.`,out);
+      go.textContent='Redemander'; go.disabled=false;
+    });
+    items.push(el('p',{class:'sage-q',text:lab+' : '+ph}),ta,el('div',{class:'row'},go,info),out,
+      el('button',{class:'linkbtn',type:'button',text:'Autre chose à lui demander',onclick:sageClose}));
+    upd(); if(R.step==='done'){ta.readOnly=true;}
+  }
+  box.replaceChildren(...items.filter(Boolean));
 }
 
 /* ---------- sas avant l'IA ---------- */

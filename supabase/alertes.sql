@@ -1,9 +1,10 @@
--- Néophyte : une alerte sur ton téléphone à chaque « Signaler un problème » (et à chaque « Je conteste »).
--- À coller une seule fois dans Supabase › SQL Editor, puis « Run » (après retours.sql).
+-- Néophyte : une alerte sur ton téléphone à chaque « Signaler un problème » (et à chaque « Je conteste »),
+-- et la page « Retours » du site, que seul le propriétaire peut ouvrir (Réglages, ou le lien de l'alerte).
+-- À coller dans Supabase › SQL Editor, puis « Run » (après retours.sql). Le relancer ne change pas ton canal.
 -- L'alerte passe par ntfy.sh, un service de notifications gratuit et sans compte : installe l'appli « ntfy »
 -- (App Store ou Google Play), puis abonne-toi au nom de canal affiché tout en bas, une fois le script lancé.
 -- Par discrétion, l'alerte ne contient ni le message du testeur ni sa capture : seulement « nouveau signalement »
--- et un lien vers Supabase, où tu lis le tout.
+-- et un lien vers la page « Retours » du site, où tu lis le tout.
 
 create extension if not exists pg_net with schema extensions;
 
@@ -14,6 +15,7 @@ create table if not exists public.alertes_config (
   email text,           -- facultatif : une adresse qui reçoit aussi l'alerte (ntfy.sh en envoie quelques-unes par jour)
   actif boolean not null default true
 );
+alter table public.alertes_config add column if not exists proprietaire uuid references auth.users (id) on delete set null;
 alter table public.alertes_config enable row level security;
 revoke all on public.alertes_config from anon, authenticated;
 insert into public.alertes_config (id) values (true) on conflict (id) do nothing;
@@ -34,9 +36,9 @@ begin
     body := jsonb_strip_nulls(jsonb_build_object(
       'topic', c.canal,
       'title', 'Néophyte',
-      'message', quoi || '. Ouvre Supabase pour le lire.',
+      'message', quoi || '. Touche pour le lire.',
       'tags', jsonb_build_array('triangular_flag_on_post'),
-      'click', 'https://supabase.com/dashboard/project/kmcelzkxnxeqwwpvyycm/editor',
+      'click', 'https://yohandk.github.io/Brain-Fit/#retours',
       'email', c.email
     ))
   );
@@ -56,8 +58,40 @@ do $$ begin
   end if;
 end $$;
 
+-- la page « Retours » : le propriétaire lit tous les retours et leurs captures, et les marque traités
+create or replace function public.est_proprietaire() returns boolean
+language sql stable security definer set search_path = '' as $$
+  select coalesce((select c.proprietaire = (select auth.uid()) from public.alertes_config c where c.id), false);
+$$;
+revoke all on function public.est_proprietaire() from public, anon;
+grant execute on function public.est_proprietaire() to authenticated;
+
+drop policy if exists "retours: le propriétaire lit tout" on public.retours;
+drop policy if exists "retours: le propriétaire marque traité" on public.retours;
+create policy "retours: le propriétaire lit tout" on public.retours
+  for select to authenticated using (public.est_proprietaire());
+create policy "retours: le propriétaire marque traité" on public.retours
+  for update to authenticated using (public.est_proprietaire()) with check (public.est_proprietaire());
+grant update (traite) on public.retours to authenticated;
+
+do $$ begin
+  if to_regclass('public.signalements') is not null then
+    execute 'drop policy if exists "signalements: le propriétaire lit tout" on public.signalements';
+    execute 'drop policy if exists "signalements: le propriétaire marque traité" on public.signalements';
+    execute 'create policy "signalements: le propriétaire lit tout" on public.signalements for select to authenticated using (public.est_proprietaire())';
+    execute 'create policy "signalements: le propriétaire marque traité" on public.signalements for update to authenticated using (public.est_proprietaire()) with check (public.est_proprietaire())';
+    execute 'grant update (traite) on public.signalements to authenticated';
+  end if;
+end $$;
+
+drop policy if exists "retours: le propriétaire voit les captures" on storage.objects;
+create policy "retours: le propriétaire voit les captures" on storage.objects
+  for select to authenticated using (bucket_id = 'retours' and public.est_proprietaire());
+
 -- le nom de ton canal, à saisir dans l'appli ntfy (garde-le pour toi : qui le connaît reçoit les alertes)
 select canal as "Ton canal ntfy" from public.alertes_config;
 
+-- Pour ouvrir la page « Retours » avec ton compte (à faire une fois, avec l'adresse de ton compte Néophyte) :
+--   update public.alertes_config set proprietaire = (select id from auth.users where email = 'ton@adresse.fr');
 -- Pour recevoir aussi un e-mail : update public.alertes_config set email = 'ton@adresse.fr';
 -- Pour couper les alertes :      update public.alertes_config set actif = false;

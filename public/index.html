@@ -1383,7 +1383,7 @@ var fin=function(){if(e.parentNode)e.remove();};e.addEventListener('click',fin);
   <footer class="foot">
     <div class="meander" aria-hidden="true"></div>
     <p><span class="foot-brand">Néo<span>phyte</span></span> · Garder l'esprit vif à l'heure de l'IA</p>
-    <p><button class="linkbtn" id="foot-about">À propos</button> · <button class="linkbtn" id="foot-privacy">Tes données</button> · <button class="linkbtn" id="foot-biblio">Bibliothèque</button></p>
+    <p><button class="linkbtn" id="foot-welcome">Présentation</button> · <button class="linkbtn" id="foot-about">À propos</button> · <button class="linkbtn" id="foot-privacy">Tes données</button> · <button class="linkbtn" id="foot-biblio">Bibliothèque</button></p>
     <p class="note">Gratuit, sans publicité ni mesure d'audience.</p>
   </footer>
 </div>
@@ -5539,7 +5539,9 @@ function showWelcome(){
   $('#welcome').hidden=false; document.body.style.overflow='hidden'; $('#welcome').scrollTop=0;
   setTimeout(()=>$('#welcome').focus({preventScroll:true}),0);
 }
-if(welcomeNeeded())showWelcome();
+// ?accueil dans l'adresse (ou « Présentation » en pied de page) montre l'accueil même connecté
+if(welcomeNeeded()||/[?&]accueil\b/.test(location.search))showWelcome();
+$('#foot-welcome').addEventListener('click',showWelcome);
 $('#wl-start').addEventListener('click',()=>closeWelcome(false));
 $('#wl-login').addEventListener('click',()=>closeWelcome('login'));
 $('#wl-signup').addEventListener('click',()=>closeWelcome('signup'));

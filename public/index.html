@@ -506,6 +506,7 @@ a{color:var(--accent);text-underline-offset:3px}
 /* en-tête */
 .brand h1 span{color:var(--gold)}
 .brand .motto{font-style:italic;color:var(--muted);font-size:.98rem}
+.brand .saint{display:block;font-family:var(--f-body);font-size:.9rem;color:var(--gold-deep);line-height:1.2}
 .brand .motto b{font-style:normal;font-weight:600;letter-spacing:.1em;font-size:.85rem;color:var(--fg2)}
 .meander{height:10px;background:var(--gold);opacity:.5;-webkit-mask:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='14' viewBox='0 0 24 14'%3E%3Cpath d='M0 1h24M0 13h24M3 13V4h14v6H9V7h5' fill='none' stroke='black' stroke-width='2'/%3E%3C/svg%3E") repeat-x left center/17px 10px;mask:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='14' viewBox='0 0 24 14'%3E%3Cpath d='M0 1h24M0 13h24M3 13V4h14v6H9V7h5' fill='none' stroke='black' stroke-width='2'/%3E%3C/svg%3E") repeat-x left center/17px 10px}
 .streak{background:var(--gold-soft);color:var(--gold-deep)}
@@ -1024,6 +1025,7 @@ var fin=function(){if(e.parentNode)e.remove();};e.addEventListener('click',fin);
       <div class="brand-txt">
         <h1>Néo<span>phyte</span></h1>
         <span class="motto"><b title="Connais-toi toi-même">ΓΝΩΘΙ ΣΕΑΥΤΟΝ</b> · <span id="today-label">aujourd'hui</span></span>
+        <span class="saint" id="saint-label"></span>
       </div>
       <div class="stag-bubble" id="stag-bubble" role="status" hidden></div>
     </div>
@@ -3143,7 +3145,7 @@ function renderToday(){
   if(floriDue().length||d.done.citations)steps.unshift({ex:'citations',m:2});
   // le point de départ, puis un point d'étape chaque mois
   const lb=(state.bilans||[]).slice(-1)[0]; if(!lb||d.done.bilan||Date.now()-lb.t>30*864e5)steps.unshift({ex:'bilan',m:10});
-  $('#today-label').textContent=fd(new Date(),{weekday:'long',day:'numeric',month:'long'});
+  $('#today-label').textContent=fd(new Date(),{weekday:'long',day:'numeric',month:'long'}); $('#saint-label').textContent=saintDuJour(k);
   $$('#dur button').forEach(b=>b.setAttribute('aria-pressed',String(+b.dataset.min===min)));
   const done=steps.filter(s=>d.done[s.ex]).length;
   $('#routine-sub').textContent=done===steps.length?'terminé':`${done} sur ${steps.length} · environ ${steps.reduce((a,s)=>a+s.m,0)} min`;
@@ -3449,6 +3451,37 @@ function gami(silent){
 /* ---------- le cerf suit les saisons et le calendrier liturgique ---------- */
 // date de Pâques (algorithme de Meeus, calendrier grégorien)
 function paques(y){const a=y%19,b=Math.floor(y/100),c=y%100,d=Math.floor(b/4),e=b%4,f=Math.floor((b+8)/25),g=Math.floor((b-f+1)/3),h=(19*a+b-d-g+15)%30,i=Math.floor(c/4),k=c%4,l=(32+2*e+2*i-h-k)%7,m=Math.floor((a+11*h+22*l)/451),mo=Math.floor((h+l-7*m+114)/31),da=(h+l-7*m+114)%31+1;return iso(new Date(y,mo-1,da));}
+/* ---------- saint du jour : calendrier romain en usage en France, hors ligne ----------
+   un saint par jour (les jours sans mémoire obligatoire, un saint traditionnellement fêté en France) ;
+   les grandes fêtes mobiles passent devant. */
+const SAINTS=[
+"Sainte Marie, Mère de Dieu|Saints Basile et Grégoire|Sainte Geneviève|Saint Odilon|Saint Édouard|Saint Mélaine|Saint Raymond de Peñafort|Saint Lucien|Sainte Alix|Saint Guillaume|Saint Paulin|Sainte Tatiana|Saint Hilaire|Sainte Nina|Saint Rémi|Saint Marcel|Saint Antoine le Grand|Sainte Prisca|Saint Marius|Saint Sébastien|Sainte Agnès|Saint Vincent|Saint Barnard|Saint François de Sales|Conversion de saint Paul|Saints Timothée et Tite|Sainte Angèle Merici|Saint Thomas d'Aquin|Saint Gildas|Sainte Martine|Saint Jean Bosco",
+'Sainte Brigitte de Kildare|Présentation du Seigneur|Saint Blaise|Sainte Jeanne de France|Sainte Agathe|Saint Paul Miki et ses compagnons|Sainte Eugénie|Sainte Joséphine Bakhita|Sainte Apolline|Sainte Scholastique|Notre-Dame de Lourdes|Saint Félix|Sainte Béatrice|Saints Cyrille et Méthode|Saint Claude La Colombière|Sainte Julienne|Les sept saints fondateurs des Servites|Sainte Bernadette|Saint Gabin|Sainte Aimée|Saint Pierre Damien|Chaire de saint Pierre|Saint Polycarpe|Saint Modeste|Sainte Walburge|Saint Nestor|Sainte Honorine|Saint Romain|Saint Oswald',
+'Saint Aubin|Saint Charles le Bon|Saint Guénolé|Saint Casimir|Sainte Olive|Sainte Colette|Saintes Perpétue et Félicité|Saint Jean de Dieu|Sainte Françoise Romaine|Saint Vivien|Sainte Rosine|Sainte Justine|Saint Rodrigue|Sainte Mathilde|Sainte Louise de Marillac|Sainte Bénédicte|Saint Patrick|Saint Cyrille de Jérusalem|Saint Joseph|Saint Cuthbert|Sainte Clémence|Sainte Léa|Saint Turibio de Mogrovejo|Sainte Catherine de Suède|Annonciation du Seigneur|Saint Ludger|Saint Rupert|Saint Gontran|Sainte Gwladys|Saint Amédée|Saint Benjamin',
+'Saint Hugues|Saint François de Paule|Saint Richard|Saint Isidore|Saint Vincent Ferrier|Saint Marcellin|Saint Jean-Baptiste de La Salle|Sainte Julie|Saint Gautier|Saint Fulbert|Saint Stanislas|Saint Jules|Saint Martin Ier|Saint Maxime|Saint Paterne|Saint Benoît-Joseph Labre|Saint Anicet|Saint Parfait|Sainte Emma|Sainte Odette|Saint Anselme|Saint Alexandre|Saint Georges|Saint Fidèle|Saint Marc|Sainte Alida|Sainte Zita|Saint Louis-Marie Grignion de Montfort|Sainte Catherine de Sienne|Saint Pie V',
+"Saint Joseph travailleur|Saint Athanase|Saints Philippe et Jacques|Saint Sylvain|Sainte Judith|Sainte Prudence|Sainte Gisèle|Saint Désiré|Saint Pacôme|Sainte Solange|Sainte Estelle|Saints Nérée et Achille|Notre-Dame de Fatima|Saint Matthias|Sainte Denise|Saint Honoré|Saint Pascal Baylon|Saint Éric|Saint Yves|Saint Bernardin de Sienne|Saint Eugène de Mazenod|Sainte Rita|Saint Didier|Saint Donatien|Saint Bède le Vénérable|Saint Philippe Néri|Saint Augustin de Cantorbéry|Saint Germain|Saint Aymar|Sainte Jeanne d'Arc|Visitation de la Vierge Marie",
+"Saint Justin|Sainte Blandine|Saint Charles Lwanga et ses compagnons|Sainte Clotilde|Saint Boniface|Saint Norbert|Saint Gilbert|Saint Médard|Saint Éphrem|Saint Landry|Saint Barnabé|Saint Guy|Saint Antoine de Padoue|Saint Élisée|Sainte Germaine|Saint Jean-François Régis|Saint Hervé|Saint Léonce|Saint Romuald|Saint Silvère|Saint Louis de Gonzague|Saints Jean Fisher et Thomas More|Sainte Audrey|Nativité de saint Jean-Baptiste|Saint Prosper|Saint Anthelme|Saint Cyrille d'Alexandrie|Saint Irénée|Saints Pierre et Paul|Premiers martyrs de l'Église de Rome",
+'Saint Thierry|Saint Martinien|Saint Thomas|Sainte Élisabeth de Portugal|Saint Antoine-Marie Zaccaria|Sainte Maria Goretti|Saint Raoul|Saint Thibaut|Sainte Amandine|Saint Ulrich|Saint Benoît|Saint Olivier|Saint Henri|Saint Camille de Lellis|Saint Bonaventure|Notre-Dame du Mont-Carmel|Sainte Charlotte|Saint Frédéric|Saint Arsène|Sainte Marina|Saint Laurent de Brindes|Sainte Marie-Madeleine|Sainte Brigitte de Suède|Saint Charbel Makhlouf|Saint Jacques le Majeur|Saints Joachim et Anne|Sainte Nathalie|Saint Samson|Saints Marthe, Marie et Lazare|Saint Pierre Chrysologue|Saint Ignace de Loyola',
+'Saint Alphonse de Liguori|Saint Pierre-Julien Eymard|Sainte Lydie|Saint Jean-Marie Vianney|Dédicace de Sainte-Marie-Majeure|Transfiguration du Seigneur|Saint Gaétan|Saint Dominique|Sainte Thérèse-Bénédicte de la Croix|Saint Laurent|Sainte Claire|Sainte Jeanne-Françoise de Chantal|Saints Pontien et Hippolyte|Saint Maximilien Kolbe|Assomption de la Vierge Marie|Saint Étienne de Hongrie|Saint Hyacinthe|Sainte Hélène|Saint Jean Eudes|Saint Bernard|Saint Pie X|Marie Reine|Sainte Rose de Lima|Saint Barthélemy|Saint Louis|Sainte Natacha|Sainte Monique|Saint Augustin|Martyre de saint Jean-Baptiste|Saint Fiacre|Saint Aristide',
+'Saint Gilles|Sainte Ingrid|Saint Grégoire le Grand|Sainte Rosalie|Sainte Teresa de Calcutta|Saint Bertrand|Sainte Reine|Nativité de la Vierge Marie|Saint Pierre Claver|Sainte Inès|Saint Adelphe|Saint Nom de Marie|Saint Jean Chrysostome|La Croix glorieuse|Notre-Dame des Douleurs|Saints Corneille et Cyprien|Saint Robert Bellarmin|Sainte Nadège|Saint Janvier|Saint André Kim et ses compagnons|Saint Matthieu|Saint Maurice|Saint Pio de Pietrelcina|Sainte Thècle|Saint Hermann|Saints Côme et Damien|Saint Vincent de Paul|Saint Venceslas|Saints Michel, Gabriel et Raphaël|Saint Jérôme',
+"Sainte Thérèse de l'Enfant-Jésus|Saints Anges gardiens|Saint Gérard|Saint François d'Assise|Sainte Faustine|Saint Bruno|Notre-Dame du Rosaire|Sainte Pélagie|Saint Denis|Saint Ghislain|Saint Jean XXIII|Saint Wilfried|Saint Géraud|Saint Calliste|Sainte Thérèse d'Avila|Sainte Marguerite-Marie Alacoque|Saint Ignace d'Antioche|Saint Luc|Saints Isaac Jogues, Jean de Brébeuf et leurs compagnons|Sainte Adeline|Sainte Céline|Saint Jean-Paul II|Saint Jean de Capistran|Saint Antoine-Marie Claret|Saint Crépin|Saint Dimitri|Sainte Émeline|Saints Simon et Jude|Saint Narcisse|Sainte Bienvenue|Saint Quentin",
+"Tous les saints|Commémoration des fidèles défunts|Saint Hubert|Saint Charles Borromée|Sainte Sylvie|Sainte Bertille|Sainte Carine|Saint Geoffroy|Dédicace du Latran|Saint Léon le Grand|Saint Martin|Saint Josaphat|Saint Brice|Saint Sidoine|Saint Albert le Grand|Sainte Marguerite d'Écosse|Sainte Élisabeth de Hongrie|Sainte Aude|Saint Tanguy|Saint Edmond|Présentation de la Vierge Marie|Sainte Cécile|Saint Clément|Saint André Dung-Lac et ses compagnons|Sainte Catherine d'Alexandrie|Sainte Delphine|Saint Séverin|Saint Jacques de la Marche|Saint Saturnin|Saint André",
+'Saint Charles de Foucauld|Sainte Viviane|Saint François Xavier|Sainte Barbe|Saint Gérald|Saint Nicolas|Saint Ambroise|Immaculée Conception|Saint Pierre Fourier|Saint Romaric|Saint Damase|Notre-Dame de Guadalupe|Sainte Lucie|Saint Jean de la Croix|Sainte Ninon|Sainte Alice|Saint Gaël|Saint Gatien|Saint Urbain|Saint Théophile|Saint Pierre Canisius|Sainte Françoise-Xavière Cabrini|Saint Jean de Kenty|Sainte Adèle|Nativité du Seigneur|Saint Étienne|Saint Jean|Saints Innocents|Saint Thomas Becket|Saint Roger|Saint Sylvestre'].map(m=>m.split('|'));
+function saintDuJour(k=todayKey()){
+  const y=+k.slice(0,4), P=paques(y), md=k.slice(5), dow=new Date(k+'T12:00:00').getDay();
+  const mob={[-46]:'Mercredi des Cendres',[-7]:'Dimanche des Rameaux',[-3]:'Jeudi saint',[-2]:'Vendredi saint',[-1]:'Samedi saint',0:'Pâques',1:'Lundi de Pâques',7:'Dimanche de la Divine Miséricorde',39:'Ascension du Seigneur',49:'Pentecôte',50:'Marie, Mère de l\'Église',56:'Sainte Trinité',63:'Saint-Sacrement',68:'Sacré-Cœur de Jésus',69:'Cœur immaculé de Marie'};
+  for(const o in mob)if(addDays(P,+o)===k)return mob[o];
+  // Christ Roi : le dimanche qui précède le premier dimanche de l'Avent
+  const n=new Date(y,11,25); const av1=addDays(iso(n),-((n.getDay()||7)+21)); if(addDays(av1,-7)===k)return'Christ Roi de l\'univers';
+  // en France, l'Épiphanie se fête le dimanche entre le 2 et le 8 janvier, le Baptême du Seigneur le dimanche suivant (le lundi si l'Épiphanie tombe le 7 ou le 8)
+  if(md>='01-02'&&md<='01-08'&&dow===0)return'Épiphanie du Seigneur';
+  const ep=[2,3,4,5,6,7,8].map(d=>iso(new Date(y,0,d))).find(x=>new Date(x+'T12:00:00').getDay()===0);
+  if(k===addDays(ep,+ep.slice(8)>=7?1:7))return'Baptême du Seigneur';
+  // Sainte Famille : le dimanche après Noël, ou le 30 décembre s'il n'y en a pas
+  if(md>='12-26'&&md<='12-31'&&dow===0)return'Sainte Famille';
+  if(md==='12-30'&&new Date(y,11,25).getDay()===0)return'Sainte Famille';
+  return SAINTS[+k.slice(5,7)-1][+k.slice(8,10)-1];
+}
 function saison(k=todayKey()){
   const y=+k.slice(0,4), md=k.slice(5), P=paques(y);
   if(k>=addDays(P,-46)&&k<addDays(P,-7))return'careme';          // du mercredi des Cendres aux Rameaux

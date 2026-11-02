@@ -262,6 +262,9 @@ select,input[type="text"]{font:inherit;color:var(--fg);background:var(--bg);bord
 .sage-txt{min-width:0;display:flex;flex-direction:column;gap:2px}
 .sage-txt h2{margin:0}
 .sage-say{margin:4px 0 0;font-style:italic;color:var(--fg2);line-height:1.45}
+.sage-ask{display:flex;flex-direction:column;gap:8px}
+.sage-ask .chat:empty{display:none}
+#coach-status:empty{display:none}
 #sage-menu{display:flex;flex-direction:column;gap:8px}
 .sage-cards{display:grid;grid-template-columns:repeat(2,1fr);gap:10px}
 .sage-card{display:flex;flex-direction:column;gap:4px;text-align:left;border:1px solid var(--line);background:var(--surface);border-radius:12px;padding:12px 14px;font:inherit;color:var(--fg);cursor:pointer;transition:border-color .2s,transform .12s}
@@ -1233,6 +1236,14 @@ var fin=function(){if(e.parentNode)e.remove();};e.addEventListener('click',fin);
     <div class="panel" id="coach-panel">
       <div class="sage-head"><span class="stag sage" id="sage-stag" aria-hidden="true"></span>
         <div class="sage-txt"><h2>Le cerf sage</h2><p class="muted note" id="coach-state"></p><p class="sage-say" id="sage-say"></p></div></div>
+      <div class="sage-ask">
+        <div class="chat" id="coach-chat"></div>
+        <form class="row" id="coach-form" style="flex-wrap:nowrap">
+          <input type="text" id="coach-q" placeholder="Pose ta question au cerf…" aria-label="Ta question au cerf" style="flex:1;min-width:0" autocomplete="off">
+          <button class="btn primary" id="coach-send" type="submit">Demander</button>
+        </form>
+        <p class="note" id="coach-status"></p>
+      </div>
       <div id="sage-menu">
         <span class="label">Ce que tu peux lui demander</span>
         <div class="sage-cards" id="sage-cards"></div>
@@ -1243,12 +1254,6 @@ var fin=function(){if(e.parentNode)e.remove();};e.addEventListener('click',fin);
         <span class="note" id="coach-review-date" hidden></span>
         <div class="coachout" id="coach-review-out" hidden></div>
         <div class="row" id="coach-goal" hidden><span class="fg2" id="coach-goal-text" style="min-width:0;overflow-wrap:anywhere"></span><button class="btn" id="coach-goal-adopt">Adopter cet objectif</button></div>
-        <div class="chat" id="coach-chat"></div>
-        <form class="row" id="coach-form" style="flex-wrap:nowrap">
-          <input type="text" id="coach-q" placeholder="Une autre question pour le cerf…" style="flex:1;min-width:0" autocomplete="off">
-          <button class="btn" id="coach-send" type="submit">Envoyer</button>
-        </form>
-        <p class="note" id="coach-status"></p>
       </div>
       <p class="note" id="coach-off-why"></p>
       <details class="tutor-box"><summary><span>Ses trois règles</span></summary>
@@ -3991,6 +3996,10 @@ $('#coach-review').addEventListener('click',async()=>{
 });
 $('#coach-form').addEventListener('submit',async e=>{
   e.preventDefault(); const q=$('#coach-q').value.trim(); if(!q)return;
+  // tant qu'il ne parle pas, la question passe par le sas : ta réponse d'abord
+  if(!coachOn){$('#sas-q').value=q;$('#coach-q').value='';sasUpdate();sasDraft();
+    $('#coach-status').textContent='Il ne parle pas encore : ta question t’attend dans le sas, juste au-dessus. Écris d’abord ta propre réponse.';
+    $('#sas-panel').scrollIntoView({behavior:'smooth',block:'start'});setTimeout(()=>$('#sas-mine').focus({preventScroll:true}),400);return;}
   $('#coach-q').value=''; $('#coach-send').disabled=true;
   const chat=$('#coach-chat'); chat.append(el('div',{class:'me',text:q}));
   const out=el('div',{class:'coachout'}); chat.append(out);

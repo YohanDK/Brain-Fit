@@ -5640,7 +5640,7 @@ hypotheses(arena){
       const t=test.value.trim(), H=NB.hypotheses.find(h=>h.fait===sc);
       // la liste de référence : on coche ce qu'on avait vraiment trouvé ; le score compte les familles différentes, pas les cases
       const chk=lab=>{const c=el('input',{type:'checkbox'});return[c,el('label',{class:'hyp-ref'},c,el('span',{},...lab))];};
-      const refs=H.ref.map(([f,txt])=>{const [c,l]=chk([el('small',{class:'label',text:NB.familles[f]}),document.createTextNode(txt)]);return{f,c,l};});
+      const refs=H.ref.map(([f,txt])=>{const [c,l]=chk([el('small',{class:'label',text:NB.famillesHyp[f]}),document.createTextNode(txt)]);return{f,c,l};});
       const [autreC,autreL]=chk([document.createTextNode('Une autre explication solide, absente de cette liste, d’une famille que je n’ai pas cochée')]);
       const [testC,testL]=chk([el('small',{class:'label',text:'Pour départager'}),document.createTextNode(H.test)]);
       testL.append(el('span',{class:'note',text:t?' Coche si ton idée va dans ce sens.':' Tu n’as rien proposé.'}));
@@ -5653,7 +5653,7 @@ hypotheses(arena){
       voir.addEventListener('click',()=>{
         const fams=new Set(refs.filter(r=>r.c.checked).map(r=>r.f)); if(autreC.checked)fams.add('autre');
         const nf=fams.size, score=Math.min(4,nf)*20+(testC.checked?20:0);
-        const manq=[...new Set(H.ref.map(r=>r[0]))].filter(f=>!fams.has(f)).map(f=>NB.familles[f].toLowerCase());
+        const manq=[...new Set(H.ref.map(r=>r[0]))].filter(f=>!fams.has(f)).map(f=>NB.famillesHyp[f].toLowerCase());
         const m=recordMsg('hypotheses',score); logResult('hypotheses',score,{sc,fam:nf});
         showResult(arena,score,`% de qualité (${nf} famille${nf>1?'s':''} d’explications${testC.checked?' + un bon test':''})`,
           m+(manq.length?` La prochaine fois, pense aussi : ${manq.slice(0,3).join(', ')}.`:' Toutes les familles de la liste y sont.')+' Quatre familles différentes valent mieux que cinq variantes de la même idée.',()=>RUN.hypotheses(arena));

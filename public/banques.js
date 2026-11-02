@@ -572,7 +572,7 @@ B.evenements=[
 // Hypothèses concurrentes : un fait surprenant et une liste de référence, chaque explication rangée dans une famille.
 // Le score mesure la variété des familles trouvées, pas le nombre de cases remplies. Le texte du fait ne change jamais
 // (les résultats s'en souviennent pour ne pas le reproposer). test : ce qui départagerait les explications.
-B.familles={directe:'Cause directe',cachee:'Facteur caché',inverse:'Causalité inversée',selection:'Sélection des cas',mesure:'Mesure ou définition',hasard:'Hasard ou comparaison trompeuse',contexte:'Changement de contexte'};
+B.famillesHyp={directe:'Cause directe',cachee:'Facteur caché',inverse:'Causalité inversée',selection:'Sélection des cas',mesure:'Mesure ou définition',hasard:'Hasard ou comparaison trompeuse',contexte:'Changement de contexte'};
 B.hypotheses=[
   {id:'h01',fait:"Les ventes d'un glacier de bord de mer ont chuté de 30 % en juillet par rapport à l'an dernier.",
    ref:[['directe',"Il a fait plus frais ou plus pluvieux ce mois de juillet."],['contexte',"Un concurrent s'est installé tout près, ou des travaux gênent l'accès."],['contexte',"La station a reçu moins de touristes cette année."],['hasard',"Le juillet de l'an dernier était exceptionnel (canicule) : la base de comparaison est anormale."],['mesure',"La façon de compter les ventes a changé (nouvelle caisse, ventes en espèces mal enregistrées)."]],

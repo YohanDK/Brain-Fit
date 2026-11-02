@@ -81,6 +81,19 @@
    ]
   },
   {
+   "titre": "Usuels en salle de lecture des Archives départementales",
+   "producteur": "Département des Alpes de Haute-Provence",
+   "page": "https://www.data.gouv.fr/datasets/usuels-salle-lecture-des-archives-departementales",
+   "maj": "2021-03-17",
+   "fichiers": [
+    {
+     "titre": "AD04_liste_usuels",
+     "format": "csv",
+     "url": "https://www.datasud.fr/fr/dataset/datasets/3375/resource/3682/download/"
+    }
+   ]
+  },
+  {
    "titre": "Fréquentation Instantanée - Salle de lecture- Médiathèque Gambetta Orléans",
    "producteur": "Orléans Métropole",
    "page": "https://www.data.gouv.fr/datasets/frequentation-instantanee-salle-de-lecture-mediatheque-gambetta-orleans",
@@ -99,19 +112,6 @@
    ]
   },
   {
-   "titre": "Usuels en salle de lecture des Archives départementales",
-   "producteur": "Département des Alpes de Haute-Provence",
-   "page": "https://www.data.gouv.fr/datasets/usuels-salle-lecture-des-archives-departementales",
-   "maj": "2021-03-17",
-   "fichiers": [
-    {
-     "titre": "AD04_liste_usuels",
-     "format": "csv",
-     "url": "https://www.datasud.fr/fr/dataset/datasets/3375/resource/3682/download/"
-    }
-   ]
-  },
-  {
    "titre": "Contrat Territoire Lecture 2022 - Convention de transition avec l'Etat",
    "producteur": "Communauté d'Agglomération Plaine Vallée",
    "page": "https://www.data.gouv.fr/datasets/contrat-territoire-lecture-2022-convention-de-transition-avec-letat",
@@ -121,6 +121,19 @@
      "titre": "ArcGIS Hub Dataset",
      "format": "web page",
      "url": "https://portail-agglo-plainevallee.opendata.arcgis.com/documents/agglo-plainevallee::contrat-territoire-lecture-2022-convention-de-transition-avec-letat"
+    }
+   ]
+  },
+  {
+   "titre": "Délibération Adoption des conventions d'adhésion au Pack Lecture 2023 2026",
+   "producteur": "Communauté d'Agglomération Plaine Vallée",
+   "page": "https://www.data.gouv.fr/datasets/deliberation-adoption-des-conventions-dadhesion-au-pack-lecture-2023-2026",
+   "maj": "2022-10-13",
+   "fichiers": [
+    {
+     "titre": "ArcGIS Hub Dataset",
+     "format": "web page",
+     "url": "https://portail-agglo-plainevallee.opendata.arcgis.com/documents/agglo-plainevallee::délibération-adoption-des-conventions-dadhésion-au-pack-lecture-2023-2026"
     }
    ]
   },
@@ -144,19 +157,6 @@
      "titre": "hlc:mediatheque_hlc_pt",
      "format": "wfs",
      "url": "https://geobretagne.fr/geoserver/hlc/wfs?REQUEST=GetCapabilities&SERVICE=WFS"
-    }
-   ]
-  },
-  {
-   "titre": "Délibération Adoption des conventions d'adhésion au Pack Lecture 2023 2026",
-   "producteur": "Communauté d'Agglomération Plaine Vallée",
-   "page": "https://www.data.gouv.fr/datasets/deliberation-adoption-des-conventions-dadhesion-au-pack-lecture-2023-2026",
-   "maj": "2022-10-13",
-   "fichiers": [
-    {
-     "titre": "ArcGIS Hub Dataset",
-     "format": "web page",
-     "url": "https://portail-agglo-plainevallee.opendata.arcgis.com/documents/agglo-plainevallee::délibération-adoption-des-conventions-dadhésion-au-pack-lecture-2023-2026"
     }
    ]
   }

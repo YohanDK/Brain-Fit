@@ -11,6 +11,7 @@ Le site s'installe sur le téléphone comme une appli. Avec un compte, les progr
 | `public/` | GitHub Pages | Le site lui-même (une seule page), installable et utilisable hors ligne. |
 | `supabase/setup.sql` | Supabase | La table qui garde tes progrès. Chacun ne voit que les siens. |
 | `supabase/cercle.sql` | Supabase | Les cercles d'amis et leur classement de la semaine, et l'effacement de ses données. |
+| `supabase/defis.sql` | Supabase | Les défis du cercle : énigme du jour et meilleur Éclair de la semaine sous chaque nom. |
 | `supabase/signalements.sql` | Supabase | Les signalements « Je conteste » envoyés depuis les corrections. |
 | `public/banques.js` | GitHub Pages | Les problèmes, sophismes, erreurs d'IA, estimations, phrases d'orthographe, textes de lecture et graphiques, avec leur niveau et leur source, et les modèles de variantes. |
 | `tools/verifier-banques.js` | GitHub | Vérifie les banques avant chaque publication : une question mal formée ou un calcul faux bloque la mise en ligne. |
@@ -26,7 +27,7 @@ Le bilan du dimanche se fait tout seul : dès dimanche 18 h, l'appli calcule le 
 ### 1. Supabase : le compte et les données
 
 1. Crée un compte sur [supabase.com](https://supabase.com) (« Continue with GitHub » est le plus simple), puis un projet nommé `brain-fit`, région **Paris (eu-west-3)**. Le mot de passe de la base ne te resservira pas.
-2. Dans le projet, ouvre **SQL Editor**, colle tout le contenu de [`supabase/setup.sql`](supabase/setup.sql), puis clique sur **Run**. Fais de même, dans une nouvelle requête, avec [`supabase/cercle.sql`](supabase/cercle.sql), puis avec [`supabase/signalements.sql`](supabase/signalements.sql).
+2. Dans le projet, ouvre **SQL Editor**, colle tout le contenu de [`supabase/setup.sql`](supabase/setup.sql), puis clique sur **Run**. Fais de même, dans une nouvelle requête, avec [`supabase/cercle.sql`](supabase/cercle.sql), puis avec [`supabase/signalements.sql`](supabase/signalements.sql) et [`supabase/defis.sql`](supabase/defis.sql).
 3. Dans **Project Settings › API Keys**, copie l'**URL du projet** et la **clé publique** (`publishable`, ou `anon`). Ces deux valeurs peuvent être partagées sans risque : elles vont dans `public/config.js`.
 4. Note l'**identifiant du projet** : ce sont les lettres de l'adresse, `https://<identifiant>.supabase.co`.
 5. Crée un jeton d'accès sur [supabase.com/dashboard/account/tokens](https://supabase.com/dashboard/account/tokens) (nom : `github`). Garde-le pour l'étape 3.

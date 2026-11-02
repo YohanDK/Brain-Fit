@@ -250,7 +250,24 @@ select,input[type="text"]{font:inherit;color:var(--fg);background:var(--bg);bord
 .sas-step.ok .n{background:var(--good);color:var(--on-accent)}
 .sas-step > div{min-width:0;display:flex;flex-direction:column;gap:8px}
 .sas-step.off > div{opacity:.45;pointer-events:none}
+.sas-step[hidden]{display:none}
 .sas-step textarea{min-height:110px}
+.sas-hist summary,.tutor-box summary{cursor:pointer;font-weight:700;color:var(--fg2);padding:4px 0}
+.sas-hist{border-top:1px solid var(--line);padding-top:10px}
+.sas-hist .history{margin-top:6px}
+.sas-coach{display:flex;flex-direction:column;gap:8px;align-items:flex-start}
+.coach-rules{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:6px}
+.coach-rules li{padding-left:14px;border-left:2px solid var(--gold);line-height:1.45;color:var(--fg2)}
+.coach-rules b{color:var(--fg)}
+.coach-when{margin:6px 0 0;padding-left:1.3em;display:flex;flex-direction:column;gap:6px}
+.coach-when li{line-height:1.45}
+.coach-when b{margin-right:6px}
+.coach-when span{color:var(--fg2)}
+#coach-off,#coach-on{display:flex;flex-direction:column;gap:12px}
+#coach-off[hidden],#coach-on[hidden]{display:none}
+.tutor-box{border-top:1px solid var(--line);padding-top:10px;display:flex;flex-direction:column;gap:10px}
+.tutor-box[open]>summary{margin-bottom:8px}
+.tutor-box summary b{color:var(--accent)}
 .history{display:flex;flex-direction:column}
 .hist{padding:12px 0;border-top:1px solid var(--line);display:flex;flex-direction:column;gap:4px}
 .hist:first-child{border-top:0}
@@ -1147,53 +1164,26 @@ var fin=function(){if(e.parentNode)e.remove();};e.addEventListener('click',fin);
 
   <!-- COACH -->
   <section class="view" id="v-coach" hidden>
-    <div class="panel">
-      <div>
-        <h2>Ton coach</h2>
-        <p class="fg2">Il connaît tes scores, tes habitudes et tes priorités : écriture et raisonnement. Il ne fait jamais le travail à ta place. Il pointe, il questionne, il te fixe le prochain objectif.</p>
-      </div>
-      <div class="row">
-        <button class="btn primary" id="coach-review">Faire mon bilan</button>
-        <span class="note" id="coach-review-date"></span>
-      </div>
-      <div class="coachout" id="coach-review-out" hidden></div>
-      <div class="row" id="coach-goal" hidden><span class="fg2" id="coach-goal-text" style="min-width:0;overflow-wrap:anywhere"></span><button class="btn" id="coach-goal-adopt">Adopter cet objectif</button></div>
-      <div class="chat" id="coach-chat"></div>
-      <form class="row" id="coach-form" style="flex-wrap:nowrap">
-        <input type="text" id="coach-q" placeholder="Pose une question à ton coach…" style="flex:1;min-width:0" autocomplete="off">
-        <button class="btn" id="coach-send" type="submit">Envoyer</button>
-      </form>
-      <p class="note" id="coach-status"></p>
-    </div>
-
-    <div class="panel" id="tutor-panel">
-      <div>
-        <h2>L'esprit de ton tuteur</h2>
-        <p class="fg2">Comment veux-tu être guidé ? Ce choix règle le mode tuteur du sas, la relecture du dimanche et la manière dont ton coach te répond.</p>
-      </div>
-      <div class="seg tutorseg" role="group" aria-label="Esprit du tuteur" id="tutor-seg"></div>
-      <p class="fg2" id="tutor-desc" style="max-width:62ch"></p>
-    </div>
-
-    <div class="panel">
+    <div class="panel" id="sas-panel">
       <div>
         <h2>Le sas avant l'IA</h2>
-        <p class="fg2">Avant de poser une vraie question à l'IA, passe par ici. Tu écris d'abord ta propre réponse, tu demandes ensuite, puis tu notes l'écart. C'est l'habitude qui protège le mieux ta réflexion, et elle prend 3 minutes.</p>
+        <p class="fg2">Avant une vraie question à l'IA : ta réponse d'abord, la sienne ensuite, puis l'écart. Trois minutes qui gardent ta réflexion aux commandes.</p>
       </div>
       <div class="sas-steps">
         <div class="sas-step on" id="sas-1"><span class="n">1</span><div>
           <label class="step-title" for="sas-q">Ta question</label>
           <textarea id="sas-q" placeholder="Ex. : Comment structurer ma présentation de jeudi ?" style="min-height:70px"></textarea>
         </div></div>
-        <div class="sas-step off" id="sas-2"><span class="n">2</span><div>
+        <div class="sas-step off" id="sas-2" hidden><span class="n">2</span><div>
           <label class="step-title" for="sas-mine">Ta réponse d'abord, sans aide</label>
           <p class="note">Une ébauche suffit : idées en vrac, plan, hypothèse. Ajoute une hypothèse concurrente : et si c'était autre chose ? Au moins 15 mots, ou 2 minutes de réflexion.</p>
           <textarea id="sas-mine" placeholder="Ce que je pense, ce que je ferais, ce que je ne sais pas…"></textarea>
           <div class="row spread"><span class="muted" id="sas-mine-info">0 mot</span>
             <div class="row"><button class="btn" id="sas-tutor" title="Copie la question avec une consigne de tuteur">Copier en mode tuteur</button><button class="btn primary" id="sas-copy" disabled>Copier la question pour l'IA</button></div></div>
           <p class="note" id="sas-copy-info"></p>
+          <div class="sas-coach" id="sas-coach" hidden><button class="btn ghost" id="sas-ask" type="button">Une question du coach sur ma réponse</button><div class="coachout" id="sas-ask-out" hidden></div></div>
         </div></div>
-        <div class="sas-step off" id="sas-3"><span class="n">3</span><div>
+        <div class="sas-step off" id="sas-3" hidden><span class="n">3</span><div>
           <span class="step-title">Après avoir lu la réponse de l'IA</span>
           <div class="seg" role="group" aria-label="Ton estimation" id="sas-rate">
             <button data-r="3">J'avais l'essentiel</button><button data-r="2">En partie</button><button data-r="1">J'étais loin</button>
@@ -1203,10 +1193,45 @@ var fin=function(){if(e.parentNode)e.remove();};e.addEventListener('click',fin);
           <div class="row"><button class="btn primary" id="sas-save" disabled>Enregistrer</button><button class="btn ghost" id="sas-clear">Recommencer</button><span class="note" id="sas-save-info"></span></div>
         </div></div>
       </div>
+      <details class="sas-hist" id="sas-hist"><summary><span id="sas-hist-t">Tes passages par le sas</span> <span class="muted note" id="sas-stats"></span></summary><div class="history" id="sas-history"></div></details>
     </div>
-    <div class="panel">
-      <div class="row spread"><h2>Tes passages par le sas</h2><span class="muted" id="sas-stats"></span></div>
-      <div class="history" id="sas-history"></div>
+
+    <div class="panel" id="coach-panel">
+      <div class="row spread" style="align-items:flex-start"><div><h2>Ton coach</h2><p class="muted note" id="coach-state"></p></div></div>
+      <ul class="coach-rules" aria-label="Les règles du coach">
+        <li><b>Après ton effort.</b> Il ne lit que ce que tu as d'abord fait seul : ton texte, ta réponse, ton point d'étape.</li>
+        <li><b>Jamais à ta place.</b> Il pointe, il questionne, il ne rédige ni ne résout pour toi.</li>
+        <li><b>Sur tes chiffres.</b> Il s'appuie sur tes résultats réels et te fixe un seul prochain pas.</li>
+      </ul>
+      <div id="coach-on" hidden>
+        <div class="row">
+          <button class="btn primary" id="coach-review">Préparer ma semaine</button>
+          <span class="note" id="coach-review-date"></span>
+        </div>
+        <div class="coachout" id="coach-review-out" hidden></div>
+        <div class="row" id="coach-goal" hidden><span class="fg2" id="coach-goal-text" style="min-width:0;overflow-wrap:anywhere"></span><button class="btn" id="coach-goal-adopt">Adopter cet objectif</button></div>
+        <div class="chat" id="coach-chat"></div>
+        <form class="row" id="coach-form" style="flex-wrap:nowrap">
+          <input type="text" id="coach-q" placeholder="Pose une question à ton coach…" style="flex:1;min-width:0" autocomplete="off">
+          <button class="btn" id="coach-send" type="submit">Envoyer</button>
+        </form>
+        <p class="note" id="coach-status"></p>
+      </div>
+      <div id="coach-off">
+        <span class="label">Où il interviendra</span>
+        <ol class="coach-when">
+          <li><b>Dans le sas</b><span>une question qui fait avancer ta propre réponse, sans te la donner.</span></li>
+          <li><b>Après l'écriture</b><span>deux points forts, deux pistes, une note sur 10.</span></li>
+          <li><b>Au point d'étape</b><span>ce que révèle l'écart entre ce que tu déclares et ce que tu réussis.</span></li>
+          <li><b>Le dimanche</b><span>ta semaine relue et trois actions pour la suivante.</span></li>
+        </ol>
+        <p class="note" id="coach-off-why"></p>
+      </div>
+      <details class="tutor-box" id="tutor-panel"><summary><span>Son esprit : <b id="tutor-cur"></b></span></summary>
+        <p class="fg2 note">Ce choix règle le mode tuteur du sas, la relecture du dimanche et la manière dont ton coach te répond.</p>
+        <div class="seg tutorseg" role="group" aria-label="Esprit du tuteur" id="tutor-seg"></div>
+        <p class="fg2" id="tutor-desc" style="max-width:62ch"></p>
+      </details>
     </div>
   </section>
 
@@ -2268,7 +2293,7 @@ async function initStore(){
     if(ts.exists){const have=new Set(texts.map(x=>x.t));for(const x of (ts.data().items||[]))if(!have.has(x.t))texts.push(x);texts.sort((a,b)=>a.t-b.t);}
     saveTexts();
     applyFreezes(); gami(true);
-    $('#syncwarn').hidden=true; $('#logout').hidden=false; setSync('ok'); persist(); renderAll(); flushContest();
+    $('#syncwarn').hidden=true; $('#logout').hidden=false; setSync('ok'); persist(); renderAll(); flushContest(); coachCheck();
     weeklyBilan(); weekBilanNotice();
   }catch(e){ref=null;localOnly();}
 }
@@ -3120,7 +3145,7 @@ $('#login').addEventListener('submit',async e=>{
 });
 $('#logout').addEventListener('click',async()=>{
   try{await window.bfSupabase.auth.signOut();}catch(e){}
-  ref=null; tref=null; circleData=null; $('#erase').hidden=true; setSync('local'); localOnly(); showTab('aujourdhui'); window.scrollTo(0,0);
+  ref=null; tref=null; circleData=null; $('#erase').hidden=true; setSync('local'); localOnly(); coachCheck(); showTab('aujourdhui'); window.scrollTo(0,0);
   showWelcome();
 });
 $('#reset').addEventListener('click',()=>{$('#reset-confirm').hidden=false;});
@@ -3686,7 +3711,8 @@ function renderWeekBilan(){
     P('Défis',b.defis.join(', ').replace(/^./,c=>c.toUpperCase())+'.'),
     ...(b.rank?[P('Classement',b.rank)]:[]),
     el('p',{class:'next'},el('b',{text:'Pour la semaine prochaine'}),document.createTextNode(b.next)),
-    P('Relecture',TUTORS[tutorKey()].rel.replace(/ ([:;!?»])/g,'\u00a0$1')));
+    P('Relecture',TUTORS[tutorKey()].rel.replace(/ ([:;!?»])/g,'\u00a0$1')),
+    ...(coachOn?[el('div',{class:'row'},el('button',{class:'btn',text:'Préparer ma semaine avec mon coach',onclick:()=>{showTab('coach');window.scrollTo(0,0);$('#coach-panel').scrollIntoView({block:'start'});}}))]:[]));
 }
 // une fois par semaine, à la première ouverture après dimanche 18 h (le coach, s'il est branché, prévient lui-même)
 let wbShown=false;
@@ -3713,7 +3739,7 @@ function weeklyBilanGo(){
 function renderCoach(){
   const c=state.coach;
   if(c&&c.text&&$('#coach-review-out').hidden){$('#coach-review-out').hidden=false;$('#coach-review-out').className='coachout';$('#coach-review-out').textContent=c.text;}
-  $('#coach-review-date').textContent=c&&c.t?'Dernier bilan : '+fd(new Date(c.t),{weekday:'long',day:'numeric',month:'long'}):'Ton coach analyse tes 4 dernières semaines.';
+  $('#coach-review-date').textContent=c&&c.t?'Dernière fois : '+fd(new Date(c.t),{weekday:'long',day:'numeric',month:'long'}):'Il relit tes 4 dernières semaines et te propose 3 actions.';
 }
 $('#coach-review').addEventListener('click',async()=>{
   const b=$('#coach-review'); b.disabled=true;
@@ -3793,7 +3819,28 @@ $('#talk-minus').addEventListener('click',()=>{const d=day();d.talks=Math.max(0,
 function coachBlock(label,buildPrompt){
   const out=el('div',{class:'coachout',hidden:''}); const btn=el('button',{class:'btn',text:label});
   btn.addEventListener('click',async()=>{btn.disabled=true;await askCoach(buildPrompt(),out);btn.textContent='Redemander';btn.disabled=false;});
-  return el('div',{class:'coachbox'},btn,out);
+  // pas de bouton qui ne mène nulle part : sans coach ouvert à ce compte, le bloc reste caché
+  return el('div',{class:'coachbox',hidden:coachOn===false?'':null},btn,out);
+}
+/* ---------- le coach est-il ouvert à ce compte ? null = pas encore su ---------- */
+let coachOn=null, coachWhy='';
+async function coachCheck(){
+  const C=window.BF_CONFIG||{}; let ok=false;
+  if(!C.coach&&window.bfSupabase){coachWhy='Il n’est pas encore branché. Tout le reste de Néophyte fonctionne déjà, et il saura tout ce que tu auras fait d’ici là.';}
+  else{const s=await sampler();
+    if(!s)coachWhy='Il n’est pas encore branché. Tout le reste de Néophyte fonctionne déjà.';
+    else if(!s.limits)ok=true;
+    else{let l=null;try{l=await s.limits();}catch(e){}
+      if(l)ok=true;else coachWhy=ref?'Pour l’instant, le coach est réservé au propriétaire de ce Néophyte : chaque réponse a un coût. Tout le reste t’est ouvert.':'Connecte-toi à ton compte pour parler à ton coach.';}}
+  coachOn=ok; renderCoachState();
+  if(!ok)$$('.coachbox').forEach(b=>b.hidden=true);
+  return ok;
+}
+function renderCoachState(){
+  $('#coach-on').hidden=!coachOn; $('#coach-off').hidden=!!coachOn;
+  $('#coach-state').textContent=coachOn===null?'':coachOn?'Prêt à te répondre.':'Bientôt à tes côtés.';
+  $('#coach-off-why').textContent=coachWhy;
+  if(typeof sasUpdate==='function')sasUpdate();
 }
 
 /* ---------- sas avant l'IA ---------- */
@@ -3811,6 +3858,8 @@ function sasUpdate(){
   $('#sas-1').className='sas-step '+(q?'ok':'on');
   $('#sas-2').className='sas-step '+(!q?'off':ready?'ok':'on');
   $('#sas-3').className='sas-step '+(ready?'on':'off');
+  // une étape à la fois : la suivante n'apparaît que lorsque la précédente est faite
+  $('#sas-2').hidden=!q; $('#sas-3').hidden=!ready; $('#sas-coach').hidden=!(ready&&coachOn);
   $$('#sas-rate button').forEach(b=>b.setAttribute('aria-pressed',String(+b.dataset.r===sasRate)));
   $('#sas-save').disabled=!(ready&&sasRate);
 }
@@ -3826,6 +3875,7 @@ function renderTutor(){
   [...seg.children].forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.t===k)));
   $('#tutor-desc').textContent=TUTORS[k].desc.replace(/ ([:;!?»])/g,'\u00a0$1');
   $('#sas-tutor').title='Copie ta question avec la consigne du tuteur, à la manière de '+TUTORS[k].name;
+  $('#tutor-cur').textContent=TUTORS[k].label;
 }
 renderTutor();
 ['#sas-q','#sas-mine','#sas-learn'].forEach(s=>$(s).addEventListener('input',()=>{sasUpdate();sasDraft();}));
@@ -3833,7 +3883,13 @@ $('#sas-mine').addEventListener('paste',e=>{e.preventDefault();$('#sas-copy-info
 $$('#sas-rate button').forEach(b=>b.addEventListener('click',()=>{sasRate=+b.dataset.r;sasUpdate();sasDraft();}));
 setInterval(()=>{if(!$('#v-coach').hidden&&sasStart)sasUpdate();},1000);
 function sasReset(){['#sas-q','#sas-mine','#sas-learn'].forEach(s=>$(s).value='');sasStart=null;sasRate=0;try{localStorage.removeItem(SAS_LS);}catch(e){}sasUpdate();}
-$('#sas-clear').addEventListener('click',sasReset);
+$('#sas-clear').addEventListener('click',()=>{sasReset();$('#sas-ask-out').hidden=true;});
+// le coach dans le sas : une seule question sur ta réponse, jamais la réponse elle-même
+$('#sas-ask').addEventListener('click',async()=>{
+  const b=$('#sas-ask'); b.disabled=true;
+  await askCoach(coachRules()+`\n\nIl passe par le sas avant l'IA. Sa question : « ${$('#sas-q').value.trim().slice(0,1500)} »\nSa réponse personnelle, écrite sans aide : « ${$('#sas-mine').value.trim().slice(0,3000)} »\n\nNe donne ni la réponse ni d'indice décisif. Pose-lui UNE seule question, ou une objection, qui l'aide à améliorer sa propre réponse avant de consulter l'IA : un terme à définir, une hypothèse oubliée, une vérification à faire. 50 mots maximum.`,$('#sas-ask-out'));
+  b.textContent='Une autre question'; b.disabled=false;
+});
 $('#sas-save').addEventListener('click',()=>{
   const cut=s=>s.trim().slice(0,2000);
   state.sas.push({t:Date.now(),q:cut($('#sas-q').value),mine:cut($('#sas-mine').value),learn:cut($('#sas-learn').value),r:sasRate});
@@ -3845,7 +3901,8 @@ $('#sas-save').addEventListener('click',()=>{
 function renderSas(){
   const list=(state.sas||[]).slice().reverse(), h=$('#sas-history'); h.replaceChildren();
   const last30=list.filter(x=>Date.now()-x.t<30*864e5), good=last30.filter(x=>x.r===3).length;
-  $('#sas-stats').textContent=last30.length?`${last30.length} en 30 jours · tu avais l'essentiel ${Math.round(good/last30.length*100)} % du temps`:'';
+  $('#sas-stats').textContent=last30.length?`· ${last30.length} en 30 jours, l'essentiel ${Math.round(good/last30.length*100)} % du temps`:'';
+  $('#sas-hist-t').textContent=`Tes passages par le sas (${list.length})`; $('#sas-hist').hidden=!list.length;
   if(!list.length){h.append(el('div',{class:'empty',text:"Aucun passage pour l'instant. La prochaine fois que tu ouvres ton IA, commence ici : ta première entrée apparaîtra dans cette liste."}));return;}
   const R={3:['good',"J'avais l'essentiel"],2:['mid','En partie'],1:['bad',"J'étais loin"]};
   for(const x of list.slice(0,15)){
@@ -5708,7 +5765,7 @@ $$('#biblio-toc button').forEach(b=>b.addEventListener('click',()=>goPanel('cons
 
 initCarnetCoach();
 applyFreezes(); gami(true);
-renderTips(); renderOrigins(); renderAll(); showTab(location.hash.slice(1)); setSync('local'); weekBilanNotice();
+renderTips(); renderOrigins(); renderAll(); showTab(location.hash.slice(1)); setSync('local'); weekBilanNotice(); coachCheck();
 if(DEFI&&$('#welcome').hidden)setTimeout(launchDefi,300);
 // on dévoile la page une fois le compte vérifié, ou au plus tard après 0,8 s
 Promise.race([initStore(),new Promise(r=>setTimeout(r,800))]).finally(()=>document.documentElement.classList.remove('boot'));

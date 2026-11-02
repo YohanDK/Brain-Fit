@@ -6,5 +6,7 @@ window.BF_CONFIG={
   // passe à true une fois la fonction « coach » déployée avec la clé Claude
   coach:false,
   // bouton « Signaler un problème » (capture d'écran + commentaire) pendant la phase de test ; false pour le cacher
-  retours:true
+  retours:true,
+  // réglage « Rappels » (notifications sur le téléphone) : true une fois rappels.sql lancé ; false pour le cacher et désabonner les appareils à leur prochaine visite
+  rappels:false
 };

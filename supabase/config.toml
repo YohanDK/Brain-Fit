@@ -8,3 +8,7 @@ verify_jwt = false
 [functions.account]
 # la fonction vérifie elle-même la session
 verify_jwt = false
+
+[functions.rappels]
+# la tournée est protégée par un jeton (pg_cron) et l'essai par la session
+verify_jwt = false

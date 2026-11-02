@@ -2428,20 +2428,46 @@ async function pdfKit(){
   const clean=s=>String(s).replace(/[’‘]/g,"'").replace(/[“”]/g,'"').replace(/≈\s?/g,'env. ').replace(/×/g,'x').replace(/→/g,'->').replace(/−/g,'-').replace(/π/g,'pi').replace(/⁹/g,'^9').replace(/⁷/g,'^7').replace(/⁵/g,'^5').replace(/[\u00A0\u202F\u2009]/g,' ').replace(/…/g,'...')
     .replace(/[^\x00-\xFF€‚ƒ„†‡ˆ‰Š‹ŒŽ•–—˜™š›œžŸ]/g,c=>c.normalize('NFD').replace(/[^\x00-\xFF]/g,''));
   const need=h=>{if(y+h>BOT){doc.addPage();y=M;}};
-  const text=(s,o={})=>{const size=o.size||11, lh=size*.43;doc.setFont(o.font||'times',o.style||'normal');doc.setFontSize(size);doc.setTextColor(o.grey?110:20);
+  const text=(s,o={})=>{const size=o.size||11, lh=size*.43;doc.setFont(o.font||'times',o.style||'normal');doc.setFontSize(size);if(o.color)doc.setTextColor(...o.color);else doc.setTextColor(o.grey?110:20);
     const lines=doc.splitTextToSize(clean(s),TW-(o.indent||0));need(Math.min(lines.length,3)*lh);
     for(const ln of lines){need(lh);doc.text(ln,M+(o.indent||0),y+lh*.78);y+=lh;}y+=o.gap??1.6;};
   const lines=(n,gap=8.5)=>{doc.setDrawColor(200);doc.setLineWidth(.2);for(let i=0;i<n;i++){need(gap);y+=gap;doc.line(M,y,W-M,y);}y+=3;};
-  const h=s=>{need(18);y+=4;text(s,{size:13,style:'bold',font:'helvetica',gap:2.5});};
-  return {doc,text,lines,h,need,page:()=>{doc.addPage();y=M;},room:()=>Math.floor((BOT-y-3)/8.5)};
+  const h=s=>{need(18);y+=4;text(s,{size:13.5,style:'bold',color:PDF_LAPIS,gap:2.5});};
+  // en-tête de la première page : le cerf, la marque en or, le titre en lapis, un filet doré
+  const head=async(title,sub,score)=>{
+    const img=await stagPng().catch(()=>null), x0=img?M+22:M;
+    if(img)doc.addImage(img,'JPEG',M-1,y-2,20,20);
+    doc.setFont('times','bold');doc.setFontSize(9);doc.setTextColor(...PDF_GOLD);doc.text('N É O P H Y T E',x0,y+3.5);
+    doc.setFontSize(20);doc.setTextColor(...PDF_LAPIS);doc.text(clean(title),x0,y+11.5);
+    doc.setFont('times','italic');doc.setFontSize(10);doc.setTextColor(110);doc.text(clean(PDF_MOTTO),x0,y+16.5);
+    y+=21; doc.setDrawColor(...PDF_GOLD);doc.setLineWidth(.6);doc.line(M,y,W-M,y);doc.setLineWidth(.2);doc.line(M,y+1.2,W-M,y+1.2);y+=4.5;
+    text(sub,{size:10.5,grey:1,gap:1});
+    if(score)text(score,{size:10.5,grey:1,gap:3});
+  };
+  // pied de chaque page : filet doré, marque et numéro
+  const finish=()=>{
+    const n=doc.getNumberOfPages();
+    for(let i=1;i<=n;i++){doc.setPage(i);doc.setDrawColor(...PDF_GOLD);doc.setLineWidth(.3);doc.line(M,297-11,W-M,297-11);
+      doc.setFont('times','normal');doc.setFontSize(8.5);doc.setTextColor(130);doc.text(clean('Néophyte · '+PDF_MOTTO),M,297-7);doc.text(`${i} / ${n}`,W-M,297-7,{align:'right'});}
+    return doc.output('blob');
+  };
+  return {doc,text,lines,h,head,finish,need,page:()=>{doc.addPage();y=M;},room:()=>Math.floor((BOT-y-3)/8.5)};
+}
+// couleurs de Néophyte pour l'imprimé (thème clair), et le cerf du niveau atteint, dessiné en image
+const PDF_LAPIS=[58,93,191], PDF_GOLD=[176,138,48], PDF_MOTTO="Garder l'esprit vif à l'heure de l'IA";
+const STAG_PRINT={'--stag':'#B07D4E','--stag-deep':'#94653C','--stag-dark':'#4A3018','--stag-light':'#F3E6D2','--antler':'#7E6040','--gold':'#B08A30','--muted':'#736D63','--f-body':'Georgia, serif'};
+async function stagPng(){
+  let svg=stagSVG(gamiCtx.level||1,'idle').replace(/var\((--[a-z-]+)\)/g,(m,k)=>STAG_PRINT[k]||'#4A3018');
+  if(!/xmlns=/.test(svg))svg=svg.replace('<svg','<svg xmlns="http://www.w3.org/2000/svg"');
+  const im=new Image(); im.src='data:image/svg+xml;charset=utf-8,'+encodeURIComponent(svg); await im.decode();
+  // fond blanc et JPEG : quelques dizaines de Ko au lieu de plusieurs centaines
+  const c=document.createElement('canvas'), g=c.getContext('2d'); c.width=c.height=300; g.fillStyle='#fff'; g.fillRect(0,0,300,300); g.drawImage(im,0,0,300,300);
+  return c.toDataURL('image/jpeg',.9);
 }
 async function makeFichePdf(F){
   const K=await pdfKit(), {doc,text,lines,h}=K;
   const date=fd(new Date(),{day:'numeric',month:'long',year:'numeric'});
-  text('NÉOPHYTE',{size:9,font:'helvetica',style:'bold',grey:1,gap:.5});
-  text(`Fiche papier n° ${F.n}`,{size:20,style:'bold',gap:1});
-  text(`${date} · Sans écran, sans IA, un stylo. 30 à 40 minutes. Le corrigé est à la fin : ne le regarde qu'une fois tout fini.`,{size:10.5,grey:1,gap:1});
-  text('Commencé à : ________     Fini à : ________     Score : ____ / 15',{size:10.5,grey:1,gap:3});
+  await K.head(`Fiche papier n° ${F.n}`,`${date} · Sans écran, sans IA, un stylo. 30 à 40 minutes. Le corrigé est à la fin : ne le regarde qu'une fois tout fini.`,'Commencé à : ________     Fini à : ________     Score : ____ / 15');
   h('1. Problèmes  (3 points)'); F.probs.forEach((p,i)=>{text(`${String.fromCharCode(97+i)}) ${p[0]}`);lines(2);});
   h("2. Estimations  (2 points) — l'ordre de grandeur, calcul détaillé"); F.fermi.forEach((q,i)=>{text(`${String.fromCharCode(97+i)}) ${q[0]}`);lines(2);});
   h('3. Sophismes  (3 points) — nomme la faille, ou écris « Argument valable »'); text('Au choix : '+F.names.join(' · '),{size:10,grey:1,gap:2.5});
@@ -2462,7 +2488,7 @@ async function makeFichePdf(F){
   text('4. Orthographe',{style:'bold'}); F.ortho.forEach((o,i)=>text(`${String.fromCharCode(97+i)}) ${o[1][o[2]]} : ${o[3]}`,{size:10}));
   text('5. Chronologie',{style:'bold'}); [...F.ev].sort((a,b)=>a[1]-b[1]||a[0].localeCompare(b[0])).forEach((e,i)=>text(`${i+1}. ${fmtY(e[1])} : ${e[2]}`,{size:10}));
   text('Compte un point par réponse juste, puis note ton score dans Néophyte (Exercices › Fiche papier).',{size:10,grey:1});
-  return doc.output('blob');
+  return K.finish();
 }
 /* cahiers thématiques à imprimer : une série d'un seul exercice, un coup de pouce, puis le corrigé */
 const CAHIERS={
@@ -2490,10 +2516,7 @@ function cahierData(kind){
 async function makeCahierPdf(C){
   const K=await pdfKit(), {text,lines,h}=K, c=CAHIERS[C.kind], L=i=>String.fromCharCode(97+i);
   const date=fd(new Date(),{day:'numeric',month:'long',year:'numeric'});
-  text('NÉOPHYTE',{size:9,font:'helvetica',style:'bold',grey:1,gap:.5});
-  text(c.t,{size:20,style:'bold',gap:1});
-  text(`${date} · Sans écran, sans IA, un stylo. Le corrigé est à la fin : ne le regarde qu'une fois tout fini.`,{size:10.5,grey:1,gap:1});
-  text(`Commencé à : ________     Fini à : ________     Score : ____ / ${c.n}`,{size:10.5,grey:1,gap:3});
+  await K.head(c.t,`${date} · Sans écran, sans IA, un stylo. Le corrigé est à la fin : ne le regarde qu'une fois tout fini.`,`Commencé à : ________     Fini à : ________     Score : ____ / ${c.n}`);
   if(C.kind==='probleme'){
     h('Problèmes — écris ta réponse et ton raisonnement');
     text("Méfie-toi de la première réponse qui vient : ces problèmes sont faits pour piéger l'intuition. Bloqué ? Le coup de pouce est avant le corrigé.",{size:10,grey:1,gap:3});
@@ -2523,7 +2546,7 @@ async function makeCahierPdf(C){
     K.page(); h('Corrigé'); C.items.forEach((ev,k)=>{text(`Frise ${k+1}`,{style:'bold',size:10});[...ev].sort((a,b)=>a[1]-b[1]||a[0].localeCompare(b[0])).forEach((e,i)=>text(`${i+1}. ${fmtY(e[1])} : ${e[2]}`,{size:10}));});
   }
   text(`Compte un point par réponse juste, puis note ton score dans Néophyte (Exercices › Fiche papier).`,{size:10,grey:1});
-  return K.doc.output('blob');
+  return K.finish();
 }
 // enregistre un fichier : par le service de téléchargement quand il existe, sinon téléchargement direct
 async function saveFile(name,blob){

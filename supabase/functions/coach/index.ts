@@ -6,6 +6,8 @@ import { createClient } from "npm:@supabase/supabase-js@2.117.3";
 const MODEL = Deno.env.get("COACH_MODEL") || "claude-opus-5-5";
 const ALLOWED = (Deno.env.get("ALLOWED_EMAIL") || "").toLowerCase().split(/[\s,;]+/).filter(Boolean);
 const IMAGE_TYPES = ["image/jpeg", "image/png", "image/webp", "image/gif"];
+// échanges permis par compte et par jour (supabase/coach.sql) ; la vérification de la page ne compte pas
+const MAX_JOUR = Math.max(1, Number(Deno.env.get("COACH_MAX_JOUR")) || 30);
 
 const anthropic = new Anthropic(); // lit ANTHROPIC_API_KEY
 const cors = {
@@ -48,6 +50,20 @@ Deno.serve(async (req) => {
     .slice(-24);
   while (turns.length && turns[0].role !== "user") turns.shift();
   if (!turns.length || turns[turns.length - 1].role !== "user") return fail("bad_request", 400);
+
+  // plafond quotidien : protège la clé API si un compte s'emballe ou est détourné
+  const admin = createClient(Deno.env.get("SUPABASE_URL")!, Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!, {
+    auth: { persistSession: false },
+  });
+  const { data: permis, error: eq } = await admin.rpc("coach_consommer", { p_user: user.id, p_max: MAX_JOUR });
+  if (eq) {
+    // coach.sql pas encore lancé : on laisse passer ; toute autre panne bloque, pour ne pas dépenser sans compter
+    if (eq.code !== "PGRST202") {
+      console.error(eq);
+      return fail("error", 500);
+    }
+    console.warn("coach.sql non lancé : pas de plafond");
+  } else if (permis !== true) return fail("quota", 429);
   const images = (Array.isArray(body.images) ? body.images : [])
     .filter((i) => IMAGE_TYPES.includes(i?.media_type) && typeof i.data === "string")
     .slice(0, 4);

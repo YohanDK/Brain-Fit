@@ -36,8 +36,22 @@ const lecteurs={
     const codes=s.pays.split(';'), points={};
     for(const l of lignes.slice(1)){
       const cols=l.split(/,(?=(?:[^"]*"[^"]*")*[^"]*$)/); if(!codes.includes(cols[1]))continue;
-      (points[cols[1]]??=[]).push([+cols[2],arrondi(+cols[3])]);}
+      if(cols[3]===''||cols[3]==null)continue; (points[cols[1]]??=[]).push([+cols[2],arrondi(+cols[3])]);}
     return {source:`Our World in Data, graphique « ${s.graphe} » (colonnes : ${tete})`,url,points};
+  },
+  // INSEE (API Melodi, ouverte) : s.jeu = identifiant DS_…, s.filtres = {dimension: valeur}. Les observations sont groupées
+  // par combinaison des autres dimensions ; le fichier liste aussi les valeurs possibles de chaque dimension pour affiner.
+  async insee(s){
+    const q=new URLSearchParams({maxResult:'5000'}); for(const [k,v] of Object.entries(s.filtres||{}))for(const x of [].concat(v))q.append(k,x);
+    const url=`https://api.insee.fr/melodi/data/${s.jeu}?${q}`, j=await get(url), obs=j.observations||[];
+    if(!obs.length)throw new Error('aucune observation : '+JSON.stringify(j).slice(0,300));
+    const dims={}, points={};
+    for(const o of obs){const d=o.dimensions||{};for(const [k,v] of Object.entries(d))(dims[k]??=new Set()).add(v);
+      const m=Object.values(o.measures||{})[0], v=m&&typeof m==='object'?m.value:m; if(v==null)continue;
+      const cle=Object.entries(d).filter(([k])=>k!=='TIME_PERIOD').map(([k,x])=>k+'='+x).join(',')||'total';
+      (points[cle]??=[]).push([String(d.TIME_PERIOD).length===4?+d.TIME_PERIOD:d.TIME_PERIOD,arrondi(+v)]);}
+    const cles=Object.keys(points); for(const k of cles.slice(60))delete points[k];
+    return {source:`INSEE, jeu ${s.jeu}`,url,points,dimensions:Object.fromEntries(Object.entries(dims).map(([k,v])=>[k,[...v].slice(0,40)])),nbSeries:cles.length};
   },
   async 'insee-catalogue'(s){
     const url='https://api.insee.fr/melodi/catalog/all';
@@ -60,7 +74,7 @@ const lecteurs={
   for(const s of series){
     try{
       const lire=lecteurs[s.type]; if(!lire)throw new Error('type inconnu : '+s.type);
-      const r=await lire(s);
+      const r=await lire(s); for(const k in r.points)r.points[k].sort((a,b)=>a[0]>b[0]?1:-1);
       fs.writeFileSync(path.join(out,s.id+'.json'),JSON.stringify({id:s.id,libelle:s.libelle,unite:s.unite,recupere:today,...r},null,1).replace(/\[\s+(-?[\d.]+|null),\s+(-?[\d.]+|null)\s+\]/g,'[$1,$2]')+'\n');
       const resume=Object.entries(r.points).map(([k,p])=>{const d=p[p.length-1];return d?`${k} ${p[0][0]}-${d[0]} (${p.length} pts, dernier ${d[1]})`:k;}).join(' ; ');
       rapport.push(`ok ${s.id} : ${resume||(r.jeux?r.jeux.length+' jeux':r.nb!=null?r.nb+' jeux':'')}`);

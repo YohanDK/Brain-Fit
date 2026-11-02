@@ -16,8 +16,11 @@
     {"id":"esperance-vie-long","type":"owid","graphe":"life-expectancy","pays":"FRA;OWID_WRL","libelle":"Espérance de vie (série longue)","unite":"ans"},
     {"id":"pauvrete-extreme","type":"owid","graphe":"share-of-population-in-extreme-poverty","pays":"OWID_WRL","libelle":"Part du monde en extrême pauvreté","unite":"%"},
     {"id":"alphabetisation","type":"owid","graphe":"literacy-rate","pays":"FRA;OWID_WRL","libelle":"Taux d'alphabétisation","unite":"%"},
+    {"id":"insee-naissances","type":"insee","jeu":"DS_NAISSANCES_FECONDITE_SERIES","libelle":"Naissances et fécondité, séries longues (INSEE)"},
+    {"id":"insee-deces","type":"insee","jeu":"DS_DECES_MORTALITE_SERIES","libelle":"Décès et mortalité, séries longues (INSEE)"},
+    {"id":"insee-population","type":"insee","jeu":"DS_POP_STRUCT_SERIES","libelle":"Population et structure, séries longues (INSEE)"},
     {"id":"insee","type":"insee-catalogue","libelle":"Catalogue des jeux de données INSEE (Melodi), pour choisir les suivants"},
-    {"id":"datagouv-lecture","type":"datagouv-recherche","q":"pratiques culturelles lecture","libelle":"data.gouv.fr : lecture et pratiques culturelles"},
+    {"id":"datagouv-lecture","type":"datagouv-recherche","q":"lecture","libelle":"data.gouv.fr : lecture et pratiques culturelles"},
     {"id":"datagouv-sport","type":"datagouv-recherche","q":"licences sportives","libelle":"data.gouv.fr : licences sportives"}
   ]
 }

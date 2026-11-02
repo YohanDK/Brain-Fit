@@ -4490,7 +4490,7 @@ lecture(arena){
     const th=state.settings.themes||[], mine=fresh.filter(x=>{const t=NB.textes.find(y=>y.titre===x[0]);return t&&th.some(k=>t.th.split(' ').includes(k));});
     const src=pick(mine.length?mine:fresh.length?fresh:SOURCES), words=(src[1].match(/\S+/g)||[]).length, start=performance.now();
     arena.style.alignItems='stretch';
-    arena.replaceChildren(el('h3',{text:src[0]}),el('p',{class:'fg2',text:src[1],style:'max-width:65ch;text-align:left;font-size:1.05rem'}),el('div',{class:'row'},el('button',{class:'btn primary',text:'Terminé',onclick:quiz})));
+    arena.replaceChildren(el('h3',{text:src[0]}),el('p',{class:'fg2',text:src[1],style:'max-width:65ch;text-align:left;font-size:1.05rem;white-space:pre-line'}),el('div',{class:'row'},el('button',{class:'btn primary',text:'Terminé',onclick:quiz})));
     cleanup=()=>{arena.style.alignItems='';};
     function quiz(){
       arena.style.alignItems='';

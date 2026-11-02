@@ -637,7 +637,7 @@ a{color:var(--accent);text-underline-offset:3px}
 .seg.themes{justify-content:flex-start}
 .circle-form input{font:inherit;font-size:1rem;padding:6px 10px;border:1px solid var(--line);border-radius:var(--r);background:var(--surface);color:var(--fg);max-width:200px}
 .ranking{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:4px}
-.ranking li{display:grid;grid-template-columns:2ch 1fr auto auto;gap:12px;align-items:baseline;padding:6px 10px;border-radius:var(--r);background:var(--sunk)}
+.ranking li{display:grid;grid-template-columns:2ch 40px 1fr auto auto;gap:10px;align-items:center;padding:6px 10px;border-radius:var(--r);background:var(--sunk)}
 .ranking li.me{background:var(--accent-soft);color:var(--accent-deep)}
 .ranking .rk{font-family:var(--f-display);font-weight:700}
 .ranking .xpw{font-weight:700;color:var(--gold-deep)}
@@ -798,6 +798,10 @@ details.fold[open]{display:flex;flex-direction:column;gap:10px}
 .attrs li>div{flex:1;min-width:0;display:flex;flex-direction:column}
 .attrs li .stag.mini{width:40px;height:32px;cursor:default}
 .attrs li.locked .stag.mini{filter:grayscale(1);opacity:.35}
+.ranking .rk-stag{width:40px;height:40px;cursor:default;flex:none}
+.pips3{display:inline-flex;gap:3px;margin-left:8px;vertical-align:middle}
+.pips3 i{width:8px;height:8px;border-radius:50%;border:1px solid var(--line);display:inline-block}
+.pips3 i.g1{background:#B07A45;border-color:#B07A45}.pips3 i.g2{background:#B9BCC2;border-color:#9A9EA6}.pips3 i.g3{background:var(--gold);border-color:var(--gold-deep)}
 .mini-bar{display:block;height:4px;border-radius:2px;background:var(--line);margin-top:4px;overflow:hidden}
 .mini-bar i{display:block;height:100%;background:var(--gold)}
 .pelages button{display:inline-flex;align-items:center;gap:6px}
@@ -1294,6 +1298,7 @@ var fin=function(){if(e.parentNode)e.remove();};e.addEventListener('click',fin);
       <div class="row" style="flex-wrap:nowrap;align-items:center;gap:16px"><span class="stag big" id="mc-stag" aria-hidden="true"></span>
         <div style="min-width:0"><h2>Mon cerf</h2><p class="muted note">Il grandit avec ton niveau. Ses attributs se gagnent par l'effort réel : écrire, lire, poser l'écran.</p></div></div>
       <form class="row" id="mc-name-f"><label class="note" for="mc-name">Son nom</label><input type="text" id="mc-name" maxlength="20" autocomplete="off" placeholder="Un nom pour ton cerf"><button class="btn mini">Valider</button></form>
+      <div class="row"><button class="btn mini" type="button" id="mc-icon" aria-pressed="false"></button></div>
       <div class="row"><span class="note">Pelage</span><div class="seg pelages" id="mc-pel" role="group" aria-label="Pelage"></div></div>
       <div><span class="label">Attributs</span><ul class="attrs" id="mc-attrs"></ul></div>
     </div>
@@ -2297,18 +2302,28 @@ async function circlePush(force){
   // énigme du jour et meilleur Éclair de la semaine (colonnes ajoutées par defis.sql)
   const k=todayKey(), en=state.enigme&&state.enigme.d===k?state.enigme.m.filter(Boolean).length:null, wk=row.week;
   const ecl=Math.max(0,...state.results.filter(r=>r.ex==='eclair'&&r.d>=wk).map(r=>r.s));
-  const extra={enig_day:en==null?null:k,enig:en,eclair_week:wk,eclair:ecl};
+  const extra={enig_day:en==null?null:k,enig:en,eclair_week:wk,eclair:ecl,cerf:cerfShape()};
   const key=JSON.stringify([c,row.week,row.xp,row.streak,row.pseudo,extra]); if(key===circleSent&&!force)return;
   let {error}=await sbc().from('circle_members').upsert({...row,...extra});
-  if(error&&/column|schema cache/i.test(error.message||''))({error}=await sbc().from('circle_members').upsert(row)); // base pas encore mise à jour
+  // base pas encore mise à jour : sans le cerf (cerf.sql), puis sans les défis (defis.sql)
+  if(error&&/column|schema cache/i.test(error.message||'')){const{cerf:_,...ex2}=extra;({error}=await sbc().from('circle_members').upsert({...row,...ex2}));}
+  if(error&&/column|schema cache/i.test(error.message||''))({error}=await sbc().from('circle_members').upsert(row));
   if(!error)circleSent=key; return error;
 }
 async function circleLoad(){
   const c=state.settings.circle; if(!c||!ref){circleData=null;return;}
-  let [m,ci]=await Promise.all([sbc().from('circle_members').select('user_id,pseudo,week,xp,streak,enig_day,enig,eclair_week,eclair').eq('code',c),sbc().from('circles').select('name').eq('code',c).maybeSingle()]);
+  let [m,ci]=await Promise.all([sbc().from('circle_members').select('user_id,pseudo,week,xp,streak,enig_day,enig,eclair_week,eclair,cerf').eq('code',c),sbc().from('circles').select('name').eq('code',c).maybeSingle()]);
+  if(m.error)m=await sbc().from('circle_members').select('user_id,pseudo,week,xp,streak,enig_day,enig,eclair_week,eclair').eq('code',c);
   if(m.error)m=await sbc().from('circle_members').select('user_id,pseudo,week,xp,streak').eq('code',c);
   if(m.error)return; const wk=weekStart(todayKey()), me=await myUserId();
   circleData={name:ci.data?ci.data.name:'',rows:(m.data||[]).map(r=>({...r,xp:String(r.week)===wk?r.xp:0,me:r.user_id===me})).sort((a,b)=>b.xp-a.xp||b.streak-a.streak)};
+}
+// le cerf d'un ami, tel qu'il l'a habillé ; une donnée venue d'ailleurs est filtrée avant d'être dessinée
+function friendStag(c){
+  const ok=c&&typeof c==='object', l=ok&&Number.isInteger(c.l)?Math.min(40,Math.max(1,c.l)):1, a={};
+  if(ok&&c.a&&typeof c.a==='object')for(const x of ATTRS){const g=c.a[x[0]];if(Number.isInteger(g)&&g>=1&&g<=3)a[x[0]]=g;}
+  const pk=ok&&Object.prototype.hasOwnProperty.call(PELAGES,c.p)?c.p:'fauve';
+  return[l,'idle',{p:pk==='blanc'&&l<5?'fauve':pk,a,l}];
 }
 // sous chaque nom : l'énigme du jour et le meilleur Éclair de la semaine
 function defiLine(r){
@@ -2354,7 +2369,7 @@ async function renderCircle(){
   body.replaceChildren(
     el('div',{class:'row spread'},el('span',{},el('b',{text:circleData.name}),document.createTextNode(' · code '),el('b',{text:c})),el('div',{class:'row'},invite,leave)),
     el('span',{class:'label',text:'Semaine '+isoWeek(todayKey())+' · XP de la semaine'}),
-    el('ol',{class:'ranking'},...circleData.rows.map((r,i)=>el('li',{class:r.me?'me':null},el('span',{class:'rk',text:String(i+1)}),el('span',{},document.createTextNode(r.pseudo+(r.me?' (toi)':'')),defiLine(r)),el('span',{class:'xpw',text:fmt(r.xp)+' XP'}),el('span',{class:'fg2',text:r.streak+' j'})))),
+    el('ol',{class:'ranking'},...circleData.rows.map((r,i)=>el('li',{class:r.me?'me':null},el('span',{class:'rk',text:String(i+1)}),el('span',{class:'stag rk-stag','aria-hidden':'true',html:stagSVG(...friendStag(r.me?cerfShape():r.cerf))}),el('span',{},document.createTextNode(r.pseudo+(r.me?' (toi)':'')),defiLine(r)),el('span',{class:'xpw',text:fmt(r.xp)+' XP'}),el('span',{class:'fg2',text:r.streak+' j'})))),
     circleData.rows.length<2?stagTalk('idle','Tu es seul pour l’instant : invite un proche avec le bouton « Inviter ».')
       :!circleData.rows[0].xp?stagTalk('idle','La semaine commence : le premier qui s’entraîne prend la tête.')
       :circleData.rows[0].me?stagTalk('proud','Tu mènes le cercle cette semaine. Tiens bon jusqu’à dimanche !'):stagTalk('idle',`${circleData.rows[0].pseudo} mène cette semaine. Une séance de plus peut tout changer.`));
@@ -3095,50 +3110,88 @@ const PELAGES={
   cendre:['Cendré',{'--stag':'#9A8E80','--stag-deep':'#776B5E','--stag-light':'#EFEAE2'}],
   blanc:['Blanc',{'--stag':'#EDE6DA','--stag-deep':'#D2C7B6','--stag-light':'#FFFFFF','--antler':'#B49A6E'},'Atteindre le niveau V : le cerf blanc des légendes',c=>c.level>=5]
 };
+// trois paliers par attribut : le dessin s'enrichit, puis se dore
 const ATTRS=[
-  // id, nom, condition, progression [fait, but], dessin
-  ['plume','La plume','5 textes écrits sans IA',()=>[state.results.filter(r=>r.ex==='write').length,5],
-    `<g class="acc"><path d="M66 50Q76 37 89 25Q85 41 69 51Z" fill="#F6F0E2" stroke="#8A7A5A" stroke-width=".7"/><path d="M66.5 51L87 27.5" stroke="#8A7A5A" stroke-width=".7"/></g>`],
-  ['lunettes','Les lunettes','5 lectures (chronométrées ou profondes)',()=>[state.results.filter(r=>r.ex==='lecture').length+Object.values(state.days).filter(d=>d.done&&d.done.read).length,5],
-    `<g class="acc" fill="none" stroke="#3A2A1A" stroke-width="1.2"><circle cx="43.5" cy="52" r="4.8"/><circle cx="56.5" cy="52" r="4.8"/><path d="M48.3 51.4q1.7-1.5 3.4 0M38.7 51l-3.2-1.6M61.3 51l3.2-1.6"/></g>`],
-  ['lanterne','La lanterne','5 séances hors écran',()=>[offlineCount(),5],
-    `<g class="acc lant"><path d="M85 74v-3" stroke="#3A2A1A" stroke-width="1"/><path d="M79.5 78h11l-2-3.5h-7z" fill="#3A2A1A"/><rect x="80.5" y="78" width="9" height="13" rx="1.6" fill="#F6D98A" stroke="#3A2A1A" stroke-width="1"/><path class="flamme" d="M85 80.5c1.5 2 1.7 3.7 0 5.2c-1.7-1.5-1.5-3.2 0-5.2z" fill="#E08A2A"/><rect x="79.8" y="91" width="10.4" height="2.4" fill="#3A2A1A"/></g>`],
-  ['livre','Le livre','10 citations dans ton florilège',()=>[Object.keys(state.flori||{}).length,10],
-    `<g class="acc" stroke="#5A4630" stroke-width=".8"><path d="M8 88q6-3.4 11 0v9q-5-3.4-11 0z" fill="#F6F0E2"/><path d="M19 88q5-3.4 11 0v9q-6-3.4-11 0z" fill="#EFE6D2"/><path d="M10 90.5q4-1.6 7.5 0M10 93q4-1.6 7.5 0M21 90.5q4-1.6 7.5 0M21 93q4-1.6 7.5 0" fill="none" stroke-width=".5"/></g>`],
-  ['laurier','La couronne de laurier','Série de 30 jours',()=>[gamiCtx.best||0,30],null]
+  // id, nom, unité, seuils des 3 paliers, compteur, dessin(palier)
+  ['plume','La plume','textes écrits sans IA',[15,50,150],()=>state.results.filter(r=>r.ex==='write').length,g=>{
+    const f=g>=3?'#E9C766':'#F6F0E2', st=g>=3?'#9A7420':'#8A7A5A';
+    return `<g class="acc"><path d="M66 50Q76 37 89 25Q85 41 69 51Z" fill="${f}" stroke="${st}" stroke-width=".7"/><path d="M66.5 51L87 27.5" stroke="${st}" stroke-width=".7"/>`+
+      (g>=2?`<path d="M71 45.5l3.6-1.2M74 41.8l3.8-1M77 38.2l3.6-.9M80 34.6l3.2-.7M70.6 48.4l-1.4 3.4" stroke="${st}" stroke-width=".5" fill="none"/><path d="M66.5 51l-1.6 2.4" stroke="#1E2A5A" stroke-width="1.6" stroke-linecap="round"/>`:'')+'</g>';}],
+  ['lunettes','Les lunettes','lectures (chronométrées ou profondes)',[15,50,150],()=>state.results.filter(r=>r.ex==='lecture').length+Object.values(state.days).filter(d=>d.done&&d.done.read).length,g=>{
+    const c=g>=2?'#A8822A':'#3A2A1A';
+    return `<g class="acc" fill="none" stroke="${c}" stroke-width="${g>=2?1.4:1.2}"><circle cx="43.5" cy="52" r="4.8" fill="rgba(255,255,255,.18)"/><circle cx="56.5" cy="52" r="4.8" fill="rgba(255,255,255,.18)"/><path d="M48.3 51.4q1.7-1.5 3.4 0M38.7 51l-3.2-1.6M61.3 51l3.2-1.6"/>`+
+      (g>=3?`<path d="M61.6 53.5q3 9 -1 17" stroke="#C9A440" stroke-width=".7" stroke-dasharray="1.2 .8"/>`:'')+'</g>';}],
+  ['lanterne','La lanterne','séances hors écran',[10,40,100],()=>offlineCount(),g=>{
+    const m=g>=2?'#A8822A':'#3A2A1A';
+    return `<g class="acc lant">`+(g>=3?`<circle cx="85" cy="84.5" r="10" fill="#F6D98A" opacity=".35"/>`:'')+`<path d="M85 74v-3" stroke="${m}" stroke-width="1"/><path d="M79.5 78h11l-2-3.5h-7z" fill="${m}"/><rect x="80.5" y="78" width="9" height="13" rx="1.6" fill="#F6D98A" stroke="${m}" stroke-width="1"/>`+
+      (g>=2?`<path d="M83 78v13M87 78v13" stroke="${m}" stroke-width=".5"/>`:'')+`<path class="flamme" d="M85 80.5c1.5 2 1.7 3.7 0 5.2c-1.7-1.5-1.5-3.2 0-5.2z" fill="#E08A2A"/><rect x="79.8" y="91" width="10.4" height="2.4" fill="${m}"/></g>`;}],
+  ['livre','Le livre','citations dans ton florilège',[20,60,150],()=>Object.keys(state.flori||{}).length,g=>{
+    const cv=g>=3?'#A8822A':g>=2?'#8E2F2B':'#5A4630', pg=g>=3?'#FBF3DC':'#F6F0E2';
+    return `<g class="acc" stroke="${cv}" stroke-width="${g>=2?1.1:.8}"><path d="M8 88q6-3.4 11 0v9q-5-3.4-11 0z" fill="${pg}"/><path d="M19 88q5-3.4 11 0v9q-6-3.4-11 0z" fill="${pg}"/><path d="M10 90.5q4-1.6 7.5 0M10 93q4-1.6 7.5 0M21 90.5q4-1.6 7.5 0M21 93q4-1.6 7.5 0" fill="none" stroke-width=".5"/>`+
+      (g>=2?`<path d="M23 88.6v8.6l1.4-1.4 1.4 1.4v-8.6" fill="#8E2F2B" stroke="none"/>`:'')+'</g>';}],
+  ['laurier','La couronne de laurier','jours de série (meilleure)',[30,100,365],()=>gamiCtx.best||0,g=>{
+    const c=g>=3?'#C9A440':'#5B7A3A', n=g>=2?7:5; let o=`<g class="acc" fill="${c}">`;
+    for(const sd of[-1,1])for(let i=0;i<n;i++){const x=(50+sd*(3.6+i*(14.5/n))).toFixed(1), y=(35+i*i*(10/(n*n))*1.7).toFixed(1);o+=`<ellipse cx="${x}" cy="${y}" rx="${n>5?2.9:3.3}" ry="1.4" transform="rotate(${sd*(8+i*(52/n))} ${x} ${y})"/>`;}
+    return o+`<circle cx="50" cy="34.6" r="1.3" fill="${g>=3?'#8E2F2B':'#8C6A2C'}"/></g>`;}]
 ];
-const laurelSVG=()=>{let o='<g class="acc" fill="#5B7A3A">';for(const sd of[-1,1])for(let i=0;i<5;i++){const x=(50+sd*(3.6+i*2.9)).toFixed(1), y=(35+i*i*.42).toFixed(1);o+=`<ellipse cx="${x}" cy="${y}" rx="3.3" ry="1.5" transform="rotate(${sd*(8+i*13)} ${x} ${y})"/>`;}return o+'<circle cx="50" cy="34.6" r="1.2" fill="#8C6A2C"/></g>';};
-const cerf=()=>{const c=state.cerf||(state.cerf={nom:'',pel:'fauve',port:[]});c.port=c.port||[];return c;};
-const attrOk=a=>{const[n,g]=a[3]();return n>=g;};
-function cerfStyle(){const p=PELAGES[cerf().pel]; if(!p||!p[1])return''; if(p[3]&&!p[3](gamiCtx))return''; return Object.entries(p[1]).map(([k,v])=>k+':'+v).join(';');}
-function cerfAcc(){
-  const c=cerf(); let o='';
-  for(const a of ATTRS){if(!c.port.includes(a[0])||!attrOk(a))continue; if(a[0]==='lanterne'&&saison()==='toussaint')continue; o+=a[0]==='laurier'?laurelSVG():a[4];}
+// le palier atteint (0 à 3) et la suite
+const attrGrade=a=>{const n=a[4]();return a[3].filter(t=>n>=t).length;};
+const cerf=()=>{const c=state.cerf||(state.cerf={nom:'',pel:'fauve',port:[]});c.port=c.port||[];if(Array.isArray(c.won)||!c.won)c.won={};return c;};
+// la forme partageable du cerf (cercle, icône) : pelage, niveau, attributs portés avec leur palier
+function cerfShape(){const c=cerf(), a={};for(const x of ATTRS){const g=attrGrade(x);if(g&&c.port.includes(x[0]))a[x[0]]=g;}
+  const p=PELAGES[c.pel]; return{p:p&&(!p[3]||p[3](gamiCtx))?c.pel:'fauve',a,l:gamiCtx.level||1};}
+function cerfStyle(sh){const p=PELAGES[(sh||cerfShape()).p]; return p&&p[1]?Object.entries(p[1]).map(([k,v])=>k+':'+v).join(';'):'';}
+function cerfAcc(sh){
+  const a=(sh||cerfShape()).a||{}; let o='';
+  for(const x of ATTRS){const g=+a[x[0]]; if(!(g>=1&&g<=3))continue; if(x[0]==='lanterne'&&saison()==='toussaint')continue; o+=x[5](g);}
   return o;
 }
-// un attribut tout juste mérité : le cerf le porte aussitôt et le dit
+// un palier tout juste franchi : le cerf le porte aussitôt et le dit
 function checkAttrs(){
-  const c=cerf(); c.won=c.won||[]; let nu=null;
-  for(const a of ATTRS)if(!c.won.includes(a[0])&&attrOk(a)){c.won.push(a[0]);if(!c.port.includes(a[0]))c.port.push(a[0]);nu=a;}
-  if(nu)persist();
-  if(nu&&state.results.length>1){toast(`<span>Ton cerf a gagné ${nu[1].toLowerCase()}</span><span class="note">Réglages · Mon cerf</span>`);stagKey='';}
+  const c=cerf(); let nu=null;
+  for(const a of ATTRS){const g=attrGrade(a);if(g>(c.won[a[0]]||0)){c.won[a[0]]=g;if(!c.port.includes(a[0]))c.port.push(a[0]);nu=[a,g];}}
+  if(nu){persist();stagKey='';cerfIcon();}
+  if(nu&&state.results.length>1)toast(`<span>${nu[1]>1?'Ton cerf passe au palier '+roman(nu[1])+' : ':'Ton cerf a gagné '}${nu[0][1].toLowerCase()}</span><span class="note">Réglages · Mon cerf</span>`);
   return nu;
 }
 function renderCerf(){
   const c=cerf();
   $('#mc-stag').innerHTML=stagSVG(gamiCtx.level||1,'proud');
   if(document.activeElement!==$('#mc-name'))$('#mc-name').value=c.nom||'';
+  $('#mc-icon').setAttribute('aria-pressed',String(!!c.icon)); $('#mc-icon').textContent=c.icon?'Icône : ton cerf':'Faire de mon cerf l’icône';
   $('#mc-pel').replaceChildren(...Object.entries(PELAGES).map(([k,p])=>{const ok=!p[3]||p[3](gamiCtx);
-    return el('button',{'aria-pressed':String(c.pel===k),disabled:ok?null:'',title:ok?p[0]:p[2],style:'--sw:'+((p[1]||{})['--stag']||'#B07D4E'),onclick:()=>{c.pel=k;save();stagKey='';renderStag();renderCerf();}},el('i',{class:'sw'}),document.createTextNode(p[0]+(ok?'':' · niveau V')));}));
-  $('#mc-attrs').replaceChildren(...ATTRS.map(a=>{const[n,g]=a[3](), ok=n>=g, on=ok&&c.port.includes(a[0]);
-    return el('li',{class:ok?'':'locked'},el('span',{class:'stag mini','aria-hidden':'true',html:attrIcon(a)}),
-      el('div',{},el('b',{text:a[1]}),el('span',{class:'note',text:ok?a[2]:`${a[2]} · ${Math.min(n,g)} sur ${g}`}),ok?null:el('span',{class:'mini-bar'},el('i',{style:`width:${Math.min(100,n/g*100)}%`}))),
-      ok?el('button',{class:'btn mini'+(on?' gold':''),'aria-pressed':String(on),text:on?'Porté':'Porter',onclick:()=>{c.port=on?c.port.filter(x=>x!==a[0]):[...c.port,a[0]];save();stagKey='';renderStag();renderCerf();}}):el('span',{class:'note',text:'À gagner'}));}));
+    return el('button',{'aria-pressed':String(c.pel===k),disabled:ok?null:'',title:ok?p[0]:p[2],style:'--sw:'+((p[1]||{})['--stag']||'#B07D4E'),onclick:()=>{c.pel=k;save();stagKey='';renderStag();renderCerf();cerfIcon();}},el('i',{class:'sw'}),document.createTextNode(p[0]+(ok?'':' · niveau V')));}));
+  $('#mc-attrs').replaceChildren(...ATTRS.map(a=>{const n=a[4](), g=attrGrade(a), nx=a[3][g], prev=g?a[3][g-1]:0, on=g&&c.port.includes(a[0]);
+    const pips=el('span',{class:'pips3','aria-label':`Palier ${g} sur 3`},...[1,2,3].map(i=>el('i',{class:i<=g?'on g'+i:''})));
+    return el('li',{class:g?'':'locked'},el('span',{class:'stag mini','aria-hidden':'true',html:attrIcon(a,Math.max(1,g))}),
+      el('div',{},el('b',{},document.createTextNode(a[1]),pips),
+        el('span',{class:'note',text:nx?`${g?'Palier suivant':'Premier palier'} : ${fmt(nx)} ${a[2]} · ${fmt(n)} sur ${fmt(nx)}`:`Palier d’or : ${fmt(n)} ${a[2]}`}),
+        nx?el('span',{class:'mini-bar'},el('i',{style:`width:${Math.min(100,(n-prev)/(nx-prev)*100)}%`})):null),
+      g?el('button',{class:'btn mini'+(on?' gold':''),'aria-pressed':String(on),text:on?'Porté':'Porter',onclick:()=>{c.port=on?c.port.filter(x=>x!==a[0]):[...c.port,a[0]];save();stagKey='';renderStag();renderCerf();cerfIcon();}}):el('span',{class:'note',text:'À gagner'}));}));
 }
-const attrIcon=a=>`<svg viewBox="${a[0]==='plume'?'60 20 34 34':a[0]==='lunettes'?'32 40 36 24':a[0]==='lanterne'?'74 68 22 28':a[0]==='livre'?'4 80 30 20':'34 26 32 18'}">${a[0]==='laurier'?laurelSVG():a[4]}</svg>`;
+const attrIcon=(a,g)=>`<svg viewBox="${a[0]==='plume'?'60 20 34 34':a[0]==='lunettes'?'32 40 36 24':a[0]==='lanterne'?'72 66 26 30':a[0]==='livre'?'4 80 30 20':'34 26 32 18'}">${a[5](g)}</svg>`;
+// le cerf en image : les couleurs du thème résolues, pour l'icône de l'appli
+function stagImage(sh,size){
+  const cs=getComputedStyle(document.documentElement), pel=(PELAGES[sh.p]||[])[1]||{};
+  const svg=stagSVG(sh.l,'idle',sh).replace(/ style="[^"]*"/,'').replace(/var\((--[a-z-]+)\)/g,(m,k)=>pel[k]||cs.getPropertyValue(k).trim()||'#4A3018');
+  return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${size} ${size}"><rect width="${size}" height="${size}" rx="${size*.22}" fill="#FBF7EE"/><svg x="${size*.06}" y="${size*.08}" width="${size*.88}" height="${size*.88}" viewBox="0 0 100 100">${svg.replace(/^<svg[^>]*>/,'').replace(/<\/svg>\s*$/,'')}</svg></svg>`;
+}
+let iconUrl=null, iconTried=false;
+function cerfIcon(){
+  const c=cerf(); if(!c.icon)return;
+  try{
+    const src=stagImage(cerfShape(),180), url='data:image/svg+xml;charset=utf-8,'+encodeURIComponent(src);
+    document.querySelectorAll('link[rel="icon"]').forEach(l=>{l.href=url;l.type='image/svg+xml';});
+    // l'icône d'écran d'accueil de l'iPhone veut une image PNG
+    const img=new Image(); img.onload=()=>{try{const cv=document.createElement('canvas');cv.width=cv.height=180;cv.getContext('2d').drawImage(img,0,0,180,180);const png=cv.toDataURL('image/png');const t=document.querySelector('link[rel="apple-touch-icon"]');if(t)t.href=png;iconUrl=png;}catch(e){}}; img.src=url;
+  }catch(e){}
+}
+$('#mc-icon').addEventListener('click',()=>{const c=cerf();c.icon=!c.icon;save();renderCerf();
+  if(c.icon){cerfIcon();toast('<span>Ton cerf devient l’icône. Sur iPhone : Partager, puis « Sur l’écran d’accueil ».</span>');}
+  else{document.querySelector('link[rel="icon"][type="image/svg+xml"]').href='icon.svg';const pn=document.querySelector('link[rel="icon"][sizes]');if(pn)pn.href='icon-192.png';document.querySelector('link[rel="apple-touch-icon"]').href='icon-180.png';}});
 $('#mc-name-f').addEventListener('submit',e=>{e.preventDefault();cerf().nom=$('#mc-name').value.trim().slice(0,20);save();renderCerf();
   const n=cerf().nom;$('#stag').setAttribute('aria-label',(n||'Ton cerf')+' : touche-le pour qu’il te parle');toast(`<span>${n?'Ton cerf s’appelle désormais '+n.replace(/[<&]/g,'')+'.':'Nom effacé.'}</span>`);});
-function stagSVG(L,mood){
+function stagSVG(L,mood,sh){
   const f=n=>n.toFixed(1), s=Math.min(1,.5+.05*L), tines=Math.min(6,1+Math.floor(L/2));
   const bez=(p,t)=>{const u=1-t;return[0,1].map(i=>u*u*u*p[0][i]+3*u*u*t*p[1][i]+3*u*t*t*p[2][i]+t*t*t*p[3][i]);};
   let ant='';
@@ -3158,7 +3211,7 @@ function stagSVG(L,mood){
   const brows=mood==='worried'?`<path d="M40 47.5l6 1.6M60 47.5l-6 1.6" stroke="var(--stag-dark)" stroke-width="1.4" stroke-linecap="round"/>`:'';
   const extra=mood==='sleepy'?`<g class="zz" fill="var(--muted)" font-family="var(--f-body)" font-style="italic"><text x="70" y="40" font-size="9">z</text><text x="77" y="31" font-size="7">z</text></g>`
     :mood==='proud'?`<g class="spark" fill="var(--gold)"><path d="M14 30l1.5 3.5 3.5 1.5-3.5 1.5-1.5 3.5-1.5-3.5-3.5-1.5 3.5-1.5z"/><path d="M86 22l1.2 2.8 2.8 1.2-2.8 1.2-1.2 2.8-1.2-2.8-2.8-1.2 2.8-1.2z"/></g>`:'';
-  const cs=cerfStyle();
+  const cs=cerfStyle(sh);
   return `<svg viewBox="0 0 100 100" aria-hidden="true"${cs?` style="${cs}"`:''}>
 <g class="antlers" fill="none" stroke="var(--antler)" stroke-width="3.4" stroke-linecap="round">${ant}</g>
 <path d="M39 72C36 84 28 92 16 100H84C72 92 64 84 61 72Z" fill="var(--stag-deep)"/>
@@ -3169,7 +3222,7 @@ function stagSVG(L,mood){
 <path d="M50 38C53 38 54 42 53 46C52 50 51 52 50 52C49 52 48 50 47 46C46 42 47 38 50 38Z" fill="var(--stag-light)" opacity=".55"/>
 <ellipse cx="50" cy="75" rx="6.2" ry="7" fill="var(--stag-light)"/>
 <ellipse cx="50" cy="79" rx="4.4" ry="2.9" fill="var(--stag-dark)"/>
-${eye(43.5)}${eye(56.5)}${brows}${extra}${SAISON_SVG[saison()]||''}${cerfAcc()}
+${eye(43.5)}${eye(56.5)}${brows}${extra}${SAISON_SVG[saison()]||''}${cerfAcc(sh)}
 </svg>`;
 }
 let stagKey='', stagI=0, stagTimer=null;
@@ -3238,7 +3291,7 @@ function stagLines(){
 $('#stag').addEventListener('click',()=>{stagJump();const ls=stagLines();stagSay(ls[stagI++%ls.length]);});
 $('#stag-bubble').addEventListener('click',e=>{e.currentTarget.hidden=true;});
 function renderHud(){
-  checkAttrs(); renderStag();
+  checkAttrs(); if(!iconTried){iconTried=true;cerfIcon();} renderStag();
   const t=todayKey(), goal=state.settings.xpGoal||60, today=gamiCtx.xp[t]||0, L=gamiCtx.level;
   $('#xp-today').textContent=today; $('#xp-goal').textContent='/ '+goal+' XP';
   $('#ring-fg').setAttribute('stroke-dasharray',Math.min(100,today/goal*100)+' 100');

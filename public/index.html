@@ -768,6 +768,43 @@ details.fold[open]{display:flex;flex-direction:column;gap:10px}
 @keyframes zz{50%{transform:translateY(-3px);opacity:.5}}
 .stag .spark{transform-box:fill-box;transform-origin:center;animation:twinkle 1.8s ease-in-out infinite}
 @keyframes twinkle{50%{opacity:.35;transform:scale(.8)}}
+/* cérémonie de niveau */
+.ceremony{position:fixed;inset:0;z-index:60;display:grid;place-items:center;padding:16px;background:rgba(20,18,14,.45);animation:fadein .3s ease-out}
+.ceremony.out{opacity:0;transition:opacity .3s}
+@keyframes fadein{from{opacity:0}}
+.cer-card{background:var(--surface);border:1px solid var(--gold);border-radius:var(--r);padding:24px 22px;display:flex;flex-direction:column;align-items:center;gap:8px;text-align:center;width:min(360px,100%);box-shadow:0 18px 50px rgba(0,0,0,.25);animation:rise .45s ease-out both}
+.cer-card h2{margin:0;font-size:1.3rem}
+.cer-stag{width:150px;height:150px;cursor:default;margin-bottom:4px}
+.cer-stag .antlers.old{animation:oldant 1.6s ease-in .5s forwards}
+@keyframes oldant{to{opacity:0}}
+.cer-stag .antlers.grow path{stroke-dasharray:1;stroke-dashoffset:1;animation:growant 1.6s ease-out .6s forwards}
+@keyframes growant{to{stroke-dashoffset:0}}
+.cer-stag .antlers.grow{filter:drop-shadow(0 0 4px var(--gold-hi))}
+@media (prefers-reduced-motion: reduce){.cer-stag .antlers.old{opacity:0}.cer-stag .antlers.grow path{stroke-dashoffset:0}}
+/* chemin de la séance */
+.trail{position:relative;width:min(420px,calc(100% - 40px));height:70px;margin:8px 20px 0}
+.trail-line{position:absolute;left:0;right:0;bottom:12px;border-top:2px dashed var(--gold)}
+.trail i{position:absolute;bottom:6px;width:14px;height:14px;margin-left:-7px;border-radius:50%;background:var(--surface);border:2px solid var(--line)}
+.trail i.ok{background:var(--gold);border-color:var(--gold)} .trail i.cur{border-color:var(--accent);box-shadow:0 0 0 4px var(--accent-soft)}
+.trail-stag{position:absolute;bottom:18px;width:46px;height:46px;margin-left:-23px;cursor:default}
+.trail-stag.go{transition:left 1.1s cubic-bezier(.45,0,.3,1)}
+.trail-stag.go svg{animation:bounds 1.1s ease-in-out}
+@keyframes bounds{25%{transform:translateY(-14px) rotate(-6deg)}50%{transform:translateY(0)}75%{transform:translateY(-10px) rotate(-4deg)}100%{transform:none}}
+.trail-next{margin:6px 0 0;font-size:1.3rem}
+/* saisons */
+.stag .acc .flamme{transform-box:fill-box;transform-origin:50% 100%;animation:flicker 1.6s ease-in-out infinite}
+@keyframes flicker{50%{transform:scaleY(.86) rotate(3deg)}}
+.stag .acc.star{transform-box:fill-box;transform-origin:center;animation:twinkle 2.4s ease-in-out infinite}
+/* le petit cerf des exercices */
+.qstag{width:34px;height:34px;cursor:default;margin:-6px 0 -4px}
+.qstag svg{transform-origin:50% 90%}
+.qstag.nod svg{animation:nod .7s ease-in-out}
+@keyframes nod{25%{transform:translateY(3px) rotate(2deg)}50%{transform:translateY(-1px)}75%{transform:translateY(2px) rotate(-1deg)}}
+.qstag.droop svg{animation:droop .9s ease-in-out}
+@keyframes droop{20%{transform:translateX(-2px) rotate(-5deg)}40%{transform:translateX(2px) rotate(5deg)}60%{transform:translateX(-1px) rotate(-3deg)}100%{transform:translateY(2px)}}
+.qstag.fete svg{animation:fete 1.2s ease-out}
+@keyframes fete{20%{transform:translateY(-9px) scale(1.12)}45%{transform:translateY(0) scale(1.05) rotate(-6deg)}70%{transform:rotate(4deg) scale(1.08)}100%{transform:none}}
+.qstag.fete .antlers{filter:drop-shadow(0 0 3px var(--gold-hi))}
 @media (prefers-reduced-motion: reduce){.stag svg,.stag *{animation:none!important}}
 .stagtalk{display:flex;align-items:flex-end;gap:10px;text-align:left;width:min(520px,100%)}
 .stag.mini{width:58px;height:58px;cursor:default}
@@ -2849,7 +2886,7 @@ function gami(silent){
   if(stage>(state.stage||1)){if(!silent)toast(`<span>Étape ${stage} du parcours : ${STAGES[stage-1][0]}<small>${STAGES[stage-1][1]}</small></span>`,'big');state.stage=stage;changed=true;setTimeout(renderToday,0);}
   const today=m[t]||0, d=state.days[t];
   if(today>=goal&&!(d&&d.goalHit)){day().goalHit=true;changed=true;if(!silent){toast(`<span>Objectif du jour atteint ! <small>${today} XP aujourd'hui. Ta série continue.</small></span>`,'big');confetti();stagJump();}}
-  if(level>(state.lastLevel||1)){if(!silent){toast(`<span>Niveau ${roman(level)} : ${levelName(level)}<small>${fmt(total)} XP au total.</small></span>`,'big');setTimeout(()=>stagSay('Niveau '+roman(level)+' ! Regarde mes bois : ils ont poussé.'),400);}state.lastLevel=level;changed=true;}
+  if(level>(state.lastLevel||1)){if(!silent)setTimeout(()=>antlerCeremony(level,total),600);state.lastLevel=level;changed=true;}
   state.badges=state.badges||{};
   for(const[id,name,desc,ok] of badgeDefs(gamiCtx))if(ok&&!state.badges[id]){state.badges[id]=Date.now();changed=true;if(!silent)toast(`<span>Badge débloqué : ${name}<small>${desc}</small></span>`);}
   if(changed)persist();
@@ -2857,6 +2894,27 @@ function gami(silent){
   if(!$('#v-progres').hidden)renderXpPanel();
 }
 // cerf vu de face, façon « rencontre de cerf » héraldique ; les bois grandissent avec le niveau
+/* ---------- le cerf suit les saisons et le calendrier liturgique ---------- */
+// date de Pâques (algorithme de Meeus, calendrier grégorien)
+function paques(y){const a=y%19,b=Math.floor(y/100),c=y%100,d=Math.floor(b/4),e=b%4,f=Math.floor((b+8)/25),g=Math.floor((b-f+1)/3),h=(19*a+b-d-g+15)%30,i=Math.floor(c/4),k=c%4,l=(32+2*e+2*i-h-k)%7,m=Math.floor((a+11*h+22*l)/451),mo=Math.floor((h+l-7*m+114)/31),da=(h+l-7*m+114)%31+1;return iso(new Date(y,mo-1,da));}
+function saison(k=todayKey()){
+  const y=+k.slice(0,4), md=k.slice(5), P=paques(y);
+  if(k>=addDays(P,-46)&&k<addDays(P,-7))return'careme';          // du mercredi des Cendres aux Rameaux
+  if(k>=addDays(P,-7)&&k<P)return'rameaux';                       // semaine sainte : le rameau
+  if(md>='12-24'||md<='01-06')return'noel';                       // de la veille de Noël à l'Épiphanie
+  if(md>='10-31'&&md<='11-08')return'toussaint';
+  if(md>='12-01'||md<='02-28')return'hiver';
+  if(md>='09-22'&&md<='11-30')return'automne';
+  return'';
+}
+const SAISON_SVG={
+  hiver:`<g class="acc"><path d="M38 70Q50 78 62 70L62.5 75.5Q50 83 37.5 75.5Z" fill="#8E2F2B"/><path d="M55 77l3 13 5-1-2-12.5z" fill="#7A2623"/><path d="M57 86.5l5-1M56.4 83.5l5-1" stroke="#B5524C" stroke-width="1"/></g>`,
+  careme:`<g class="acc"><path d="M38.5 70.5Q50 76 61.5 70.5L61 74Q50 79 39 74Z" fill="#5E3F86"/><path d="M41 74l-2.4 24h5.4l1.6-23z" fill="#5E3F86"/><path d="M59 74l2.4 24h-5.4l-1.6-23z" fill="#5E3F86"/><path d="M41.3 90h3M42.8 88.5v3M55.7 90h3M57.2 88.5v3" stroke="var(--gold-hi)" stroke-width="1.1"/></g>`,
+  rameaux:`<g class="acc" fill="#5B7A3A"><path d="M66 96Q72 80 80 70" fill="none" stroke="#5B7A3A" stroke-width="1.6"/><ellipse cx="70" cy="86" rx="5" ry="1.8" transform="rotate(-50 70 86)"/><ellipse cx="74" cy="80" rx="5" ry="1.8" transform="rotate(-40 74 80)"/><ellipse cx="77.5" cy="74.5" rx="4.5" ry="1.6" transform="rotate(-35 77.5 74.5)"/><ellipse cx="68" cy="81" rx="4.5" ry="1.6" transform="rotate(-80 68 81)"/><ellipse cx="72" cy="75" rx="4.2" ry="1.5" transform="rotate(-75 72 75)"/></g>`,
+  noel:`<g class="acc star"><path d="M50 6l2.2 5 5.3.5-4 3.6 1.2 5.3-4.7-2.8-4.7 2.8 1.2-5.3-4-3.6 5.3-.5z" fill="var(--gold)"/></g>`,
+  toussaint:`<g class="acc"><rect x="83" y="80" width="6" height="18" rx="1" fill="#F4EEDD" stroke="var(--line)" stroke-width=".6"/><path class="flamme" d="M86 70c2.4 3 2.6 6 0 8.5c-2.6-2.5-2.4-5.5 0-8.5z" fill="var(--gold)"/></g>`,
+  automne:`<g class="acc leaf" transform="translate(5 5)"><path d="M20 14c3-4 8-4 10 0c-1 1-1 2 0 3c-3 1-4 3-5 5c-2-2-4-2-6-1c1-2 1-4-1-5c1 0 2-1 2-2z" fill="#C0702E"/><path d="M21 19l7-4" stroke="#8A4A1C" stroke-width=".7"/></g>`
+};
 function stagSVG(L,mood){
   const f=n=>n.toFixed(1), s=Math.min(1,.5+.05*L), tines=Math.min(6,1+Math.floor(L/2));
   const bez=(p,t)=>{const u=1-t;return[0,1].map(i=>u*u*u*p[0][i]+3*u*u*t*p[1][i]+3*u*t*t*p[2][i]+t*t*t*p[3][i]);};
@@ -2887,7 +2945,7 @@ function stagSVG(L,mood){
 <path d="M50 38C53 38 54 42 53 46C52 50 51 52 50 52C49 52 48 50 47 46C46 42 47 38 50 38Z" fill="var(--stag-light)" opacity=".55"/>
 <ellipse cx="50" cy="75" rx="6.2" ry="7" fill="var(--stag-light)"/>
 <ellipse cx="50" cy="79" rx="4.4" ry="2.9" fill="var(--stag-dark)"/>
-${eye(43.5)}${eye(56.5)}${brows}${extra}
+${eye(43.5)}${eye(56.5)}${brows}${extra}${SAISON_SVG[saison()]||''}
 </svg>`;
 }
 let stagKey='', stagI=0, stagTimer=null;
@@ -2899,8 +2957,23 @@ function stagMood(){
   return'idle';
 }
 function renderStag(){
-  const L=gamiCtx.level, m=stagMood(), k=L+m; if(k===stagKey)return; stagKey=k;
+  const L=gamiCtx.level, m=stagMood(), k=L+m+saison(); if(k===stagKey)return; stagKey=k;
   $('#stag').innerHTML=stagSVG(L,m);
+}
+// passage de niveau : les anciens bois s'effacent pendant que la nouvelle ramure se dessine
+function antlerCeremony(L,total){
+  if(document.querySelector('.ceremony'))return;
+  const old=stagSVG(Math.max(1,L-1),'proud'), nu=stagSVG(L,'proud');
+  const grow=nu.match(/<g class="antlers"[^>]*>([\s\S]*?)<\/g>/)[1].replace(/<path /g,'<path pathLength="1" ');
+  const svg=old.replace('<g class="antlers"','<g class="antlers grow" fill="none" stroke="var(--antler)" stroke-width="3.4" stroke-linecap="round">'+grow+'</g><g class="antlers old"');
+  const close=()=>{box.classList.add('out');setTimeout(()=>box.remove(),300);stagKey='';renderStag();};
+  const box=el('div',{class:'ceremony',role:'dialog','aria-modal':'true','aria-label':'Nouveau niveau',onclick:e=>{if(e.target===box)close();}},
+    el('div',{class:'cer-card'},el('span',{class:'stag cer-stag',html:svg}),
+      el('span',{class:'label',text:'Nouveau niveau'}),el('h2',{text:`Niveau ${roman(L)} : ${levelName(L)}`}),
+      el('p',{class:'fg2',text:`${fmt(total)} XP au total. Tes bois ont gagné un andouiller.`}),
+      el('button',{class:'btn primary',text:'Continuer',onclick:close})));
+  document.body.append(box); son('niveau'); setTimeout(()=>{laurels();},900);
+  setTimeout(()=>box.querySelector('.btn').focus(),50);
 }
 function stagJump(){const b=$('#stag');b.classList.remove('joy');void b.offsetWidth;b.classList.add('joy');}
 // le cerf ailleurs dans l'appli : une humeur, une phrase
@@ -3632,7 +3705,16 @@ function qprog(i,n){
   const bar=el('div',{class:'qbar',role:'progressbar','aria-valuemin':'1','aria-valuemax':String(n),'aria-valuenow':String(i+1),'aria-label':`Question ${i+1} sur ${n}`});
   for(let j=0;j<n;j++)bar.append(el('i',{class:j<i?(qmarks[j]?'ok':'ko'):j===i?'cur':null}));
   const c=el('span',{class:'combo',hidden:combo<2?'':null}); if(combo>=2)c.innerHTML=FLAME+combo+' d’affilée';
-  return el('div',{class:'qhead'},bar,el('span',{class:'qcount',text:`${i+1}/${n}`}),c);
+  return el('div',{class:'qhead'},qstag(),bar,el('span',{class:'qcount',text:`${i+1}/${n}`}),c);
+}
+// le petit cerf des exercices : il hoche la tête, baisse les oreilles, ou se redresse au 5 d'affilée
+const qstag=()=>el('span',{class:'stag qstag','aria-hidden':'true',html:stagSVG(gamiCtx.level||1,'idle')});
+function stagReact(right){
+  const st=$('#arena').querySelector('.qstag'); if(!st)return;
+  clearTimeout(st._t); const L=gamiCtx.level||1, fete=right&&combo>=5&&combo%5===0;
+  st.innerHTML=stagSVG(L,fete?'proud':right?'idle':'worried');
+  st.classList.remove('nod','droop','fete'); void st.offsetWidth; st.classList.add(fete?'fete':right?'nod':'droop');
+  st._t=setTimeout(()=>{st.classList.remove('nod','droop','fete');st.innerHTML=stagSVG(L,'idle');},fete?1800:1100);
 }
 function hit(right){
   right=!!right; qmarks[qcur]=right; combo=right?combo+1:0; son(right?'juste':'faux');
@@ -3641,6 +3723,7 @@ function hit(right){
   const seg=a.querySelector('.qbar i.cur'); if(seg)seg.className=right?'ok':'ko';
   const c=a.querySelector('.combo');
   if(c){c.hidden=combo<2; if(combo>=2){c.innerHTML=FLAME+combo+' d’affilée'; c.classList.remove('bump'); void c.offsetWidth; c.classList.add('bump');}}
+  stagReact(right);
   try{if(navigator.vibrate)navigator.vibrate(right?12:[25,40,25]);}catch(e){}
 }
 function countUp(node,to){
@@ -3676,9 +3759,21 @@ function backHome(){stopRun();$('#stage').hidden=true;$('#exgrid').hidden=false;
 function nextButtons(again){
   const nx=seanceNext(), row=el('div',{class:'row',style:'justify-content:center'});
   if(nx==='fin')row.append(el('button',{class:'btn primary',text:'Voir le bilan de la séance',onclick:()=>seanceRecap($('#arena'))}),el('button',{class:'btn ghost',text:'Recommencer',onclick:again}));
-  else if(nx)row.append(el('button',{class:'btn primary',text:'Suivant : '+EX[nx].name,onclick:()=>openEx(nx)}),el('button',{class:'btn ghost',text:'Recommencer',onclick:again}));
+  else if(nx)row.append(el('button',{class:'btn primary',text:'Suivant : '+EX[nx].name,onclick:()=>seanceTrail(nx)}),el('button',{class:'btn ghost',text:'Recommencer',onclick:again}));
   else row.append(el('button',{class:'btn primary',text:'Recommencer',onclick:again}),el('button',{class:'btn',text:'Retour à l’accueil',onclick:backHome}));
   return row;
+}
+// entre deux exercices, le cerf bondit sur le chemin de la séance jusqu'à l'étape suivante
+function seanceTrail(nx){
+  const arena=$('#arena'), steps=routineFor(todayKey(),state.settings.minutes), j=steps.findIndex(x=>x.ex===nx), from=Math.max(0,j-1);
+  if(reduceMotion()||j<0){openEx(nx);return;}
+  stopRun(); $('#st-skill').textContent='Séance du jour'; $('#st-name').textContent='En route'; $('#st-orig').hidden=true; delete arena.dataset.v;
+  const pos=i=>steps.length>1?i/(steps.length-1)*100:50;
+  const st=el('span',{class:'stag trail-stag','aria-hidden':'true',html:stagSVG(gamiCtx.level||1,'proud'),style:`left:${pos(from)}%`});
+  const trail=el('div',{class:'trail'},el('div',{class:'trail-line'}),...steps.map((x,i)=>el('i',{class:i<j?'ok':i===j?'cur':'',style:`left:${pos(i)}%`})),st);
+  arena.replaceChildren(el('span',{class:'label',text:`Étape ${j+1} sur ${steps.length}`}),trail,el('h3',{class:'trail-next',text:EX[nx].name}),el('p',{class:'fg2',text:EX[nx].skill}));
+  requestAnimationFrame(()=>requestAnimationFrame(()=>{st.classList.add('go');st.style.left=pos(j)+'%';}));
+  setTimeout(()=>{if(arena.contains(trail))openEx(nx);},1500);
 }
 // bilan de fin de séance : ce qui a été fait, les XP du jour, les quêtes et la série
 function seanceRecap(arena){
@@ -3692,7 +3787,7 @@ function seanceRecap(arena){
       el('ul',{class:'seance-list'},...steps.map(x=>{const r=last(x.ex);return el('li',{},el('span',{text:EX[x.ex].name}),el('b',{text:r?fmt(r.s)+(PCT(x.ex)?' %':' '+EX[x.ex].unit):'—'}));})),
       el('span',{class:'label',text:'Quêtes du jour'}),
       el('ul',{class:'seance-list'},...qs.map(([,lab,ok])=>el('li',{},el('span',{text:lab}),el('b',{text:ok?'✓':'à faire'}))))),
-    el('p',{class:'fg2',style:'text-align:center',text:cur>1?`Série de ${cur} jours. À demain !`:'Ta série a commencé. À demain !'}),
+    stagTalk('proud',cur>1?`Séance terminée, et ${cur} jours d’affilée. Je me repose ici jusqu’à demain.`:'Séance terminée. Ta série a commencé : je t’attends demain.'),
     el('div',{class:'row',style:'justify-content:center'},el('button',{class:'btn primary',text:'Retour à l’accueil',onclick:backHome}),el('button',{class:'btn ghost',text:'Un exercice de plus',onclick:()=>{stopRun();$('#stage').hidden=true;$('#exgrid').hidden=false;}})));
   son('record'); laurels();
 }
@@ -4519,7 +4614,7 @@ eclair(arena){
         setTimeout(ask,good?380:1100);
       }));
     };
-    arena.replaceChildren(el('div',{class:'qhead eclair-head'},el('span',{class:'fg2',text:'Bonnes réponses'}),count,c),zone);
+    arena.replaceChildren(el('div',{class:'qhead eclair-head'},qstag(),el('span',{class:'fg2',text:'Bonnes réponses'}),count,c),zone);
     ask();
     cleanup=countdown(90,null,()=>{
       over=true; const m=recordMsg('eclair',ok); logResult('eclair',ok,{n});

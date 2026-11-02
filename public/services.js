@@ -6,6 +6,11 @@
   const ready=!!(window.supabase&&C.supabaseUrl&&C.supabaseKey);
   const sb=ready?window.supabase.createClient(C.supabaseUrl,C.supabaseKey,{auth:{persistSession:true,autoRefreshToken:true,detectSessionInUrl:true}}):null;
   window.bfSupabase=sb;
+  // retour d'un lien « mot de passe oublié » : la page proposera de choisir le nouveau
+  if(sb){
+    if(/type=recovery/.test(location.hash))window.bfRecovery=true;
+    sb.auth.onAuthStateChange(ev=>{if(ev==='PASSWORD_RECOVERY'){window.bfRecovery=true;window.dispatchEvent(new Event('bf-recovery'));}});
+  }
 
   async function session(){
     if(!sb)return null;

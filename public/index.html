@@ -756,6 +756,8 @@ a{color:var(--accent);text-underline-offset:3px}
 .login{display:flex;flex-direction:column;gap:8px;max-width:420px}
 .login input{font:inherit;font-size:1rem;padding:10px 12px;border:1px solid var(--line);border-radius:var(--r);background:var(--surface);color:var(--fg)}
 .login .note:empty{display:none}
+.login .age15{display:flex;gap:8px;align-items:center}
+.pwnew{position:fixed;z-index:70;top:16px;left:50%;transform:translateX(-50%);width:min(420px,calc(100% - 32px));box-shadow:0 12px 40px rgba(0,0,0,.25)}
 .seg.themes{justify-content:flex-start}
 .circle-form input{font:inherit;font-size:1rem;padding:6px 10px;border:1px solid var(--line);border-radius:var(--r);background:var(--surface);color:var(--fg);max-width:200px}
 .ranking{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:4px}
@@ -1126,7 +1128,9 @@ var fin=function(){if(e.parentNode)e.remove();};e.addEventListener('click',fin);
         <p class="note">Sans compte, tout reste sur cet appareil.</p>
         <input type="email" id="login-email" autocomplete="username" placeholder="Ton e-mail" aria-label="E-mail" required>
         <input type="password" id="login-pw" autocomplete="current-password" placeholder="Mot de passe" aria-label="Mot de passe" minlength="8" required>
+        <label class="note age15"><input type="checkbox" id="login-age"> J'ai 15 ans ou plus <span class="muted">(pour créer un compte)</span></label>
         <div class="row"><button class="btn primary" id="login-in">Se connecter</button><button class="btn ghost" id="login-new">Créer mon compte</button></div>
+        <button class="linkbtn note" type="button" id="login-forgot" style="align-self:flex-start">Mot de passe oublié ?</button>
         <p class="note" id="login-msg" role="status"></p>
       </form>
     </div>
@@ -1232,7 +1236,7 @@ var fin=function(){if(e.parentNode)e.remove();};e.addEventListener('click',fin);
   <section class="view" id="v-coach" hidden>
     <div class="panel" id="coach-panel">
       <div class="sage-head"><span class="stag sage" id="sage-stag" aria-hidden="true"></span>
-        <div class="sage-txt"><h2>Le cerf sage</h2><p class="muted note" id="coach-state"></p><p class="sage-say" id="sage-say"></p></div></div>
+        <div class="sage-txt"><h2>Le cerf sage</h2><p class="muted note" id="coach-state"></p><p class="note muted">Le cerf est une intelligence artificielle, pas une personne. Il peut se tromper : vérifie ce qui compte.</p><p class="sage-say" id="sage-say"></p></div></div>
       <div class="sage-ask">
         <div class="chat" id="coach-chat"></div>
         <form class="row" id="coach-form" style="flex-wrap:nowrap">
@@ -1483,6 +1487,7 @@ var fin=function(){if(e.parentNode)e.remove();};e.addEventListener('click',fin);
         <li>Gratuit, sans publicité ni mesure d'audience.</li>
         <li>Sans compte, tout reste sur ton appareil. Avec un compte, tes progrès sont gardés chez Supabase : le détail est dans « Tes données », dans les réglages.</li>
         <li>Les contenus (problèmes, citations, questions disputées, études) ont été rédigés et vérifiés pour Néophyte. Chaque citation et chaque étude indique sa source.</li>
+        <li>Chiffres officiels : Banque mondiale et Our World in Data (licence CC BY 4.0), Eurostat (réutilisation libre avec mention de la source), INSEE et data.gouv.fr (Licence Ouverte Etalab 2.0) ; la source précise est donnée sous chaque exercice. Textes littéraires du domaine public, transcrits par Wikisource. Polices Cinzel et EB Garamond, licence SIL Open Font.</li>
         <li>Site hébergé par GitHub Pages (GitHub, Inc.). Il s'installe comme une application : sur iPhone, « Partager » puis « Sur l'écran d'accueil » ; sur Android, « Installer l'application ».</li>
       </ul>
     </div>
@@ -3381,6 +3386,7 @@ $('#login').addEventListener('submit',async e=>{
   e.preventDefault();
   const sb=window.bfSupabase, msg=$('#login-msg'), isNew=e.submitter&&e.submitter.id==='login-new';
   if(!sb){msg.textContent="Le site n'est pas encore relié à son serveur.";return;}
+  if(isNew&&!$('#login-age').checked){msg.textContent="Un compte demande d'avoir 15 ans ou plus. Plus jeune, tu peux utiliser Néophyte sans compte : tout reste sur cet appareil.";$('#login-age').focus();return;}
   const email=$('#login-email').value.trim(), password=$('#login-pw').value;
   msg.textContent=isNew?'Création du compte…':'Connexion…';
   const {data,error}=isNew?await sb.auth.signUp({email,password}):await sb.auth.signInWithPassword({email,password});
@@ -3388,6 +3394,33 @@ $('#login').addEventListener('submit',async e=>{
   if(isNew&&!data.session){msg.textContent="Compte créé. Ouvre le lien reçu par e-mail pour le confirmer, puis reviens ici et clique sur « Se connecter ».";return;}
   msg.textContent=''; $('#login-pw').value=''; initStore();
 });
+// mot de passe oublié : un lien par e-mail ramène ici, où l'on choisit le nouveau
+$('#login-forgot').addEventListener('click',async()=>{
+  const sb=window.bfSupabase, msg=$('#login-msg'), email=$('#login-email').value.trim();
+  if(!sb){msg.textContent="Le site n'est pas encore relié à son serveur.";return;}
+  if(!/^\S+@\S+\.\S+$/.test(email)){msg.textContent="Écris d'abord ton e-mail ci-dessus, puis touche « Mot de passe oublié ? ».";$('#login-email').focus();return;}
+  msg.textContent='Envoi…';
+  const {error}=await sb.auth.resetPasswordForEmail(email,{redirectTo:location.origin+location.pathname});
+  msg.textContent=!error?"Si un compte existe avec cette adresse, un lien pour choisir un nouveau mot de passe vient d'y partir. Pense à regarder dans les indésirables."
+    :/rate|second|many/i.test(error.message)?'Trop de demandes : réessaie dans quelques minutes.':'Envoi impossible : '+error.message;
+});
+function pwRecovery(){
+  if(!window.bfSupabase||$('#pwnew'))return;
+  const inp=el('input',{type:'password',autocomplete:'new-password',placeholder:'Nouveau mot de passe (8 caractères au moins)','aria-label':'Nouveau mot de passe',minlength:'8',required:''});
+  const msg=el('p',{class:'note',role:'status'});
+  const f=el('form',{class:'panel login pwnew',id:'pwnew','aria-labelledby':'pwnew-h'},
+    el('h2',{id:'pwnew-h',text:'Choisis un nouveau mot de passe'}),inp,
+    el('div',{class:'row'},el('button',{class:'btn primary',text:'Enregistrer'}),el('button',{class:'btn ghost',type:'button',text:'Plus tard',onclick:()=>f.remove()})),msg);
+  f.addEventListener('submit',async e=>{
+    e.preventDefault(); msg.textContent='Enregistrement…';
+    const {error}=await window.bfSupabase.auth.updateUser({password:inp.value});
+    if(error){msg.textContent=/weak|short|characters|password/i.test(error.message)?'Mot de passe trop faible : 8 caractères au moins, avec des lettres et des chiffres.':'Échec : '+error.message;return;}
+    msg.textContent='Mot de passe changé. Tu es connecté.'; inp.value=''; setTimeout(()=>f.remove(),2500);
+  });
+  document.body.append(f); inp.focus();
+}
+window.addEventListener('bf-recovery',pwRecovery);
+if(window.bfRecovery)setTimeout(pwRecovery,0);
 $('#logout').addEventListener('click',async()=>{
   try{await window.bfSupabase.auth.signOut();}catch(e){}
   ref=null; tref=null; circleData=null; $('#erase').hidden=true; setSync('local'); localOnly(); coachCheck(); showTab('aujourdhui'); window.scrollTo(0,0);
@@ -6254,7 +6287,7 @@ function closeWelcome(mode){
   if(mode){
     try{sessionStorage.removeItem('brainfit.later');}catch(e){}
     $('#syncwarn').hidden=false; openLogin(); showTab('aujourdhui'); window.scrollTo(0,0);
-    $('#login-msg').textContent=mode==='signup'?"Choisis ton e-mail et un mot de passe (8 caractères au moins), puis « Créer mon compte ».":'';
+    $('#login-msg').textContent=mode==='signup'?"Choisis ton e-mail et un mot de passe (8 caractères au moins), coche « J’ai 15 ans ou plus », puis « Créer mon compte ».":'';
     setTimeout(()=>{$('#login').scrollIntoView({block:'center'});$('#login-email').focus({preventScroll:true});},50);
   }
   else{try{sessionStorage.setItem('brainfit.later','1');}catch(e){}$('#syncwarn').hidden=true;showTab('aujourdhui');window.scrollTo(0,0);}

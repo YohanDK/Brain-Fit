@@ -790,6 +790,13 @@ details.fold[open]{display:flex;flex-direction:column;gap:10px}
 .ceremony{position:fixed;inset:0;z-index:60;display:grid;place-items:center;padding:16px;background:rgba(20,18,14,.45);animation:fadein .3s ease-out}
 .ceremony.out{opacity:0;transition:opacity .3s}
 /* signaler un problème */
+.rt-list{display:flex;flex-direction:column;gap:12px}
+.rt-item{border:1px solid var(--line);border-radius:10px;padding:12px;display:flex;flex-direction:column;gap:6px}
+.rt-item.done{opacity:.6}
+.rt-item .rt-meta{font-size:.8rem;color:var(--fg2)}
+.rt-item .rt-msg{white-space:pre-wrap;margin:0}
+.rt-item img{max-width:100%;max-height:420px;object-fit:contain;align-self:flex-start;border:1px solid var(--line);border-radius:6px;cursor:zoom-in}
+.rt-item details{font-size:.8rem;color:var(--fg2)}
 .cer-card.rp-card{align-items:stretch;text-align:left;width:min(440px,100%);max-height:calc(100vh - 32px);overflow-y:auto;border-color:var(--line)}
 .rp-shot{display:flex;gap:12px;align-items:flex-start}
 .rp-shot img{width:96px;max-height:170px;object-fit:cover;object-position:top;border:1px solid var(--line);border-radius:6px;background:var(--bg)}
@@ -1270,6 +1277,12 @@ q{quotes:"« " " »" "“" "”"}
         <textarea id="import-box" style="min-height:120px;font-family:var(--f-mono);font-size:.8rem" placeholder="Colle ici les données copiées depuis Néophyte ouvert ailleurs." aria-label="Données à fusionner"></textarea>
         <div class="row"><button class="btn" id="import-go">Fusionner avec mes progrès</button><span class="note" id="import-msg"></span></div>
       </div>
+    </div>
+    <div class="panel" id="retours-panel" hidden>
+      <div><h2>Retours des testeurs</h2><p class="muted note">Signalements et réponses contestées, les plus récents d'abord. Visible de toi seul.</p></div>
+      <div class="row"><div class="seg" id="rt-filtre" role="group" aria-label="Quels retours"><button data-f="ouverts" aria-pressed="true">À traiter</button><button data-f="tous" aria-pressed="false">Tous</button></div><button class="btn ghost small" id="rt-maj">Actualiser</button></div>
+      <p class="note" id="rt-msg" role="status"></p>
+      <div id="rt-list" class="rt-list"></div>
     </div>
     <div class="panel" id="privacy">
       <div><h2>Tes données</h2>
@@ -3489,6 +3502,7 @@ sasUpdate();
 
 const TABS=['aujourdhui','classement','exercices','coach','progres','conseils','reglages'];
 function showTab(t){
+  if(t==='retours'){t='reglages';renderRetours(true);}
   if(t==='exercices'&&$('#stage').hidden)$('#exgrid').hidden=false;
   if(!TABS.includes(t))t='aujourdhui';
   $$('.tabs button').forEach(b=>b.setAttribute('aria-selected',String(b.dataset.tab===t)));
@@ -3497,7 +3511,7 @@ function showTab(t){
   if(t==='conseils'||t==='reglages')$('#go-'+(t==='conseils'?'biblio':'settings')).setAttribute('aria-current','page');
   if(t==='progres'){renderProgress();renderCarnet();renderXpPanel();renderScreenChart();}
   if(t==='classement')renderCircle();
-  if(t==='reglages')$('#city-in').value=city();
+  if(t==='reglages'){$('#city-in').value=city();renderRetours();}
   if(t==='coach'){renderSas();renderCoach();renderWeekBilan();renderTutor();}
   if(location.hash!=='#'+t)try{history.replaceState(null,'','#'+t);}catch(e){}
 }
@@ -3814,6 +3828,51 @@ function openReport(){
   // le clavier n'apparaît qu'une fois la capture prise, pour ne pas rétrécir l'écran capturé
   Promise.race([snapScreen(),new Promise((_,ko)=>setTimeout(()=>ko(new Error('lent')),10000))]).then(b=>{if(thumbNode===thumb)swap(b);}).catch(()=>{if(thumbNode===thumb)swap(null);}).finally(()=>{busy=false;if(document.activeElement===document.body||!box.contains(document.activeElement))ta.focus();});
 }
+// page « Retours » : le propriétaire (alertes_config.proprietaire) lit les signalements des testeurs et les marque traités
+let rtFiltre='ouverts', rtBusy=false, rtAgain=false, rtFocus=false;
+async function renderRetours(focus){
+  const sb=sbc(), panel=$('#retours-panel');
+  if(focus)rtFocus=true;
+  if(!sb)return;
+  if(rtBusy){rtAgain=true;return;}
+  rtBusy=true;
+  try{
+    let own=false;
+    try{const s=await sb.auth.getSession();if(s.data.session){const r=await sb.rpc('est_proprietaire');own=r.data===true;}}catch(e){}
+    panel.hidden=!own; if(!own)return;
+    if(rtFocus){rtFocus=false;setTimeout(()=>panel.scrollIntoView({behavior:'smooth',block:'start'}),60);}
+    const msg=$('#rt-msg'), list=$('#rt-list'); msg.textContent='Chargement…';
+    const q=(t,cols)=>{let r=sb.from(t).select(cols).order('created_at',{ascending:false}).limit(50);if(rtFiltre==='ouverts')r=r.eq('traite',false);return r;};
+    const [a,b]=await Promise.all([q('retours','id,message,contexte,capture,created_at,traite'),q('signalements','id,exercice,question_id,enonce,message,created_at,traite')]);
+    if(a.error){msg.textContent='Lecture impossible : '+(a.error.message||'erreur');list.replaceChildren();return;}
+    const rows=[...(a.data||[]).map(r=>({...r,t:'retours'})),...(b.data||[]).map(r=>({...r,t:'signalements'}))].sort((x,y)=>y.created_at.localeCompare(x.created_at));
+    msg.textContent=rows.length?`${rows.length} ${rtFiltre==='ouverts'?'à traiter':'retour'+(rows.length>1?'s':'')}.`:(rtFiltre==='ouverts'?'Rien à traiter. Bravo !':'Aucun retour pour l’instant.');
+    const urls={}, paths=rows.filter(r=>r.capture).map(r=>r.capture);
+    if(paths.length)try{const {data}=await sb.storage.from('retours').createSignedUrls(paths,3600);(data||[]).forEach(x=>{if(x.signedUrl)urls[x.path]=x.signedUrl;});}catch(e){}
+    list.replaceChildren(...rows.map(r=>{
+      const when=new Date(r.created_at).toLocaleString('fr-FR',{weekday:'short',day:'numeric',month:'short',hour:'2-digit',minute:'2-digit'});
+      const cx=r.contexte||{}, where=r.t==='retours'?[cx.onglet,cx.exercice&&(EX[cx.exercice]?EX[cx.exercice].name:cx.exercice)].filter(Boolean).join(' › '):'Je conteste · '+(EX[r.exercice]?EX[r.exercice].name:r.exercice);
+      const done=el('button',{class:'btn small'+(r.traite?' ghost':''),text:r.traite?'Rouvrir':'Marquer traité'});
+      const item=el('div',{class:'rt-item'+(r.traite?' done':'')},
+        el('span',{class:'rt-meta',text:when+(where?' · '+where:'')}),
+        el('p',{class:'rt-msg',text:r.message}),
+        r.enonce?el('p',{class:'note',text:'Question : '+r.enonce}):null,
+        r.capture?(urls[r.capture]?el('a',{href:urls[r.capture],target:'_blank',rel:'noopener'},el('img',{src:urls[r.capture],alt:'Capture envoyée',loading:'lazy'})):el('p',{class:'note',text:'Capture jointe, illisible pour l’instant.'})):null,
+        r.t==='retours'&&(cx.question||cx.navigateur)?el('details',{},el('summary',{text:'Détails'}),el('p',{text:[cx.question&&'Écran : '+cx.question,cx.ecran&&'Taille : '+cx.ecran,cx.navigateur&&'Navigateur : '+cx.navigateur,cx.appli?'Appli installée':null].filter(Boolean).join('\n'),style:'white-space:pre-wrap'})):null,
+        el('div',{class:'row'},done));
+      done.addEventListener('click',async()=>{
+        done.disabled=true;
+        const {error}=await sb.from(r.t).update({traite:!r.traite}).eq('id',r.id);
+        if(error){done.disabled=false;toast('<span>Impossible de modifier ce retour.</span>');return;}
+        r.traite=!r.traite;
+        if(rtFiltre==='ouverts'&&r.traite)item.remove(); else{item.classList.toggle('done',r.traite);done.textContent=r.traite?'Rouvrir':'Marquer traité';done.className='btn small'+(r.traite?' ghost':'');done.disabled=false;}
+      });
+      return item;
+    }));
+  }finally{rtBusy=false;if(rtAgain){rtAgain=false;renderRetours();}}
+}
+$$('#rt-filtre button').forEach(b=>b.addEventListener('click',()=>{rtFiltre=b.dataset.f;$$('#rt-filtre button').forEach(x=>x.setAttribute('aria-pressed',String(x===b)));renderRetours();}));
+$('#rt-maj').addEventListener('click',()=>renderRetours());
 // une question ratée repasse devant toutes les autres à la prochaine séance
 function missAgain(bank,arr,item){const i=arr.indexOf(item);if(i>=0)((state.seen=state.seen||{})[bank]||(state.seen[bank]={}))[i]=-1;}
 let cleanup=null;
@@ -5035,6 +5094,7 @@ function renderAll(){
   renderThemes();renderQuoteDay();renderCjl();renderFlori();renderGoal();renderProgram();renderScreens();renderToday();renderExGrid();
   if(!$('#v-progres').hidden){renderProgress();renderCarnet();}
   if(!$('#v-classement').hidden)renderCircle();
+  if(!$('#v-reglages').hidden)renderRetours();
   $('#erase').hidden=!ref; $('#login-open').hidden=!!ref||!window.bfSupabase;
   if(!$('#v-coach').hidden){renderSas();renderWeekBilan();renderTutor();}
 }

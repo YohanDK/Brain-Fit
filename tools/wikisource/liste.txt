@@ -1,0 +1,26 @@
+# Une recherche par ligne : auteur | titre. Le texte trouvé sur fr.wikisource.org est écrit dans tools/wikisource/textes/.
+La Fontaine | La Cigale et la Fourmi
+La Fontaine | Le Loup et l'Agneau
+La Fontaine | Le Chêne et le Roseau
+La Fontaine | Le Laboureur et ses Enfants
+La Fontaine | Le Lièvre et la Tortue
+Baudelaire | L'Albatros
+Rimbaud | Le Dormeur du val
+Verlaine | Chanson d'automne
+Lamartine | Le Lac
+Hugo | Après la bataille
+Hugo | Les Misérables Mgr Bienvenu chandeliers
+Daudet | La Chèvre de M. Seguin
+Daudet | La Dernière Classe
+Maupassant | Le Horla
+Chateaubriand | Mémoires d'outre-tombe grive Montboissier
+Péguy | Présentation de la Beauce à Notre-Dame de Chartres
+Voltaire | Candide chapitre premier
+Zola | Germinal première partie chapitre 1
+Flaubert | Un cœur simple
+Pascal | Pensées divertissement
+Bossuet | Oraison funèbre d'Henriette d'Angleterre
+Thérèse de Lisieux | Histoire d'une âme
+Fénelon | Lettre à l'Académie
+Alain-Fournier | Le Grand Meaulnes chapitre premier
+Jules Verne | Le Tour du monde en quatre-vingts jours chapitre I

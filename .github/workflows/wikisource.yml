@@ -1,0 +1,28 @@
+# Importe les textes de tools/wikisource/liste.txt depuis Wikisource et les enregistre sur la même branche.
+name: Importer Wikisource
+
+on:
+  workflow_dispatch:
+  push:
+    branches: ["claude/**"]
+    paths: ["tools/wikisource/liste.txt"]
+
+permissions:
+  contents: write
+
+jobs:
+  importer:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - run: node tools/wikisource/importer.js
+      - name: Enregistrer les textes
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add tools/wikisource/textes
+          git diff --cached --quiet || git commit -m "Textes importés de Wikisource"
+          git push

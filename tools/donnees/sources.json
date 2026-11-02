@@ -1,0 +1,30 @@
+{
+  "_lisez-moi": "Séries de chiffres officiels à récupérer. Ajoute une entrée, pousse sur une branche claude/… : l'action « Importer les données » remplit series/ et _rapport.txt. Types : banquemondiale, eurostat, owid, insee-catalogue, datagouv-recherche.",
+  "series": [
+    {"id":"pop-fr","type":"banquemondiale","indicateur":"SP.POP.TOTL","pays":"FRA;WLD","libelle":"Population totale","unite":"habitants"},
+    {"id":"esperance-vie","type":"banquemondiale","indicateur":"SP.DYN.LE00.IN","pays":"FRA;WLD","libelle":"Espérance de vie à la naissance","unite":"ans"},
+    {"id":"fecondite","type":"banquemondiale","indicateur":"SP.DYN.TFRT.IN","pays":"FRA;WLD","libelle":"Enfants par femme","unite":"enfants"},
+    {"id":"pib-hab","type":"banquemondiale","indicateur":"NY.GDP.PCAP.KD","pays":"FRA;WLD","libelle":"PIB par habitant (dollars constants 2015)","unite":"$"},
+    {"id":"co2-hab","type":"banquemondiale","indicateur":"EN.GHG.CO2.PC.CE.AR5","pays":"FRA;WLD","libelle":"CO2 par habitant","unite":"t éq. CO2"},
+    {"id":"urbains","type":"banquemondiale","indicateur":"SP.URB.TOTL.IN.ZS","pays":"FRA;WLD","libelle":"Part de la population urbaine","unite":"%"},
+    {"id":"internet","type":"banquemondiale","indicateur":"IT.NET.USER.ZS","pays":"FRA;WLD","libelle":"Part des personnes qui utilisent Internet","unite":"%"},
+    {"id":"forets","type":"banquemondiale","indicateur":"AG.LND.FRST.ZS","pays":"FRA;WLD","libelle":"Part du territoire couverte de forêts","unite":"%"},
+    {"id":"mortalite-infantile","type":"banquemondiale","indicateur":"SP.DYN.IMRT.IN","pays":"FRA;WLD","libelle":"Mortalité infantile (pour 1 000 naissances)","unite":"‰"},
+    {"id":"chomage","type":"eurostat","jeu":"une_rt_a","filtres":{"geo":["FR","EU27_2020"],"age":"Y15-74","sex":"T","unit":"PC_ACT"},"libelle":"Taux de chômage (15-74 ans)","unite":"%"},
+    {"id":"inflation","type":"eurostat","jeu":"prc_hicp_aind","filtres":{"geo":["FR","EU27_2020"],"coicop":"CP00","unit":"RCH_A_AVG"},"libelle":"Inflation (IPCH, moyenne annuelle)","unite":"%"},
+    {"id":"renouvelables","type":"eurostat","jeu":"nrg_ind_ren","filtres":{"geo":["FR","EU27_2020"],"nrg_bal":"REN","unit":"PC"},"libelle":"Part des renouvelables dans la consommation d'énergie","unite":"%"},
+    {"id":"esperance-vie-long","type":"owid","graphe":"life-expectancy","pays":"FRA;OWID_WRL","libelle":"Espérance de vie (série longue)","unite":"ans"},
+    {"id":"pauvrete-extreme","type":"owid","graphe":"share-of-population-in-extreme-poverty","pays":"OWID_WRL","libelle":"Part du monde en extrême pauvreté","unite":"%"},
+    {"id":"alphabetisation","type":"owid","graphe":"literacy-rate","pays":"FRA;OWID_WRL","libelle":"Taux d'alphabétisation","unite":"%"},
+    {"id":"insee-naissances","type":"insee","jeu":"DS_NAISSANCES_FECONDITE_SERIES","libelle":"Naissances et fécondité, séries longues (INSEE)"},
+    {"id":"insee-deces","type":"insee","jeu":"DS_DECES_MORTALITE_SERIES","libelle":"Décès et mortalité, séries longues (INSEE)"},
+    {"id":"insee-population","type":"insee","jeu":"DS_POP_STRUCT_SERIES","libelle":"Population et structure, séries longues (INSEE)"},
+    {"id":"insee-naissances-an","type":"insee","jeu":"DS_NAISSANCES_FECONDITE_SERIES","filtres":{"GEO":["2025-FRANCE-F","2025-FRANCE-FM"],"FREQ":"A","EC_MEASURE":"LVB_PLACE_REG"},"libelle":"Naissances par an (INSEE)","unite":"naissances"},
+    {"id":"insee-deces-an","type":"insee","jeu":"DS_DECES_MORTALITE_SERIES","filtres":{"GEO":["2025-FRANCE-F","2025-FRANCE-FM"],"FREQ":"A","EC_MEASURE":"DTH_PLACE_REG","SEX":"_T","AGE":"_T"},"libelle":"Décès par an (INSEE)","unite":"décès"},
+    {"id":"insee-solde-naturel","type":"insee","jeu":"DS_POP_STRUCT_SERIES","filtres":{"GEO":["2025-FRANCE-F","2025-FRANCE-FM"],"EP_MEASURE":"EVO_NAT_POP","SEX":"_T","AGE":"_T"},"libelle":"Solde naturel : naissances moins décès (INSEE)","unite":"personnes"},
+    {"id":"insee-pop-ages","type":"insee","jeu":"DS_POP_STRUCT_SERIES","filtres":{"GEO":"2025-FRANCE-FM","EP_MEASURE":"POP_JAN_1ST","SEX":"_T","AGE":["_T","Y_LT20","Y_GE60","Y_GE75"]},"libelle":"Population au 1er janvier par âge, métropole (INSEE)","unite":"habitants"},
+    {"id":"insee","type":"insee-catalogue","libelle":"Catalogue des jeux de données INSEE (Melodi), pour choisir les suivants"},
+    {"id":"datagouv-lecture","type":"datagouv-recherche","q":"lecture","libelle":"data.gouv.fr : lecture et pratiques culturelles"},
+    {"id":"datagouv-sport","type":"datagouv-recherche","q":"licences sportives","libelle":"data.gouv.fr : licences sportives"}
+  ]
+}

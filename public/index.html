@@ -3660,9 +3660,9 @@ function chartSVG(g){
   return o+'</svg>';
 }
 function chartCard(g){
-  const leg=g.s.length>1?el('div',{class:'chart-leg'},...g.s.map((x,k)=>el('span',{class:'s'+k,text:x.nom+(x.axe==='d'?' (axe de droite)':' (axe de gauche)')}))):null;
+  const leg=g.s.length>1?el('div',{class:'chart-leg'},...g.s.map((x,k)=>el('span',{class:'s'+k,text:x.nom+(g.s.some(y=>y.axe==='d')?(x.axe==='d'?' (axe de droite)':' (axe de gauche)'):'')}))):null;
   const c=el('figure',{class:'chartcard'},el('figcaption',{},el('strong',{text:g.titre}),g.unite?el('span',{class:'note',text:g.unite}):null),leg,el('div',{html:chartSVG(g)}));
-  c.append(el('span',{class:'note',text:(g.legende?g.legende+' ':'')+'Données fictives, pour l’exercice.'}));
+  c.append(el('span',{class:'note',text:(g.legende?g.legende+' ':'')+(g.reel?'Source : '+g.src+'.':'Données fictives, pour l’exercice.')}));
   return c;
 }
 /* ---------- sophismes : des leurres qui ne soient pas aussi de bonnes réponses ---------- */

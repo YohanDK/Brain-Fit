@@ -1,0 +1,148 @@
+{
+ "id": "datagouv-sport",
+ "libelle": "data.gouv.fr : licences sportives",
+ "recupere": "2026-11-02",
+ "source": "data.gouv.fr, recherche « licences sportives »",
+ "url": "https://www.data.gouv.fr/api/1/datasets/?q=licences+sportives&page_size=8",
+ "points": {},
+ "jeux": [
+  {
+   "titre": "Communes et licences sportives par federation CD76 2018",
+   "producteur": "Département de la Seine-Maritime",
+   "page": "https://www.data.gouv.fr/datasets/communes-et-licences-sportives-par-federation-cd76-2018",
+   "maj": "2021-10-27",
+   "fichiers": [
+    {
+     "titre": "ArcGIS Hub Dataset",
+     "format": "web page",
+     "url": "https://www.opendata76.fr/maps/seine-maritime::communes-et-licences-sportives-par-federation-cd76-2018"
+    },
+    {
+     "titre": "ArcGIS GeoService",
+     "format": "arcgis geoservices rest api",
+     "url": "https://services-eu1.arcgis.com/Nt9PzCzX9tz2k5Lq/arcgis/rest/services/Federations_et_licences_sportives_par_commune_CD76_2018_V4/FeatureServer/0"
+    },
+    {
+     "titre": "GeoJSON",
+     "format": "geojson",
+     "url": "https://www.opendata76.fr/datasets/seine-maritime::communes-et-licences-sportives-par-federation-cd76-2018.geojson?outSR=%7B%22latestWkid%22%3A3857%2C%22wkid%22%3A102100%7D"
+    },
+    {
+     "titre": "CSV",
+     "format": "csv",
+     "url": "https://www.opendata76.fr/datasets/seine-maritime::communes-et-licences-sportives-par-federation-cd76-2018.csv?outSR=%7B%22latestWkid%22%3A3857%2C%22wkid%22%3A102100%7D"
+    }
+   ]
+  },
+  {
+   "titre": "Federations et licences sportives par commune CD76 2018",
+   "producteur": "Département de la Seine-Maritime",
+   "page": "https://www.data.gouv.fr/datasets/federations-et-licences-sportives-par-commune-cd76-2018-1",
+   "maj": "2021-10-27",
+   "fichiers": [
+    {
+     "titre": "ArcGIS Hub Dataset",
+     "format": "web page",
+     "url": "https://www.opendata76.fr/maps/seine-maritime::federations-et-licences-sportives-par-commune-cd76-2018"
+    },
+    {
+     "titre": "ArcGIS GeoService",
+     "format": "arcgis geoservices rest api",
+     "url": "https://services-eu1.arcgis.com/Nt9PzCzX9tz2k5Lq/arcgis/rest/services/F%C3%A9d%C3%A9rations_et_licences_sportives_par_commune_CD76_2018_V2/FeatureServer/0"
+    },
+    {
+     "titre": "GeoJSON",
+     "format": "geojson",
+     "url": "https://www.opendata76.fr/datasets/seine-maritime::federations-et-licences-sportives-par-commune-cd76-2018.geojson?outSR=%7B%22latestWkid%22%3A3857%2C%22wkid%22%3A102100%7D"
+    },
+    {
+     "titre": "CSV",
+     "format": "csv",
+     "url": "https://www.opendata76.fr/datasets/seine-maritime::federations-et-licences-sportives-par-commune-cd76-2018.csv?outSR=%7B%22latestWkid%22%3A3857%2C%22wkid%22%3A102100%7D"
+    }
+   ]
+  },
+  {
+   "titre": "Federations et Licences sportives par commune CD76 2018",
+   "producteur": "Département de la Seine-Maritime",
+   "page": "https://www.data.gouv.fr/datasets/federations-et-licences-sportives-par-commune-cd76-2018",
+   "maj": "2021-10-27",
+   "fichiers": [
+    {
+     "titre": "ArcGIS Hub Dataset",
+     "format": "web page",
+     "url": "https://www.opendata76.fr/maps/seine-maritime::federations-et-licences-sportives-par-commune-cd76-2018-1"
+    }
+   ]
+  },
+  {
+   "titre": "Relations géographiques distantes des licences 2013 des fédérations sportives à leur club",
+   "producteur": "Ministère chargé des Sports",
+   "page": "https://www.data.gouv.fr/datasets/relations-geographiques-distantes-des-licences-2013-des-federations-sportives-a-leur-club",
+   "maj": "2016-09-11",
+   "fichiers": [
+    {
+     "titre": "Relations géographiques distantes des licences 2013 des fédérations sportives à leur club",
+     "format": "docx",
+     "url": "https://static.data.gouv.fr/resources/relations-geographiques-distantes-des-licences-2013-des-federations-sportives-a-leur-club/20160911-195729/LicencesClubs2013_Description.docx"
+    },
+    {
+     "titre": "Fédération Française d'Etudes et de sports sous marins",
+     "format": "txt",
+     "url": "https://static.data.gouv.fr/resources/relations-geographiques-distantes-des-licences-2013-des-federations-sportives-a-leur-club/20160911-171700/LicencesClubs2013_MVT221.txt"
+    },
+    {
+     "titre": "Fédération Française de golf",
+     "format": "txt",
+     "url": "https://static.data.gouv.fr/resources/relations-geographiques-distantes-des-licences-2013-des-federations-sportives-a-leur-club/20160911-171622/LicencesClubs2013_MVT132.txt"
+    },
+    {
+     "titre": "Fédération Française de voile",
+     "format": "txt",
+     "url": "https://static.data.gouv.fr/resources/relations-geographiques-distantes-des-licences-2013-des-federations-sportives-a-leur-club/20160911-171545/LicencesClubs2013_MVT128.txt"
+    }
+   ]
+  },
+  {
+   "titre": " Licences sportives par fédération et par commune de la Seine-Maritime en 2018",
+   "producteur": "Département de la Seine-Maritime",
+   "page": "https://www.data.gouv.fr/datasets/licences-sportives-par-federation-et-par-commune-de-la-seine-maritime-en-2018",
+   "maj": "2022-03-21",
+   "fichiers": [
+    {
+     "titre": "ArcGIS Hub Dataset",
+     "format": "web page",
+     "url": "https://www.opendata76.fr/apps/seine-maritime::-licences-sportives-par-fédération-et-par-commune-de-la-seine-maritime-en-2018"
+    }
+   ]
+  },
+  {
+   "titre": "Données géocodées issues du recensement des licences et clubs auprès des fédérations sportives agréées par le ministère chargé des sports",
+   "producteur": "Institut national de la jeunesse et de l’éducation populaire",
+   "page": "https://www.data.gouv.fr/datasets/donnees-geocodees-issues-du-recensement-des-licences-et-clubs-aupres-des-federations-sportives-agreees-par-le-ministere-charge-des-sports",
+   "maj": "2025-12-29",
+   "fichiers": [
+    {
+     "titre": "lic-data-2023.csv",
+     "format": "csv",
+     "url": "https://static.data.gouv.fr/resources/donnees-geocodees-issues-du-recensement-des-licences-et-clubs-aupres-des-federations-sportives-agreees-par-le-ministere-charge-des-sports/20251229-163107/lic-data-2023.csv"
+    },
+    {
+     "titre": "clubs-data-2023.csv",
+     "format": "csv",
+     "url": "https://static.data.gouv.fr/resources/donnees-geocodees-issues-du-recensement-des-licences-et-clubs-aupres-des-federations-sportives-agreees-par-le-ministere-charge-des-sports/20251229-163249/clubs-data-2023.csv"
+    },
+    {
+     "titre": "lic-data-2022.csv",
+     "format": "csv",
+     "url": "https://static.data.gouv.fr/resources/donnees-geocodees-issues-du-recensement-des-licences-et-clubs-aupres-des-federations-sportives-agreees-par-le-ministere-charge-des-sports/20241230-162428/lic-data-2022.csv"
+    },
+    {
+     "titre": "clubs-data-2022.csv",
+     "format": "csv",
+     "url": "https://static.data.gouv.fr/resources/donnees-geocodees-issues-du-recensement-des-licences-et-clubs-aupres-des-federations-sportives-agreees-par-le-ministere-charge-des-sports/20241230-161350/clubs-data-2022.csv"
+    }
+   ]
+  }
+ ]
+}

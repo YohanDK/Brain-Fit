@@ -1,0 +1,9 @@
+{
+ "id": "insee",
+ "libelle": "Catalogue des jeux de données INSEE (Melodi), pour choisir les suivants",
+ "recupere": "2026-11-02",
+ "source": "INSEE, catalogue Melodi",
+ "url": "https://api.insee.fr/melodi/catalog/all",
+ "points": {},
+ "nb": 163
+}

@@ -8,5 +8,7 @@ window.BF_CONFIG={
   // bouton « Signaler un problème » (capture d'écran + commentaire) pendant la phase de test ; false pour le cacher
   retours:true,
   // réglage « Rappels » (notifications sur le téléphone) : true une fois rappels.sql lancé ; false pour le cacher et désabonner les appareils à leur prochaine visite
-  rappels:true
+  rappels:true,
+  // vidéo de présentation sur l'écran d'accueil des visiteurs (adresse d'une vidéo .mp4 ou d'une page à intégrer) ; vide = emplacement caché
+  video:''
 };

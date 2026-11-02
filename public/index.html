@@ -265,6 +265,13 @@ select,input[type="text"]{font:inherit;color:var(--fg);background:var(--bg);bord
 .coach-when span{color:var(--fg2)}
 #coach-off,#coach-on{display:flex;flex-direction:column;gap:12px}
 #coach-off[hidden],#coach-on[hidden]{display:none}
+.cc-opt{display:flex;flex-direction:column;gap:6px}
+.tutor-box>.cc-opt,.tutor-box>#cc-opts,.tutor-box>.row{margin-top:16px}
+#cc-opts .cc-opt+.cc-opt{margin-top:0}
+#cc-opts{display:flex;flex-direction:column;gap:14px}
+.cc-seg{justify-content:flex-start}
+.cc-chk{display:flex;gap:8px;align-items:center;color:var(--fg2)}
+.cc-chk input{width:18px;height:18px;accent-color:var(--accent)}
 .tutor-box{border-top:1px solid var(--line);padding-top:10px;display:flex;flex-direction:column;gap:10px}
 .tutor-box[open]>summary{margin-bottom:8px}
 .tutor-box summary b{color:var(--accent)}
@@ -1227,10 +1234,16 @@ var fin=function(){if(e.parentNode)e.remove();};e.addEventListener('click',fin);
         </ol>
         <p class="note" id="coach-off-why"></p>
       </div>
-      <details class="tutor-box" id="tutor-panel"><summary><span>Son esprit : <b id="tutor-cur"></b></span></summary>
-        <p class="fg2 note">Ce choix règle le mode tuteur du sas, la relecture du dimanche et la manière dont ton coach te répond.</p>
-        <div class="seg tutorseg" role="group" aria-label="Esprit du tuteur" id="tutor-seg"></div>
-        <p class="fg2" id="tutor-desc" style="max-width:62ch"></p>
+      <details class="tutor-box" id="tutor-panel"><summary><span>Personnaliser mon coach · <b id="cc-sum"></b></span></summary>
+        <div class="cc-opt"><span class="label">Son esprit</span>
+          <div class="seg tutorseg" role="group" aria-label="Esprit du tuteur" id="tutor-seg"></div>
+          <p class="fg2 note" id="tutor-desc" style="max-width:62ch"></p>
+          <p class="note">Règle aussi le mode tuteur du sas et la relecture du dimanche.</p></div>
+        <div id="cc-opts"></div>
+        <div class="cc-opt"><span class="label">Il intervient de lui-même</span>
+          <label class="cc-chk"><input type="checkbox" id="cc-sas"> Une question sur ma réponse, dans le sas</label>
+          <label class="cc-chk"><input type="checkbox" id="cc-dim"> Ma semaine préparée le dimanche soir</label></div>
+        <div class="row"><button class="btn ghost" id="cc-reset" type="button">Revenir aux réglages par défaut</button><span class="note" id="cc-info"></span></div>
       </details>
     </div>
   </section>
@@ -2120,7 +2133,30 @@ const TUTORS={
 };
 const tutorKey=()=>TUTORS[state.settings.tutor]?state.settings.tutor:'mix';
 const COACH_BASE="Tu es le coach cognitif personnel de l'utilisateur, dans l'application Néophyte. Son but : garder et développer ses capacités de réflexion malgré l'usage quotidien de l'IA. Ses priorités : l'écriture (orthographe comprise) et le raisonnement, avec un exercice chaque jour, un programme hebdomadaire exigeant (2 lectures intensives, 1 séance d'écriture longue), un régime pauvre en contenus courts et 3 discussions intéressantes par jour. Tu t'appuies sur ces principes : réfléchir avant de demander à l'IA, se faire challenger par l'IA plutôt que la laisser produire, apprentissage actif et espacé, expliquer à voix haute, hypothèses concurrentes, métacognition, lecture latérale. Tu es nourri de la tradition chrétienne d'éducation et de la culture classique : l'étude est une recherche de la vérité, qui demande ordre, humilité et persévérance, et l'intelligence est faite pour le vrai et le bien, non pour briller. Quand c'est juste et naturel, tu peux t'appuyer sur saint Augustin, saint Thomas d'Aquin, saint Ignace de Loyola, Pascal ou les grands auteurs, sans sermonner ni plaquer de citations, et en ne citant que ce dont tu es sûr, avec sa source. Ton style : chaleureux mais exigeant, direct, concret, en français, en tutoyant. Règles absolues : tu ne fais jamais le travail à sa place, tu ne réécris jamais ses textes et tu ne donnes pas de solution toute faite quand il peut la trouver ; tu pointes, tu questionnes, tu proposes un prochain pas. Réponds en texte simple, sans markdown (pas de **, pas de #), avec des tirets pour les listes. Sois concis.";
-const coachRules=()=>COACH_BASE+' '+TUTORS[tutorKey()].coach;
+/* ---------- réglages du coach : des valeurs par défaut, que chacun peut changer (state.settings.cc) ---------- */
+const CC_OPTS={
+  ton:{label:'Son ton',def:'direct',v:{
+    doux:['Encourageant',"Ton ton est chaleureux et encourageant : commence par ce qui va bien, formule les critiques comme des pistes, sans complaisance sur le fond."],
+    direct:['Direct',"Ton ton est direct et bienveillant : tu dis les choses clairement, sans détour ni flatterie."],
+    exigeant:['Exigeant',"Ton ton est exigeant, celui d'un maître qui croit en son élève : tu ne laisses passer aucune approximation, tu relèves la barre à chaque fois, sans jamais être blessant."]}},
+  long:{label:'Ses réponses',def:'breve',v:{
+    breve:['Brèves',"Sois bref : au plus les deux tiers de la longueur demandée, l'essentiel seulement."],
+    normale:['Normales',''],
+    detail:['Détaillées',"Tu peux développer jusqu'à une fois et demie la longueur demandée, avec des exemples tirés de ses résultats."]}},
+  prio:{label:'Sa priorité',def:'ecrire',v:{
+    ecrire:['Écrire et raisonner',''],
+    ecriture:['Écriture',"Priorité choisie par l'utilisateur : l'écriture (style, structure, orthographe). Ramène tes conseils d'abord à elle."],
+    raison:['Raisonnement',"Priorité choisie par l'utilisateur : le raisonnement (logique, calcul, problèmes). Ramène tes conseils d'abord à lui."],
+    critique:['Esprit critique',"Priorité choisie par l'utilisateur : l'esprit critique face à l'IA et aux informations (vérifier, sourcer, repérer les sophismes). Ramène tes conseils d'abord à lui."],
+    reel:['Retour au réel',"Priorité choisie par l'utilisateur : le retour au réel (lecture longue, papier, hors écran, conversations). Ramène tes conseils d'abord à lui."]}},
+  voix:{label:'Il te parle',def:'tu',v:{
+    tu:['En te tutoyant',"Tu le tutoies."],
+    vous:['En te vouvoyant',"Tu le vouvoies, toujours."]}}
+};
+const CC_DEF={ton:'direct',long:'breve',prio:'ecrire',voix:'tu',sas:true,dim:true};
+const ccGet=k=>{const c=state.settings.cc||{};if(k==='sas'||k==='dim')return c[k]!=null?!!c[k]:CC_DEF[k];return CC_OPTS[k].v[c[k]]?c[k]:CC_DEF[k];};
+const ccCustom=()=>state.settings.cc&&(Object.keys(CC_DEF).some(k=>ccGet(k)!==CC_DEF[k]));
+const coachRules=()=>[COACH_BASE,TUTORS[tutorKey()].coach,...['ton','long','prio','voix'].map(k=>CC_OPTS[k].v[ccGet(k)][1])].filter(Boolean).join(' ');
 /* ---------- citations à retenir ----------
    c : philo, politique, histoire, nation, classique, ecriture, fausse. a : auteur réel. f : fausse attribution courante.
    k : mot à retrouver dans l'exercice « mot manquant ». n : le contexte « À retenir ». */
@@ -3725,7 +3761,7 @@ function weekBilanNotice(){
   toast('<span>Ton bilan de la semaine est prêt<small>À lire dans l’onglet Bilan.</small></span>');
 }
 function weeklyBilan(){
-  if(!(window.BF_CONFIG||{}).coach)return;
+  if(!(window.BF_CONFIG||{}).coach||!ccGet('dim'))return;
   sampler().then(s=>s&&s.limits()).then(l=>{if(l)weeklyBilanGo();}).catch(()=>{});
 }
 function weeklyBilanGo(){
@@ -3734,7 +3770,7 @@ function weeklyBilanGo(){
   if(state.coach&&state.coach.t>=sun.getTime())return;
   if($('#coach-review').disabled)return;
   $('#coach-review').click();
-  toast('<span>Ton coach prépare le bilan de la semaine : à lire dans l’onglet Coach.</span>');
+  toast('<span>Ton coach prépare ta semaine : à lire dans l’onglet Coach.</span>');
 }
 function renderCoach(){
   const c=state.coach;
@@ -3859,7 +3895,7 @@ function sasUpdate(){
   $('#sas-2').className='sas-step '+(!q?'off':ready?'ok':'on');
   $('#sas-3').className='sas-step '+(ready?'on':'off');
   // une étape à la fois : la suivante n'apparaît que lorsque la précédente est faite
-  $('#sas-2').hidden=!q; $('#sas-3').hidden=!ready; $('#sas-coach').hidden=!(ready&&coachOn);
+  $('#sas-2').hidden=!q; $('#sas-3').hidden=!ready; $('#sas-coach').hidden=!(ready&&coachOn&&ccGet('sas'));
   $$('#sas-rate button').forEach(b=>b.setAttribute('aria-pressed',String(+b.dataset.r===sasRate)));
   $('#sas-save').disabled=!(ready&&sasRate);
 }
@@ -3875,8 +3911,23 @@ function renderTutor(){
   [...seg.children].forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.t===k)));
   $('#tutor-desc').textContent=TUTORS[k].desc.replace(/ ([:;!?»])/g,'\u00a0$1');
   $('#sas-tutor').title='Copie ta question avec la consigne du tuteur, à la manière de '+TUTORS[k].name;
-  $('#tutor-cur').textContent=TUTORS[k].label;
+  renderCC();
 }
+function renderCC(){
+  const box=$('#cc-opts');
+  if(!box.children.length)for(const[k,o] of Object.entries(CC_OPTS)){
+    const sg=el('div',{class:'seg cc-seg',role:'group','aria-label':o.label,'data-k':k});
+    for(const[v,[lab]] of Object.entries(o.v))sg.append(el('button',{'data-v':v,text:lab,onclick:()=>{state.settings.cc=Object.assign({},state.settings.cc,{[k]:v});save();renderCC();}}));
+    box.append(el('div',{class:'cc-opt'},el('span',{class:'label',text:o.label}),sg));}
+  $$('#cc-opts .cc-seg').forEach(sg=>[...sg.children].forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.v===ccGet(sg.dataset.k)))));
+  $('#cc-sas').checked=ccGet('sas'); $('#cc-dim').checked=ccGet('dim');
+  const custom=ccCustom()||tutorKey()!=='mix';
+  $('#cc-sum').textContent=custom?[TUTORS[tutorKey()].label,...['ton','long','prio'].map(k=>CC_OPTS[k].v[ccGet(k)][0]),ccGet('voix')==='vous'?'vouvoiement':''].filter(Boolean).join(', ').toLowerCase().replace(/^./,c=>c.toUpperCase()):'réglages par défaut';
+  $('#cc-reset').hidden=!custom;
+  if(typeof sasUpdate==='function')sasUpdate();
+}
+['sas','dim'].forEach(k=>$('#cc-'+k).addEventListener('change',e=>{state.settings.cc=Object.assign({},state.settings.cc,{[k]:e.target.checked});save();renderCC();}));
+$('#cc-reset').addEventListener('click',()=>{delete state.settings.cc;delete state.settings.tutor;save();renderTutor();$('#cc-info').textContent='Réglages par défaut rétablis.';setTimeout(()=>$('#cc-info').textContent='',3000);});
 renderTutor();
 ['#sas-q','#sas-mine','#sas-learn'].forEach(s=>$(s).addEventListener('input',()=>{sasUpdate();sasDraft();}));
 $('#sas-mine').addEventListener('paste',e=>{e.preventDefault();$('#sas-copy-info').textContent='Le collage est désactivé ici : écris ta propre réflexion.';});

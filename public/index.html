@@ -792,6 +792,16 @@ details.fold>summary::-webkit-details-marker{display:none}
 details.fold>summary::before{content:"›";display:inline-block;transition:transform .2s;color:var(--muted)}
 details.fold[open]>summary::before{transform:rotate(90deg)}
 details.fold[open]{display:flex;flex-direction:column;gap:10px}
+.stag.big{width:96px;height:96px;cursor:default}
+.attrs{list-style:none;margin:6px 0 0;padding:0;display:flex;flex-direction:column;gap:8px}
+.attrs li{display:flex;align-items:center;gap:12px;padding:8px 10px;border:1px solid var(--line);border-radius:10px}
+.attrs li>div{flex:1;min-width:0;display:flex;flex-direction:column}
+.attrs li .stag.mini{width:40px;height:32px;cursor:default}
+.attrs li.locked .stag.mini{filter:grayscale(1);opacity:.35}
+.mini-bar{display:block;height:4px;border-radius:2px;background:var(--line);margin-top:4px;overflow:hidden}
+.mini-bar i{display:block;height:100%;background:var(--gold)}
+.pelages button{display:inline-flex;align-items:center;gap:6px}
+.pelages .sw{width:12px;height:12px;border-radius:50%;background:var(--sw);border:1px solid var(--line);display:inline-block}
 .stag{width:78px;height:78px;padding:0;border:0;background:none;cursor:pointer;flex:none;-webkit-tap-highlight-color:transparent}
 .stag svg{width:100%;height:100%;display:block;overflow:visible}
 .stag:focus-visible{outline:2px solid var(--gold);outline-offset:2px;border-radius:50%}
@@ -1280,6 +1290,13 @@ var fin=function(){if(e.parentNode)e.remove();};e.addEventListener('click',fin);
 
   <!-- RÉGLAGES -->
   <section class="view" id="v-reglages" hidden>
+    <div class="panel moncerf" id="moncerf">
+      <div class="row" style="flex-wrap:nowrap;align-items:center;gap:16px"><span class="stag big" id="mc-stag" aria-hidden="true"></span>
+        <div style="min-width:0"><h2>Mon cerf</h2><p class="muted note">Il grandit avec ton niveau. Ses attributs se gagnent par l'effort réel : écrire, lire, poser l'écran.</p></div></div>
+      <form class="row" id="mc-name-f"><label class="note" for="mc-name">Son nom</label><input type="text" id="mc-name" maxlength="20" autocomplete="off" placeholder="Un nom pour ton cerf"><button class="btn mini">Valider</button></form>
+      <div class="row"><span class="note">Pelage</span><div class="seg pelages" id="mc-pel" role="group" aria-label="Pelage"></div></div>
+      <div><span class="label">Attributs</span><ul class="attrs" id="mc-attrs"></ul></div>
+    </div>
     <div class="panel">
       <div><h2>Réglages</h2><p class="muted" id="account-line">Progrès enregistrés dans ce navigateur.</p></div>
       <div class="row"><button class="btn" id="login-open" hidden>Se connecter</button><button class="btn ghost" id="logout" hidden>Se déconnecter</button></div>
@@ -2517,7 +2534,8 @@ async function pdfKit(){
 const PDF_LAPIS=[58,93,191], PDF_GOLD=[176,138,48], PDF_MOTTO="Garder l'esprit vif à l'heure de l'IA";
 const STAG_PRINT={'--stag':'#B07D4E','--stag-deep':'#94653C','--stag-dark':'#4A3018','--stag-light':'#F3E6D2','--antler':'#7E6040','--gold':'#B08A30','--muted':'#736D63','--f-body':'Georgia, serif'};
 async function stagPng(){
-  let svg=stagSVG(gamiCtx.level||1,'idle').replace(/var\((--[a-z-]+)\)/g,(m,k)=>STAG_PRINT[k]||'#4A3018');
+  const PEL=(PELAGES[cerf().pel]||[])[1]||{};
+  let svg=stagSVG(gamiCtx.level||1,'idle').replace(/var\((--[a-z-]+)\)/g,(m,k)=>PEL[k]||STAG_PRINT[k]||'#4A3018');
   if(!/xmlns=/.test(svg))svg=svg.replace('<svg','<svg xmlns="http://www.w3.org/2000/svg"');
   const im=new Image(); im.src='data:image/svg+xml;charset=utf-8,'+encodeURIComponent(svg); await im.decode();
   // fond blanc et JPEG : quelques dizaines de Ko au lieu de plusieurs centaines
@@ -3069,6 +3087,57 @@ const SAISON_SVG={
   toussaint:`<g class="acc"><rect x="83" y="80" width="6" height="18" rx="1" fill="#F4EEDD" stroke="var(--line)" stroke-width=".6"/><path class="flamme" d="M86 70c2.4 3 2.6 6 0 8.5c-2.6-2.5-2.4-5.5 0-8.5z" fill="var(--gold)"/></g>`,
   automne:`<g class="acc leaf" transform="translate(5 5)"><path d="M20 14c3-4 8-4 10 0c-1 1-1 2 0 3c-3 1-4 3-5 5c-2-2-4-2-6-1c1-2 1-4-1-5c1 0 2-1 2-2z" fill="#C0702E"/><path d="M21 19l7-4" stroke="#8A4A1C" stroke-width=".7"/></g>`
 };
+/* ---------- mon cerf : un nom, un pelage, des attributs gagnés ---------- */
+const PELAGES={
+  fauve:['Fauve',null],
+  roux:['Roux',{'--stag':'#B8643A','--stag-deep':'#94482A','--stag-light':'#F6E2CF'}],
+  brun:['Brun',{'--stag':'#7E5634','--stag-deep':'#5E3E24','--stag-light':'#E9D6BE'}],
+  cendre:['Cendré',{'--stag':'#9A8E80','--stag-deep':'#776B5E','--stag-light':'#EFEAE2'}],
+  blanc:['Blanc',{'--stag':'#EDE6DA','--stag-deep':'#D2C7B6','--stag-light':'#FFFFFF','--antler':'#B49A6E'},'Atteindre le niveau V : le cerf blanc des légendes',c=>c.level>=5]
+};
+const ATTRS=[
+  // id, nom, condition, progression [fait, but], dessin
+  ['plume','La plume','5 textes écrits sans IA',()=>[state.results.filter(r=>r.ex==='write').length,5],
+    `<g class="acc"><path d="M66 50Q76 37 89 25Q85 41 69 51Z" fill="#F6F0E2" stroke="#8A7A5A" stroke-width=".7"/><path d="M66.5 51L87 27.5" stroke="#8A7A5A" stroke-width=".7"/></g>`],
+  ['lunettes','Les lunettes','5 lectures (chronométrées ou profondes)',()=>[state.results.filter(r=>r.ex==='lecture').length+Object.values(state.days).filter(d=>d.done&&d.done.read).length,5],
+    `<g class="acc" fill="none" stroke="#3A2A1A" stroke-width="1.2"><circle cx="43.5" cy="52" r="4.8"/><circle cx="56.5" cy="52" r="4.8"/><path d="M48.3 51.4q1.7-1.5 3.4 0M38.7 51l-3.2-1.6M61.3 51l3.2-1.6"/></g>`],
+  ['lanterne','La lanterne','5 séances hors écran',()=>[offlineCount(),5],
+    `<g class="acc lant"><path d="M85 74v-3" stroke="#3A2A1A" stroke-width="1"/><path d="M79.5 78h11l-2-3.5h-7z" fill="#3A2A1A"/><rect x="80.5" y="78" width="9" height="13" rx="1.6" fill="#F6D98A" stroke="#3A2A1A" stroke-width="1"/><path class="flamme" d="M85 80.5c1.5 2 1.7 3.7 0 5.2c-1.7-1.5-1.5-3.2 0-5.2z" fill="#E08A2A"/><rect x="79.8" y="91" width="10.4" height="2.4" fill="#3A2A1A"/></g>`],
+  ['livre','Le livre','10 citations dans ton florilège',()=>[Object.keys(state.flori||{}).length,10],
+    `<g class="acc" stroke="#5A4630" stroke-width=".8"><path d="M8 88q6-3.4 11 0v9q-5-3.4-11 0z" fill="#F6F0E2"/><path d="M19 88q5-3.4 11 0v9q-6-3.4-11 0z" fill="#EFE6D2"/><path d="M10 90.5q4-1.6 7.5 0M10 93q4-1.6 7.5 0M21 90.5q4-1.6 7.5 0M21 93q4-1.6 7.5 0" fill="none" stroke-width=".5"/></g>`],
+  ['laurier','La couronne de laurier','Série de 30 jours',()=>[gamiCtx.best||0,30],null]
+];
+const laurelSVG=()=>{let o='<g class="acc" fill="#5B7A3A">';for(const sd of[-1,1])for(let i=0;i<5;i++){const x=(50+sd*(3.6+i*2.9)).toFixed(1), y=(35+i*i*.42).toFixed(1);o+=`<ellipse cx="${x}" cy="${y}" rx="3.3" ry="1.5" transform="rotate(${sd*(8+i*13)} ${x} ${y})"/>`;}return o+'<circle cx="50" cy="34.6" r="1.2" fill="#8C6A2C"/></g>';};
+const cerf=()=>{const c=state.cerf||(state.cerf={nom:'',pel:'fauve',port:[]});c.port=c.port||[];return c;};
+const attrOk=a=>{const[n,g]=a[3]();return n>=g;};
+function cerfStyle(){const p=PELAGES[cerf().pel]; if(!p||!p[1])return''; if(p[3]&&!p[3](gamiCtx))return''; return Object.entries(p[1]).map(([k,v])=>k+':'+v).join(';');}
+function cerfAcc(){
+  const c=cerf(); let o='';
+  for(const a of ATTRS){if(!c.port.includes(a[0])||!attrOk(a))continue; if(a[0]==='lanterne'&&saison()==='toussaint')continue; o+=a[0]==='laurier'?laurelSVG():a[4];}
+  return o;
+}
+// un attribut tout juste mérité : le cerf le porte aussitôt et le dit
+function checkAttrs(){
+  const c=cerf(); c.won=c.won||[]; let nu=null;
+  for(const a of ATTRS)if(!c.won.includes(a[0])&&attrOk(a)){c.won.push(a[0]);if(!c.port.includes(a[0]))c.port.push(a[0]);nu=a;}
+  if(nu)persist();
+  if(nu&&state.results.length>1){toast(`<span>Ton cerf a gagné ${nu[1].toLowerCase()}</span><span class="note">Réglages · Mon cerf</span>`);stagKey='';}
+  return nu;
+}
+function renderCerf(){
+  const c=cerf();
+  $('#mc-stag').innerHTML=stagSVG(gamiCtx.level||1,'proud');
+  if(document.activeElement!==$('#mc-name'))$('#mc-name').value=c.nom||'';
+  $('#mc-pel').replaceChildren(...Object.entries(PELAGES).map(([k,p])=>{const ok=!p[3]||p[3](gamiCtx);
+    return el('button',{'aria-pressed':String(c.pel===k),disabled:ok?null:'',title:ok?p[0]:p[2],style:'--sw:'+((p[1]||{})['--stag']||'#B07D4E'),onclick:()=>{c.pel=k;save();stagKey='';renderStag();renderCerf();}},el('i',{class:'sw'}),document.createTextNode(p[0]+(ok?'':' · niveau V')));}));
+  $('#mc-attrs').replaceChildren(...ATTRS.map(a=>{const[n,g]=a[3](), ok=n>=g, on=ok&&c.port.includes(a[0]);
+    return el('li',{class:ok?'':'locked'},el('span',{class:'stag mini','aria-hidden':'true',html:attrIcon(a)}),
+      el('div',{},el('b',{text:a[1]}),el('span',{class:'note',text:ok?a[2]:`${a[2]} · ${Math.min(n,g)} sur ${g}`}),ok?null:el('span',{class:'mini-bar'},el('i',{style:`width:${Math.min(100,n/g*100)}%`}))),
+      ok?el('button',{class:'btn mini'+(on?' gold':''),'aria-pressed':String(on),text:on?'Porté':'Porter',onclick:()=>{c.port=on?c.port.filter(x=>x!==a[0]):[...c.port,a[0]];save();stagKey='';renderStag();renderCerf();}}):el('span',{class:'note',text:'À gagner'}));}));
+}
+const attrIcon=a=>`<svg viewBox="${a[0]==='plume'?'60 20 34 34':a[0]==='lunettes'?'32 40 36 24':a[0]==='lanterne'?'74 68 22 28':a[0]==='livre'?'4 80 30 20':'34 26 32 18'}">${a[0]==='laurier'?laurelSVG():a[4]}</svg>`;
+$('#mc-name-f').addEventListener('submit',e=>{e.preventDefault();cerf().nom=$('#mc-name').value.trim().slice(0,20);save();renderCerf();
+  const n=cerf().nom;$('#stag').setAttribute('aria-label',(n||'Ton cerf')+' : touche-le pour qu’il te parle');toast(`<span>${n?'Ton cerf s’appelle désormais '+n.replace(/[<&]/g,'')+'.':'Nom effacé.'}</span>`);});
 function stagSVG(L,mood){
   const f=n=>n.toFixed(1), s=Math.min(1,.5+.05*L), tines=Math.min(6,1+Math.floor(L/2));
   const bez=(p,t)=>{const u=1-t;return[0,1].map(i=>u*u*u*p[0][i]+3*u*u*t*p[1][i]+3*u*t*t*p[2][i]+t*t*t*p[3][i]);};
@@ -3089,7 +3158,8 @@ function stagSVG(L,mood){
   const brows=mood==='worried'?`<path d="M40 47.5l6 1.6M60 47.5l-6 1.6" stroke="var(--stag-dark)" stroke-width="1.4" stroke-linecap="round"/>`:'';
   const extra=mood==='sleepy'?`<g class="zz" fill="var(--muted)" font-family="var(--f-body)" font-style="italic"><text x="70" y="40" font-size="9">z</text><text x="77" y="31" font-size="7">z</text></g>`
     :mood==='proud'?`<g class="spark" fill="var(--gold)"><path d="M14 30l1.5 3.5 3.5 1.5-3.5 1.5-1.5 3.5-1.5-3.5-3.5-1.5 3.5-1.5z"/><path d="M86 22l1.2 2.8 2.8 1.2-2.8 1.2-1.2 2.8-1.2-2.8-2.8-1.2 2.8-1.2z"/></g>`:'';
-  return `<svg viewBox="0 0 100 100" aria-hidden="true">
+  const cs=cerfStyle();
+  return `<svg viewBox="0 0 100 100" aria-hidden="true"${cs?` style="${cs}"`:''}>
 <g class="antlers" fill="none" stroke="var(--antler)" stroke-width="3.4" stroke-linecap="round">${ant}</g>
 <path d="M39 72C36 84 28 92 16 100H84C72 92 64 84 61 72Z" fill="var(--stag-deep)"/>
 <path d="M44 80C44 88 46 94 50 100C54 94 56 88 56 80Z" fill="var(--stag-light)"/>
@@ -3099,7 +3169,7 @@ function stagSVG(L,mood){
 <path d="M50 38C53 38 54 42 53 46C52 50 51 52 50 52C49 52 48 50 47 46C46 42 47 38 50 38Z" fill="var(--stag-light)" opacity=".55"/>
 <ellipse cx="50" cy="75" rx="6.2" ry="7" fill="var(--stag-light)"/>
 <ellipse cx="50" cy="79" rx="4.4" ry="2.9" fill="var(--stag-dark)"/>
-${eye(43.5)}${eye(56.5)}${brows}${extra}${SAISON_SVG[saison()]||''}
+${eye(43.5)}${eye(56.5)}${brows}${extra}${SAISON_SVG[saison()]||''}${cerfAcc()}
 </svg>`;
 }
 let stagKey='', stagI=0, stagTimer=null;
@@ -3152,7 +3222,9 @@ function stagLines(){
   const t=todayKey(), d=state.days[t]||{}, goal=state.settings.xpGoal||60, xp=gamiCtx.xp[t]||0, cur=streaks().cur, L=gamiCtx.level;
   const due=floriDue().length, steps=(due||(d.done||{}).citations?[{ex:'citations'}]:[]).concat(routineFor(t,state.settings.minutes)), next=steps.find(s=>!(d.done||{})[s.ex]), tines=Math.min(6,1+Math.floor(L/2));
   const pool=Object.keys(state.flori||{}).map(id=>QBY[id]).filter(Boolean), q=pool.length?pick(pool):quoteOfDay(t,0), r=RULES[Math.floor(Date.now()/864e5)%RULES.length];
+  const nom=cerf().nom;
   return[
+    ...(nom&&stagI===0?[`C'est moi, ${nom}. Touche-moi encore, j'ai des choses à te dire.`]:[]),
     d.goalHit?`Objectif du jour atteint, ${xp} XP. Je suis fier de toi.`:`Encore ${goal-xp} XP pour l'objectif du jour.`+(next?` Prochaine étape : ${EX[next.ex].name}.`:''),
     cur>0?`${cur} jour${cur>1?'s':''} d'affilée. Un cerf ne recule pas.`:"Une seule étape aujourd'hui suffit pour relancer ta série.",
     due?`${due} citation${due>1?'s':''} à revoir dans ton florilège.`:`« ${q.q} » (${q.a})`,
@@ -3166,7 +3238,7 @@ function stagLines(){
 $('#stag').addEventListener('click',()=>{stagJump();const ls=stagLines();stagSay(ls[stagI++%ls.length]);});
 $('#stag-bubble').addEventListener('click',e=>{e.currentTarget.hidden=true;});
 function renderHud(){
-  renderStag();
+  checkAttrs(); renderStag();
   const t=todayKey(), goal=state.settings.xpGoal||60, today=gamiCtx.xp[t]||0, L=gamiCtx.level;
   $('#xp-today').textContent=today; $('#xp-goal').textContent='/ '+goal+' XP';
   $('#ring-fg').setAttribute('stroke-dasharray',Math.min(100,today/goal*100)+' 100');
@@ -3594,7 +3666,7 @@ function showTab(t){
   if(t==='conseils'||t==='reglages')$('#go-'+(t==='conseils'?'biblio':'settings')).setAttribute('aria-current','page');
   if(t==='progres'){renderProgress();renderCarnet();renderXpPanel();renderScreenChart();}
   if(t==='classement')renderCircle();
-  if(t==='reglages'){$('#city-in').value=city();renderRetours();}
+  if(t==='reglages'){$('#city-in').value=city();renderRetours();renderCerf();}
   if(t==='coach'){renderSas();renderCoach();renderWeekBilan();renderTutor();}
   if(location.hash!=='#'+t)try{history.replaceState(null,'','#'+t);}catch(e){}
 }

@@ -605,6 +605,7 @@ a{color:var(--accent);text-underline-offset:3px}
 .ranking li.me{background:var(--accent-soft);color:var(--accent-deep)}
 .ranking .rk{font-family:var(--f-display);font-weight:700}
 .ranking .xpw{font-weight:700;color:var(--gold-deep)}
+.ranking .defis{display:block;font-size:.82rem;color:var(--muted)}
 #erase-msg:empty{display:none}
 .reel-city input{font:inherit;font-size:1rem;padding:6px 10px;border:1px solid var(--line);border-radius:var(--r);background:var(--surface);color:var(--fg);max-width:220px}
 .cjl-text{font-size:1.12rem;line-height:1.45;max-width:60ch;text-wrap:pretty}
@@ -1325,6 +1326,7 @@ const EX={
   stroop:{name:'Stroop',skill:'Attention & inhibition',desc:"Donne la couleur de l'encre, pas le mot écrit. 30 secondes.",unit:'points'},
   fluency:{name:'Fluence verbale',skill:'Accès au langage',desc:"Un maximum de mots d'une lettre ou d'une catégorie en 60 secondes.",unit:'mots'},
   enigme:{name:'Énigme du jour',skill:'Défi commun',desc:"Cinq questions, les mêmes pour tout le monde aujourd'hui. Une seule tentative, puis partage ta grille.",unit:'% de bonnes réponses'},
+  rattrapage:{name:'Rattrapage',skill:'Mémoire des erreurs',desc:"Tes erreurs récentes en orthographe, sophismes et dates reviennent. Réussis-les pour les rayer de ton carnet.",unit:'erreurs rattrapées'},
   eclair:{name:'Éclair',skill:'Vivacité',desc:"90 secondes de questions mêlées : orthographe, dates, sophismes. Bats ton record.",unit:'bonnes réponses'},
   evenement:{name:'Événement de saison',skill:'Esprit critique & culture',desc:"Une semaine à thème : vrai, faux ou non prouvé.",unit:'% de bonnes réponses',hidden:true},
   bilan:{name:"Point d'étape",skill:'Parcours',desc:"Huit questions pour mesurer ton autonomie face à l'IA. Le premier sert de point de départ, puis un chaque mois.",unit:'sur 100',hidden:true},
@@ -1332,6 +1334,7 @@ const EX={
 };
 // d'où vient chaque exercice : affiché sous le titre du plateau et dans la Bibliothèque
 const ORIG={
+  rattrapage:"Revenir sur ses erreurs juste avant de les oublier est l'une des méthodes d'apprentissage les mieux établies : c'est l'effet de test (Roediger et Karpicke, 2006) combiné à la répétition espacée. Une erreur rattrapée sort du carnet ; une erreur ratée de nouveau y reste.",
   enigme:"Le principe vient de Wordle (Josh Wardle, 2021) : une seule grille par jour, la même pour tous, et un résultat qu'on partage en petits carrés de couleur sans rien dévoiler. Ici, les questions viennent des banques de Néophyte.",
   eclair:"Un sprint chronométré, comme les manches rapides des jeux de culture générale. Répondre vite oblige à reconnaître une règle ou un repère sans tout recalculer : c'est le signe qu'il est vraiment acquis.",
   write:"L'écriture libre (freewriting) vient de Peter Elbow, Writing Without Teachers (1973) : écrire sans s'arrêter ni se corriger, pour que la pensée se forme en écrivant. Le format « Expliquer » reprend la technique dite de Feynman : si tu ne sais pas l'expliquer simplement, tu ne l'as pas compris. La « Disputatio » reprend la forme des articles de la Somme théologique de saint Thomas d'Aquin (XIIIe siècle), héritée de la dispute pratiquée dans les universités médiévales : objections, argument en sens contraire, réponse, réponse à chaque objection. Et ce que l'on produit soi-même se retient mieux que ce que l'on lit : c'est l'effet de génération (Slamecka et Graf, 1978). L'« Homme d'acier » applique les règles d'Anatol Rapoport, popularisées par Daniel Dennett (Intuition Pumps, 2013) : reformuler la position adverse si bien que son défenseur vous en remercie, avant de la critiquer. Le « Résumer » se vérifie idée par idée : garder la thèse et ses appuis, c'est ce qui distingue un résumé d'un extrait.",
@@ -2170,14 +2173,28 @@ function weekXp(){const m=gamiCtx.xp||xpByDay(), wk=weekStart(todayKey());let n=
 async function circlePush(force){
   const c=state.settings.circle, id=ref&&await myUserId(); if(!c||!id||!state.settings.pseudo)return;
   const row={code:c,user_id:id,pseudo:state.settings.pseudo,week:weekStart(todayKey()),xp:weekXp(),streak:streaks().cur,updated_at:new Date().toISOString()};
-  const key=JSON.stringify([c,row.week,row.xp,row.streak,row.pseudo]); if(key===circleSent&&!force)return;
-  const {error}=await sbc().from('circle_members').upsert(row); if(!error)circleSent=key; return error;
+  // énigme du jour et meilleur Éclair de la semaine (colonnes ajoutées par defis.sql)
+  const k=todayKey(), en=state.enigme&&state.enigme.d===k?state.enigme.m.filter(Boolean).length:null, wk=row.week;
+  const ecl=Math.max(0,...state.results.filter(r=>r.ex==='eclair'&&r.d>=wk).map(r=>r.s));
+  const extra={enig_day:en==null?null:k,enig:en,eclair_week:wk,eclair:ecl};
+  const key=JSON.stringify([c,row.week,row.xp,row.streak,row.pseudo,extra]); if(key===circleSent&&!force)return;
+  let {error}=await sbc().from('circle_members').upsert({...row,...extra});
+  if(error&&/column|schema cache/i.test(error.message||''))({error}=await sbc().from('circle_members').upsert(row)); // base pas encore mise à jour
+  if(!error)circleSent=key; return error;
 }
 async function circleLoad(){
   const c=state.settings.circle; if(!c||!ref){circleData=null;return;}
-  const [m,ci]=await Promise.all([sbc().from('circle_members').select('user_id,pseudo,week,xp,streak').eq('code',c),sbc().from('circles').select('name').eq('code',c).maybeSingle()]);
+  let [m,ci]=await Promise.all([sbc().from('circle_members').select('user_id,pseudo,week,xp,streak,enig_day,enig,eclair_week,eclair').eq('code',c),sbc().from('circles').select('name').eq('code',c).maybeSingle()]);
+  if(m.error)m=await sbc().from('circle_members').select('user_id,pseudo,week,xp,streak').eq('code',c);
   if(m.error)return; const wk=weekStart(todayKey()), me=await myUserId();
   circleData={name:ci.data?ci.data.name:'',rows:(m.data||[]).map(r=>({...r,xp:String(r.week)===wk?r.xp:0,me:r.user_id===me})).sort((a,b)=>b.xp-a.xp||b.streak-a.streak)};
+}
+// sous chaque nom : l'énigme du jour et le meilleur Éclair de la semaine
+function defiLine(r){
+  const k=todayKey(), parts=[];
+  if(r.enig_day&&String(r.enig_day)===k&&r.enig!=null)parts.push(`énigme ${r.enig}/5`);
+  if(r.eclair&&String(r.eclair_week)===weekStart(k))parts.push(`Éclair ${r.eclair}`);
+  return parts.length?el('small',{class:'defis',text:parts.join(' · ')}):null;
 }
 const newCode=()=>{const A='ABCDEFGHJKLMNPQRSTUVWXYZ23456789';return Array.from(crypto.getRandomValues(new Uint8Array(6)),b=>A[b%A.length]).join('');};
 async function renderCircle(){
@@ -2216,7 +2233,7 @@ async function renderCircle(){
   body.replaceChildren(
     el('div',{class:'row spread'},el('span',{},el('b',{text:circleData.name}),document.createTextNode(' · code '),el('b',{text:c})),el('div',{class:'row'},invite,leave)),
     el('span',{class:'label',text:'Semaine '+isoWeek(todayKey())+' · XP de la semaine'}),
-    el('ol',{class:'ranking'},...circleData.rows.map((r,i)=>el('li',{class:r.me?'me':null},el('span',{class:'rk',text:String(i+1)}),el('span',{text:r.pseudo+(r.me?' (toi)':'')}),el('span',{class:'xpw',text:fmt(r.xp)+' XP'}),el('span',{class:'fg2',text:r.streak+' j'})))),
+    el('ol',{class:'ranking'},...circleData.rows.map((r,i)=>el('li',{class:r.me?'me':null},el('span',{class:'rk',text:String(i+1)}),el('span',{},document.createTextNode(r.pseudo+(r.me?' (toi)':'')),defiLine(r)),el('span',{class:'xpw',text:fmt(r.xp)+' XP'}),el('span',{class:'fg2',text:r.streak+' j'})))),
     circleData.rows.length<2?stagTalk('idle','Tu es seul pour l’instant : invite un proche avec le bouton « Inviter ».')
       :!circleData.rows[0].xp?stagTalk('idle','La semaine commence : le premier qui s’entraîne prend la tête.')
       :circleData.rows[0].me?stagTalk('proud','Tu mènes le cercle cette semaine. Tiens bon jusqu’à dimanche !'):stagTalk('idle',`${circleData.rows[0].pseudo} mène cette semaine. Une séance de plus peut tout changer.`));
@@ -2540,11 +2557,17 @@ const QUESTS={
   affilee:['Enchaîne 5 bonnes réponses d’affilée',(k,d)=>!!d.q5],
   enigme:['Résous l’énigme du jour',(k,d)=>!!d.done.enigme],
   record:['Bats un de tes records',k=>state.results.some(r=>r.d===k&&r.rec)],
+  ratt:['Rattrape une de tes erreurs',(k,d)=>(d.ratt||0)>0],
   eclair:['Marque 12 points à l’Éclair',k=>state.results.some(r=>r.d===k&&r.ex==='eclair'&&r.s>=12)]
 };
 // la séance chaque jour, et deux autres tirées au sort avec la date : les mêmes toute la journée
-function questsOf(k){const r=seeded('neophyte-quetes-'+k);return['seance',...rshuf(r,Object.keys(QUESTS).filter(q=>q!=='seance')).slice(0,2)];}
-function questState(k=todayKey()){const d=day(k);return questsOf(k).map(q=>[q,QUESTS[q][0],!!QUESTS[q][1](k,d)]);}
+function questsOf(k){
+  // tirées une fois dans la journée puis gardées ; le rattrapage n'est proposé que s'il y a des erreurs à rattraper
+  const d=state.days[k]; if(d&&d.qs&&d.qs.every(q=>QUESTS[q]))return d.qs;
+  const r=seeded('neophyte-quetes-'+k), ok=q=>q!=='seance'&&(q!=='ratt'||(state.errs||[]).some(e=>e[2]<k)); // erreurs d'avant aujourd'hui : le tirage ne bouge pas dans la journée
+  const qs=['seance',...rshuf(r,Object.keys(QUESTS).filter(ok)).slice(0,2)]; if(d)d.qs=qs; return qs;
+}
+function questState(k=todayKey()){const d=state.days[k]||{done:{},habits:{}};return questsOf(k).map(q=>[q,QUESTS[q][0],!!QUESTS[q][1](k,d)]);}
 const QBONUS=15;
 function checkQuests(){
   const k=todayKey(), d=day(k), qs=questState(k);
@@ -3448,7 +3471,7 @@ window.addEventListener('hashchange',()=>showTab(location.hash.slice(1)));
 // les familles d'exercices, de la plus importante à la plus légère
 const EXFAM=[
   ['Écrire',"Le cœur de l'entraînement : penser en écrivant, sans aide.",['write','ortho','dictee']],
-  ['Défis',"Une énigme commune à tous chaque jour, et un sprint contre ton propre record.",['enigme','eclair']],
+  ['Défis',"Une énigme commune à tous chaque jour, et un sprint contre ton propre record.",['enigme','eclair','rattrapage']],
   ['Raisonner',"Débusquer l'erreur, le sophisme et la réponse trop rapide.",['probleme','erreuria','sophismes','graphe','hypotheses','fermi']],
   ['Lire et retenir',"Lire vraiment, puis garder en mémoire ce qui compte.",['lecture','citations','chrono']],
   ['Hors écran',"Le papier et le silence : là où l'attention se reforme.",['fiche','focus']],
@@ -3543,25 +3566,46 @@ const seeded=str=>{let h=1779033703^str.length;for(let i=0;i<str.length;i++){h=M
 const rpick=(r,a)=>a[Math.floor(r()*a.length)], rshuf=(r,a)=>{a=[...a];for(let i=a.length-1;i>0;i--){const j=Math.floor(r()*(i+1));[a[i],a[j]]=[a[j],a[i]];}return a;};
 // un tirage dans une banque, en visant un niveau (1 à 3) quand la banque en a
 const rniv=(r,bank,niv)=>{const ok=bank.filter(x=>!x.retire), lv=niv?ok.filter(x=>x.niv===niv):[];return rpick(r,lv.length?lv:ok);};
+const qOrtho=(r,o)=>({kind:'Orthographe',quote:o.phrase,prompt:'Quelle forme ?',opts:o.choix,right:o.bonne,why:o.regle,src:['ortho',o.id]});
+function qSoph(r,s){
+  const near=x=>FAM.has(s.nom)&&FAM.get(x)===FAM.get(s.nom);
+  const pool=[...new Set(NB.sophismes.filter(x=>!x.retire).map(x=>x.nom))].filter(x=>x!==s.nom&&x!==VALABLE&&!near(x)).sort();
+  const opts=rshuf(r,[s.nom,...rshuf(r,pool).slice(0,s.nom===VALABLE?3:2)]).concat(s.nom===VALABLE?[]:[VALABLE]);
+  return{kind:'Sophisme',quote:'« '+s.arg+' »',prompt:'Quelle faille ?',opts,right:opts.indexOf(s.nom),why:s.expl,src:['soph',s.id]};
+}
+const evKey=e=>e[1]*1e4+ +e[0];
+function qChrono(r,a,b){const p=r()<.5?[a,b]:[b,a];
+  return{kind:'Chronologie',prompt:'Lequel s’est produit en premier ?',opts:p.map(e=>e[2]),right:evKey(p[0])<evKey(p[1])?0:1,why:p.map(e=>fmtY(e[1])+' : '+e[2]).join(' · '),dates:p.map(e=>e[1]),src:['chrono',[a[2],b[2]]]};}
 function quickQ(r,type,niv){
-  if(type==='ortho'){const o=rniv(r,NB.ortho,niv);
-    return{kind:'Orthographe',quote:o.phrase,prompt:'Quelle forme ?',opts:o.choix,right:o.bonne,why:o.regle};}
-  if(type==='soph'){const s=rniv(r,NB.sophismes,niv), near=x=>FAM.has(s.nom)&&FAM.get(x)===FAM.get(s.nom);
-    const pool=[...new Set(NB.sophismes.filter(x=>!x.retire).map(x=>x.nom))].filter(x=>x!==s.nom&&x!==VALABLE&&!near(x)).sort();
-    const opts=rshuf(r,[s.nom,...rshuf(r,pool).slice(0,s.nom===VALABLE?3:2)]).concat(s.nom===VALABLE?[]:[VALABLE]);
-    return{kind:'Sophisme',quote:'« '+s.arg+' »',prompt:'Quelle faille ?',opts,right:opts.indexOf(s.nom),why:s.expl};}
+  if(type==='ortho')return qOrtho(r,rniv(r,NB.ortho,niv));
+  if(type==='soph')return qSoph(r,rniv(r,NB.sophismes,niv));
   // chronologie : deux événements, l'écart se resserre avec le niveau
   const [lo,hi]=niv===3?[3,30]:niv===2?[30,150]:[150,3000];
   for(let t=0;t<300;t++){const a=rpick(r,EVENTS), bs=EVENTS.filter(b=>Math.abs(b[1]-a[1])>=lo&&Math.abs(b[1]-a[1])<=hi);
-    if(!bs.length)continue; const b=rpick(r,bs), p=r()<.5?[a,b]:[b,a];
-    return{kind:'Chronologie',prompt:'Lequel s’est produit en premier ?',opts:p.map(e=>e[2]),right:p[0][1]<p[1][1]?0:1,why:p.map(e=>fmtY(e[1])+' : '+e[2]).join(' · '),dates:p.map(e=>e[1])};}
+    if(bs.length)return qChrono(r,a,rpick(r,bs));}
 }
+/* ---------- rattrapage : les erreurs récentes reviennent jusqu'à ce qu'elles soient réussies ---------- */
+// carnet d'erreurs : [type, id, date] ; une erreur réussie en rattrapage sort du carnet
+const errKey=(t,id)=>t+':'+(Array.isArray(id)?id.join('|'):id);
+function logErr(t,id){
+  const E=(state.errs=state.errs||[]), k=errKey(t,id);
+  if(E.some(e=>errKey(e[0],e[1])===k))return;
+  E.push([t,id,todayKey()]); if(E.length>200)E.splice(0,E.length-200);
+}
+function errQ(e){
+  const [t,id]=e, r=Math.random;
+  if(t==='ortho'){const o=NB.ortho.find(x=>x.id===id&&!x.retire);return o?qOrtho(r,o):null;}
+  if(t==='soph'){const x=NB.sophismes.find(y=>y.id===id&&!y.retire);return x?qSoph(r,x):null;}
+  if(t==='chrono'){const a=EVENTS.find(v=>v[2]===id[0]),b=EVENTS.find(v=>v[2]===id[1]);return a&&b?qChrono(r,a,b):null;}
+  return null;
+}
+const errsLeft=()=>(state.errs||[]).filter(e=>errQ(e));
 // affiche une question et rend la main avec la réponse ; renvoie les éléments à placer dans l'arène
 function quickAsk(q,onAnswer){
   const box=el('div',{class:'options'+(q.kind==='Chronologie'?' chrono':'')});
   q.opts.forEach((o,i)=>box.append(el('button',{text:o,onclick:e=>{
     [...box.children].forEach((b,j)=>{b.disabled=true;if(q.dates)b.prepend(el('b',{text:fmtY(q.dates[j])+' · '}));if(j===q.right)b.classList.add('right');});
-    if(i!==q.right)e.currentTarget.classList.add('wrong');
+    if(i!==q.right){e.currentTarget.classList.add('wrong');if(q.src&&curEx!=='rattrapage')logErr(...q.src);}
     hit(i===q.right); onAnswer(i===q.right);
   }})));
   return[el('span',{class:'label',text:q.kind}),q.quote?el('p',{class:'quote',text:q.quote}):null,el('p',{class:'prompt',style:'text-align:center',text:q.prompt}),box].filter(Boolean);
@@ -3642,6 +3686,9 @@ async function flushContest(){
 // une question ratée repasse devant toutes les autres à la prochaine séance
 function missAgain(bank,arr,item){const i=arr.indexOf(item);if(i>=0)((state.seen=state.seen||{})[bank]||(state.seen[bank]={}))[i]=-1;}
 let cleanup=null;
+// un défi reçu par lien : ?defi=graine.score.pseudo
+let DEFI=(()=>{try{const v=new URLSearchParams(location.search).get('defi');if(!v)return null;const m=v.match(/^([a-z0-9]{4,12})\.(\d{1,3})\.(.{1,24})$/i);return m?{seed:m[1],score:+m[2],from:m[3].trim()||'Un ami'}:null;}catch(e){return null;}})();
+function launchDefi(){if(!DEFI)return;try{history.replaceState(null,'',location.pathname+location.hash);}catch(e){}showTab('exercices');openEx('eclair');}
 function stopRun(){if(cleanup){cleanup();cleanup=null;}$('#st-timer').hidden=true;$('#st-bar').hidden=true;}
 function openEx(key){
   stopRun();
@@ -4111,7 +4158,7 @@ ortho(arena){
       const box=el('div',{class:'options'}), fb=el('div',{class:'answer',hidden:''});
       const next=el('button',{class:'btn primary',text:qi<7?'Suivante':'Voir le résultat',hidden:''});
       const conclude=(good,label)=>{
-        if(good)ok++;else miss.push(idx);
+        if(good)ok++;else{miss.push(idx);logErr('ortho',NB.ortho[idx].id);}
         hit(good);
         fb.replaceChildren(el('span',{class:'label',text:label||(good?'Exact':'La bonne forme : '+opts[right])}),el('span',{class:'fg2',text:why}),contestBtn('ortho',NB.ortho[idx].id,ph));fb.hidden=false;next.hidden=false;next.focus({preventScroll:true});
       };
@@ -4382,7 +4429,7 @@ sophismes(arena){
         box.after(askConf(c=>{
           me.classList.remove('chosen');
           [...box.children].forEach(b=>{if(sameText(b.textContent,right))b.classList.add('right');});
-          if(o===right)ok++;else{me.classList.add('wrong');missAgain('soph',FALLACIES,qs[qi]);}
+          if(o===right)ok++;else{me.classList.add('wrong');missAgain('soph',FALLACIES,qs[qi]);logErr('soph',id);}
           hit(o===right); const pts=logConf('sophismes',c,o===right?1:0);
           fb.replaceChildren(el('span',{class:'label'},(o===right?'Exact':right===VALABLE?'Cet argument tient debout':'C’était : '+right)+' ',betChip(pts)),el('span',{class:'fg2',text:why}),contestBtn('sophismes',id,txt)); fb.hidden=false; next.hidden=false; next.focus();
         }));
@@ -4552,6 +4599,7 @@ chrono(arena){
         // note : la part des paires d'événements rangées dans le bon sens
         let good=0,tot=0; for(let i=0;i<mine.length;i++)for(let j=i+1;j<mine.length;j++){tot++;if(key(mine[i])<key(mine[j]))good++;}
         const sc=good/tot, all=sc===1; sum+=sc; if(all)perfect++;
+        let nl=0; for(let i=0;i<mine.length&&nl<2;i++)for(let j=i+1;j<mine.length&&nl<2;j++)if(key(mine[i])>key(mine[j])){logErr('chrono',[mine[i][2],mine[j][2]]);nl++;}
         [...list.children].forEach((li,i)=>{const ok=li._ev===truth[i];li.classList.add(ok?'ok':'ko');li.querySelector('.sbtns').replaceWith(el('b',{class:'sdate',text:fmtY(li._ev[1])}));seen.push([li._ev,ok]);});
         hit(all);
         // après un temps pour voir ses erreurs, la frise se remet d'elle-même dans le bon ordre
@@ -4598,9 +4646,37 @@ enigme(arena){
     ask();
   }
 },
-eclair(arena){
-  intro(arena,"90 secondes de questions mêlées : orthographe, chronologie, sophismes. Réponds vite, mais juste : chaque bonne réponse compte un point. À la fin, revois celles que tu as manquées.",null,go);
+rattrapage(arena){
+  const left=errsLeft();
+  if(!left.length){arena.replaceChildren(stagTalk('proud','Ton carnet d’erreurs est vide. Les questions que tu manqueras à l’orthographe, aux sophismes, à la chronologie, à l’énigme ou à l’Éclair viendront ici.'),
+    el('div',{class:'row',style:'justify-content:center'},el('button',{class:'btn primary',text:'Retour aux exercices',onclick:()=>{stopRun();$('#stage').hidden=true;$('#exgrid').hidden=false;}})));return;}
+  intro(arena,`${left.length} erreur${left.length>1?'s':''} dans ton carnet. Elles reviennent, les plus anciennes d'abord, jusqu'à huit par séance. Réussis-en une et elle disparaît ; rate-la et elle reste.`,null,go);
   function go(){
+    const pick8=left.slice(0,8), qs=pick8.map(errQ); let qi=0, ok=0; const cleared=[];
+    const ask=()=>{
+      const fb=el('div',{class:'answer',hidden:''}), next=el('button',{class:'btn primary',text:qi<qs.length-1?'Suivante':'Voir le résultat',hidden:''});
+      next.addEventListener('click',()=>{qi++;if(qi<qs.length)ask();else finish();});
+      arena.replaceChildren(qprog(qi,qs.length),...quickAsk(qs[qi],good=>{
+        if(good){ok++;cleared.push(errKey(pick8[qi][0],pick8[qi][1]));}
+        fb.replaceChildren(el('span',{class:'label',text:good?'Rattrapée : elle sort du carnet':'Encore ratée : elle reste dans le carnet'}),el('span',{class:'fg2',text:qs[qi].why}));fb.hidden=false;next.hidden=false;next.focus({preventScroll:true});}),fb,next);
+    };
+    const finish=()=>{
+      state.errs=(state.errs||[]).filter(e=>!cleared.includes(errKey(e[0],e[1])));
+      if(cleared.length)day().ratt=(day().ratt||0)+cleared.length;
+      const m=recordMsg('rattrapage',ok); logResult('rattrapage',ok,{n:qs.length});
+      const rest=errsLeft().length;
+      showResult(arena,ok,`erreur${ok>1?'s':''} rattrapée${ok>1?'s':''} sur ${qs.length}`,m+(rest?` Il reste ${rest} erreur${rest>1?'s':''} dans ton carnet.`:' Ton carnet est vide. Bravo.'),()=>RUN.rattrapage(arena));
+    };
+    ask();
+  }
+},
+eclair(arena){
+  const D=DEFI; DEFI=null;
+  const seed=D?D.seed:Math.random().toString(36).slice(2,8);
+  intro(arena,D?`${D.from} te défie : ${D.score} point${D.score>1?'s':''} en 90 secondes. Tu auras exactement les mêmes questions. À toi de faire mieux.`
+    :"90 secondes de questions mêlées : orthographe, chronologie, sophismes. Réponds vite, mais juste : chaque bonne réponse compte un point. À la fin, revois celles que tu as manquées, ou défie un ami sur les mêmes questions.",null,go);
+  function go(){
+    const R=seeded('neophyte-eclair-'+seed);
     let ok=0, n=0, over=false; const missed=[]; combo=0; qmarks=[];
     const count=el('span',{class:'eclair-n',text:'0'}), c=el('span',{class:'combo',hidden:''});
     const zone=el('div',{class:'eclair-q'});
@@ -4608,7 +4684,7 @@ eclair(arena){
       if(over)return;
       delete arena.dataset.v;
       zone.style.animation='none'; void zone.offsetWidth; zone.style.animation='';
-      const q=quickQ(Math.random,pick(['ortho','ortho','chrono','chrono','soph']),rnd(1,3)); n++; qcur=n;
+      const q=quickQ(R,rpick(R,['ortho','ortho','chrono','chrono','soph']),1+Math.floor(R()*3)); n++; qcur=n;
       zone.replaceChildren(...quickAsk(q,good=>{
         if(good){ok++;count.textContent=fmt(ok);count.classList.remove('bump');void count.offsetWidth;count.classList.add('bump');}else missed.push(q);
         setTimeout(ask,good?380:1100);
@@ -4619,7 +4695,12 @@ eclair(arena){
     cleanup=countdown(90,null,()=>{
       over=true; const m=recordMsg('eclair',ok); logResult('eclair',ok,{n});
       const rev=missed.length?el('div',{class:'recap wide'},el('span',{class:'label',text:'À revoir'}),...missed.slice(0,6).map(q=>el('div',{class:'answer'},el('span',{class:'label',text:q.kind==='Chronologie'?q.kind:q.kind+' · '+q.opts[q.right]}),q.kind==='Orthographe'?el('p',{class:'quote',style:'margin:0;font-size:1rem',text:q.quote.replace('___',q.opts[q.right])}):null,el('span',{class:'fg2',text:q.why})))):null;
-      showResult(arena,ok,`bonnes réponses en 90 s (${n} questions)`,m,()=>RUN.eclair(arena),rev);
+      const vs=D?(ok>D.score?`Tu bats ${D.from} : ${ok} contre ${D.score}. `:ok===D.score?`Égalité parfaite avec ${D.from}. `:`${D.from} garde l’avantage : ${D.score} contre ${ok}. `):'';
+      showResult(arena,ok,`bonnes réponses en 90 s (${n} questions)`,vs+m,()=>RUN.eclair(arena),rev);
+      const who=(state.settings.pseudo||'').trim()||'Un ami', url=location.origin+location.pathname.replace(/index\.html$/,'')+'?defi='+encodeURIComponent(seed+'.'+ok+'.'+who.slice(0,24));
+      const txt=`${who} te défie sur Néophyte : ${ok} point${ok>1?'s':''} en 90 secondes à l’Éclair. Mêmes questions pour toi. Tu fais mieux ?\n${url}`;
+      const btn=el('button',{class:'btn',text:D?'Renvoyer le défi':'Défier un ami',onclick:()=>shareText(txt)});
+      const rows=arena.querySelectorAll(':scope > .row'); (rows[rows.length-1]||arena).append(btn);
     });
   }
 },
@@ -4830,6 +4911,7 @@ function closeWelcome(login){
   $('#welcome').hidden=true; document.body.style.overflow='';
   if(login){try{sessionStorage.removeItem('brainfit.later');}catch(e){}$('#syncwarn').hidden=false;showTab('aujourdhui');window.scrollTo(0,0);setTimeout(()=>$('#login-email').focus(),50);}
   else{try{sessionStorage.setItem('brainfit.later','1');}catch(e){}$('#syncwarn').hidden=true;showTab('aujourdhui');window.scrollTo(0,0);}
+  if(DEFI)setTimeout(launchDefi,200);
 }
 if(welcomeNeeded()){
   $('#wl-em').innerHTML=stagSVG(1,'proud'); $('#welcome').hidden=false; document.body.style.overflow='hidden';
@@ -4849,6 +4931,7 @@ $$('#biblio-toc button').forEach(b=>b.addEventListener('click',()=>goPanel('cons
 initCarnetCoach();
 applyFreezes(); gami(true);
 renderTips(); renderOrigins(); renderAll(); showTab(location.hash.slice(1)); setSync('local'); weekBilanNotice();
+if(DEFI&&$('#welcome').hidden)setTimeout(launchDefi,300);
 // on dévoile la page une fois le compte vérifié, ou au plus tard après 0,8 s
 Promise.race([initStore(),new Promise(r=>setTimeout(r,800))]).finally(()=>document.documentElement.classList.remove('boot'));
 if('serviceWorker' in navigator)navigator.serviceWorker.register('sw.js').catch(()=>{});

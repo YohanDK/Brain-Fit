@@ -38,7 +38,7 @@ Une par semaine, dans `B.enquetes`, datée du dimanche **d'après le suivant** (
 
 ## Les parcours de saison
 
-`B.parcours` : l'Avent 2026 (29 novembre-24 décembre, dimanches compris) est en place. Le Carême 2027 (10 février-27 mars, `dimanches:false` : 40 jours sans les dimanches, l'énigme y tient lieu de case) s'écrit en janvier sur le même modèle, avec six énigmes pour les dimanches du 14 février au 21 mars. Pour relire un parcours avant sa date : `?apercu=AAAA-MM-JJ` (rien n'est enregistré).
+`B.parcours` : l'Avent 2026 (29 novembre-24 décembre, dimanches compris) est en place. Le Carême 2027 (10 février-27 mars, `dimanches:false` : 40 jours sans les dimanches, l'énigme y tient lieu de case) s'écrit en janvier sur le même modèle, avec six énigmes pour les dimanches du 14 février au 21 mars. Le parcours s'annonce à tous la semaine d'avant, sans dévoiler ses cases. Pour le relire avant sa date : `?apercu=AAAA-MM-JJ`, réservé au compte propriétaire (rien n'est enregistré).
 
 ## Les signalements
 

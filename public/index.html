@@ -789,6 +789,13 @@ details.fold[open]{display:flex;flex-direction:column;gap:10px}
 /* cérémonie de niveau */
 .ceremony{position:fixed;inset:0;z-index:60;display:grid;place-items:center;padding:16px;background:rgba(20,18,14,.45);animation:fadein .3s ease-out}
 .ceremony.out{opacity:0;transition:opacity .3s}
+/* signaler un problème */
+.cer-card.rp-card{align-items:stretch;text-align:left;width:min(440px,100%);max-height:calc(100vh - 32px);overflow-y:auto;border-color:var(--line)}
+.rp-shot{display:flex;gap:12px;align-items:flex-start}
+.rp-shot img{width:96px;max-height:170px;object-fit:cover;object-position:top;border:1px solid var(--line);border-radius:6px;background:var(--bg)}
+.rp-shot .rp-none{width:96px;height:120px;display:grid;place-items:center;border:1px dashed var(--line);border-radius:6px;color:var(--fg2);font-size:.75rem;text-align:center;padding:4px}
+.rp-shot .rp-acts{display:flex;flex-direction:column;align-items:flex-start;gap:4px}
+.rp-card textarea{min-height:90px}
 @keyframes fadein{from{opacity:0}}
 .cer-card{background:var(--surface);border:1px solid var(--gold);border-radius:var(--r);padding:24px 22px;display:flex;flex-direction:column;align-items:center;gap:8px;text-align:center;width:min(360px,100%);box-shadow:0 18px 50px rgba(0,0,0,.25);animation:rise .45s ease-out both}
 .cer-card h2{margin:0;font-size:1.3rem}
@@ -854,6 +861,7 @@ q{quotes:"« " " »" "“" "”"}
         <span class="freeze" id="freeze" title="Égides : chacune protège ta série si tu manques un jour"><svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2l8 3v6c0 5-3.4 9.3-8 11-4.6-1.7-8-6-8-11V5z" opacity=".25"/><path d="M12 2l8 3v6c0 5-3.4 9.3-8 11-4.6-1.7-8-6-8-11V5zm0 2.2L6 6.4V11c0 3.9 2.5 7.4 6 8.9 3.5-1.5 6-5 6-8.9V6.4z"/><circle cx="12" cy="11" r="2.6"/></svg><span class="num" id="freeze-n">1</span></span>
       </div>
       <div class="top-actions">
+        <button class="iconbtn" id="go-report" aria-label="Signaler un problème" title="Signaler un problème" hidden><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 21V4M5 4h11l-2 4 2 4H5"/></svg></button>
         <button class="iconbtn" id="go-biblio" aria-label="Bibliothèque" title="Bibliothèque"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 9l9-5 9 5M5.5 10v8M10 10v8M14 10v8M18.5 10v8M3 20h18"/></svg></button>
         <button class="iconbtn" id="go-settings" aria-label="Réglages" title="Réglages"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/></svg></button>
       </div>
@@ -1265,7 +1273,7 @@ q{quotes:"« " " »" "“" "”"}
     </div>
     <div class="panel" id="privacy">
       <div><h2>Tes données</h2>
-        <p class="fg2" style="max-width:65ch">Avec un compte, Néophyte garde ton e-mail, tes progrès et tes textes chez Supabase, qui héberge sa base de données. Les autres utilisateurs ne peuvent pas les lire ; techniquement, la personne qui gère ce Néophyte y a accès. Si tu rejoins un cercle, ses membres voient seulement ton pseudo, tes XP de la semaine et ta série. Quand tu contestes une réponse, ton message et la question concernée sont envoyés pour être relus ; ils sont effacés avec ton compte. Quand tu parles au coach, ta demande et le résumé de tes progrès sont envoyés à Claude (Anthropic) pour qu'il réponde. Rien n'est vendu, et il n'y a ni publicité ni mesure d'audience.</p></div>
+        <p class="fg2" style="max-width:65ch">Avec un compte, Néophyte garde ton e-mail, tes progrès et tes textes chez Supabase, qui héberge sa base de données. Les autres utilisateurs ne peuvent pas les lire ; techniquement, la personne qui gère ce Néophyte y a accès. Si tu rejoins un cercle, ses membres voient seulement ton pseudo, tes XP de la semaine et ta série. Quand tu contestes une réponse ou signales un problème, ton message, la question ou l'écran concernés (avec la capture si tu la laisses) et le type d'appareil sont envoyés pour être relus ; ils sont effacés avec ton compte. Quand tu parles au coach, ta demande et le résumé de tes progrès (et la photo de ta feuille, si tu lui en confies une) sont envoyés à Claude (Anthropic) pour qu'il réponde. Rien n'est vendu, et il n'y a ni publicité ni mesure d'audience.</p></div>
       <div class="row"><button class="btn ghost" id="erase" hidden>Effacer mon compte</button></div>
       <div id="erase-confirm" class="row" hidden>
         <span class="fg2">Effacer ton compte, tes progrès, tes textes et ta place dans ton cercle ? Ce n'est pas réversible.</span>
@@ -3496,6 +3504,9 @@ function showTab(t){
 $('#city-form').addEventListener('submit',e=>{e.preventDefault();state.settings.city=$('#city-in').value.trim().slice(0,60);save();renderReel();toast('<span>Ville enregistrée.</span>');});
 $('#go-biblio').addEventListener('click',()=>{showTab('conseils');window.scrollTo(0,0);});
 $('#go-settings').addEventListener('click',()=>{showTab('reglages');window.scrollTo(0,0);});
+// le bouton « Signaler un problème » reste visible pendant la phase de test (BF_CONFIG.retours dans config.js)
+$('#go-report').hidden=!window.bfRetour||!(window.BF_CONFIG||{}).retours;
+$('#go-report').addEventListener('click',openReport);
 $('#login-open').addEventListener('click',()=>{try{sessionStorage.removeItem('brainfit.later');}catch(e){}$('#syncwarn').hidden=false;openLogin();showTab('aujourdhui');window.scrollTo(0,0);$('#login-email').focus();});
 $$('.tabs button').forEach(b=>b.addEventListener('click',()=>{const same=b.getAttribute('aria-selected')==='true';showTab(b.dataset.tab);if(!same)window.scrollTo(0,0);}));
 window.addEventListener('hashchange',()=>showTab(location.hash.slice(1)));
@@ -3722,6 +3733,86 @@ async function flushContest(){
   let sent=false;
   for(const r of (state.contest||[]))if(!r.sent){try{await window.bfSignaler(r);r.sent=1;sent=true;}catch(e){break;}}
   if(sent)persist();
+}
+// « Signaler un problème » (phase de test) : une capture de l'écran et un commentaire, relus dans Supabase (table et dossier « retours »)
+let h2cP=null;
+function loadH2C(){
+  if(window.html2canvas)return Promise.resolve(window.html2canvas);
+  return h2cP||(h2cP=new Promise((ok,ko)=>{
+    const sc=el('script',{src:'https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js',integrity:'sha384-ZZ1pncU3bQe8y31yfZdMFdSpttDoPmOZg2wguVK9almUodir1PghgT0eY7Mrty8H',crossorigin:'anonymous'});
+    sc.onload=()=>ok(window.html2canvas); sc.onerror=()=>{h2cP=null;ko(new Error('capture'));};
+    document.head.append(sc);
+  }));
+}
+// une image (capture ou fichier) réduite à 1600 px et compressée en JPEG : quelques centaines de Ko
+function shrinkShot(src){
+  const w=src.naturalWidth||src.width, h=src.naturalHeight||src.height, k=Math.min(1,1600/Math.max(w,h,1));
+  const c=document.createElement('canvas'); c.width=Math.max(1,Math.round(w*k)); c.height=Math.max(1,Math.round(h*k));
+  const g=c.getContext('2d'); g.fillStyle='#fff'; g.fillRect(0,0,c.width,c.height); g.drawImage(src,0,0,c.width,c.height);
+  return new Promise((ok,ko)=>c.toBlob(b=>b?ok(b):ko(new Error('capture')),'image/jpeg',.82));
+}
+async function snapScreen(){
+  const h2c=await loadH2C();
+  const c=await h2c(document.body,{x:window.scrollX,y:window.scrollY,width:window.innerWidth,height:window.innerHeight,scale:Math.min(window.devicePixelRatio||1,2),
+    backgroundColor:getComputedStyle(document.body).backgroundColor,logging:false,useCORS:true,
+    ignoreElements:e=>e.id==='confetti'||e.id==='toasts'||e.classList.contains('rp-wrap')});
+  return shrinkShot(c);
+}
+async function fileShot(f){
+  const u=URL.createObjectURL(f);
+  try{const im=new Image(); im.src=u; await im.decode(); return await shrinkShot(im);}finally{URL.revokeObjectURL(u);}
+}
+function reportContext(){
+  const ex=curEx&&!$('#stage').hidden?curEx:null;
+  return {onglet:(location.hash||'#aujourdhui').slice(1,40),exercice:ex,question:ex?($('#arena').innerText||'').trim().slice(0,400):null,
+    ecran:`${window.innerWidth}×${window.innerHeight} @${window.devicePixelRatio||1}`,theme:document.documentElement.dataset.theme||'auto',
+    appli:matchMedia('(display-mode: standalone)').matches,enligne:navigator.onLine,navigateur:navigator.userAgent.slice(0,300),heure:new Date().toString().slice(0,90)};
+}
+function openReport(){
+  if(document.querySelector('.rp-wrap'))return;
+  const ctx=reportContext(); let shot=null, busy=true;
+  const close=()=>{box.classList.add('out');setTimeout(()=>box.remove(),300);document.removeEventListener('keydown',onKey);$('#go-report').focus();};
+  const onKey=e=>{if(e.key==='Escape')close();};
+  const thumb=el('div',{class:'rp-none',text:'Capture…'});
+  const file=el('input',{type:'file',accept:'image/*',hidden:''});
+  const drop=el('button',{class:'btn ghost small',text:'Retirer la capture',hidden:''});
+  const pick=el('button',{class:'btn ghost small',text:'Choisir une autre image'});
+  const ta=el('textarea',{'aria-label':'Ce qui ne va pas',placeholder:'Que s’est-il passé ? Qu’attendais-tu à la place ?',maxlength:'2000'});
+  const send=el('button',{class:'btn primary',text:'Envoyer'});
+  const msg=el('p',{class:'note',role:'status'});
+  let thumbNode=thumb;
+  const swap=b=>{const cur=thumbNode; shot=b; drop.hidden=!b;
+    if(cur.tagName==='IMG')URL.revokeObjectURL(cur.src);
+    const n=b?el('img',{src:URL.createObjectURL(b),alt:'Capture jointe'}):el('div',{class:'rp-none',text:'Sans capture'});
+    cur.replaceWith(n); thumbNode=n;};
+  drop.addEventListener('click',()=>swap(null));
+  pick.addEventListener('click',()=>file.click());
+  const takeFile=async f=>{if(!f||!/^image\//.test(f.type))return; try{swap(await fileShot(f));}catch(e){msg.textContent='Image illisible : essaie une capture en PNG ou JPEG.';}};
+  file.addEventListener('change',()=>takeFile(file.files[0]));
+  ta.addEventListener('paste',e=>{const it=[...(e.clipboardData?.items||[])].find(i=>i.type.startsWith('image/'));if(it){e.preventDefault();takeFile(it.getAsFile());}});
+  send.addEventListener('click',async()=>{
+    const m=ta.value.trim(); if(m.length<3){ta.focus();msg.textContent='Dis en une phrase ce qui ne va pas.';return;}
+    if(busy){msg.textContent='Capture en cours, un instant…';return;}
+    if(!window.bfRetour){msg.textContent='Envoi indisponible sur cette version.';return;}
+    send.disabled=true; msg.textContent='Envoi…';
+    try{
+      await window.bfRetour({message:m.slice(0,2000),contexte:ctx,image:shot});
+      box.querySelector('.cer-card').replaceChildren(el('h2',{text:'Merci !'}),el('p',{class:'fg2',text:'Ton signalement est bien arrivé. Il sera relu, et tu verras la correction dans une prochaine version.'}),el('div',{class:'row'},el('button',{class:'btn primary',text:'Fermer',onclick:close})));
+      box.querySelector('.cer-card .btn').focus();
+    }catch(e){
+      send.disabled=false;
+      msg.textContent=e&&e.code==='signed_out'?'Connecte-toi d’abord (Réglages › compte) : l’envoi passe par ton compte.':/trop/.test(e&&e.message||'')?'Tu as déjà envoyé beaucoup de signalements aujourd’hui : reprends demain.':'L’envoi n’a pas abouti. Vérifie ta connexion et réessaie.';
+    }
+  });
+  const box=el('div',{class:'ceremony rp-wrap',role:'dialog','aria-modal':'true','aria-labelledby':'rp-title',onclick:e=>{if(e.target===box)close();}},
+    el('div',{class:'cer-card rp-card',tabindex:'-1'},
+      el('h2',{id:'rp-title',text:'Signaler un problème'}),
+      el('p',{class:'fg2',text:'Une capture de ton écran est jointe. Vérifie qu’elle ne montre rien que tu veux garder pour toi, ou retire-la.'}),
+      el('div',{class:'rp-shot'},thumb,el('div',{class:'rp-acts'},drop,pick,file,el('span',{class:'note',text:'Tu peux aussi coller une image dans le texte.'}))),
+      ta,el('div',{class:'row'},send,el('button',{class:'btn ghost',text:'Annuler',onclick:close})),msg));
+  document.body.append(box); document.addEventListener('keydown',onKey); box.firstChild.focus();
+  // le clavier n'apparaît qu'une fois la capture prise, pour ne pas rétrécir l'écran capturé
+  Promise.race([snapScreen(),new Promise((_,ko)=>setTimeout(()=>ko(new Error('lent')),10000))]).then(b=>{if(thumbNode===thumb)swap(b);}).catch(()=>{if(thumbNode===thumb)swap(null);}).finally(()=>{busy=false;if(document.activeElement===document.body||!box.contains(document.activeElement))ta.focus();});
 }
 // une question ratée repasse devant toutes les autres à la prochaine séance
 function missAgain(bank,arr,item){const i=arr.indexOf(item);if(i>=0)((state.seen=state.seen||{})[bank]||(state.seen[bank]={}))[i]=-1;}
@@ -4102,9 +4193,30 @@ write(arena){
     ta.addEventListener('paste',e=>{e.preventDefault();fb.textContent='Le collage est désactivé ici : écris avec tes propres mots.';setTimeout(()=>fb.textContent='',2500);});
     ta.addEventListener('drop',e=>e.preventDefault());
     const fin=el('button',{class:'btn primary',text:'Terminer',onclick:()=>finish()});
+    // écrire sur papier : le coach transcrit la photo de la feuille, sans rien corriger, puis tout continue comme au clavier
+    let hand=false;
+    const photo=el('input',{type:'file',accept:'image/*',capture:'environment',hidden:''});
+    const pbtn=el('button',{class:'btn ghost small',text:'J’écris sur papier : photographier ma feuille'});
+    const handRow=el('div',{class:'row hand-row',hidden:''},pbtn,photo);
+    (async()=>{const sm=await sampler();const lim=sm&&sm.limits?await sm.limits().catch(()=>null):null;if(lim&&lim.images)handRow.hidden=false;})();
+    pbtn.addEventListener('click',()=>photo.click());
+    photo.addEventListener('change',async()=>{
+      const f=photo.files&&photo.files[0]; photo.value=''; if(!f)return;
+      pbtn.disabled=true; fin.disabled=true; fb.textContent='Le coach lit ta feuille…';
+      try{
+        const sm=await sampler(), img=await shrinkPhoto(f);
+        const r=await sm.json(`La photo montre un texte écrit à la main, en français, sur ce sujet : « ${(mode==='resume'?src[0]:prompt).slice(0,400)} ». Transcris-le fidèlement, mot pour mot, en gardant ses fautes d'orthographe, de grammaire et de ponctuation : ne corrige rien, ne complète rien, ne reformule rien. Garde les retours à la ligne entre paragraphes. Ignore les mots barrés. Un mot que tu ne parviens pas à lire s'écrit [?]. Réponds uniquement en JSON : {"lisible": boolean, "texte": string, "illisibles": number}.`,{images:[img],modelTier:'complex',cache:false});
+        if(!r||r.lisible===false||!r.texte||!String(r.texte).trim()){fb.textContent='Le coach n’arrive pas à lire la feuille. Reprends la photo bien à plat, en pleine lumière.';return;}
+        const tx=String(r.texte).trim().slice(0,12000);
+        ta.value=ta.value.trim()&&mode!=='revise'?ta.value.trim()+'\n\n'+tx:tx; hand=true;
+        ta.dispatchEvent(new Event('input'));
+        fb.textContent=(r.illisibles>0||/\[\?\]/.test(tx))?'Relis la transcription : remplace chaque [?] par le bon mot, puis clique sur Terminer.':'Relis la transcription et corrige les erreurs de lecture (pas les tiennes !), puis clique sur Terminer.';
+      }catch(e){fb.textContent=e&&COACH_ERR[e.code]!=null?COACH_ERR[e.code]:'La lecture de la photo a échoué. Réessaie, ou recopie ton texte.';}
+      finally{pbtn.disabled=false; fin.disabled=false;}
+    });
     arena.style.alignItems='stretch';
     arena.replaceChildren(...[el('span',{class:'label',text:WMODES[mode].label}),el('p',{class:'prompt',text:mode==='resume'?'Résume de mémoire : '+src[0]:prompt}),
-      mode==='disput'?el('p',{class:'note dplan',text:'Il semble que… · En sens contraire… · Je réponds que… · Réponse aux objections'}):null,ta,el('div',{class:'row spread'},el('div',{class:'row'},wc,fb),fin)].filter(Boolean));
+      mode==='disput'?el('p',{class:'note dplan',text:'Il semble que… · En sens contraire… · Je réponds que… · Réponse aux objections'}):null,ta,el('div',{class:'row spread'},el('div',{class:'row'},wc,fb),fin),handRow].filter(Boolean));
     count(); ta.focus();
     const total=mode==='resume'?5:mins;
     const stopT=countdown(total*60,null,()=>{fb.textContent='Temps écoulé. Termine ta phrase puis clique sur Terminer.';});
@@ -4113,18 +4225,19 @@ write(arena){
       const n=count();
       if(n<(limit?10:15)){fb.textContent=`Écris au moins ${limit?10:15} mots pour enregistrer la séance.`;return;}
       if(limit&&n>limit){fb.textContent=`Coupe ton résumé à ${limit} mots : choisir l'essentiel fait partie de l'exercice.`;return;}
+      if(/\[\?\]/.test(ta.value)){fb.textContent='Remplace d’abord chaque [?] par le mot que tu as écrit.';return;}
       if(mode==='revise'&&ta.value.trim()===orig.text.trim()){fb.textContent='Modifie ton texte avant de terminer : coupe, précise, réorganise.';return;}
       stopT(); arena.style.alignItems='';
       try{localStorage.removeItem('brainfit.draft');}catch(e){}
       const text=ta.value.trim(), el_m=Math.max(.5,(Date.now()-started)/60000), st=textStats(text,el_m);
       const m=recordMsg('write',n); logResult('write',n,{w:mode});
       if(mode==='revise')orig.rev=Date.now();
-      texts.push({t:Date.now(),mode,prompt,text:text.slice(0,4000),words:st.words,avgSent:st.avgSent,variety:st.variety,wpm:mode==='revise'?0:st.wpm}); saveTexts();
+      texts.push({t:Date.now(),mode,prompt,text:text.slice(0,4000),words:st.words,avgSent:st.avgSent,variety:st.variety,wpm:mode==='revise'||hand?0:st.wpm,hand:hand?1:undefined}); saveTexts();
       const rv=mode==='revise', dq=mode==='disput'?DISPUT.find(d=>DQ(d)===prompt):null;
       const thom=dq?el('div',{class:'answer'},el('span',{class:'label',text:dq[1]?'Ce que répond saint Thomas':'Une piste chez saint Thomas'}),el('span',{class:'fg2',text:dq[2]}),dq[1]?el('span',{class:'note',text:dq[1]}):null):null;
       showResult(arena,n,rv?'mots dans ta version révisée':'mots écrits sans aide',m+(rv?` Version d'origine : ${orig.words} mots, ${orig.avgSent} mots/phrase. Les deux versions sont dans ton carnet.`:dq?' Compare avec ta réponse : où es-tu d’accord, où diverges-tu, et pourquoi ?':" Ton texte est rangé dans ton carnet (onglet Progrès). Relis-le demain : qu'ajouterais-tu, que couperais-tu ?"),()=>RUN.write(arena),thom);
       arena.insertBefore(el('div',{class:'row',style:'justify-content:center;gap:18px'},
-        rv?null:statChip(st.wpm,'mots / min'),statChip(st.avgSent,'mots / phrase'),statChip(st.variety+' %','vocabulaire varié')),arena.children[2]);
+        rv||hand?null:statChip(st.wpm,'mots / min'),statChip(st.avgSent,'mots / phrase'),statChip(st.variety+' %','vocabulaire varié')),arena.children[2]);
       const extra=mode==='resume'?`\n\nTexte source qu'il devait résumer :\n---\n${src[1]}\n---`:mode==='revise'?`\n\nVersion d'origine, qu'il vient de réviser :\n---\n${orig.text}\n---\nCompare les deux versions : dis précisément ce que la révision a amélioré et ce qui reste à travailler.`:'';
       if(mode==='resume')arena.append(precisCheck(src,text));
       if(mode==='acier')arena.append(acierCheck());
@@ -4132,7 +4245,7 @@ write(arena){
         const info=el('p',{class:'note'});
         arena.append(el('div',{class:'coachbox'},el('button',{class:'btn',text:'Disputer avec ton IA',title:'Copie ton texte avec une consigne : ton IA examine ton article et t’oppose une nouvelle objection, sans le réécrire',onclick:()=>copyText(DISPUT_AI+'\n\n'+prompt+'\n\nMon texte :\n'+text,info,'Copié. Colle-le dans ton IA : elle examine ton article et t’oppose une nouvelle objection, sans rien réécrire.')}),info));
       }
-      arena.append(coachBlock('Avis du coach sur mon texte',()=>coachRules()+`\n\nExercice d'écriture « ${WMODES[mode].label} ». Consigne : « ${mode==='resume'?'Résumer de mémoire en 60 mots max : '+src[0]:prompt} ». Il a écrit sans aide en ${Math.round(el_m)} minutes.${extra}\n\nSon texte :\n---\n${text.slice(0,12000)}\n---\n\nCritères pour ce format : ${WMODES[mode].crit}.\nDonne-lui un retour d'entraîneur d'écriture, en 180 mots maximum :\n- 2 points forts précis (cite ses mots) ;\n- 2 axes d'amélioration selon les critères, chacun avec une piste qu'il appliquera lui-même, sans réécrire ses phrases ;\n- une note sur 10 pour ce format, justifiée en une phrase ;\n- une question qui l'oblige à approfondir.`));
+      arena.append(coachBlock('Avis du coach sur mon texte',()=>coachRules()+`\n\nExercice d'écriture « ${WMODES[mode].label} ». Consigne : « ${mode==='resume'?'Résumer de mémoire en 60 mots max : '+src[0]:prompt} ». Il a écrit sans aide en ${Math.round(el_m)} minutes${hand?', à la main sur papier ; le texte ci-dessous est la transcription de sa feuille, relue par lui':''}.${extra}\n\nSon texte :\n---\n${text.slice(0,12000)}\n---\n\nCritères pour ce format : ${WMODES[mode].crit}.\nDonne-lui un retour d'entraîneur d'écriture, en 180 mots maximum :\n- 2 points forts précis (cite ses mots) ;\n- 2 axes d'amélioration selon les critères, chacun avec une piste qu'il appliquera lui-même, sans réécrire ses phrases ;\n- une note sur 10 pour ce format, justifiée en une phrase ;\n- une question qui l'oblige à approfondir.`));
     }
   }
 },

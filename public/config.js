@@ -4,5 +4,7 @@ window.BF_CONFIG={
   supabaseUrl:'https://kmcelzkxnxeqwwpvyycm.supabase.co',
   supabaseKey:'sb_publishable_y7Bnt_xi7saCiOzqZJwUww_2Otq4jGP',
   // passe à true une fois la fonction « coach » déployée avec la clé Claude
-  coach:false
+  coach:false,
+  // bouton « Signaler un problème » (capture d'écran + commentaire) pendant la phase de test ; false pour le cacher
+  retours:true
 };

@@ -1201,38 +1201,6 @@ var fin=function(){if(e.parentNode)e.remove();};e.addEventListener('click',fin);
 
   <!-- COACH -->
   <section class="view" id="v-coach" hidden>
-    <div class="panel" id="sas-panel">
-      <div>
-        <h2>Le sas avant l'IA</h2>
-        <p class="fg2">Avant une vraie question à l'IA : ta réponse d'abord, la sienne ensuite, puis l'écart. Trois minutes qui gardent ta réflexion aux commandes.</p>
-      </div>
-      <div class="sas-steps">
-        <div class="sas-step on" id="sas-1"><span class="n">1</span><div>
-          <label class="step-title" for="sas-q">Ta question</label>
-          <textarea id="sas-q" placeholder="Ex. : Comment structurer ma présentation de jeudi ?" style="min-height:70px"></textarea>
-        </div></div>
-        <div class="sas-step off" id="sas-2" hidden><span class="n">2</span><div>
-          <label class="step-title" for="sas-mine">Ta réponse d'abord, sans aide</label>
-          <p class="note">Une ébauche suffit : idées en vrac, plan, hypothèse. Ajoute une hypothèse concurrente : et si c'était autre chose ? Au moins 15 mots, ou 2 minutes de réflexion.</p>
-          <textarea id="sas-mine" placeholder="Ce que je pense, ce que je ferais, ce que je ne sais pas…"></textarea>
-          <div class="row spread"><span class="muted" id="sas-mine-info">0 mot</span>
-            <div class="row"><button class="btn" id="sas-tutor" title="Copie la question avec une consigne de tuteur">Copier en mode tuteur</button><button class="btn primary" id="sas-copy" disabled>Copier la question pour l'IA</button></div></div>
-          <p class="note" id="sas-copy-info"></p>
-          <div class="sas-coach" id="sas-coach" hidden><button class="btn ghost" id="sas-ask" type="button">Une question du coach sur ma réponse</button><div class="coachout" id="sas-ask-out" hidden></div></div>
-        </div></div>
-        <div class="sas-step off" id="sas-3" hidden><span class="n">3</span><div>
-          <span class="step-title">Après avoir lu la réponse de l'IA</span>
-          <div class="seg" role="group" aria-label="Ton estimation" id="sas-rate">
-            <button data-r="3">J'avais l'essentiel</button><button data-r="2">En partie</button><button data-r="1">J'étais loin</button>
-          </div>
-          <label class="note" for="sas-learn">Ce que j'ai appris ou ce qui m'a manqué, avec mes mots. As-tu vérifié une affirmation dans une autre source ?</label>
-          <textarea id="sas-learn" style="min-height:80px"></textarea>
-          <div class="row"><button class="btn primary" id="sas-save" disabled>Enregistrer</button><button class="btn ghost" id="sas-clear">Recommencer</button><span class="note" id="sas-save-info"></span></div>
-        </div></div>
-      </div>
-      <details class="sas-hist" id="sas-hist"><summary><span id="sas-hist-t">Tes passages par le sas</span> <span class="muted note" id="sas-stats"></span></summary><div class="history" id="sas-history"></div></details>
-    </div>
-
     <div class="panel" id="coach-panel">
       <div class="sage-head"><span class="stag sage" id="sage-stag" aria-hidden="true"></span>
         <div class="sage-txt"><h2>Le cerf sage</h2><p class="muted note" id="coach-state"></p><p class="sage-say" id="sage-say"></p></div></div>
@@ -1273,6 +1241,38 @@ var fin=function(){if(e.parentNode)e.remove();};e.addEventListener('click',fin);
           <label class="cc-chk"><input type="checkbox" id="cc-dim"> Ma semaine préparée le dimanche soir</label></div>
         <div class="row"><button class="btn ghost" id="cc-reset" type="button">Revenir aux réglages par défaut</button><span class="note" id="cc-info"></span></div>
       </details>
+    </div>
+
+    <div class="panel" id="sas-panel">
+      <div>
+        <h2>Le sas avant l'IA</h2>
+        <p class="fg2">Avant une vraie question à l'IA : ta réponse d'abord, la sienne ensuite, puis l'écart. Trois minutes qui gardent ta réflexion aux commandes.</p>
+      </div>
+      <div class="sas-steps">
+        <div class="sas-step on" id="sas-1"><span class="n">1</span><div>
+          <label class="step-title" for="sas-q">Ta question</label>
+          <textarea id="sas-q" placeholder="Ex. : Comment structurer ma présentation de jeudi ?" style="min-height:70px"></textarea>
+        </div></div>
+        <div class="sas-step off" id="sas-2" hidden><span class="n">2</span><div>
+          <label class="step-title" for="sas-mine">Ta réponse d'abord, sans aide</label>
+          <p class="note">Une ébauche suffit : idées en vrac, plan, hypothèse. Ajoute une hypothèse concurrente : et si c'était autre chose ? Au moins 15 mots, ou 2 minutes de réflexion.</p>
+          <textarea id="sas-mine" placeholder="Ce que je pense, ce que je ferais, ce que je ne sais pas…"></textarea>
+          <div class="row spread"><span class="muted" id="sas-mine-info">0 mot</span>
+            <div class="row"><button class="btn" id="sas-tutor" title="Copie la question avec une consigne de tuteur">Copier en mode tuteur</button><button class="btn primary" id="sas-copy" disabled>Copier la question pour l'IA</button></div></div>
+          <p class="note" id="sas-copy-info"></p>
+          <div class="sas-coach" id="sas-coach" hidden><button class="btn ghost" id="sas-ask" type="button">Une question du coach sur ma réponse</button><div class="coachout" id="sas-ask-out" hidden></div></div>
+        </div></div>
+        <div class="sas-step off" id="sas-3" hidden><span class="n">3</span><div>
+          <span class="step-title">Après avoir lu la réponse de l'IA</span>
+          <div class="seg" role="group" aria-label="Ton estimation" id="sas-rate">
+            <button data-r="3">J'avais l'essentiel</button><button data-r="2">En partie</button><button data-r="1">J'étais loin</button>
+          </div>
+          <label class="note" for="sas-learn">Ce que j'ai appris ou ce qui m'a manqué, avec mes mots. As-tu vérifié une affirmation dans une autre source ?</label>
+          <textarea id="sas-learn" style="min-height:80px"></textarea>
+          <div class="row"><button class="btn primary" id="sas-save" disabled>Enregistrer</button><button class="btn ghost" id="sas-clear">Recommencer</button><span class="note" id="sas-save-info"></span></div>
+        </div></div>
+      </div>
+      <details class="sas-hist" id="sas-hist"><summary><span id="sas-hist-t">Tes passages par le sas</span> <span class="muted note" id="sas-stats"></span></summary><div class="history" id="sas-history"></div></details>
     </div>
   </section>
 
@@ -3998,7 +3998,7 @@ $('#coach-form').addEventListener('submit',async e=>{
   e.preventDefault(); const q=$('#coach-q').value.trim(); if(!q)return;
   // tant qu'il ne parle pas, la question passe par le sas : ta réponse d'abord
   if(!coachOn){$('#sas-q').value=q;$('#coach-q').value='';sasUpdate();sasDraft();
-    $('#coach-status').textContent='Il ne parle pas encore : ta question t’attend dans le sas, juste au-dessus. Écris d’abord ta propre réponse.';
+    $('#coach-status').textContent='Il ne parle pas encore : ta question t’attend dans le sas, juste en dessous. Écris d’abord ta propre réponse.';
     $('#sas-panel').scrollIntoView({behavior:'smooth',block:'start'});setTimeout(()=>$('#sas-mine').focus({preventScroll:true}),400);return;}
   $('#coach-q').value=''; $('#coach-send').disabled=true;
   const chat=$('#coach-chat'); chat.append(el('div',{class:'me',text:q}));

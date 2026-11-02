@@ -5462,11 +5462,14 @@ citations(arena){
 ortho(arena){
   intro(arena,"Huit phrases. Pour certaines, un mot manque : choisis la bonne forme. Pour d'autres, relis comme un correcteur : touche le mot fautif s'il y en a un, puis répare-le. Ce sont les pièges que les correcteurs automatiques nous font oublier.",null,go);
   function go(){
-    const seen=new Map(); state.results.filter(r=>r.ex==='ortho'&&r.miss).forEach(r=>r.miss.forEach(i=>seen.set(i,(seen.get(i)||0)+1)));
+    // les phrases ratées ces deux dernières semaines, pas celles d'il y a longtemps
+    const seen=new Map(), t14=Date.now()-14*864e5; state.results.filter(r=>r.ex==='ortho'&&r.miss&&r.t>t14).forEach(r=>r.miss.forEach(i=>seen.set(i,(seen.get(i)||0)+1)));
     // les erreurs passées reviennent en priorité (répétition espacée simple)
-    const L=lvl('ortho'), dist=i=>Math.abs(NB.ortho[i].niv-L);
-    const order=[...ORTHO.keys()].filter(i=>!NB.ortho[i].retire).sort((a,b)=>(seen.get(b)||0)-(seen.get(a)||0)||Math.random()-.5);
-    const qs=[...order.slice(0,3),...order.slice(3).sort(()=>Math.random()-.5).sort((a,b)=>dist(a)-dist(b)).slice(0,5)].sort(()=>Math.random()-.5);
+    // deux phrases ratées au plus ; le reste parmi les moins récemment vues (à fraîcheur égale, celles de ton niveau),
+    // pour ne pas retomber sans cesse sur les mêmes
+    const ratees=[...ORTHO.keys()].filter(i=>!NB.ortho[i].retire&&seen.get(i)).sort((a,b)=>seen.get(b)-seen.get(a)||Math.random()-.5).slice(0,2);
+    const fraiches=freshPick('ortho',ORTHO,8,'ortho').map(t=>ORTHO.indexOf(t)).filter(i=>!ratees.includes(i));
+    const qs=[...ratees,...fraiches].slice(0,8).sort(()=>Math.random()-.5);
     let qi=0, ok=0, miss=[];
     // la moitié des phrases se lit comme une copie à corriger : trouver la faute, puis la réparer
     const hunt=new Set([...Array(8).keys()].sort(()=>Math.random()-.5).slice(0,4));
@@ -5516,7 +5519,7 @@ ortho(arena){
         }
         b.classList.add('wrong');
         if(faulty){slot.classList.add('missed');return conclude(false,'La faute était ailleurs : '+opts[put]+' → '+opts[right]);}
-        slot.classList.add('right'); return conclude(false,'Cette phrase était juste');
+        slot.classList.add('right'); return conclude(false,`Pas de faute ici : « ${b.textContent.replace(/[.,;:!?»]+$/,'')} » était juste, comme toute la phrase`);
       };
       arena.replaceChildren(qprog(qi,8),el('p',{class:'prompt',style:'text-align:center',text:'Une faute ? Touche le mot fautif.'}),sent,el('div',{class:'row',style:'justify-content:center'},none),ask2,box,fb,next);
     };

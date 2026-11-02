@@ -847,9 +847,25 @@ details.fold[open]{display:flex;flex-direction:column;gap:10px}
 q{quotes:"« " " »" "“" "”"}
 .seg{flex-wrap:wrap;max-width:100%}
 .cloze{display:inline-block;min-width:6ch;border-bottom:2px solid var(--gold);text-align:center;font-style:normal;color:var(--gold-deep)}
+/* écran d'ouverture (téléphone, une fois par lancement) : le cerf dessine ses bois, puis le nom apparaît */
+.splash{position:fixed;inset:0;z-index:100;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;background:var(--bg);animation:sp-out .45s ease-in 1.55s forwards}
+.splash .sp-stag{width:132px;height:132px;overflow:visible}
+.splash .sp-stag>*:not(.sp-ant){opacity:0;animation:sp-in .5s ease-out .1s forwards}
+.splash .sp-ant path{stroke-dasharray:1;stroke-dashoffset:1;animation:sp-draw .75s ease-out .45s forwards}
+.splash .sp-name{font-family:var(--f-display);font-size:2rem;font-weight:700;letter-spacing:.06em;margin:0;color:var(--fg);opacity:0;animation:sp-in .5s ease-out .9s forwards}
+.splash .sp-name span{color:var(--gold)}
+@keyframes sp-in{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+@keyframes sp-draw{to{stroke-dashoffset:0}}
+@keyframes sp-out{to{opacity:0;visibility:hidden;pointer-events:none}}
+@media (prefers-reduced-motion:reduce){.splash{display:none}}
 </style>
 </head>
 <body>
+<div class="splash" id="splash" aria-hidden="true"><svg class="sp-stag" viewBox="0 0 100 100" aria-hidden="true"><g class="antlers sp-ant" fill="none" stroke="var(--antler)" stroke-width="3.4" stroke-linecap="round"><path pathLength="1" d="M44.0 37.0C39.0 27.0 19.0 19.0 20.0 6.0"/><path pathLength="1" d="M38.9 30.6q-2.3 -2.7 -5.8 -3.9"/><path pathLength="1" d="M34.7 26.9q1.1 -6.0 2.7 -8.6"/><path pathLength="1" d="M30.3 23.1q1.1 -6.0 2.7 -8.6"/><path pathLength="1" d="M26.1 19.2q1.1 -6.0 2.7 -8.6"/><path pathLength="1" d="M22.7 15.0q1.1 -6.0 2.7 -8.6"/><path pathLength="1" d="M20.5 10.5q1.1 -6.0 2.7 -8.6"/><path pathLength="1" d="M56.0 37.0C61.0 27.0 81.0 19.0 80.0 6.0"/><path pathLength="1" d="M61.1 30.6q2.3 -2.7 5.8 -3.9"/><path pathLength="1" d="M65.3 26.9q-1.1 -6.0 -2.7 -8.6"/><path pathLength="1" d="M69.7 23.1q-1.1 -6.0 -2.7 -8.6"/><path pathLength="1" d="M73.9 19.2q-1.1 -6.0 -2.7 -8.6"/><path pathLength="1" d="M77.3 15.0q-1.1 -6.0 -2.7 -8.6"/><path pathLength="1" d="M79.5 10.5q-1.1 -6.0 -2.7 -8.6"/></g><path d="M39 72C36 84 28 92 16 100H84C72 92 64 84 61 72Z" fill="var(--stag-deep)"/><path d="M44 80C44 88 46 94 50 100C54 94 56 88 56 80Z" fill="var(--stag-light)"/><g class="ear ear-l"><ellipse cx="33" cy="44" rx="10" ry="4.2" transform="rotate(-28 40 44)" fill="var(--stag)"/><ellipse cx="34" cy="44" rx="6" ry="2" transform="rotate(-28 40 44)" fill="var(--stag-light)"/></g><g class="ear ear-r"><ellipse cx="67" cy="44" rx="10" ry="4.2" transform="rotate(28 60 44)" fill="var(--stag)"/><ellipse cx="66" cy="44" rx="6" ry="2" transform="rotate(28 60 44)" fill="var(--stag-light)"/></g><path d="M50 34C59 34 64 40 64 47C64 56 58 66 56 74C55 79 53 82 50 82C47 82 45 79 44 74C42 66 36 56 36 47C36 40 41 34 50 34Z" fill="var(--stag)"/><path d="M50 38C53 38 54 42 53 46C52 50 51 52 50 52C49 52 48 50 47 46C46 42 47 38 50 38Z" fill="var(--stag-light)" opacity=".55"/><ellipse cx="50" cy="75" rx="6.2" ry="7" fill="var(--stag-light)"/><ellipse cx="50" cy="79" rx="4.4" ry="2.9" fill="var(--stag-dark)"/><g class="sp-eye"><circle cx="43.5" cy="52" r="2.9" fill="var(--stag-dark)"/><circle cx="44.4" cy="51" r=".9" fill="#fff"/></g><g class="sp-eye"><circle cx="56.5" cy="52" r="2.9" fill="var(--stag-dark)"/><circle cx="57.4" cy="51" r=".9" fill="#fff"/></g></svg><p class="sp-name">Néo<span>phyte</span></p></div>
+<script>(function(){var e=document.getElementById('splash'),go=false;
+try{go=matchMedia('(max-width:700px)').matches&&!matchMedia('(prefers-reduced-motion:reduce)').matches&&!sessionStorage.getItem('brainfit.splash');sessionStorage.setItem('brainfit.splash','1');}catch(x){}
+if(!go){e.remove();return;}
+var fin=function(){if(e.parentNode)e.remove();};e.addEventListener('click',fin);setTimeout(fin,2100);})();</script>
 
 <div class="wrap">
   <header class="top">

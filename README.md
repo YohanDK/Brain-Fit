@@ -20,6 +20,7 @@ Le site s'installe sur le téléphone comme une appli. Avec un compte, les progr
 | `supabase/functions/coach/` | Supabase | Le coach : il reçoit la demande de la page et appelle Claude avec ta clé API, qui reste secrète. |
 | `supabase/functions/account/` | Supabase | Efface un compte et toutes ses données, à la demande de son propriétaire. |
 | `supabase/rappels.sql`, `supabase/functions/rappels/`, `public/rappels.js` | Supabase, GitHub Pages | Les rappels par notification : à l'heure choisie si la séance du jour n'est pas faite, et à 21 h si une série est en danger. |
+| `supabase/coach.sql` | Supabase | Le plafond d'échanges avec le coach par compte et par jour (30 par défaut, variable `COACH_MAX_JOUR` du dépôt). À lancer avant d'ouvrir le coach à d'autres comptes. |
 | `.github/workflows/pages.yml` | GitHub | Remet le site en ligne à chaque changement. |
 | `.github/workflows/deploy-coach.yml` | GitHub | Remet le coach à jour sur Supabase à chaque changement. |
 

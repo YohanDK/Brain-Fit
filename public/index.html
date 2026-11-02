@@ -3822,7 +3822,7 @@ function renderScreenChart(){
 }
 let samplerP=null;
 function sampler(){if(!samplerP)samplerP=(window.claude&&window.claude.use?window.claude.use('sample'):Promise.resolve(null)).catch(()=>null);return samplerP;}
-const COACH_ERR={signed_out:"Connecte-toi à ton compte (onglet Aujourd'hui) pour parler au coach.",not_granted:"Le coach est réservé au propriétaire de ce Néophyte : il paie chaque réponse. Tout le reste t'est ouvert.",rate_limited:"Le coach est très sollicité. Réessaie dans une minute.",refused:"Le coach ne peut pas répondre à cette demande. Reformule-la.",network:"Pas de connexion internet : le coach répondra quand tu seras de nouveau en ligne.",cancelled:""};
+const COACH_ERR={signed_out:"Connecte-toi à ton compte (onglet Aujourd'hui) pour parler au coach.",not_granted:"Le coach est réservé au propriétaire de ce Néophyte : il paie chaque réponse. Tout le reste t'est ouvert.",rate_limited:"Le coach est très sollicité. Réessaie dans une minute.",quota:"Tu as utilisé tous tes échanges avec le coach pour aujourd'hui. Reprends demain : tout le reste t'est ouvert.",refused:"Le coach ne peut pas répondre à cette demande. Reformule-la.",network:"Pas de connexion internet : le coach répondra quand tu seras de nouveau en ligne.",cancelled:""};
 // Appelle le coach et affiche sa réponse en direct dans `out`. Renvoie le texte, ou null.
 async function askCoach(input,out,opts){
   const s=await sampler();

@@ -532,11 +532,28 @@ a{color:var(--accent);text-underline-offset:3px}
 .seance-list{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:6px;width:100%}
 .seance-list li{display:flex;justify-content:space-between;gap:12px;text-align:left;border-bottom:1px solid var(--line);padding:6px 0}
 .seance-list b{font-family:var(--f-display);color:var(--gold-deep);white-space:nowrap}
-.routine>summary{cursor:pointer;list-style:none;display:flex;align-items:baseline;gap:8px;flex-wrap:wrap}
-.routine>summary::-webkit-details-marker{display:none}
-.routine>summary::before{content:"›";display:inline-block;transition:transform .2s;color:var(--muted)}
-.routine[open]>summary::before{transform:rotate(90deg)}
-.routine:not([open]){display:block}
+.routine>summary,.fp>summary,.exgroup>summary{cursor:pointer;list-style:none;display:flex;align-items:baseline;gap:8px;flex-wrap:wrap}
+.routine>summary::-webkit-details-marker,.fp>summary::-webkit-details-marker,.exgroup>summary::-webkit-details-marker{display:none}
+.routine>summary::before,.fp>summary::before,.exgroup>summary::before{content:"›";display:inline-block;transition:transform .2s;color:var(--muted)}
+.routine[open]>summary::before,.fp[open]>summary::before,.exgroup[open]>summary::before{transform:rotate(90deg)}
+.routine:not([open]),.fp:not([open]){display:block}
+.fp>summary{flex-wrap:nowrap}
+.fp>summary h2{margin:0;font-size:1.05rem;flex:1;min-width:0}
+.fp>summary .note{white-space:nowrap}
+.cjl>summary .note{white-space:nowrap}
+.fp>summary .note{margin-left:auto}
+.fp[open]>summary{margin-bottom:4px}
+.syncwarn .login[hidden]{display:none}
+.cjl>summary{cursor:pointer;list-style:none;display:flex;align-items:baseline;gap:8px}
+.cjl>summary::-webkit-details-marker{display:none}
+.cjl>summary::after{content:"›";margin-left:auto;color:var(--muted);transition:transform .2s}
+.cjl[open]>summary::after{transform:rotate(90deg)}
+.cjl[open]{display:flex;flex-direction:column;gap:10px}
+.exgroup>summary{flex-direction:column;gap:2px;position:relative;padding-left:1.1em}
+.exgroup>summary::before{position:absolute;left:0;top:.2em}
+.exgroup>summary .note{margin:0}
+.exgroup[open]{display:flex;flex-direction:column;gap:12px}
+@media (prefers-reduced-motion:no-preference){section.view:not([hidden]){animation:fadein .22s ease-out}.fp[open]>summary~*,.exgroup[open]>.cards,.cjl[open]>summary~*{animation:rise .25s ease-out}}
 .event{border:1px solid var(--gold);background:linear-gradient(180deg,var(--gold-soft),var(--surface) 70%);gap:6px;padding:16px 20px}
 .event h3{margin:0;font-size:1.15rem}
 .event p{margin:0}
@@ -875,11 +892,13 @@ q{quotes:"« " " »" "“" "”"}
       <ul id="quests-list"></ul>
     </div>
     <div class="panel syncwarn" id="syncwarn" hidden>
-      <p><b>Connecte-toi pour retrouver tes progrès partout.</b> Avec ton compte Néophyte, ton téléphone et ton ordinateur partagent les mêmes progrès, et le coach est disponible. Sans compte, tout reste sur cet appareil.</p>
-      <form class="login" id="login">
+      <p><b>Garde tes progrès sur tous tes appareils.</b> <span class="fg2">Un compte, et le coach s'ouvre aussi.</span></p>
+      <div class="row" id="login-ask"><button class="btn primary" type="button" id="login-show">Se connecter</button><button class="btn ghost" type="button" id="syncwarn-ok">Plus tard</button></div>
+      <form class="login" id="login" hidden>
+        <p class="note">Sans compte, tout reste sur cet appareil.</p>
         <input type="email" id="login-email" autocomplete="username" placeholder="Ton e-mail" aria-label="E-mail" required>
         <input type="password" id="login-pw" autocomplete="current-password" placeholder="Mot de passe" aria-label="Mot de passe" minlength="8" required>
-        <div class="row"><button class="btn primary" id="login-in">Se connecter</button><button class="btn ghost" id="login-new">Créer mon compte</button><button class="btn ghost" type="button" id="syncwarn-ok">Plus tard</button></div>
+        <div class="row"><button class="btn primary" id="login-in">Se connecter</button><button class="btn ghost" id="login-new">Créer mon compte</button></div>
         <p class="note" id="login-msg" role="status"></p>
       </form>
     </div>
@@ -921,18 +940,17 @@ q{quotes:"« " " »" "“" "”"}
       <details class="fold"><summary><span class="label">À retenir</span></summary><p class="qnote" id="qd-note"></p>
       <div class="row"><button class="btn gold mini" id="qd-add"></button><button class="btn ghost mini" id="qd-write">Écrire dessus</button></div></details>
     </div>
-    <div class="cjl" id="cjl">
-      <div class="row spread" style="flex-wrap:nowrap;align-items:flex-start"><span class="label" id="cjl-label">Ce jour-là</span><button class="btn ghost mini" id="cjl-next" style="flex:none">Un autre</button></div>
+    <details class="cjl" id="cjl">
+      <summary><span class="label" id="cjl-label">Ce jour-là</span><span class="note" id="cjl-hint">devine l'année</span></summary>
       <p class="cjl-text" id="cjl-text"></p>
       <div class="row" id="cjl-ask"><input type="text" id="cjl-in" inputmode="numeric" autocomplete="off" placeholder="Année ?" aria-label="En quelle année ?" style="width:9ch;text-align:center"><span class="fg2" id="cjl-bc" hidden>av. J.-C.</span><button class="btn" id="cjl-go">Deviner</button><button class="btn ghost" id="cjl-show">Voir la date</button></div>
       <div class="cjl-res" id="cjl-res" hidden><span class="cjl-year" id="cjl-year"></span><span class="fg2" id="cjl-fb"></span></div>
+      <div class="row"><button class="btn ghost mini" id="cjl-next">Un autre événement</button></div>
+    </details>
     </div>
-    </div>
-    <div class="panel">
-      <div>
-        <h2>Mes habitudes du jour</h2>
-        <p class="muted">Coche ce que tu as vraiment fait aujourd'hui : c'est ce qui compte le plus.</p>
-      </div>
+    <details class="panel fp" id="habits-fold">
+      <summary><h2>Mes habitudes du jour</h2><span class="note" id="habits-n"></span></summary>
+      <p class="muted">Coche ce que tu as vraiment fait aujourd'hui : c'est ce qui compte le plus.</p>
       <div class="habits" id="habits"></div>
       <div class="row spread talks">
         <div style="min-width:0"><span class="step-title">Discussions intéressantes aujourd'hui</span><br><span class="note">Une vraie conversation d'idées, sans écran entre vous. Objectif : 3.</span></div>
@@ -955,7 +973,7 @@ q{quotes:"« " " »" "“" "”"}
         <div class="habits" id="scr-habits"></div>
         <div class="row"><button class="btn primary" id="scr-focus">Lancer une séance sans écran</button><span class="note">Lecture, écriture à la main, réflexion : on mesure ta concentration.</span></div>
       </details>
-    </div>
+    </details>
   </section>
 
   <!-- CLASSEMENT -->
@@ -1108,7 +1126,7 @@ q{quotes:"« " " »" "“" "”"}
       <div class="row spread"><h2>Badges</h2><span class="muted" id="badge-count"></span></div>
       <div class="badges" id="badges"></div>
       <button class="btn ghost badges-more" id="badges-more" hidden>Voir tous les badges</button>
-      <p class="note">Pourquoi une série et des XP ? Chez Duolingo, les apprenants qui atteignent 7 jours de série ont 3,6 fois plus de chances de terminer leur cours, et les « gels de série » (ici, les égides) évitent qu'un seul jour manqué fasse tout abandonner. <a href="https://blog.duolingo.com/how-duolingo-streak-builds-habit" target="_blank" rel="noopener">Source</a>. Le but reste le même : que l'envie de penser par toi-même prenne le relais des récompenses.</p>
+      <details class="fold"><summary><span class="note">Pourquoi une série et des XP ?</span></summary><p class="note"> Chez Duolingo, les apprenants qui atteignent 7 jours de série ont 3,6 fois plus de chances de terminer leur cours, et les « gels de série » (ici, les égides) évitent qu'un seul jour manqué fasse tout abandonner. <a href="https://blog.duolingo.com/how-duolingo-streak-builds-habit" target="_blank" rel="noopener">Source</a>. Le but reste le même : que l'envie de penser par toi-même prenne le relais des récompenses.</p></details>
     </div>
     <div class="panel">
       <div class="kpis">
@@ -1118,39 +1136,43 @@ q{quotes:"« " " »" "“" "”"}
         <div class="kpi"><span class="label">Hygiène IA</span><span class="num" id="k-habits">0 %</span><span class="muted">habitudes cochées, 7 j</span></div>
       </div>
     </div>
-    <div class="panel" id="calib-panel">
-      <div><h2>Sûr à combien ?</h2><p class="muted note">Quand tu te dis sûr à 90 %, as-tu raison 9 fois sur 10 ? C'est le réflexe à garder face à une IA qui parle avec aplomb, et l'entraînement des meilleurs prévisionnistes (Tetlock, 2015).</p></div>
+    <details class="panel fp" id="calib-panel">
+      <summary><h2>Sûr à combien ?</h2></summary><div><p class="muted note">Quand tu te dis sûr à 90 %, as-tu raison 9 fois sur 10 ? C'est le réflexe à garder face à une IA qui parle avec aplomb, et l'entraînement des meilleurs prévisionnistes (Tetlock, 2015).</p></div>
       <div class="tablewrap" id="calib"></div>
       <p class="note" id="calib-sum"></p>
-    </div>
-    <div class="panel">
-      <div><h2>Cette semaine en chiffres</h2><p class="muted note">Moyenne de tes scores depuis lundi, comparée à la semaine précédente.</p></div>
+    </details>
+    <h2 class="label prog-more">En détail</h2>
+    <details class="panel fp">
+      <summary><h2>Cette semaine en chiffres</h2></summary>
+      <p class="muted note">Moyenne de tes scores depuis lundi, comparée à la semaine précédente.</p>
       <div class="tablewrap" id="weekly"></div>
-    </div>
-    <div class="panel">
-      <div><h2>Temps d'écran, 14 derniers jours</h2><p class="muted note" id="scr-sub">La ligne pointillée marque ton objectif.</p></div>
-      <div class="bars" id="scr-bars" role="img" aria-label="Temps d'écran par jour" style="grid-template-columns:repeat(14,1fr);gap:4px"></div>
-    </div>
-    <div class="panel">
+    </details>
+    <details class="panel fp">
+      <summary><h2>Par exercice</h2></summary>
+      <div class="excstats" id="excstats"></div>
+    </details>
+    <details class="panel fp">
+      <summary><h2>Carnet d'écriture</h2></summary>
       <div class="row spread">
-        <h2>16 dernières semaines</h2>
-        <div class="legend">moins <i style="background:var(--heat0)"></i><i style="background:var(--heat1)"></i><i style="background:var(--heat2)"></i><i style="background:var(--heat3)"></i><i style="background:var(--heat4)"></i> plus</div>
-      </div>
-      <div class="heatwrap"><div class="heat" id="heat" role="img" aria-label="Calendrier d'activité"></div></div>
-      <p class="note">Chaque case est un jour : sa couleur reflète la part de la routine et des habitudes accomplies.</p>
-    </div>
-    <div class="panel">
-      <div class="row spread">
-        <div><h2>Carnet d'écriture</h2><p class="muted note">Tes textes, du plus récent au plus ancien, avec leurs mesures de style.</p></div>
+        <p class="muted note">Tes textes, du plus récent au plus ancien, avec leurs mesures de style.</p>
         <button class="btn" id="carnet-coach" hidden>Avis du coach sur mon évolution</button>
       </div>
       <div class="coachout" id="carnet-out" hidden></div>
       <div id="carnet" style="display:flex;flex-direction:column;gap:14px"></div>
-    </div>
-    <div class="panel">
-      <h2>Par exercice</h2>
-      <div class="excstats" id="excstats"></div>
-    </div>
+    </details>
+    <details class="panel fp">
+      <summary><h2>Temps d'écran, 14 derniers jours</h2></summary>
+      <p class="muted note" id="scr-sub">La ligne pointillée marque ton objectif.</p>
+      <div class="bars" id="scr-bars" role="img" aria-label="Temps d'écran par jour" style="grid-template-columns:repeat(14,1fr);gap:4px"></div>
+    </details>
+    <details class="panel fp">
+      <summary><h2>16 dernières semaines</h2></summary>
+      <div class="row spread">
+        <div class="legend">moins <i style="background:var(--heat0)"></i><i style="background:var(--heat1)"></i><i style="background:var(--heat2)"></i><i style="background:var(--heat3)"></i><i style="background:var(--heat4)"></i> plus</div>
+      </div>
+      <div class="heatwrap"><div class="heat" id="heat" role="img" aria-label="Calendrier d'activité"></div></div>
+      <p class="note">Chaque case est un jour : sa couleur reflète la part de la routine et des habitudes accomplies.</p>
+    </details>
   </section>
 
   <!-- CONSEILS -->
@@ -2152,7 +2174,8 @@ const evDate=md=>fd(new Date(2024,+md.slice(0,2)-1,+md.slice(2)),{day:'numeric',
 function renderThemes(){
   const m=myThemes();
   for(const id of ['#themes-seg','#themes-seg2'])$(id).replaceChildren(...THEMES.map(([k,v])=>el('button',{'aria-pressed':String(m.includes(k)),text:v,onclick:()=>toggleTheme(k)})));
-  $('#themes-ask').hidden=!!state.settings.themesSet;
+  const dd=state.days[todayKey()];
+  $('#themes-ask').hidden=!!state.settings.themesSet||!(dd&&Object.values(dd.done||{}).some(Boolean))||!$('#syncwarn').hidden;
 }
 function toggleTheme(k){
   let m=myThemes();
@@ -2638,9 +2661,10 @@ function renderToday(){
   const hb=$('#habits'); hb.replaceChildren();
   for(const[id,t,sub] of HABITS){
     const cb=el('input',{type:'checkbox',id:'h-'+id}); cb.checked=!!d.habits[id];
-    cb.addEventListener('change',()=>{d.habits[id]=cb.checked;save();renderProgress();});
+    cb.addEventListener('change',()=>{d.habits[id]=cb.checked;save();renderProgress();habitsCount();});
     hb.append(el('label',{class:'habit',for:'h-'+id},cb,el('span',{},document.createTextNode(t),el('small',{text:sub}))));
   }
+  habitsCount();
   const dayNum=Math.floor(new Date(k+'T12:00:00').getTime()/864e5), r=RULES[dayNum%RULES.length];
   $('#rule-title').textContent=r[0]; $('#rule-text').textContent=r[1];
   const wk=weekStart(k), wn=Math.floor(new Date(wk+'T12:00:00').getTime()/(7*864e5)), ch=CHALLENGES[wn%CHALLENGES.length], chDone=!!state.weeks[wk];
@@ -2686,6 +2710,7 @@ function applyFreezes(){
 // calibration : pour chaque confiance annoncée, la part de réponses justes
 function renderCalib(){
   const cs=state.calib||[], box=$('#calib'), sum=$('#calib-sum');
+  $('#calib-panel').hidden=!cs.length&&!confOn();
   if(!cs.length){box.replaceChildren(el('p',{class:'muted',text:"Pas encore de réponse avec confiance annoncée. Elle se demande dans « Trouve l'erreur de l'IA », le détecteur de sophismes et le problème du jour."}));sum.textContent='';return;}
   const tbl=el('table',{class:'week'}), head=el('tr');
   ['Tu annonces','Tu réussis','Réponses',''].forEach(h=>head.append(el('th',{text:h})));
@@ -2793,6 +2818,8 @@ $('#import-go').addEventListener('click',()=>{
   $('#import-msg').textContent=n?`Progrès fusionnés : ${n} exercice${n>1?'s':''} ajouté${n>1?'s':''}.`:'Progrès fusionnés : ces exercices étaient déjà là.';
 });
 $('#syncwarn-ok').addEventListener('click',()=>{try{sessionStorage.setItem('brainfit.later','1');}catch(e){}$('#syncwarn').hidden=true;});
+function openLogin(){$('#login').hidden=false;$('#login-ask').hidden=true;}
+$('#login-show').addEventListener('click',()=>{openLogin();$('#login-email').focus();});
 // compte Néophyte : e-mail et mot de passe, gardés par Supabase
 $('#login').addEventListener('submit',async e=>{
   e.preventDefault();
@@ -3374,6 +3401,12 @@ function renderProgram(){
     row('2 lectures intensives','30 minutes ou plus, livre ou article long, téléphone ailleurs. Clique un rond quand c’est fait.',dots(pr.lect||0,2,'lect')),
     row('1 séance d’écriture longue','30 minutes sur un sujet qui te tient à cœur, sans aucune aide. Ensuite, avis du coach.',dots(pr.ecrit||0,1,'ecrit')));
   const n=day().talks||0; $('#talk-n').textContent=n+'/3'; $('#talk-n').style.color=n>=3?'var(--good)':'';
+  habitsCount();
+}
+// le pli des habitudes résume la journée en une ligne
+function habitsCount(){
+  const d=state.days[todayKey()]||{}, h=HABITS.filter(x=>(d.habits||{})[x[0]]).length, t=d.talks||0;
+  $('#habits-n').textContent=`${h} sur ${HABITS.length}`+(t?` · ${t} discussion${t>1?'s':''}`:'');
 }
 $('#talk-plus').addEventListener('click',()=>{const d=day();d.talks=Math.min(9,(d.talks||0)+1);save();renderProgram();});
 $('#talk-minus').addEventListener('click',()=>{const d=day();d.talks=Math.max(0,(d.talks||0)-1);save();renderProgram();});
@@ -3463,7 +3496,7 @@ function showTab(t){
 $('#city-form').addEventListener('submit',e=>{e.preventDefault();state.settings.city=$('#city-in').value.trim().slice(0,60);save();renderReel();toast('<span>Ville enregistrée.</span>');});
 $('#go-biblio').addEventListener('click',()=>{showTab('conseils');window.scrollTo(0,0);});
 $('#go-settings').addEventListener('click',()=>{showTab('reglages');window.scrollTo(0,0);});
-$('#login-open').addEventListener('click',()=>{try{sessionStorage.removeItem('brainfit.later');}catch(e){}$('#syncwarn').hidden=false;showTab('aujourdhui');window.scrollTo(0,0);$('#login-email').focus();});
+$('#login-open').addEventListener('click',()=>{try{sessionStorage.removeItem('brainfit.later');}catch(e){}$('#syncwarn').hidden=false;openLogin();showTab('aujourdhui');window.scrollTo(0,0);$('#login-email').focus();});
 $$('.tabs button').forEach(b=>b.addEventListener('click',()=>{const same=b.getAttribute('aria-selected')==='true';showTab(b.dataset.tab);if(!same)window.scrollTo(0,0);}));
 window.addEventListener('hashchange',()=>showTab(location.hash.slice(1)));
 
@@ -3486,8 +3519,15 @@ function renderExGrid(){
   // un exercice ajouté sans famille rejoint les échauffements plutôt que de disparaître
   const rest=Object.keys(EX).filter(k=>!EX[k].manual&&!EX[k].hidden&&!fams.some(f=>f[2].includes(k)));
   fams[fams.length-1][2].push(...rest);
-  g.replaceChildren(...fams.filter(f=>f[2].length).map(([t,d,keys])=>el('section',{class:'exgroup'},
-    el('div',{class:'exgroup-head'},el('h2',{text:t}),el('p',{class:'muted note',text:d})),el('div',{class:'cards'},...keys.map(card)))));
+  // une seule famille ouverte au départ ; on retient celles que tu ouvres
+  let op=null; try{op=JSON.parse(localStorage.getItem('neo.exopen')||'null');}catch(e){}
+  const shown=fams.filter(f=>f[2].length); if(!Array.isArray(op))op=[shown[0][0]];
+  g.replaceChildren(...shown.map(([t,d,keys])=>{
+    const nd=keys.filter(k=>day().done[k]).length;
+    const det=el('details',{class:'exgroup',open:op.includes(t)?'':null},
+      el('summary',{class:'exgroup-head'},el('h2',{text:t}),el('p',{class:'muted note',text:d+' · '+keys.length+' exercice'+(keys.length>1?'s':'')+(nd?' · '+nd+' fait'+(nd>1?'s':'')+' aujourd’hui':'')})),el('div',{class:'cards'},...keys.map(card)));
+    det.addEventListener('toggle',()=>{const o=$$('#exgrid details.exgroup').filter(x=>x.open).map(x=>x.querySelector('h2').textContent);try{localStorage.setItem('neo.exopen',JSON.stringify(o));}catch(e){}});
+    return det;}));
 }
 // tirage sans lassitude : les questions les moins récemment vues passent en premier
 // ex : l'exercice dont le niveau oriente le tirage ; à fraîcheur égale, les questions de ton niveau passent devant
@@ -3748,7 +3788,8 @@ let curEx=null, qmarks=[], qcur=0, combo=0;
 const FLAME='<svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2c1 4-3 6-3 10a3 3 0 0 0 6 0c0-1-.5-2-1-3 3 1 5 4 5 7a7 7 0 0 1-14 0c0-6 7-8 7-14z"/></svg>';
 function qprog(i,n){
   if(i===0){qmarks=[];combo=0;}
-  qcur=i; const ar=$('#arena'); delete ar.dataset.v; ar.classList.remove('qin'); void ar.offsetWidth; ar.classList.add('qin');
+  qcur=i; const ar=$('#arena'); delete ar.dataset.v;
+  if(i>0){const top=$('#stage').getBoundingClientRect().top; if(top<0)window.scrollBy({top:top-8,behavior:reduceMotion()?'auto':'smooth'});} ar.classList.remove('qin'); void ar.offsetWidth; ar.classList.add('qin');
   const bar=el('div',{class:'qbar',role:'progressbar','aria-valuemin':'1','aria-valuemax':String(n),'aria-valuenow':String(i+1),'aria-label':`Question ${i+1} sur ${n}`});
   for(let j=0;j<n;j++)bar.append(el('i',{class:j<i?(qmarks[j]?'ok':'ko'):j===i?'cur':null}));
   const c=el('span',{class:'combo',hidden:combo<2?'':null}); if(combo>=2)c.innerHTML=FLAME+combo+' d’affilée';
@@ -3770,8 +3811,17 @@ function hit(right){
   const seg=a.querySelector('.qbar i.cur'); if(seg)seg.className=right?'ok':'ko';
   const c=a.querySelector('.combo');
   if(c){c.hidden=combo<2; if(combo>=2){c.innerHTML=FLAME+combo+' d’affilée'; c.classList.remove('bump'); void c.offsetWidth; c.classList.add('bump');}}
-  stagReact(right);
+  stagReact(right); revealNext();
   try{if(navigator.vibrate)navigator.vibrate(right?12:[25,40,25]);}catch(e){}
+}
+function revealNext(){
+  setTimeout(()=>{
+    const a=$('#arena'); if(!a||$('#stage').hidden)return;
+    const bs=[...a.querySelectorAll('button.primary,.answer,.feedback')].filter(b=>b.offsetParent&&!b.disabled);
+    const b=bs[bs.length-1]; if(!b)return;
+    const r=b.getBoundingClientRect(), nav=$('.tabs'), nb=nav&&getComputedStyle(nav).position==='fixed'&&nav.getBoundingClientRect().top>innerHeight/2?nav.offsetHeight:0, lim=innerHeight-nb-12;
+    if(r.bottom>lim)window.scrollBy({top:Math.min(r.bottom-lim,Math.max(0,r.top-80)),behavior:reduceMotion()?'auto':'smooth'});
+  },90);
 }
 function countUp(node,to){
   const reduce=window.matchMedia&&matchMedia('(prefers-reduced-motion: reduce)').matches;
@@ -4909,7 +4959,7 @@ function welcomeNeeded(){
 function closeWelcome(login){
   try{localStorage.setItem(LS_WELCOME,'1');}catch(e){}
   $('#welcome').hidden=true; document.body.style.overflow='';
-  if(login){try{sessionStorage.removeItem('brainfit.later');}catch(e){}$('#syncwarn').hidden=false;showTab('aujourdhui');window.scrollTo(0,0);setTimeout(()=>$('#login-email').focus(),50);}
+  if(login){try{sessionStorage.removeItem('brainfit.later');}catch(e){}$('#syncwarn').hidden=false;openLogin();showTab('aujourdhui');window.scrollTo(0,0);setTimeout(()=>$('#login-email').focus(),50);}
   else{try{sessionStorage.setItem('brainfit.later','1');}catch(e){}$('#syncwarn').hidden=true;showTab('aujourdhui');window.scrollTo(0,0);}
   if(DEFI)setTimeout(launchDefi,200);
 }

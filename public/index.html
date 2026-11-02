@@ -1273,7 +1273,7 @@ q{quotes:"« " " »" "“" "”"}
     </div>
     <div class="panel" id="privacy">
       <div><h2>Tes données</h2>
-        <p class="fg2" style="max-width:65ch">Avec un compte, Néophyte garde ton e-mail, tes progrès et tes textes chez Supabase, qui héberge sa base de données. Les autres utilisateurs ne peuvent pas les lire ; techniquement, la personne qui gère ce Néophyte y a accès. Si tu rejoins un cercle, ses membres voient seulement ton pseudo, tes XP de la semaine et ta série. Quand tu contestes une réponse ou signales un problème, ton message, la question ou l'écran concernés (avec la capture si tu la laisses) et le type d'appareil sont envoyés pour être relus ; ils sont effacés avec ton compte. Quand tu parles au coach, ta demande et le résumé de tes progrès sont envoyés à Claude (Anthropic) pour qu'il réponde. Rien n'est vendu, et il n'y a ni publicité ni mesure d'audience.</p></div>
+        <p class="fg2" style="max-width:65ch">Avec un compte, Néophyte garde ton e-mail, tes progrès et tes textes chez Supabase, qui héberge sa base de données. Les autres utilisateurs ne peuvent pas les lire ; techniquement, la personne qui gère ce Néophyte y a accès. Si tu rejoins un cercle, ses membres voient seulement ton pseudo, tes XP de la semaine et ta série. Quand tu contestes une réponse ou signales un problème, ton message, la question ou l'écran concernés (avec la capture si tu la laisses) et le type d'appareil sont envoyés pour être relus ; ils sont effacés avec ton compte. Quand tu parles au coach, ta demande et le résumé de tes progrès (et la photo de ta feuille, si tu lui en confies une) sont envoyés à Claude (Anthropic) pour qu'il réponde. Rien n'est vendu, et il n'y a ni publicité ni mesure d'audience.</p></div>
       <div class="row"><button class="btn ghost" id="erase" hidden>Effacer mon compte</button></div>
       <div id="erase-confirm" class="row" hidden>
         <span class="fg2">Effacer ton compte, tes progrès, tes textes et ta place dans ton cercle ? Ce n'est pas réversible.</span>
@@ -4193,9 +4193,30 @@ write(arena){
     ta.addEventListener('paste',e=>{e.preventDefault();fb.textContent='Le collage est désactivé ici : écris avec tes propres mots.';setTimeout(()=>fb.textContent='',2500);});
     ta.addEventListener('drop',e=>e.preventDefault());
     const fin=el('button',{class:'btn primary',text:'Terminer',onclick:()=>finish()});
+    // écrire sur papier : le coach transcrit la photo de la feuille, sans rien corriger, puis tout continue comme au clavier
+    let hand=false;
+    const photo=el('input',{type:'file',accept:'image/*',capture:'environment',hidden:''});
+    const pbtn=el('button',{class:'btn ghost small',text:'J’écris sur papier : photographier ma feuille'});
+    const handRow=el('div',{class:'row hand-row',hidden:''},pbtn,photo);
+    (async()=>{const sm=await sampler();const lim=sm&&sm.limits?await sm.limits().catch(()=>null):null;if(lim&&lim.images)handRow.hidden=false;})();
+    pbtn.addEventListener('click',()=>photo.click());
+    photo.addEventListener('change',async()=>{
+      const f=photo.files&&photo.files[0]; photo.value=''; if(!f)return;
+      pbtn.disabled=true; fin.disabled=true; fb.textContent='Le coach lit ta feuille…';
+      try{
+        const sm=await sampler(), img=await shrinkPhoto(f);
+        const r=await sm.json(`La photo montre un texte écrit à la main, en français, sur ce sujet : « ${(mode==='resume'?src[0]:prompt).slice(0,400)} ». Transcris-le fidèlement, mot pour mot, en gardant ses fautes d'orthographe, de grammaire et de ponctuation : ne corrige rien, ne complète rien, ne reformule rien. Garde les retours à la ligne entre paragraphes. Ignore les mots barrés. Un mot que tu ne parviens pas à lire s'écrit [?]. Réponds uniquement en JSON : {"lisible": boolean, "texte": string, "illisibles": number}.`,{images:[img],modelTier:'complex',cache:false});
+        if(!r||r.lisible===false||!r.texte||!String(r.texte).trim()){fb.textContent='Le coach n’arrive pas à lire la feuille. Reprends la photo bien à plat, en pleine lumière.';return;}
+        const tx=String(r.texte).trim().slice(0,12000);
+        ta.value=ta.value.trim()&&mode!=='revise'?ta.value.trim()+'\n\n'+tx:tx; hand=true;
+        ta.dispatchEvent(new Event('input'));
+        fb.textContent=(r.illisibles>0||/\[\?\]/.test(tx))?'Relis la transcription : remplace chaque [?] par le bon mot, puis clique sur Terminer.':'Relis la transcription et corrige les erreurs de lecture (pas les tiennes !), puis clique sur Terminer.';
+      }catch(e){fb.textContent=e&&COACH_ERR[e.code]!=null?COACH_ERR[e.code]:'La lecture de la photo a échoué. Réessaie, ou recopie ton texte.';}
+      finally{pbtn.disabled=false; fin.disabled=false;}
+    });
     arena.style.alignItems='stretch';
     arena.replaceChildren(...[el('span',{class:'label',text:WMODES[mode].label}),el('p',{class:'prompt',text:mode==='resume'?'Résume de mémoire : '+src[0]:prompt}),
-      mode==='disput'?el('p',{class:'note dplan',text:'Il semble que… · En sens contraire… · Je réponds que… · Réponse aux objections'}):null,ta,el('div',{class:'row spread'},el('div',{class:'row'},wc,fb),fin)].filter(Boolean));
+      mode==='disput'?el('p',{class:'note dplan',text:'Il semble que… · En sens contraire… · Je réponds que… · Réponse aux objections'}):null,ta,el('div',{class:'row spread'},el('div',{class:'row'},wc,fb),fin),handRow].filter(Boolean));
     count(); ta.focus();
     const total=mode==='resume'?5:mins;
     const stopT=countdown(total*60,null,()=>{fb.textContent='Temps écoulé. Termine ta phrase puis clique sur Terminer.';});
@@ -4204,18 +4225,19 @@ write(arena){
       const n=count();
       if(n<(limit?10:15)){fb.textContent=`Écris au moins ${limit?10:15} mots pour enregistrer la séance.`;return;}
       if(limit&&n>limit){fb.textContent=`Coupe ton résumé à ${limit} mots : choisir l'essentiel fait partie de l'exercice.`;return;}
+      if(/\[\?\]/.test(ta.value)){fb.textContent='Remplace d’abord chaque [?] par le mot que tu as écrit.';return;}
       if(mode==='revise'&&ta.value.trim()===orig.text.trim()){fb.textContent='Modifie ton texte avant de terminer : coupe, précise, réorganise.';return;}
       stopT(); arena.style.alignItems='';
       try{localStorage.removeItem('brainfit.draft');}catch(e){}
       const text=ta.value.trim(), el_m=Math.max(.5,(Date.now()-started)/60000), st=textStats(text,el_m);
       const m=recordMsg('write',n); logResult('write',n,{w:mode});
       if(mode==='revise')orig.rev=Date.now();
-      texts.push({t:Date.now(),mode,prompt,text:text.slice(0,4000),words:st.words,avgSent:st.avgSent,variety:st.variety,wpm:mode==='revise'?0:st.wpm}); saveTexts();
+      texts.push({t:Date.now(),mode,prompt,text:text.slice(0,4000),words:st.words,avgSent:st.avgSent,variety:st.variety,wpm:mode==='revise'||hand?0:st.wpm,hand:hand?1:undefined}); saveTexts();
       const rv=mode==='revise', dq=mode==='disput'?DISPUT.find(d=>DQ(d)===prompt):null;
       const thom=dq?el('div',{class:'answer'},el('span',{class:'label',text:dq[1]?'Ce que répond saint Thomas':'Une piste chez saint Thomas'}),el('span',{class:'fg2',text:dq[2]}),dq[1]?el('span',{class:'note',text:dq[1]}):null):null;
       showResult(arena,n,rv?'mots dans ta version révisée':'mots écrits sans aide',m+(rv?` Version d'origine : ${orig.words} mots, ${orig.avgSent} mots/phrase. Les deux versions sont dans ton carnet.`:dq?' Compare avec ta réponse : où es-tu d’accord, où diverges-tu, et pourquoi ?':" Ton texte est rangé dans ton carnet (onglet Progrès). Relis-le demain : qu'ajouterais-tu, que couperais-tu ?"),()=>RUN.write(arena),thom);
       arena.insertBefore(el('div',{class:'row',style:'justify-content:center;gap:18px'},
-        rv?null:statChip(st.wpm,'mots / min'),statChip(st.avgSent,'mots / phrase'),statChip(st.variety+' %','vocabulaire varié')),arena.children[2]);
+        rv||hand?null:statChip(st.wpm,'mots / min'),statChip(st.avgSent,'mots / phrase'),statChip(st.variety+' %','vocabulaire varié')),arena.children[2]);
       const extra=mode==='resume'?`\n\nTexte source qu'il devait résumer :\n---\n${src[1]}\n---`:mode==='revise'?`\n\nVersion d'origine, qu'il vient de réviser :\n---\n${orig.text}\n---\nCompare les deux versions : dis précisément ce que la révision a amélioré et ce qui reste à travailler.`:'';
       if(mode==='resume')arena.append(precisCheck(src,text));
       if(mode==='acier')arena.append(acierCheck());
@@ -4223,7 +4245,7 @@ write(arena){
         const info=el('p',{class:'note'});
         arena.append(el('div',{class:'coachbox'},el('button',{class:'btn',text:'Disputer avec ton IA',title:'Copie ton texte avec une consigne : ton IA examine ton article et t’oppose une nouvelle objection, sans le réécrire',onclick:()=>copyText(DISPUT_AI+'\n\n'+prompt+'\n\nMon texte :\n'+text,info,'Copié. Colle-le dans ton IA : elle examine ton article et t’oppose une nouvelle objection, sans rien réécrire.')}),info));
       }
-      arena.append(coachBlock('Avis du coach sur mon texte',()=>coachRules()+`\n\nExercice d'écriture « ${WMODES[mode].label} ». Consigne : « ${mode==='resume'?'Résumer de mémoire en 60 mots max : '+src[0]:prompt} ». Il a écrit sans aide en ${Math.round(el_m)} minutes.${extra}\n\nSon texte :\n---\n${text.slice(0,12000)}\n---\n\nCritères pour ce format : ${WMODES[mode].crit}.\nDonne-lui un retour d'entraîneur d'écriture, en 180 mots maximum :\n- 2 points forts précis (cite ses mots) ;\n- 2 axes d'amélioration selon les critères, chacun avec une piste qu'il appliquera lui-même, sans réécrire ses phrases ;\n- une note sur 10 pour ce format, justifiée en une phrase ;\n- une question qui l'oblige à approfondir.`));
+      arena.append(coachBlock('Avis du coach sur mon texte',()=>coachRules()+`\n\nExercice d'écriture « ${WMODES[mode].label} ». Consigne : « ${mode==='resume'?'Résumer de mémoire en 60 mots max : '+src[0]:prompt} ». Il a écrit sans aide en ${Math.round(el_m)} minutes${hand?', à la main sur papier ; le texte ci-dessous est la transcription de sa feuille, relue par lui':''}.${extra}\n\nSon texte :\n---\n${text.slice(0,12000)}\n---\n\nCritères pour ce format : ${WMODES[mode].crit}.\nDonne-lui un retour d'entraîneur d'écriture, en 180 mots maximum :\n- 2 points forts précis (cite ses mots) ;\n- 2 axes d'amélioration selon les critères, chacun avec une piste qu'il appliquera lui-même, sans réécrire ses phrases ;\n- une note sur 10 pour ce format, justifiée en une phrase ;\n- une question qui l'oblige à approfondir.`));
     }
   }
 },

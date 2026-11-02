@@ -908,6 +908,8 @@ html.boot .view{visibility:hidden}
 .wl-install h2{margin:0}
 .wl-qr{display:flex;gap:18px;align-items:center;text-align:left}
 .wl-qr svg{width:132px;height:132px;flex:none;border-radius:8px;box-shadow:0 0 0 1px var(--line),0 0 0 6px var(--gold-soft)}
+.share-qr{display:flex;justify-content:center;padding:6px 0}
+.share-qr svg{width:min(220px,70vw);height:auto;aspect-ratio:1;border-radius:10px;box-shadow:0 0 0 1px var(--line),0 0 0 8px var(--gold-soft)}
 .wl-qr p,.wl-steps p{margin:0;color:var(--fg2);font-size:.95rem;line-height:1.45}
 .wl-steps{text-align:left;width:100%;display:flex;flex-direction:column;gap:6px;align-items:flex-start}
 .wl-steps ol{margin:0;padding-left:1.4em;color:var(--fg2);font-size:.95rem;line-height:1.55}
@@ -1515,6 +1517,11 @@ var fin=function(){if(e.parentNode)e.remove();};e.addEventListener('click',fin);
       <div><h2>Mes thèmes</h2><p class="muted note">Jusqu'à trois. Citations, « Ce jour-là », dictées, sujets d'écriture et coach s'en inspirent.</p></div>
       <div class="seg themes" id="themes-seg" role="group" aria-label="Mes thèmes"></div>
     </div>
+    <div class="panel" id="partage">
+      <div><h2>Partager Néophyte</h2><p class="muted note">Quelqu'un à côté de toi ? Montre-lui ce code : il le scanne avec l'appareil photo de son téléphone et arrive sur Néophyte.</p></div>
+      <div class="share-qr" id="share-qr"></div>
+      <div class="row"><button class="btn" id="share-btn">Envoyer le lien</button><span class="muted note">yohandk.github.io/Brain-Fit</span></div>
+    </div>
     <div class="panel">
       <div class="row spread">
         <div><h2>Sauvegarde</h2><p class="muted note">Copie tes données pour les garder ou les transférer.</p><span class="sync" id="sync">Progrès enregistrés dans ce navigateur</span></div>
@@ -1557,7 +1564,7 @@ var fin=function(){if(e.parentNode)e.remove();};e.addEventListener('click',fin);
   <footer class="foot">
     <div class="meander" aria-hidden="true"></div>
     <p><span class="foot-brand">Néo<span>phyte</span></span> · Garder l'esprit vif à l'heure de l'IA</p>
-    <p><button class="linkbtn" id="foot-welcome">Présentation</button> · <button class="linkbtn" id="foot-about">À propos</button> · <button class="linkbtn" id="foot-privacy">Tes données</button> · <button class="linkbtn" id="foot-biblio">Bibliothèque</button></p>
+    <p><button class="linkbtn" id="foot-welcome">Présentation</button> · <button class="linkbtn" id="foot-about">À propos</button> · <button class="linkbtn" id="foot-privacy">Tes données</button> · <button class="linkbtn" id="foot-biblio">Bibliothèque</button> · <button class="linkbtn" id="foot-share">Partager</button></p>
     <p class="note">Gratuit, sans publicité ni mesure d'audience.</p>
   </footer>
 </div>
@@ -6326,6 +6333,15 @@ $('#wl-signup').addEventListener('click',()=>closeWelcome('signup'));
 const goPanel=(tab,id)=>{showTab(tab);setTimeout(()=>{const p=document.getElementById(id);if(p)p.scrollIntoView({behavior:'smooth',block:'start'});},30);};
 $('#foot-about').addEventListener('click',()=>goPanel('conseils','about'));
 $('#foot-privacy').addEventListener('click',()=>goPanel('reglages','privacy'));
+// partager l'appli : le QR code de l'accueil, repris dans Réglages, et le partage natif du téléphone
+{const SITE='https://yohandk.github.io/Brain-Fit/';
+ const q=$('#wl-qr svg'); if(q)$('#share-qr').append(q.cloneNode(true));
+ $('#share-btn').addEventListener('click',async()=>{
+   const data={title:'Néophyte',text:"Néophyte : un exercice par jour pour garder l'esprit vif à l'heure de l'IA.",url:SITE};
+   try{if(navigator.share){await navigator.share(data);return;}}catch(e){if(e&&e.name==='AbortError')return;}
+   try{await navigator.clipboard.writeText(SITE);toast('<span>Lien copié : colle-le dans un message.</span>');}catch(e){toast('<span>'+SITE+'</span>');}
+ });
+ $('#foot-share').addEventListener('click',()=>goPanel('reglages','partage'));}
 $('#foot-biblio').addEventListener('click',()=>{showTab('conseils');window.scrollTo(0,0);});
 $$('#biblio-toc button').forEach(b=>b.addEventListener('click',()=>goPanel('conseils',b.dataset.to)));
 

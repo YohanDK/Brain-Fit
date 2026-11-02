@@ -390,6 +390,10 @@ table.week td.num{font-family:var(--f-mono)}
 .chart .ln{fill:none;stroke-width:2.2}
 .chart .ln.s0{stroke:var(--accent)} .chart .dt.s0{fill:var(--accent)}
 .chart .ln.s1{stroke:var(--gold-deep)} .chart .dt.s1{fill:var(--gold-deep)}
+.chart.still *{animation:none!important;opacity:1!important;stroke-dashoffset:0!important}
+.fixbox{width:min(520px,100%);display:flex;flex-direction:column;gap:4px;padding:10px 12px;border:1px dashed var(--gold);border-radius:10px;background:var(--gold-soft)}
+.fixrange{width:100%;accent-color:var(--gold-deep);height:32px}
+.chartcard.fixed figcaption strong{color:var(--good)}
 .chart-leg{display:flex;gap:12px;flex-wrap:wrap;font-size:.85rem}
 .chart-leg .s0{color:var(--accent)} .chart-leg .s1{color:var(--gold-deep)}
 .precis .check{display:flex;gap:8px;align-items:flex-start;text-align:left}
@@ -3657,11 +3661,11 @@ function precisCheck(src,text){
 function chartSVG(g){
   const W=340, H=220, L=44, R=g.s.some(x=>x.axe==='d')?44:12, T=14, B=34, w=W-L-R, h=H-T-B;
   const cut=a=>g.fenetre?a.slice(g.fenetre[0],g.fenetre[1]+1):a, cum=a=>{let t=0;return a.map(v=>t+=v);};
-  const xs=cut(g.x), xn=g.xnum?cut(g.xnum):null, ser=g.s.map(x=>({...x,v:cut(g.cumul?cum(x.v):x.v)}));
+  const ck=g.cumul===true?1:+g.cumul||0, xs=cut(g.x), xn=g.xnum?cut(g.xnum):null, ser=g.s.map(x=>({...x,v:cut(ck?cum(x.v).map((c,i)=>x.v[i]+(c-x.v[i])*ck):x.v)}));
   const nice=st=>{const p=Math.pow(10,Math.floor(Math.log10(st))),k=st/p;return(k<=1?1:k<=2?2:k<=2.5?2.5:k<=5?5:10)*p;};
   const scale=(a,b)=>{const st=nice((b-a)/4);return{a,b,st,y:v=>T+h-(v-a)/(b-a)*h};};
   const S1=scale(g.ymin,g.ymax), S2=g.ymax2!=null?scale(g.ymin2,g.ymax2):null;
-  const n=xs.length, px=i=>g.type==='barres'?L+w*(i+.5)/n:xn&&g.prop?L+12+(w-24)*(xn[i]-xn[0])/(xn[n-1]-xn[0]):L+12+(w-24)*(n>1?i/(n-1):.5);
+  const pk=g.prop===true?1:+g.prop||0, n=xs.length, px=i=>{if(g.type==='barres')return L+w*(i+.5)/n;const reg=L+12+(w-24)*(n>1?i/(n-1):.5);return xn&&pk?reg+(L+12+(w-24)*(xn[i]-xn[0])/(xn[n-1]-xn[0])-reg)*pk:reg;};
   const f=v=>fmt(Math.round(v*100)/100+0), esc=t=>String(t).replace(/&/g,'&amp;').replace(/</g,'&lt;');
   let o=`<svg viewBox="0 0 ${W} ${H}" class="chart" role="img" aria-label="${esc(g.titre)}">`;
   const ticks=(Sc,side)=>{for(let v=Math.ceil(Sc.a/Sc.st-1e-9)*Sc.st;v<=Sc.b+1e-9;v+=Sc.st){const y=Sc.y(v);if(side==='g')o+=`<line x1="${L}" x2="${W-R}" y1="${y}" y2="${y}" class="grid"/>`;o+=`<text x="${side==='g'?L-6:W-R+6}" y="${y+4}" text-anchor="${side==='g'?'end':'start'}" class="${side==='d'?'tk s1':'tk'}">${f(v)}</text>`;}};
@@ -3674,6 +3678,27 @@ function chartSVG(g){
   // on saute une étiquette qui chevaucherait la précédente
   let lastX=-1e9; xs.forEach((t,i)=>{const x=px(i);if(x-lastX<String(t).length*6+6)return;lastX=x;o+=`<text x="${x}" y="${H-B+16}" text-anchor="middle" class="tk">${esc(t)}</text>`;});
   return o+'</svg>';
+}
+// le piège redressé à la main : t va de 0 (le graphique trompeur) à 1 (la version honnête)
+function chartAt(g,t){
+  const c=g.corr, lp=(a,b)=>a+(b-a)*t, o=Object.assign({},g);
+  if(c.ymin!=null)o.ymin=lp(g.ymin,c.ymin); if(c.ymax!=null)o.ymax=lp(g.ymax,c.ymax);
+  if(c.s)o.s=g.s.map((x,k)=>({...x,v:x.v.map((v,i)=>lp(v,c.s[k].v[i]))}));
+  if(c.cumul===false)o.cumul=1-t; if(c.prop)o.prop=t;
+  if(c.fenetre===null&&g.fenetre){const N=g.x.length-1;o.fenetre=[Math.round(g.fenetre[0]*(1-t)),Math.round(lp(g.fenetre[1],N))];}
+  if(t>=.5){if(c.unite)o.unite=c.unite;if(c.legende!==undefined)o.legende=c.legende;}
+  return o;
+}
+function chartFix(card,g,onDone){
+  const svg=card.querySelector('div'), cap=card.querySelector('figcaption'), title=g.corr.titre||'Les mêmes chiffres, montrés honnêtement';
+  const r=el('input',{type:'range',min:'0',max:'100',value:'0',class:'fixrange','aria-label':'Redresser le graphique'});
+  let done=false;
+  r.addEventListener('input',()=>{const t=+r.value/100, o=chartAt(g,t);
+    svg.innerHTML=chartSVG(o); svg.firstChild.classList.add('still');
+    cap.replaceChildren(el('strong',{text:t>=.98?title:g.titre}),o.unite?el('span',{class:'note',text:o.unite}):null);
+    card.classList.toggle('fixed',t>=.98);
+    if(t>=.98&&!done){done=true;son('juste');if(onDone)onDone();}});
+  return el('div',{class:'fixbox'},el('span',{class:'label',text:'À toi : redresse-le'}),r,el('div',{class:'row spread note'},el('span',{text:'le piège'}),el('span',{text:'la vérité'})));
 }
 function chartCard(g){
   const leg=g.s.length>1?el('div',{class:'chart-leg'},...g.s.map((x,k)=>el('span',{class:'s'+k,text:x.nom+(g.s.some(y=>y.axe==='d')?(x.axe==='d'?' (axe de droite)':' (axe de gauche)'):'')}))):null;
@@ -4670,13 +4695,16 @@ graphe(arena){
           [...box.children].forEach(b=>{if(sameText(b.textContent,right))b.classList.add('right');});
           if(o===right)ok++;else{me.classList.add('wrong');missAgain('graphe',G,g);}
           hit(o===right); const pts=logConf('graphe',c,o===right?1:0);
-          fb.replaceChildren(el('span',{class:'label'},(o===right?'Exact':g.piege==='honnete'?'Ce graphique est honnête':'Le piège : '+right)+' ',betChip(pts)),el('span',{class:'fg2',text:g.expl}),
-            g.corr?el('span',{class:'label',text:'La version honnête'}):null,g.corr?chartCard(Object.assign({},g,{titre:'Les mêmes chiffres, montrés honnêtement'},g.corr)):null,contestBtn('graphe',g.id,g.titre));
+          const expl=el('span',{class:'fg2',text:g.expl});
+          if(g.corr){expl.hidden=true;card.after(chartFix(card,g,()=>{expl.hidden=false;revealNext();}));}
+          fb.replaceChildren(el('span',{class:'label'},(o===right?'Exact':g.piege==='honnete'?'Ce graphique est honnête':'Le piège : '+right)+' ',betChip(pts)),
+            g.corr?el('span',{class:'note',text:'Fais glisser le curseur sous le graphique jusqu’au bout pour voir les mêmes chiffres montrés honnêtement.'}):null,expl,contestBtn('graphe',g.id,g.titre));
           fb.hidden=false; next.hidden=false; next.focus();
         }));
       }})));
       next.addEventListener('click',()=>{qi++;if(qi<3)ask();else{const sc=ok/3*100;const m=recordMsg('graphe',sc);logResult('graphe',sc);const up=adaptLevel('graphe',sc);showResult(arena,Math.round(sc),`% de bonnes réponses (${ok} sur 3)`,m+' Devant un graphique qui circule, trois questions : où commence l’axe, quelle période, combien au départ ?'+betSummary()+up,()=>RUN.graphe(arena));}});
-      arena.replaceChildren(qprog(qi,3),chartCard(g),el('p',{class:'prompt',style:'text-align:center',text:'Qu’est-ce qui cloche ?'}),box,fb,next);
+      const card=chartCard(g);
+      arena.replaceChildren(qprog(qi,3),card,el('p',{class:'prompt',style:'text-align:center',text:'Qu’est-ce qui cloche ?'}),box,fb,next);
     };
     ask();
   }

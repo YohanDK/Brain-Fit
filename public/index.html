@@ -330,6 +330,34 @@ table.week td.num{font-family:var(--f-mono)}
 .chat .coachout{border-radius:14px 14px 14px 4px;max-width:92%}
 .coachbox{display:flex;flex-direction:column;gap:10px;align-items:center;width:100%;border-top:1px solid var(--line);padding-top:16px}
 .options{display:flex;flex-direction:column;gap:8px;width:min(520px,100%)}
+/* arbre de la connaissance */
+.arbre-wrap{width:min(420px,100%);align-self:center}
+.arbre-svg{width:100%;height:auto;display:block;overflow:visible}
+.arbre-svg .sol{stroke:var(--line);stroke-width:1.5;stroke-dasharray:3 5;fill:none}
+.arbre-svg .racine,.arbre-svg .branche{stroke:var(--gold-deep);opacity:.45;stroke-width:3;fill:none;stroke-linecap:round}
+.arbre-svg .tronc{stroke:var(--gold-deep);opacity:.55;stroke-width:11;fill:none;stroke-linecap:round}
+.arbre-svg .part{font:600 10px var(--f-body);fill:var(--muted);letter-spacing:.06em;text-transform:uppercase}
+.arbre-svg .an{cursor:pointer;outline:none}
+.arbre-svg .an text{font:600 10.5px var(--f-body);fill:var(--fg);text-anchor:middle;paint-order:stroke;stroke:var(--surface);stroke-width:4px;stroke-linejoin:round}
+.arbre-svg .an .dot{fill:var(--surface);stroke:var(--gold);stroke-width:2;transition:transform .2s}
+.arbre-svg .an .ring{fill:none;stroke:var(--gold);stroke-width:1.3;stroke-dasharray:2.5 3}
+.arbre-svg .an .ico{fill:none;stroke:var(--gold-deep);stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+.arbre-svg .an.lock .dot{fill:var(--sunk);stroke:var(--line)} .arbre-svg .an.lock .ico{stroke:var(--muted)} .arbre-svg .an.lock text{fill:var(--muted)} .arbre-svg .an.lock .ring{stroke:var(--line)}
+.arbre-svg .an.ok .dot,.arbre-svg .an.field .dot{fill:var(--accent);stroke:var(--accent)} .arbre-svg .an.ok .ico,.arbre-svg .an.field .ico{stroke:var(--on-accent)}
+.arbre-svg .an.gold .dot{fill:var(--gold);stroke:var(--gold-deep)} .arbre-svg .an.gold .ico{stroke:#fff} .arbre-svg .an.gold .ring{stroke-dasharray:none;stroke-width:2}
+.arbre-svg .an.sel .dot{stroke:var(--fg);stroke-width:3} .arbre-svg .an:focus-visible .dot{stroke:var(--accent-deep);stroke-width:3.5}
+.arbre-svg .an.open .dot{animation:arbre-pulse 2.4s ease-in-out infinite}
+@keyframes arbre-pulse{50%{stroke-width:4}}
+@media (prefers-reduced-motion:reduce){.arbre-svg .an.open .dot{animation:none}}
+.arbre-leg{justify-content:center;flex-wrap:wrap;gap:6px 14px}
+.arbre-leg i{display:inline-block;width:11px;height:11px;border-radius:50%;margin-right:5px;vertical-align:-1px;border:2px solid var(--gold)}
+.arbre-leg .l-open{background:var(--surface)} .arbre-leg .l-ok{background:var(--accent);border-color:var(--accent)} .arbre-leg .l-field{background:var(--accent);border:2px dashed var(--gold)} .arbre-leg .l-gold{background:var(--gold)}
+.arbre-sum{text-align:center}
+.arbre-fiche{display:flex;flex-direction:column;gap:10px;width:100%;max-width:62ch;text-align:left;border-top:1px solid var(--line);padding-top:16px}
+.arbre-fiche h3{margin:2px 0 0}
+.arbre-txt{line-height:1.65}
+.arbre-terrain{background:var(--gold-soft);border-left:3px solid var(--gold);border-radius:0 10px 10px 0;padding:12px 14px;display:flex;flex-direction:column;gap:8px}
+.arbre-terrain textarea{width:100%}
 .options button{border:1px solid var(--line);background:var(--surface);border-radius:9px;padding:11px 14px;text-align:left;font-weight:700}
 .options button:hover:not([disabled]){border-color:var(--accent)}
 .options button.right{background:var(--good-soft);border-color:var(--good);color:var(--good)}
@@ -1670,10 +1698,12 @@ const EX={
   eclair:{name:'Éclair',skill:'Vivacité',desc:"90 secondes de questions mêlées : orthographe, dates, sophismes, citations, calcul, ordres de grandeur. Bats ton record.",unit:'bonnes réponses'},
   evenement:{name:'Événement de saison',skill:'Esprit critique & culture',desc:"Une semaine à thème : vrai, faux ou non prouvé.",unit:'% de bonnes réponses',hidden:true},
   bilan:{name:"Point d'étape",skill:'Bilan',desc:"Seize affirmations en quatre axes, puis six questions pour te mettre à l'épreuve. Le premier sert de point de départ, puis un chaque mois.",unit:'sur 100',hidden:true},
+  arbre:{name:'Arbre de la connaissance',skill:'Connaître le réel',desc:"Une matière concrète, des racines aux fruits : une fiche, trois questions, et des feuilles qui ne dorent qu'après une sortie sur le terrain. Pour commencer : la vigne.",unit:'% de bonnes réponses'},
   read:{name:'Lecture profonde',skill:'Attention soutenue',desc:"Lecture sur papier ou liseuse, téléphone dans une autre pièce.",unit:'',manual:true}
 };
 // d'où vient chaque exercice : affiché sous le titre du plateau et dans la Bibliothèque
 const ORIG={
+  arbre:"L'image vient de loin : Descartes compare la philosophie à un arbre dont les racines sont la métaphysique, le tronc la physique et les branches les autres sciences (préface des Principes, 1647). Ici, chaque notion s'appuie sur celles qui la portent, comme dans les arbres de compétences des jeux. Mais une chose sue n'est pas encore une chose vue : certaines feuilles demandent de sortir, d'observer et de raconter.",
   rattrapage:"Revenir sur ses erreurs juste avant de les oublier est l'une des méthodes d'apprentissage les mieux établies : c'est l'effet de test (Roediger et Karpicke, 2006) combiné à la répétition espacée. Une erreur rattrapée sort du carnet ; une erreur ratée de nouveau y reste.",
   enigme:"Le principe vient de Wordle (Josh Wardle, 2021) : une seule grille par jour, la même pour tous, et un résultat qu'on partage en petits carrés de couleur sans rien dévoiler. Ici, les questions viennent des banques de Néophyte.",
   dimanche:"Les énigmes de déduction ont leurs classiques : Lewis Carroll en publiait (Symbolic Logic, 1896), Raymond Smullyan en a fait des livres entiers avec ses chevaliers qui disent toujours vrai et ses fripons qui mentent toujours. Les indices révélés un à un viennent des jeux d'enquête. Chaque énigme de Néophyte est vérifiée par un programme qui passe en revue tous les cas possibles : une seule réponse tient.",
@@ -2471,6 +2501,8 @@ function mergeStates(a,b){ // fusionne données distantes (a) et locales (b)
   out.sas.sort((x,y)=>x.t-y.t);
   out.weeks=Object.assign({},b.weeks,out.weeks);
   out.reel=Object.assign({},b.reel,out.reel);
+  // arbre de la connaissance : on garde, notion par notion, le meilleur score et le retour de terrain
+  out.arbre=Object.assign({},out.arbre); for(const[ai,m] of Object.entries(b.arbre||{})){const t=out.arbre[ai]=Object.assign({},out.arbre[ai]);for(const[ni,v] of Object.entries(m||{})){const u=t[ni]||{};t[ni]=Object.assign({},v,u,{s:Math.max(u.s||0,v.s||0)},u.d||!v.d?{}:{d:v.d,r:v.r});}}
   out.bilans=out.bilans||[]; const seenB=new Set(out.bilans.map(x=>x.t)); for(const x of (b.bilans||[]))if(!seenB.has(x.t))out.bilans.push(x); out.bilans.sort((x,y)=>x.t-y.t);
   out.stage=Math.max(out.stage||1,b.stage||1);
   out.lvl=Object.assign({},b.lvl,out.lvl);
@@ -3478,6 +3510,7 @@ function xpByDay(){
   for(const[k,n] of Object.entries(fc))add(k,Math.min(3,n)*5);
   for(const ts of Object.values(state.weeks||{}))if(typeof ts==='number')add(iso(ts),50);
   for(const r of Object.values(state.reel||{}))if(r&&r.d)add(iso(r.d),50);
+  for(const m of Object.values(state.arbre||{}))for(const n of Object.values(m||{}))if(n&&n.d)add(iso(n.d),30);
   for(const[k,d] of Object.entries(state.days))if(d.qall)add(k,QBONUS);
   return m;
 }
@@ -4399,6 +4432,7 @@ const EXFAM=[
   ['Défis',"Une énigme commune à tous chaque jour, une enquête chaque dimanche, et un sprint contre ton propre record.",['enigme','dimanche','eclair','rattrapage']],
   ['Raisonner',"Débusquer l'erreur, le sophisme et la réponse trop rapide.",['probleme','erreuria','sophismes','graphe','hypotheses','fermi']],
   ['Lire et retenir',"Lire vraiment, puis garder en mémoire ce qui compte.",['lecture','citations','chrono']],
+  ['Connaître le réel',"Des matières concrètes, apprises notion par notion, puis vérifiées sur le terrain.",['arbre']],
   ['Hors écran',"Le papier et le silence : là où l'attention se reforme.",['fiche','focus']],
   ['Échauffements',"Des tests classiques de psychologie cognitive, courts et chronométrés. Utiles pour s'échauffer ; l'écriture et le raisonnement comptent davantage.",['calc','span','words','nback','stroop','fluency']]
 ];
@@ -4409,6 +4443,7 @@ const EXICON={
   dictee:'<rect x="9" y="6" width="17" height="22" rx="2"/><path d="M13 12h9M13 16h9M13 20h6"/><path class="g" d="M3 13q2 3 0 6M6 11q3 5 0 10"/>',
   enigme:'<rect x="4" y="9" width="6" height="6" rx="1"/><rect class="gf" x="13" y="9" width="6" height="6" rx="1"/><rect x="22" y="9" width="6" height="6" rx="1"/><rect class="gf" x="4" y="18" width="6" height="6" rx="1"/><rect class="gf" x="13" y="18" width="6" height="6" rx="1"/><rect x="22" y="18" width="6" height="6" rx="1"/>',
   eclair:'<path class="gf" d="M18 3L7 18h8l-2 11 12-16h-8z"/>',
+  arbre:'<path d="M16 29V15"/><path d="M16 20l-6-5M16 17l6-5"/><path d="M11 29h10"/><path d="M13 29l3-3 3 3"/><circle class="gf" cx="9" cy="13" r="2.4"/><circle class="gf" cx="23" cy="10" r="2.4"/><circle cx="16" cy="7" r="2.4"/>',
   dimanche:'<circle cx="13" cy="13" r="8"/><path d="M19 19l8 8"/><circle class="gf" cx="13" cy="13" r="3"/>',
   rattrapage:'<path d="M8 5h14a2 2 0 0 1 2 2v20H10a2 2 0 0 1-2-2z"/><path d="M8 25a2 2 0 0 1 2-2h14"/><path class="g" d="M20 12a4.5 4.5 0 1 1-1.3-3.2M19 6v3h-3"/>',
   probleme:'<path d="M16 4a8 8 0 0 0-5 14c1 1 1.5 2 1.5 3.5h7c0-1.5.5-2.5 1.5-3.5a8 8 0 0 0-5-14z"/><path d="M13 25h6M14 28h4"/><path class="g" d="M16 9v5M16 16.5v.5"/>',
@@ -4435,6 +4470,7 @@ const FAMICON={
   'Défis':'<path class="gf" d="M26 8L16 24h7l-2 14 11-17h-7z"/><path class="g" d="M10 34q-4-8 0-17M38 34q4-8 0-17M10 34q3 4 8 5M38 34q-3 4-8 5"/>',
   'Raisonner':'<circle cx="20" cy="20" r="11"/><path d="M28 28l11 11"/><path class="g" d="M15 20h10M20 15v10"/>',
   'Lire et retenir':'<path d="M5 13q9-5 19 2q10-7 19-2v24q-9-5-19 2q-10-7-19-2z"/><path d="M24 15v24"/><path class="g" d="M10 19q5-2 9 1M10 25q5-2 9 1M29 20q4-3 9-1M29 26q4-3 9-1"/>',
+  'Connaître le réel':'<path d="M24 44V22"/><path d="M24 30l-8-6M24 26l8-6"/><path d="M14 44h20"/><circle cx="24" cy="14" r="9"/><circle class="gf" cx="15" cy="22" r="3"/><circle class="gf" cx="33" cy="20" r="3"/>',
   'Hors écran':'<path d="M24 8v-3"/><path d="M17 13h14l-3-5h-8z"/><rect x="18" y="13" width="12" height="20" rx="2"/><path class="gf" d="M24 17c2.4 3 2.8 6 0 8.5c-2.8-2.5-2.4-5.5 0-8.5z"/><path d="M16 33h16v4H16z"/>',
   'Échauffements':'<circle cx="24" cy="27" r="14"/><path d="M24 13V9M20 7h8M35 16l2-2"/><path class="g" d="M24 27l6-7"/><path d="M24 18v2M33 27h-2M15 27h2"/>'
 };
@@ -5118,7 +5154,98 @@ function bougies(n){
     g.insertAdjacentHTML('beforeend',`<rect class="bougie" x="${x}" y="${i%2?18:14}" width="6" height="${i%2?24:28}" rx="1"/>`+(i<n?`<path class="flamme" d="M${x+3} ${i%2?8:4}c2 3 3 4.5 3 6a3 3 0 0 1-6 0c0-1.5 1-3 3-6z"/>`:''));
   });
 }
+let arbre_sel=null;
 const RUN={
+arbre(arena){
+  const A=(NB.arbres||[])[0]; if(!A){arena.replaceChildren(stagTalk('idle','Aucun arbre pour l’instant.'));return;}
+  $('#st-name').textContent='Arbre de la connaissance · '+A.titre;
+  const S=()=>{state.arbre=state.arbre||{};return state.arbre[A.id]=state.arbre[A.id]||{};};
+  const N=A.notions, by=Object.fromEntries(N.map(x=>[x.id,x]));
+  const comprise=id=>((S()[id]||{}).s||0)>=2, vecue=id=>!!(S()[id]||{}).d;
+  const ouverte=x=>(x.req||[]).every(comprise);
+  const etat=x=>!ouverte(x)?'lock':!comprise(x.id)?'open':x.terrain&&!vecue(x.id)?'field':x.terrain?'gold':'ok';
+  // places fixes : la première notion de chaque partie au centre, les deux autres de part et d'autre
+  const POS={racines:[[170,334],[100,368],[240,368]],tronc:[[170,250],[100,222],[240,222]],branches:[[170,146],[78,158],[262,158]],fruit:[[170,36],[110,74],[230,74]]};
+  const at={}; for(const p of Object.keys(POS))N.filter(x=>x.partie===p).forEach((x,i)=>{at[x.id]=POS[p][i];});
+  let sel=arbre_sel&&by[arbre_sel]?arbre_sel:(N.find(x=>etat(x)==='open')||N.find(x=>etat(x)==='field')||N[0]).id;
+  const draw=()=>{
+    const nodes=N.map(x=>{const[cx,cy]=at[x.id], e=etat(x), on=x.id===sel;
+      return `<g class="an ${e}${on?' sel':''}" data-n="${x.id}" role="button" tabindex="0" aria-label="${x.titre} : ${{lock:'verrouillée',open:'à découvrir',field:'comprise, sortie à faire',ok:'comprise',gold:'vécue'}[e]}">`
+        +(x.terrain?`<circle class="ring" cx="${cx}" cy="${cy}" r="19"/>`:'')
+        +`<circle class="dot" cx="${cx}" cy="${cy}" r="14"/>`
+        +(e==='lock'?`<path class="ico" d="M${cx-4} ${cy-1}v-2a4 4 0 0 1 8 0v2M${cx-5.5} ${cy-1}h11v7h-11z"/>`:e==='open'?`<circle class="ico" cx="${cx}" cy="${cy}" r="3"/>`:e==='field'?`<path class="ico" d="M${cx-5} ${cy+4}q0-9 10-9q0 9-10 9zM${cx-5} ${cy+4}l5-5"/>`:`<path class="ico" d="M${cx-5} ${cy}l3.5 3.5 6.5-7"/>`)
+        +`<text x="${cx}" y="${cy+30}">${x.court}</text></g>`;}).join('');
+    const lab=[['Fruits',58],['Branches',128],['Tronc',258],['Racines',392]].map(([t,y])=>`<text class="part" x="6" y="${y}">${t}</text>`).join('');
+    return `<svg class="arbre-svg" viewBox="0 0 340 400" role="group" aria-label="L'arbre de la ${A.titre.toLowerCase().replace(/^la /,'')}">`
+      +`<path class="sol" d="M30 300H310"/>`
+      +`<path class="racine" d="M170 300v34M170 302C150 320 120 340 100 368M170 302C190 320 220 340 240 368"/>`
+      +`<path class="tronc" d="M166 300C160 270 176 240 170 210C165 185 174 165 170 146"/>`
+      +`<path class="branche" d="M169 232C150 228 120 226 100 222M171 228C190 226 220 224 240 222M168 180C140 172 105 166 78 158M172 178C200 170 235 166 262 158M170 146C150 120 125 95 110 74M170 146C190 120 215 95 230 74M170 146V36"/>`
+      +lab+nodes+`</svg>`;
+  };
+  const fiche=()=>{
+    const x=by[sel], e=etat(x), r=S()[x.id]||{}, box=el('div',{class:'arbre-fiche'});
+    const head=el('div',{},el('span',{class:'label',text:{racines:'Racines',tronc:'Tronc',branches:'Branches',fruit:'Fruits'}[x.partie]+(x.terrain?' · feuille de terrain':'')}),el('h3',{text:x.titre}));
+    if(e==='lock'){
+      const manque=(x.req||[]).filter(k=>!comprise(k)).map(k=>by[k].titre);
+      box.append(head,el('p',{class:'fg2',text:'Cette notion s’ouvrira quand tu auras compris : '+manque.join(', ')+'.'}));return box;
+    }
+    box.append(head,el('p',{class:'fg2 arbre-txt',text:x.fiche}),el('p',{class:'qsource',text:'Source : '+x.src}));
+    const row=el('div',{class:'row'},el('button',{class:'btn'+(comprise(x.id)?'':' primary'),text:comprise(x.id)?`Compris (${r.s}/3) · se retester`:'Me tester : trois questions',onclick:()=>quiz(x)}));
+    box.append(row);
+    if(x.terrain){
+      const t=el('div',{class:'arbre-terrain'+(r.d?' done':'')},el('span',{class:'label',text:r.d?'✓ Sortie faite':'Sur le terrain'}),el('p',{class:'fg2',text:x.terrain.sortie.replace('{ici}',ici())}));
+      if(!comprise(x.id))t.append(el('p',{class:'note',text:'Comprends d’abord la notion : la sortie n’en sera que plus riche.'}));
+      else if(r.d)t.append(el('details',{},el('summary',{text:'Mon retour du '+fd(new Date(r.d),{day:'numeric',month:'long'})}),el('p',{class:'fg2',text:r.r||''})),
+        el('button',{class:'btn ghost small',text:'Annuler la sortie',onclick:()=>{const s=S();s[x.id]=Object.assign({},s[x.id]);delete s[x.id].d;delete s[x.id].r;save();refresh();}}));
+      else{
+        const ta=el('textarea',{'aria-label':'Mon retour de terrain',placeholder:'Au retour : '+x.terrain.retour.charAt(0).toLowerCase()+x.terrain.retour.slice(1),maxlength:'3000',style:'min-height:110px'});
+        const n=el('span',{class:'note',text:'Au moins 30 mots, de mémoire.'});
+        const ok=el('button',{class:'btn primary',text:'C’est fait : j’enregistre mon retour',disabled:'',onclick:()=>{
+          const s=S(); s[x.id]=Object.assign({},s[x.id],{d:Date.now(),r:ta.value.trim().slice(0,3000)}); save(); son('niveau');
+          toast(`<span class="xp">+30 XP</span><span>Feuille dorée : ${x.titre}</span>`); renderToday(); refresh();}});
+        ta.addEventListener('input',()=>{const w=wordCount(ta.value);n.textContent=w>=30?w+' mots':`${w} mot${w>1?'s':''} sur 30`;ok.disabled=w<30;});
+        t.append(el('p',{class:'note',text:'Au retour : '+x.terrain.retour.charAt(0).toLowerCase()+x.terrain.retour.slice(1)}),ta,el('div',{class:'row spread'},n,ok));
+      }
+      box.append(t);
+    }
+    return box;
+  };
+  function refresh(){
+    const ok=N.filter(x=>comprise(x.id)).length, F=N.filter(x=>x.terrain), v=F.filter(x=>vecue(x.id)).length;
+    const svg=el('div',{class:'arbre-wrap',html:draw()});
+    svg.querySelectorAll('[data-n]').forEach(g=>{const go=()=>{sel=arbre_sel=g.dataset.n;refresh();$('#arena .arbre-fiche').scrollIntoView({behavior:reduceMotion()?'auto':'smooth',block:'nearest'});};
+      g.addEventListener('click',go);g.addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();go();}});});
+    const fin=ok===N.length&&v===F.length?stagTalk('proud',`Tout l'arbre est doré. Tu connais la ${A.titre.toLowerCase().replace(/^la /,'')} par la tête et par les pieds.`):null;
+    arena.replaceChildren(el('p',{class:'fg2',text:A.intro,style:'max-width:56ch'}),
+      el('p',{class:'note arbre-sum',text:`${ok} notion${ok>1?'s':''} comprise${ok>1?'s':''} sur ${N.length} · ${v} feuille${v>1?'s':''} de terrain vécue${v>1?'s':''} sur ${F.length}`}),
+      svg,el('div',{class:'legend arbre-leg'},el('span',{},el('i',{class:'l-open'}),'à découvrir'),el('span',{},el('i',{class:'l-ok'}),'comprise'),el('span',{},el('i',{class:'l-field'}),'sortie à faire'),el('span',{},el('i',{class:'l-gold'}),'vécue')),
+      ...[fin,fiche()].filter(Boolean));
+  }
+  function quiz(x){
+    const Q=x.q.map(q=>Object.assign({},q,{oo:q.o.slice().sort(()=>Math.random()-.5)})), n=Q.length; let qi=0, ok=0;
+    const ask=()=>{
+      const q=Q[qi], right=q.o[q.b], box=el('div',{class:'options'}), fb=el('div',{class:'answer',hidden:''});
+      const next=el('button',{class:'btn primary',text:qi<n-1?'Suivant':'Voir le résultat',hidden:''});
+      q.oo.forEach(o=>box.append(el('button',{text:o,onclick:e=>{
+        const me=e.currentTarget; [...box.children].forEach(b=>{b.disabled=true;if(b.textContent===right)b.classList.add('right');});
+        const good=o===right; if(good)ok++;else me.classList.add('wrong'); hit(good);
+        fb.replaceChildren(el('span',{class:'label',text:good?'Exact':'C’était : '+right}),el('span',{class:'fg2',text:q.e}),contestBtn('arbre',x.id+'-q'+(x.q.indexOf(x.q.find(y=>y.q===q.q))+1),q.q));
+        fb.hidden=false; next.hidden=false; next.focus();
+      }})));
+      next.addEventListener('click',()=>{qi++;if(qi<n)ask();else{
+        const s=S(), was=comprise(x.id); s[x.id]=Object.assign({},s[x.id],{s:Math.max(ok,(s[x.id]||{}).s||0)});
+        logResult('arbre',ok/n*100,{n:x.id});
+        const opened=!was&&ok>=2?N.filter(y=>(y.req||[]).includes(x.id)&&ouverte(y)).map(y=>y.titre):[];
+        const msg=ok>=2?(was?'Toujours comprise.':'Notion comprise.')+(opened.length?' Elle ouvre : '+opened.join(', ')+'.':'')+(x.terrain&&!vecue(x.id)?' Reste la sortie sur le terrain pour dorer la feuille.':'')
+          :'Il faut deux bonnes réponses sur trois. Relis la fiche, puis retente.';
+        showResult(arena,ok,'sur '+n,msg,()=>quiz(x),el('button',{class:'btn',text:'Retour à l’arbre',onclick:refresh}));}});
+      arena.replaceChildren(qprog(qi,n),el('p',{class:'prompt',text:q.q}),box,fb,next);
+    };
+    ask();
+  }
+  refresh();
+},
 evenement(arena){
   const ev=evNow()||NB.evenements[NB.evenements.length-1], Q=ev.questions, n=Q.length;
   $('#st-name').textContent=ev.titre;

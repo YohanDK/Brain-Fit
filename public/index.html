@@ -217,6 +217,9 @@ select,input[type="text"]{font:inherit;color:var(--fg);background:var(--bg);bord
 .tipcard div{min-width:0;display:flex;flex-direction:column;gap:4px}
 .tipcard p{color:var(--fg2);max-width:65ch}
 .evid{font-size:.82rem;color:var(--muted)}
+#apprendre-panel h3.label{margin-top:6px}
+.tipcard.flash{background:color-mix(in srgb,var(--gold) 12%,transparent);transition:background 1.2s}
+.astuce{gap:6px}.astuce p{margin:0}.astuce .linkbtn{align-self:flex-start;padding-left:0}
 .findings{display:flex;flex-direction:column;gap:12px}
 .finding{display:flex;flex-direction:column;gap:3px;padding:12px 14px;border-radius:9px;background:var(--sunk)}
 .finding p{color:var(--fg2);font-size:.93rem;max-width:70ch}
@@ -1125,6 +1128,11 @@ var fin=function(){if(e.parentNode)e.remove();};e.addEventListener('click',fin);
       <div class="row spread" style="flex-wrap:nowrap;align-items:baseline"><h2 class="label" id="quests-h">Quêtes du jour</h2><span class="note" id="quests-n"></span></div>
       <ul id="quests-list"></ul>
     </div>
+    <div class="panel astuce" id="astuce">
+      <span class="label">Astuce pour apprendre</span>
+      <p><b id="astuce-t"></b> <span class="fg2" id="astuce-l"></span></p>
+      <button class="linkbtn note" type="button" id="astuce-go">Lire la fiche</button>
+    </div>
     <div class="panel syncwarn" id="syncwarn" hidden>
       <p><b>Garde tes progrès sur tous tes appareils.</b> <span class="fg2">Un compte, et le coach s'ouvre aussi.</span></p>
       <div class="row" id="login-ask"><button class="btn primary" type="button" id="login-show">Se connecter</button><button class="btn ghost" type="button" id="syncwarn-ok">Plus tard</button></div>
@@ -1446,7 +1454,7 @@ var fin=function(){if(e.parentNode)e.remove();};e.addEventListener('click',fin);
   <!-- CONSEILS -->
   <section class="view" id="v-conseils" hidden>
     <nav class="toc" id="biblio-toc" aria-label="Sommaire de la bibliothèque">
-      <button data-to="flori-panel">Florilège</button><button data-to="research">La recherche</button><button data-to="origins-panel">Les exercices</button><button data-to="pistes-panel">8 pistes</button><button data-to="rules-panel">10 règles</button><button data-to="about">À propos</button>
+      <button data-to="flori-panel">Florilège</button><button data-to="apprendre-panel">Apprendre</button><button data-to="research">La recherche</button><button data-to="origins-panel">Les exercices</button><button data-to="pistes-panel">8 pistes</button><button data-to="rules-panel">10 règles</button><button data-to="about">À propos</button>
     </nav>
     <div class="panel">
       <div class="rule">
@@ -1463,6 +1471,13 @@ var fin=function(){if(e.parentNode)e.remove();};e.addEventListener('click',fin);
         <div class="seg" id="qcat-seg" role="group" aria-label="Catégorie"></div>
         <div class="flori" id="qcat-list"></div>
       </details>
+    </div>
+    <div class="panel" id="apprendre-panel">
+      <div><h2>Apprendre à apprendre</h2><p class="fg2">Dix astuces simples, chacune avec sa source et son niveau de preuve. Les plus solides : se tester et espacer les révisions (Dunlosky et al., 2013, synthèse de dix techniques).</p></div>
+      <h3 class="label">Retenir</h3>
+      <div class="tips" id="apprendre-retenir"></div>
+      <h3 class="label">Moins d'écran</h3>
+      <div class="tips" id="apprendre-ecran"></div>
     </div>
     <div class="panel" id="research">
       <div>
@@ -2162,6 +2177,19 @@ const PISTES=[
   ["Envisager des hypothèses concurrentes","Avant de conclure, chercher au moins une autre explication possible.","Exercice « Hypothèses concurrentes », sas avant l'IA (étape 2), problèmes du jour."],
   ["Pratiquer la métacognition","Évaluer sa propre confiance et repérer où l'on s'est trompé.","Auto-évaluation du sas et des problèmes, bilan du coach."],
   ["Lire latéralement, varier les sources","Vérifier une affirmation ailleurs plutôt que de s'en remettre à une seule réponse.","Exercice « Trouve l'erreur de l'IA », habitude « j'ai vérifié une réponse de l'IA », sas étape 3."]
+];
+// apprendre à apprendre : [id, groupe, titre, ligne du jour, comment faire, source, dans Néophyte]
+const ASTUCES=[
+  ['test','retenir',"Se tester plutôt que relire","Fermer le livre et se demander ce qu'on a retenu fixe mieux que relire.","Après une lecture, ferme le livre et écris ou dis de mémoire les trois idées principales, puis vérifie. L'effort de rappel est ce qui grave. Relire donne une impression de maîtrise trompeuse.","Roediger & Karpicke, Psychological Science, 2006 ; preuve forte (Dunlosky et al., 2013)","chaque question d'exercice, « Résumer de mémoire »."],
+  ['espacer','retenir',"Espacer les révisions","Revoir à 1, 3, 7 puis 14 jours vaut mieux que tout revoir la veille.","Plutôt qu'une longue séance, plusieurs courtes, de plus en plus espacées. On revoit juste au moment où l'on commence à oublier : c'est là que le souvenir se renforce.","Ebbinghaus, 1885 ; Cepeda et al., Psychological Bulletin, 2006 ; preuve forte","le florilège revient à 1, 3, 7, 14 puis 30 jours."],
+  ['palais','retenir',"Le palais de mémoire","Ranger ce qu'on veut retenir le long d'un trajet qu'on connaît par cœur.","Choisis un lieu familier, ta maison par exemple. Dépose chaque élément à retenir à un endroit précis, sous une image frappante : la porte, le couloir, la cuisine. Pour retrouver la liste, refais le trajet en pensée. C'est la méthode des lieux, attribuée à Simonide par Cicéron.","Cicéron, De oratore, II, 351-354 ; Dresler et al., Neuron, 2017 : après 40 jours d'entraînement, des novices passent d'environ 26 à 62 mots retenus sur 72","la frise chronologique, pour placer des dates."],
+  ['mnemo','retenir',"Les phrases mnémotechniques","« Mais où est donc Ornicar ? » : une phrase pour garder une liste dans l'ordre.","Prends l'initiale de chaque élément et fabrique une phrase drôle ou absurde : on s'en souvient mieux. Pour les planètes : « Me Voici Toute Mouillée, J'ai Suivi Un Nuage. » Utile pour des listes et des ordres, moins pour comprendre.","Bellezza, Review of Educational Research, 1981 ; utilité limitée aux listes (Dunlosky et al., 2013)",""],
+  ['expliquer','retenir',"S'expliquer à soi-même","Expliquer avec ses mots, c'est découvrir ce qu'on n'a pas compris.","En lisant, arrête-toi à chaque paragraphe et demande-toi : pourquoi est-ce vrai ? comment cela se relie-t-il à ce que je sais ? Dis-le à voix haute ou écris-le en une phrase. Les trous apparaissent tout de suite.","Chi et al., Cognitive Science, 1994 ; preuve moyenne (Dunlosky et al., 2013)","le format « Expliquer » en écriture."],
+  ['melanger','retenir',"Mélanger les exercices","Alterner les types de problèmes apprend à choisir la bonne méthode.","Au lieu de faire vingt exercices du même type à la suite, mélange-les. C'est plus difficile sur le moment, mais on apprend à reconnaître quel problème appelle quelle méthode, et on retient mieux.","Rohrer & Taylor, Instructional Science, 2007 ; preuve moyenne","la séance du jour enchaîne des familles différentes."],
+  ['sommeil','retenir',"Dormir sur ce qu'on apprend","Le sommeil range et consolide ce qu'on a appris dans la journée.","Révise le soir plutôt que tard dans la nuit, et ne sacrifie pas le sommeil avant un examen. Pendant la nuit, le cerveau rejoue et consolide les souvenirs de la journée.","Diekelmann & Born, Nature Reviews Neuroscience, 2010 ; preuve forte",""],
+  ['gris','ecran',"L'écran en noir et blanc","Un téléphone en niveaux de gris attire moins l'œil : on le prend moins souvent.","Les couleurs vives des icônes et des pastilles rouges sont faites pour attirer. En gris, le téléphone redevient un outil. Sur iPhone : Réglages › Accessibilité › Affichage et taille du texte › Filtres de couleur. Sur Android : Bien-être numérique (mode Coucher) ou Accessibilité. Un raccourci permet de remettre la couleur pour une photo.","Holte & Ferraro, The Social Science Journal, 2020 : un peu plus d’une demi-heure d’écran en moins par jour ; petite étude, preuve modeste",""],
+  ['notif','ecran',"Couper les notifications","Ne garder que les notifications des personnes, pas celles des applis.","Chaque notification interrompt et coûte un temps de retour à la tâche. Coupe toutes celles des applications et des réseaux, garde les appels et les messages de tes proches. Regarde le reste à heure fixe.","Kushlev, Proulx & Dunn, CHI, 2016 : une semaine avec les notifications coupées réduit l'inattention ; preuve moyenne",""],
+  ['piece','ecran',"Le téléphone dans une autre pièce","Pour lire ou écrire, laisser le téléphone hors de la pièce, pas seulement retourné.","Le seul fait de le voir rappelle qu'il est là. Pour une séance de travail, de lecture ou un repas, pose-le dans une autre pièce. Le geste est simple et ne coûte rien.","Ward et al., Journal of the Association for Consumer Research, 2017 ; effet discuté, des reprises ne l'ont pas retrouvé","l'habitude « régime pauvre en slop »."]
 ];
 const PROMPTS=[
   "Explique à un enfant de 10 ans comment fonctionne Internet.",
@@ -3248,6 +3276,7 @@ function renderToday(){
   habitsCount();
   const dayNum=Math.floor(new Date(k+'T12:00:00').getTime()/864e5), r=RULES[dayNum%RULES.length];
   $('#rule-title').textContent=r[0]; $('#rule-text').textContent=r[1];
+  const as=ASTUCES[(dayNum*3)%ASTUCES.length]; $('#astuce-t').textContent=as[2]+'.'; $('#astuce-l').textContent=as[3]; $('#astuce-go').dataset.id=as[0];
   const wk=weekStart(k), wn=Math.floor(new Date(wk+'T12:00:00').getTime()/(7*864e5)), ch=CHALLENGES[wn%CHALLENGES.length], chDone=!!state.weeks[wk];
   const chBox=$('#challenge'); chBox.className='challenge'+(chDone?' done':'');
   chBox.replaceChildren(el('span',{class:'badge',text:chDone?'✓':'S'+String(isoWeek(k))}),el('div',{},el('h3',{text:ch[0]}),el('p',{class:'fg2',text:ch[1]}),
@@ -3455,6 +3484,8 @@ function renderTips(){
   renderLessons();
   const pb=$('#pistes'); pb.replaceChildren();
   PISTES.forEach((r,i)=>pb.append(el('div',{class:'tipcard'},el('span',{class:'k',text:String(i+1).padStart(2,'0')}),el('div',{},el('h3',{text:r[0]}),el('p',{text:r[1]}),el('span',{class:'evid',text:'Dans Néophyte : '+r[2]})))));
+  for(const g of ['retenir','ecran']){const b=$('#apprendre-'+g); b.replaceChildren();
+    ASTUCES.filter(a=>a[1]===g).forEach((a,i)=>b.append(el('div',{class:'tipcard',id:'ast-'+a[0]},el('span',{class:'k',text:String(i+1).padStart(2,'0')}),el('div',{},el('h3',{text:a[2]}),el('p',{text:a[4]}),a[6]?el('span',{class:'evid',text:'Dans Néophyte : '+a[6]}):null,el('span',{class:'evid',text:'Source : '+a[5]})))));}
   const box=$('#tips'); box.replaceChildren();
   RULES.forEach((r,i)=>box.append(el('div',{class:'tipcard'},el('span',{class:'k',text:String(i+1).padStart(2,'0')}),el('div',{},el('h3',{text:r[0]}),el('p',{text:r[1]}),r[2]?el('span',{class:'evid',text:r[2]}):null))));
 }
@@ -6401,6 +6432,7 @@ $('#foot-privacy').addEventListener('click',()=>goPanel('reglages','privacy'));
  });
  $('#foot-share').addEventListener('click',()=>goPanel('reglages','partage'));}
 $('#foot-biblio').addEventListener('click',()=>{showTab('conseils');window.scrollTo(0,0);});
+$('#astuce-go').addEventListener('click',e=>{const c='ast-'+e.currentTarget.dataset.id;goPanel('conseils',c);const t=document.getElementById(c);if(t){t.classList.add('flash');setTimeout(()=>t.classList.remove('flash'),1600);}});
 $$('#biblio-toc button').forEach(b=>b.addEventListener('click',()=>goPanel('conseils',b.dataset.to)));
 
 initCarnetCoach();

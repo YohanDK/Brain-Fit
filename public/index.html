@@ -1039,6 +1039,31 @@ details.fold[open]{display:flex;flex-direction:column;gap:10px}
 @keyframes balance{0%,100%{transform:rotate(0)}30%{transform:rotate(-1.6deg) translateY(.4px)}65%{transform:rotate(1.2deg)}}
 @keyframes frem{0%,88%,100%{transform:rotate(0)}91%{transform:rotate(9deg)}94%{transform:rotate(-3deg)}}
 @keyframes frem2{0%,60%,70%,100%{transform:rotate(0)}63%{transform:rotate(-8deg)}66%{transform:rotate(2deg)}}
+/* le brame (en automne) et le bâillement (matin et soir) : il lève le museau, la bouche s'ouvre */
+.stag .bouche{opacity:0;transition:opacity .3s}
+.stag:is(.brame,.baille) .bouche{opacity:1}
+.stag.brame .tete{animation:none;transform:translateY(-4px) scale(1.03)}
+.stag.baille .tete{animation:none;transform:translateY(-2px) rotate(3deg)}
+.stag .voix circle,.stag .voix path{opacity:0}
+.stag.brame .voix{opacity:1}
+.stag .voix :is(circle,path){transform-box:view-box;transform-origin:50px 82px}
+.stag.brame .buee circle{animation:buee 1.8s ease-out infinite}
+.stag.brame .buee circle:nth-child(2){animation-delay:.3s}.stag.brame .buee circle:nth-child(3){animation-delay:.6s}
+@keyframes buee{0%{opacity:0;transform:translate(0,0) scale(.4)}15%{opacity:.85}100%{opacity:0;transform:translate(var(--dx),-10px) scale(1.8)}}
+.stag.brame .ondes path{animation:onde 1.2s ease-out infinite}
+.stag.brame .ondes path:nth-child(even){animation-delay:.25s}
+@keyframes onde{0%{opacity:0}30%{opacity:.9}100%{opacity:0;transform:scale(1.15)}}
+/* la mue : chaque bois tombe de son côté */
+.stag .ant-g{transform-box:view-box;transform-origin:44px 37px}.stag .ant-d{transform-box:view-box;transform-origin:56px 37px}
+.stag.chute :is(.ant-g,.ant-d){transition:transform 1.4s cubic-bezier(.5,0,.8,.4),opacity 1.4s;opacity:0}
+.stag.chute .ant-g{transform:translate(-14px,60px) rotate(-70deg)}.stag.chute .ant-d{transform:translate(14px,60px) rotate(70deg)}
+/* les bois d'or luisent doucement */
+:where(#stag,.stagtalk .stag,.qstag,.stag.big) .ors{animation:ors 3.6s ease-in-out infinite}
+@keyframes ors{50%{filter:drop-shadow(0 0 2.5px var(--gold-hi))}}
+/* en lecture, il lit avec toi : son regard va et vient sous ses lunettes */
+.qstag.lit{display:block;margin:0 auto 4px;width:48px;height:48px;align-self:center}
+.qstag.lit .pup{animation:lire 2.8s ease-in-out infinite}
+@keyframes lire{0%,100%{transform:translate(-1.2px,.9px)}45%,50%{transform:translate(1.2px,.9px)}53%{transform:translate(-1.2px,.9px)}}
 /* touché, il penche la tête vers toi */
 .stag.penche .tete{animation:none;transform:rotate(-6deg) translateY(-1px)}
 .stag.penche .ear-l{animation:none;transform:rotate(10deg)}
@@ -4181,19 +4206,39 @@ $('#mc-icon').addEventListener('click',()=>{const c=cerf();c.icon=!c.icon;save()
   else{document.querySelector('link[rel="icon"][type="image/svg+xml"]').href='icon.svg';const pn=document.querySelector('link[rel="icon"][sizes]');if(pn)pn.href='icon-192.png';document.querySelector('link[rel="apple-touch-icon"]').href='icon-180.png';}});
 $('#mc-name-f').addEventListener('submit',e=>{e.preventDefault();cerf().nom=$('#mc-name').value.trim().slice(0,20);save();renderCerf();
   const n=cerf().nom;$('#stag').setAttribute('aria-label',(n||'Ton cerf')+' : touche-le pour qu’il te parle');toast(`<span>${n?'Ton cerf s’appelle désormais '+n.replace(/[<&]/g,'')+'.':'Nom effacé.'}</span>`);});
-function stagSVG(L,mood,sh){
-  const f=n=>n.toFixed(1), s=Math.min(1,.5+.05*L), tines=Math.min(6,1+Math.floor(L/2));
+/* ---------- les bois au fil de l'année, comme un vrai cerf ----------
+   début mars : il perd ses bois ; mi-mars à fin avril : ils repoussent, couverts de velours ;
+   le velours reste jusqu'à la mi-août, puis tombe : les bois sont prêts pour le brame de l'automne */
+function mue(k=todayKey()){const md=k.slice(5);
+  if(md>='03-01'&&md<'03-15')return{ph:'chute',g:0};
+  if(md>='03-15'&&md<'08-15'){const d=(new Date(k+'T12:00:00')-new Date(k.slice(0,4)+'-03-15T12:00:00'))/864e5;return{ph:'velours',g:Math.min(1,.35+.65*d/46)};}
+  return{ph:'',g:1};}
+const brameSaison=(k=todayKey())=>{const md=k.slice(5);return md>='09-15'&&md<='11-15';};
+const nuit=()=>{const d=new Date(),h=d.getHours();return h>22||(h===22&&d.getMinutes()>=30)||h<6;};
+// o : {sansMue} pour la cérémonie de niveau, {lit} pour les lunettes de lecture
+function stagSVG(L,mood,sh,o={}){
+  const M=o.sansMue?{ph:'',g:1}:mue(), f=n=>n.toFixed(1), s=Math.min(1,.5+.05*L)*(M.ph==='velours'?M.g:1), tines=Math.min(6,1+Math.floor(L/2));
   const bez=(p,t)=>{const u=1-t;return[0,1].map(i=>u*u*u*p[0][i]+3*u*u*t*p[1][i]+3*u*t*t*p[2][i]+t*t*t*p[3][i]);};
+  // après le niveau X, une couronne de pointes au sommet de chaque bois (XI à XIX : deux, dès XX : quatre), et des bois d'or au niveau XXX
+  const crown=M.ph==='velours'||L<11?0:L<20?2:4, gold=L>=30&&!M.ph;
   let ant='';
   for(const side of [-1,1]){
     const X=x=>50+side*x, P=[[6,0],[11,-10*s],[26*s+5,-18*s],[24*s+6,-31*s]].map(([x,y])=>[X(x),37+y]);
-    ant+=`<path d="M${f(P[0][0])} ${f(P[0][1])}C${f(P[1][0])} ${f(P[1][1])} ${f(P[2][0])} ${f(P[2][1])} ${f(P[3][0])} ${f(P[3][1])}"/>`;
+    let a='';
+    // chaque pointe part d'un peu plus bas sur le bois et s'ouvre en éventail
+    for(const [t,dx,dy] of [[1,3,-8],[.9,9,-5],[.8,-4,-9],[.94,-1,-10]].slice(0,crown)){const [x,y]=bez(P,t);a+=`<path stroke-width="2.6" d="M${f(x)} ${f(y)}q${f(side*dx*.25)} ${f(dy*.55)} ${f(side*dx*.9)} ${f(dy*.8)}"/>`;}
+    ant+=a+`<path d="M${f(P[0][0])} ${f(P[0][1])}C${f(P[1][0])} ${f(P[1][1])} ${f(P[2][0])} ${f(P[2][1])} ${f(P[3][0])} ${f(P[3][1])}"/>`;
     for(let i=0;i<tines;i++){
       const t=.22+i*(.66/Math.max(1,tines-1||1)), [x,y]=bez(P,t), len=(i===0?7:9)*s;
       const dx=i===0?side*6:-side*2.5, dy=i===0?-4:-8;
       const n=Math.hypot(dx,dy);ant+=`<path d="M${f(x)} ${f(y)}q${f(dx/n*len*.4)} ${f(dy/n*len*.7)} ${f(dx/n*len)} ${f(dy/n*len)}"/>`;
     }
+    ant+='|';
   }
+  // un groupe par bois, pour qu'ils puissent tomber chacun de son côté
+  const [antG,antD]=ant.split('|'), aSt=M.ph==='velours'?'stroke="#9A7B5C" stroke-width="4.2"':gold?'stroke="#C9A440" stroke-width="3.4"':'stroke="var(--antler)" stroke-width="3.4"';
+  const bois=M.ph==='chute'?`<g class="antlers pivots" fill="var(--antler)"><circle cx="44" cy="36.4" r="2.2"/><circle cx="56" cy="36.4" r="2.2"/></g>`
+    :`<g class="antlers ant-g${gold?' ors':''}" fill="none" ${aSt} stroke-linecap="round">${antG}</g><g class="antlers ant-d${gold?' ors':''}" fill="none" ${aSt} stroke-linecap="round">${antD}</g>`;
   const ears=mood==='worried'?55:28;
   const eye=x=>mood==='proud'?`<path class="eyel" d="M${x-2.6} 53q2.6-3 5.2 0" fill="none" stroke="var(--stag-dark)" stroke-width="1.8" stroke-linecap="round"/>`
     :mood==='sleepy'?`<path d="M${x-2.4} 52.5h4.8" stroke="var(--stag-dark)" stroke-width="1.8" stroke-linecap="round"/>`
@@ -4202,43 +4247,76 @@ function stagSVG(L,mood,sh){
   const brows=mood==='worried'?`<path d="M40 49.2l6-1.7M60 49.2l-6-1.7" stroke="var(--stag-dark)" stroke-width="1.4" stroke-linecap="round"/>`:'';
   const extra=mood==='sleepy'?`<g class="zz" fill="var(--muted)" font-family="var(--f-body)" font-style="italic"><text x="70" y="40" font-size="9">z</text><text x="77" y="31" font-size="7">z</text></g>`
     :mood==='proud'?`<g class="spark" fill="var(--gold)"><path d="M14 30l1.5 3.5 3.5 1.5-3.5 1.5-1.5 3.5-1.5-3.5-3.5-1.5 3.5-1.5z"/><path d="M86 22l1.2 2.8 2.8 1.2-2.8 1.2-1.2 2.8-1.2-2.8-2.8-1.2 2.8-1.2z"/></g>`:'';
-  const cs=cerfStyle(sh);
+  const cs=cerfStyle(sh), lune=mood==='sleepy'&&nuit()?`<path class="lune" d="M86 12a8 8 0 1 0 6 13a6.5 6.5 0 1 1-6-13z" fill="#E9D38A"/>`:'';
+  const lunettes=o.lit&&!((sh||cerfShape()).a||{}).lunettes?`<g class="acc" fill="none" stroke="#3A2A1A" stroke-width="1.2"><circle cx="43.5" cy="52" r="4.8" fill="rgba(255,255,255,.18)"/><circle cx="56.5" cy="52" r="4.8" fill="rgba(255,255,255,.18)"/><path d="M48.3 51.4q1.7-1.5 3.4 0M38.7 51l-3.2-1.6M61.3 51l3.2-1.6"/></g>`:'';
+  // le brame et le bâillement : la bouche s'ouvre, des ondes, un peu de buée
+  const voix=`<g class="voix" opacity="0"><g class="buee" fill="#fff"><circle cx="50" cy="86" r="2.4" style="--dx:-6px"/><circle cx="51" cy="86" r="2" style="--dx:7px"/><circle cx="49" cy="86" r="2.2" style="--dx:1px"/></g><g class="ondes" fill="none" stroke="var(--gold)" stroke-width="1.3" stroke-linecap="round"><path d="M33 78q-4 4 0 9"/><path d="M28 75q-6 7 0 15"/><path d="M67 78q4 4 0 9"/><path d="M72 75q6 7 0 15"/></g></g>`;
   return `<svg viewBox="0 0 100 100" aria-hidden="true"${cs?` style="${cs}"`:''}>
 <g class="corps"><path d="M39 72C36 84 28 92 16 100H84C72 92 64 84 61 72Z" fill="var(--stag-deep)"/>
 <path d="M44 80C44 88 46 94 50 100C54 94 56 88 56 80Z" fill="var(--stag-light)"/></g>
-<g class="tete"><g class="antlers" fill="none" stroke="var(--antler)" stroke-width="3.4" stroke-linecap="round">${ant}</g>
+<g class="tete">${bois}
 <g class="ear ear-l"><ellipse cx="33" cy="44" rx="10" ry="4.2" transform="rotate(${-ears} 40 44)" fill="var(--stag)"/><ellipse cx="34" cy="44" rx="6" ry="2" transform="rotate(${-ears} 40 44)" fill="var(--stag-light)"/></g>
 <g class="ear ear-r"><ellipse cx="67" cy="44" rx="10" ry="4.2" transform="rotate(${ears} 60 44)" fill="var(--stag)"/><ellipse cx="66" cy="44" rx="6" ry="2" transform="rotate(${ears} 60 44)" fill="var(--stag-light)"/></g>
 <path d="M50 34C59 34 64 40 64 47C64 56 58 66 56 74C55 79 53 82 50 82C47 82 45 79 44 74C42 66 36 56 36 47C36 40 41 34 50 34Z" fill="var(--stag)"/>
 <path d="M50 38C53 38 54 42 53 46C52 50 51 52 50 52C49 52 48 50 47 46C46 42 47 38 50 38Z" fill="var(--stag-light)" opacity=".55"/>
 <ellipse cx="50" cy="75" rx="6.2" ry="7" fill="var(--stag-light)"/>
+<ellipse class="bouche" cx="50" cy="83.4" rx="2.6" ry="1.9" fill="#5A2A1E" opacity="0"/>
 <ellipse cx="50" cy="79" rx="4.4" ry="2.9" fill="var(--stag-dark)"/>
-${eye(43.5)}${eye(56.5)}${brows}${cerfAcc(sh,'tete')}</g>${extra}${SAISON_SVG[saison()]||''}${cerfAcc(sh,'corps')}
+${eye(43.5)}${eye(56.5)}${brows}${lunettes}${cerfAcc(sh,'tete')}</g>${extra}${lune}${voix}${SAISON_SVG[saison()]||''}${cerfAcc(sh,'corps')}
 </svg>`;
 }
 let stagKey='', stagI=0, stagTimer=null;
 function stagMood(){
   const d=state.days[todayKey()]||{}, did=Object.values(d.done||{}).some(Boolean), cur=streaks().cur, h=new Date().getHours();
+  if(nuit())return'sleepy';
   if(d.goalHit)return'proud';
   if(!did&&cur>0&&h>=18)return'worried'; // la série est en danger ce soir
   if(!did&&cur===0&&state.results.length)return'sleepy';
   return'idle';
 }
 function renderStag(){
-  const L=gamiCtx.level, m=stagMood(), k=L+m+saison(); if(k===stagKey)return; stagKey=k;
+  const L=gamiCtx.level, m=stagMood(), k=L+m+saison()+mue().ph+Math.round(mue().g*20)+nuit(); if(k===stagKey)return; stagKey=k;
   $('#stag').innerHTML=stagSVG(L,m);
+  if(!stagAccueilFait){stagAccueilFait=true;setTimeout(stagAccueil,900);}
+}
+/* ---------- le cerf t'accueille, une fois par jour au plus, sans jamais couvrir l'écran ----------
+   la mue des bois, le retour après une absence, le matin, la nuit */
+let stagAccueilFait=false;
+const LS_SALUT='brainfit.cerf.salut';
+function stagAccueil(){
+  const b=$('#stag'); if(!b||!b.offsetParent||($('#welcome')&&!$('#welcome').hidden))return;
+  const t=todayKey(), sv=(()=>{try{return JSON.parse(localStorage.getItem(LS_SALUT)||'{}')||{};}catch(e){return{};}})();
+  const put=(k,v)=>{sv[k]=v;try{localStorage.setItem(LS_SALUT,JSON.stringify(sv));}catch(e){}};
+  const anim=(c,ms)=>{if(reduceMotion())return;b.classList.remove('penche','baille','brame');void b.offsetWidth;b.classList.add(c);setTimeout(()=>b.classList.remove(c),ms);};
+  const M=mue(), y=t.slice(0,4), L=gamiCtx.level||1, m=stagMood();
+  if(!state.results.length)return;
+  // la mue : une fois par an et par étape
+  if(M.ph==='chute'&&sv.mue!==y+'chute'){put('mue',y+'chute');
+    b.innerHTML=stagSVG(L,m,undefined,{sansMue:true});
+    setTimeout(()=>{b.classList.add('chute');setTimeout(()=>{b.classList.remove('chute');stagKey='';renderStag();},reduceMotion()?0:1500);},reduceMotion()?0:400);
+    stagSay("Comme chaque fin d'hiver, j'ai perdu mes bois. Ils repousseront : on repousse toujours.");return;}
+  if(M.ph==='velours'&&sv.mue!==y+'velours'){put('mue',y+'velours');stagSay('Mes bois repoussent, couverts de velours. Ils grandissent un peu chaque jour jusqu’à la fin avril.');return;}
+  if(!M.ph&&t.slice(5)>='08-15'&&sv.mue===y+'velours'){put('mue',y+'prets');anim('penche',2600);stagSay('Le velours de mes bois est tombé : ils sont prêts.');return;}
+  if(sv.jour===t)return;
+  const d=state.days[t]||{}, did=Object.values(d.done||{}).some(Boolean);
+  const actifs=Object.keys(state.days).filter(k=>k<t&&Object.values(state.days[k].done||{}).some(Boolean)).sort(), last=actifs[actifs.length-1];
+  const absent=last&&(new Date(t+'T12:00:00')-new Date(last+'T12:00:00'))/864e5>=3;
+  const h=new Date().getHours();
+  if(!did&&absent){put('jour',t);b.innerHTML=stagSVG(L,'idle');anim('penche',2600);stagSay('Te revoilà. On reprend doucement ? Une seule étape suffit.');return;}
+  if(nuit()){put('jour',t);b.innerHTML=stagSVG(L,'idle');anim('baille',1300);setTimeout(()=>{stagKey='';renderStag();},reduceMotion()?0:1400);stagSay('Il se fait tard. Je dors, mais je garde ta série au chaud.');return;}
+  if(h>=6&&h<11&&!did){put('jour',t);b.innerHTML=stagSVG(L,'sleepy');anim('baille',1300);setTimeout(()=>{b.innerHTML=stagSVG(L,m);},reduceMotion()?0:1400);stagSay('Bonjour. Dix minutes, et la journée est à toi.');}
 }
 // passage de niveau : les anciens bois s'effacent pendant que la nouvelle ramure se dessine
 function antlerCeremony(L,total){
   if(document.querySelector('.ceremony'))return;
-  const old=stagSVG(Math.max(1,L-1),'proud'), nu=stagSVG(L,'proud');
-  const grow=nu.match(/<g class="antlers"[^>]*>([\s\S]*?)<\/g>/)[1].replace(/<path /g,'<path pathLength="1" ');
-  const svg=old.replace('<g class="antlers"','<g class="antlers grow" fill="none" stroke="var(--antler)" stroke-width="3.4" stroke-linecap="round">'+grow+'</g><g class="antlers old"');
+  const old=stagSVG(Math.max(1,L-1),'proud',undefined,{sansMue:true}), nu=stagSVG(L,'proud',undefined,{sansMue:true});
+  const grow=[...nu.matchAll(/<g class="antlers[^"]*"([^>]*)>([\s\S]*?)<\/g>/g)].map(m=>`<g${m[1]}>${m[2].replace(/<path /g,'<path pathLength="1" ')}</g>`).join('');
+  const svg=old.replace(/<g class="antlers /g,'<g class="antlers old ').replace('<g class="antlers old ','<g class="antlers grow">'+grow+'</g><g class="antlers old ');
   const close=()=>{box.classList.add('out');setTimeout(()=>box.remove(),300);stagKey='';renderStag();};
   const box=el('div',{class:'ceremony',role:'dialog','aria-modal':'true','aria-label':'Nouveau niveau',onclick:e=>{if(e.target===box)close();}},
     el('div',{class:'cer-card'},el('span',{class:'stag cer-stag',html:svg}),
       el('span',{class:'label',text:'Nouveau niveau'}),el('h2',{text:`Niveau ${roman(L)} : ${levelName(L)}`}),
-      el('p',{class:'fg2',text:`${fmt(total)} XP au total. Tes bois ont gagné un andouiller.`}),
+      el('p',{class:'fg2',text:`${fmt(total)} XP au total. `+(L===11?'Tes bois se couronnent : deux pointes de plus au sommet.':L===20?'Ta couronne est pleine : quatre pointes au sommet de chaque bois.':L===30?'Tes bois sont devenus d’or.':L<=10?'Tes bois ont grandi.':'Tes bois s’affermissent.')}),
       el('button',{class:'btn primary',text:'Continuer',onclick:close})));
   document.body.append(box); son('niveau'); setTimeout(()=>{laurels();},900);
   setTimeout(()=>box.querySelector('.btn').focus(),50);
@@ -4272,14 +4350,20 @@ function stagLines(){
     d.goalHit?`Objectif du jour atteint, ${xp} XP. Je suis fier de toi.`:`Encore ${goal-xp} XP pour l'objectif du jour.`+(next?` Prochaine étape : ${EX[next.ex].name}.`:''),
     cur>0?`${cur} jour${cur>1?'s':''} d'affilée. Un cerf ne recule pas.`:"Une seule étape aujourd'hui suffit pour relancer ta série.",
     due?`${due} citation${due>1?'s':''} à revoir dans ton florilège.`:`« ${q.q} » (${q.a})`,
-    `Mes bois portent ${tines} andouiller${tines>1?'s':''} de chaque côté. Ils grandissent avec ton niveau : encore ${fmt(needFor(L+1)-gamiCtx.total)} XP pour le niveau ${roman(L+1)}.`,
+    mue().ph==='chute'?"J'ai perdu mes bois, comme chaque fin d'hiver. Ils repoussent mi-mars, plus beaux.":mue().ph==='velours'?'Mes bois repoussent sous leur velours. En août, ils seront prêts.'
+      :L<11?`Mes bois portent ${tines} andouiller${tines>1?'s':''} de chaque côté. Ils grandissent avec ton niveau : encore ${fmt(needFor(L+1)-gamiCtx.total)} XP pour le niveau ${roman(L+1)}.`
+      :L<20?`Mes bois sont couronnés. Au niveau XX, la couronne sera pleine : encore ${fmt(needFor(20)-gamiCtx.total)} XP.`
+      :L<30?`Ma couronne est pleine. Au niveau XXX, mes bois deviendront d’or : encore ${fmt(needFor(30)-gamiCtx.total)} XP.`:'Mes bois sont d’or. Peu de cerfs vont jusque-là.',
     `Règle du jour : ${r[0].toLowerCase()}.`,
     (state.bilans||[]).length?`Étape ${gamiCtx.stage||1} sur 4 du parcours : ${STAGES[(gamiCtx.stage||1)-1][0]}. Plus tu avances, plus je t'envoie vers le papier.`:"Commence par ton point de départ : une dizaine de minutes, en tête de ta routine.",
     d.cjl?`Ce jour-là, en ${fmtY(d.cjl.y)} : ${d.cjl.t}`:"As-tu deviné l'année de l'événement du jour ? Il t'attend sous la citation.",
     STAG_FACTS[Math.floor(Date.now()/864e5)%STAG_FACTS.length]
   ];
 }
-$('#stag').addEventListener('click',()=>{const b=$('#stag');b.classList.remove('joy');b.classList.add('penche');clearTimeout(b._pt);b._pt=setTimeout(()=>b.classList.remove('penche'),2600);
+let brames=0;
+$('#stag').addEventListener('click',()=>{const b=$('#stag'), br=brameSaison()&&mue().ph===''&&!nuit()&&brames++%4===0, c=br?'brame':'penche';
+  b.classList.remove('joy','penche','brame','baille');void b.offsetWidth;b.classList.add(c);clearTimeout(b._pt);b._pt=setTimeout(()=>b.classList.remove(c),br?2400:2600);
+  if(br){stagSay('Brrôôô ! C’est la saison du brame. Je défends mon territoire ; toi, défends le tien : ton attention.');return;}
   const ls=stagLines();stagSay(ls[stagI++%ls.length]);});
 // le regard du cerf suit le doigt ou la souris (pas en animations douces)
 let gazeRaf=0;
@@ -5840,7 +5924,7 @@ write(arena){
   show();
   function read(){
     arena.style.alignItems='stretch';
-    arena.replaceChildren(el('h3',{text:src[0]}),el('p',{class:'fg2',text:src[1],style:'max-width:65ch;text-align:left'}),
+    arena.replaceChildren(el('span',{class:'stag qstag lit','aria-hidden':'true',html:stagSVG(gamiCtx.level||1,'idle',undefined,{lit:true})}),el('h3',{text:src[0]}),el('p',{class:'fg2',text:src[1],style:'max-width:65ch;text-align:left'}),
       el('div',{class:'row'},el('button',{class:'btn primary',text:'J’ai lu, je résume',onclick:()=>{stopR();go();}})));
     const stopR=countdown(120,null,()=>go()); cleanup=()=>{stopR();arena.style.alignItems='';};
   }
@@ -6041,7 +6125,7 @@ lecture(arena){
     const th=state.settings.themes||[], mine=fresh.filter(x=>{const t=NB.textes.find(y=>y.titre===x[0]);return t&&th.some(k=>t.th.split(' ').includes(k));});
     const src=pick(mine.length?mine:fresh.length?fresh:SOURCES), words=(src[1].match(/\S+/g)||[]).length, start=performance.now();
     arena.style.alignItems='stretch';
-    arena.replaceChildren(el('h3',{text:src[0]}),el('p',{class:'fg2',text:src[1],style:'max-width:65ch;text-align:left;font-size:1.05rem;white-space:pre-line'}),el('div',{class:'row'},el('button',{class:'btn primary',text:'Terminé',onclick:quiz})));
+    arena.replaceChildren(el('span',{class:'stag qstag lit','aria-hidden':'true',html:stagSVG(gamiCtx.level||1,'idle',undefined,{lit:true})}),el('h3',{text:src[0]}),el('p',{class:'fg2',text:src[1],style:'max-width:65ch;text-align:left;font-size:1.05rem;white-space:pre-line'}),el('div',{class:'row'},el('button',{class:'btn primary',text:'Terminé',onclick:quiz})));
     cleanup=()=>{arena.style.alignItems='';};
     function quiz(){
       arena.style.alignItems='';

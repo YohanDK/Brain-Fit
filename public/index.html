@@ -904,6 +904,11 @@ html.boot .view{visibility:hidden}
 .wl-pts i{font-style:normal;font-family:var(--f-display);color:var(--gold-deep);font-weight:700;min-width:1.8em}
 .wl-pts b{display:block}
 .wl-pts span{color:var(--fg2);font-size:.95rem}
+.wl-senior{display:inline-flex;align-items:center;gap:10px;min-height:48px;padding:8px 18px;margin-top:4px;border:1.5px solid var(--line);border-radius:999px;background:var(--surface);color:var(--fg);font-size:1rem}
+.wl-senior:hover{border-color:var(--accent)}
+.wl-senior[aria-pressed="true"]{border-color:var(--accent);background:var(--accent-soft);color:var(--accent-deep)}
+.wl-aa{font-family:var(--f-display);font-size:.85rem;line-height:1;color:var(--accent)}
+.wl-aa b{font-size:1.35rem}
 .wl-act{display:flex;flex-direction:column;gap:6px;width:100%;max-width:320px;margin-top:6px}
 .wl-act .btn{width:100%;padding:12px 16px}
 .welcome .meander{width:100%;max-width:360px;margin:6px 0}
@@ -1076,13 +1081,13 @@ body{font-size:1.09375rem}
 html[data-texte="grand"]{font-size:115%}
 html[data-texte="tres"]{font-size:130%}
 html[data-police="lisible"]{--f-display:"Atkinson Hyperlegible", Verdana, system-ui, sans-serif;--f-body:"Atkinson Hyperlegible", Verdana, system-ui, sans-serif;--f-mono:"Atkinson Hyperlegible", Verdana, system-ui, sans-serif}
-html[data-police="lisible"] .brand h1,html[data-police="lisible"] .foot-brand{font-family:"Cinzel","Times New Roman",serif}
+html[data-police="lisible"] .brand h1,html[data-police="lisible"] .welcome h1,html[data-police="lisible"] .foot-brand{font-family:"Cinzel","Times New Roman",serif}
 html[data-police="lisible"] h1,html[data-police="lisible"] h2{letter-spacing:.01em}
 html[data-police="lisible"] body{font-size:1rem}
 html[data-aere] body{line-height:1.8;word-spacing:.04em;letter-spacing:.01em}
 html[data-texte] .tabs button,html[data-police] .tabs button{font-size:.7rem;letter-spacing:0;word-spacing:0}
 html[data-texte="tres"] .tabs button{font-size:.6rem}
-html[data-aere] p,html[data-aere] li{text-align:left;hyphens:manual}
+html[data-aere] p,html[data-aere] li{hyphens:manual}
 html[data-senior] :is(.label,.note,.legend,.tag,.lvl,.pill,.cat,.excard .skill,table.week th,.badge span,.bars .b span,.bars .b em,.quests li i,.qnote b,.sbtns button){font-size:.92rem}
 html[data-senior] :is(.btn,.seg button,.options button,.linkbtn){min-height:48px}
 html[data-senior] .iconbtn{min-width:48px;min-height:48px}
@@ -1640,6 +1645,7 @@ var fin=function(){if(e.parentNode)e.remove();};e.addEventListener('click',fin);
     <h1 id="wl-title">Néo<span>phyte</span></h1>
     <p class="wl-motto" title="Les belles choses sont difficiles (proverbe grec cité par Platon, République IV, 435c)">ΧΑΛΕΠΑ ΤΑ ΚΑΛΑ</p>
     <p class="wl-lead">Garder l'esprit vif à l'heure de l'IA.</p>
+    <button class="wl-senior" id="wl-senior" type="button" aria-pressed="false"><span class="wl-aa" aria-hidden="true">A<b>A</b></span><span id="wl-senior-txt">Texte trop petit ? Passer en mode sénior</span></button>
     <!-- emplacement de la future vidéo interactive : renseigner BF_CONFIG.video (config.js) pour l'afficher -->
     <div class="wl-video" id="wl-video" hidden></div>
     <section class="wl-esprit" aria-labelledby="wl-esprit-h">
@@ -6398,9 +6404,14 @@ function applyLecture(l){
 }
 function renderLecture(){const l=lecture();
   const mark=(id,v)=>$$(id+' button').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.v===v)));
-  mark('#senior-seg',l.senior?'1':'0');mark('#taille-seg',l.taille||'normal');mark('#police-seg',l.police||'classique');mark('#aere-seg',l.aere?'1':'0');}
+  mark('#senior-seg',l.senior?'1':'0');mark('#taille-seg',l.taille||'normal');mark('#police-seg',l.police||'classique');mark('#aere-seg',l.aere?'1':'0');
+  // le même mode, proposé dès l'écran d'accueil, avant l'inscription
+  $('#wl-senior').setAttribute('aria-pressed',String(!!l.senior));
+  $('#wl-senior-txt').textContent=l.senior?'Mode sénior activé · annuler':'Texte trop petit ? Passer en mode sénior';}
+const SENIOR={senior:true,taille:'grand',police:'lisible',aere:true};
+$('#wl-senior').addEventListener('click',()=>applyLecture(lecture().senior?{}:Object.assign({},SENIOR)));
 // le mode sénior règle d'un coup texte, police et interligne ; chacun reste ajustable ensuite
-$$('#senior-seg button').forEach(b=>b.addEventListener('click',()=>applyLecture(b.dataset.v==='1'?{senior:true,taille:'grand',police:'lisible',aere:true}:{})));
+$$('#senior-seg button').forEach(b=>b.addEventListener('click',()=>applyLecture(b.dataset.v==='1'?Object.assign({},SENIOR):{})));
 $$('#taille-seg button').forEach(b=>b.addEventListener('click',()=>applyLecture(Object.assign(lecture(),{taille:b.dataset.v}))));
 $$('#police-seg button').forEach(b=>b.addEventListener('click',()=>applyLecture(Object.assign(lecture(),{police:b.dataset.v}))));
 $$('#aere-seg button').forEach(b=>b.addEventListener('click',()=>applyLecture(Object.assign(lecture(),{aere:b.dataset.v==='1'}))));

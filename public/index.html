@@ -3,14 +3,14 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>Néophyte · Garder l'esprit vif à l'heure de l'IA</title>
-<meta name="description" content="Quelques minutes par jour pour écrire, raisonner et retenir par toi-même. Gratuit, sans publicité.">
+<title>Néophyte · Aiguise ton esprit, reste libre</title>
+<meta name="description" content="Dix minutes par jour d'écriture et de raisonnement pour reprendre le contrôle du réel. Gratuit, sans publicité.">
 <link rel="canonical" href="https://yohandk.github.io/Brain-Fit/">
 <meta property="og:type" content="website">
 <meta property="og:locale" content="fr_FR">
 <meta property="og:site_name" content="Néophyte">
-<meta property="og:title" content="Néophyte · Garder l'esprit vif à l'heure de l'IA">
-<meta property="og:description" content="Quelques minutes par jour pour écrire, raisonner et retenir par toi-même. Gratuit, sans publicité.">
+<meta property="og:title" content="Néophyte · Aiguise ton esprit, reste libre">
+<meta property="og:description" content="Dix minutes par jour d'écriture et de raisonnement pour reprendre le contrôle du réel. Gratuit, sans publicité.">
 <meta property="og:url" content="https://yohandk.github.io/Brain-Fit/">
 <meta property="og:image" content="https://yohandk.github.io/Brain-Fit/og.png">
 <meta property="og:image:width" content="1200">
@@ -928,15 +928,17 @@ html.boot .view{visibility:hidden}
 .foot-brand span{color:var(--gold-deep)}
 .wl-motto{font-family:var(--f-display);font-size:.85rem;letter-spacing:.16em;color:var(--gold-deep);margin:-6px 0 0}
 .wl-lead{font-size:1.45rem;font-style:italic;line-height:1.25;margin:6px 0 0}
+.debutant #quests,.debutant #astuce,.debutant #v-aujourdhui .culture,.debutant #habits-fold,.debutant #themes-ask{display:none!important}
+.wl-sub{margin:-4px 0 0;max-width:34ch;color:var(--fg2);line-height:1.4}
 .wl-in>.fg2{max-width:42ch}
 .wl-pts{list-style:none;margin:6px 0;padding:0;display:flex;flex-direction:column;gap:10px;width:100%;text-align:left}
 .wl-pts li{display:flex;gap:14px;align-items:baseline;background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:12px 16px}
 .wl-pts i{font-style:normal;font-family:var(--f-display);color:var(--gold-deep);font-weight:700;min-width:1.8em}
 .wl-pts b{display:block}
 .wl-pts span{color:var(--fg2);font-size:.95rem}
-.wl-senior{display:inline-flex;align-items:center;gap:10px;min-height:48px;padding:8px 18px;margin-top:4px;border:1.5px solid var(--line);border-radius:999px;background:var(--surface);color:var(--fg);font-size:1rem}
-.wl-senior:hover{border-color:var(--accent)}
-.wl-senior[aria-pressed="true"]{border-color:var(--accent);background:var(--accent-soft);color:var(--accent-deep)}
+.wl-senior{display:inline-flex;align-items:center;gap:8px;min-height:44px;padding:6px 12px;margin-top:0;border:0;border-radius:8px;background:none;color:var(--fg2);font-size:.95rem;text-decoration:underline;text-decoration-color:var(--line);text-underline-offset:3px}
+.wl-senior:hover{color:var(--fg)}
+.wl-senior[aria-pressed="true"]{color:var(--accent-deep)}
 .wl-aa{font-family:var(--f-display);font-size:.85rem;line-height:1;color:var(--accent)}
 .wl-aa b{font-size:1.35rem}
 .wl-act{display:flex;flex-direction:column;gap:6px;width:100%;max-width:320px;margin-top:6px}
@@ -944,7 +946,8 @@ html.boot .view{visibility:hidden}
 .welcome .meander{width:100%;max-width:360px;margin:6px 0}
 @media (max-width:640px){.wl-in{gap:10px}.wl-em{width:96px;height:96px;margin-bottom:6px}.wl-em svg{width:80px;height:80px}.welcome h1{font-size:2.15rem}.wl-lead{font-size:1.25rem}.wl-pts{gap:8px}.wl-pts li{padding:10px 14px}.wl-pts span{font-size:.9rem;line-height:1.35}.welcome .meander{display:none}}
 .wl-esprit{width:100%;text-align:left;background:var(--surface);border:1px solid var(--line);border-left:3px solid var(--gold);border-radius:10px;padding:14px 18px}
-.wl-esprit h2{margin:0 0 6px}
+.wl-esprit summary{cursor:pointer}
+.wl-esprit[open] summary{margin-bottom:6px}
 .wl-esprit p{margin:0;line-height:1.5;color:var(--fg2)}
 .wl-act .linkbtn{margin-top:2px;align-self:center}
 .wl-video{width:100%;aspect-ratio:16/9;border-radius:12px;overflow:hidden;background:var(--sunk);border:1px solid var(--line)}
@@ -1661,13 +1664,13 @@ var fin=function(){if(e.parentNode)e.remove();};e.addEventListener('click',fin);
     </div>
     <div class="panel" id="lecture">
       <div><h2>Lecture et confort</h2><p class="muted note">Propres à cet appareil. Les changements s'appliquent tout de suite.</p></div>
-      <div class="row"><span class="note">Mode sénior</span><div class="seg" id="senior-seg" role="group" aria-label="Mode sénior"><button data-v="1">Activé</button><button data-v="0">Désactivé</button></div></div>
+      <div class="row"><span class="note">Lecture agrandie</span><div class="seg" id="senior-seg" role="group" aria-label="Lecture agrandie"><button data-v="1">Activé</button><button data-v="0">Désactivé</button></div></div>
       <p class="muted note">Texte plus grand, police très lisible, boutons plus grands et contrastes renforcés. L'XP, la série et les minuteurs restent les mêmes.</p>
       <div class="row"><span class="note">Taille du texte</span><div class="seg" id="taille-seg" role="group" aria-label="Taille du texte"><button data-v="normal">Normale</button><button data-v="grand">Grande</button><button data-v="tres">Très grande</button></div></div>
       <div class="row"><span class="note">Police</span><div class="seg" id="police-seg" role="group" aria-label="Police"><button data-v="classique">Classique</button><button data-v="lisible">Très lisible</button></div></div>
       <div class="row"><span class="note">Interligne</span><div class="seg" id="aere-seg" role="group" aria-label="Interligne"><button data-v="0">Normal</button><button data-v="1">Aéré</button></div></div>
       <div class="row"><span class="note">Animations</span><div class="seg" id="anim-seg" role="group" aria-label="Animations"><button data-v="complet">Complètes</button><button data-v="doux">Douces</button></div></div>
-      <p class="muted note" id="anim-note">Douces : le cerf ne bouge plus, il change seulement d'humeur, et l'appli passe d'un écran à l'autre sans effet. C'est le réglage d'office du mode sénior.</p>
+      <p class="muted note" id="anim-note">Douces : le cerf ne bouge plus, il change seulement d'humeur, et l'appli passe d'un écran à l'autre sans effet. C'est le réglage d'office de la lecture agrandie.</p>
       <p class="lecture-ex">Le néophyte, c'est celui qui commence : un exercice par jour, fait à la main et à la tête.</p>
     </div>
     <div class="panel">
@@ -1700,6 +1703,12 @@ var fin=function(){if(e.parentNode)e.remove();};e.addEventListener('click',fin);
         <div class="row"><button class="btn" id="import-go">Fusionner avec mes progrès</button><span class="note" id="import-msg"></span></div>
       </div>
     </div>
+    <div class="panel" id="assid-panel" hidden>
+      <div><h2>Qui revient ?</h2><p class="muted note">Les comptes, sans e-mail ni nom, dans l'ordre d'inscription. Un jour actif = au moins un exercice fait. Visible de toi seul.</p></div>
+      <div class="kpis" id="as-kpis"></div>
+      <p class="note" id="as-msg" role="status"></p>
+      <details class="fold"><summary><span class="label">Compte par compte</span></summary><div class="tablewrap" id="as-table"></div></details>
+    </div>
     <div class="panel" id="retours-panel" hidden>
       <div><h2>Retours des testeurs</h2><p class="muted note">Signalements et réponses contestées, les plus récents d'abord. Visible de toi seul.</p></div>
       <div class="row"><div class="seg" id="rt-filtre" role="group" aria-label="Quels retours"><button data-f="ouverts" aria-pressed="true">À traiter</button><button data-f="tous" aria-pressed="false">Tous</button></div><button class="btn ghost small" id="rt-maj">Actualiser</button><button class="btn small" id="rt-copie">Copier les questions à corriger</button></div>
@@ -1708,7 +1717,7 @@ var fin=function(){if(e.parentNode)e.remove();};e.addEventListener('click',fin);
     </div>
     <div class="panel" id="privacy">
       <div><h2>Tes données</h2>
-        <p class="fg2" style="max-width:65ch">Avec un compte, Néophyte garde ton e-mail, tes progrès et tes textes chez Supabase, qui héberge sa base de données. Les autres utilisateurs ne peuvent pas les lire ; techniquement, la personne qui gère ce Néophyte y a accès. Si tu rejoins un cercle, ses membres voient seulement ton pseudo, ton cerf, ton niveau, tes XP, ta série, tes scores à l'énigme et à l'Éclair, et les encouragements ou défis que tu leur envoies. Quand tu contestes une réponse ou signales un problème, ton message, la question ou l'écran concernés (avec la capture si tu la laisses) et le type d'appareil sont envoyés pour être relus ; ils sont effacés avec ton compte. Quand tu parles au coach, ta demande et le résumé de tes progrès (et la photo de ta feuille, si tu lui en confies une) sont envoyés à Claude (Anthropic) pour qu'il réponde. Rien n'est vendu, et il n'y a ni publicité ni mesure d'audience.</p></div>
+        <p class="fg2" style="max-width:65ch">Avec un compte, Néophyte garde ton e-mail, tes progrès et tes textes chez Supabase, qui héberge sa base de données. Les autres utilisateurs ne peuvent pas les lire ; techniquement, la personne qui gère ce Néophyte y a accès, et elle voit, sans ton e-mail ni ton nom, combien de jours tu es venu. Si tu rejoins un cercle, ses membres voient seulement ton pseudo, ton cerf, ton niveau, tes XP, ta série, tes scores à l'énigme et à l'Éclair, et les encouragements ou défis que tu leur envoies. Quand tu contestes une réponse ou signales un problème, ton message, la question ou l'écran concernés (avec la capture si tu la laisses) et le type d'appareil sont envoyés pour être relus ; ils sont effacés avec ton compte. Quand tu parles au coach, ta demande et le résumé de tes progrès (et la photo de ta feuille, si tu lui en confies une) sont envoyés à Claude (Anthropic) pour qu'il réponde. Rien n'est vendu, et il n'y a ni publicité ni mesure d'audience.</p></div>
       <div class="row"><button class="btn ghost" id="erase" hidden>Effacer mon compte</button></div>
       <div id="erase-confirm" class="row" hidden>
         <span class="fg2">Effacer ton compte, tes progrès, tes textes et ta place dans ton cercle ? Ce n'est pas réversible.</span>
@@ -1721,7 +1730,7 @@ var fin=function(){if(e.parentNode)e.remove();};e.addEventListener('click',fin);
   </main>
   <footer class="foot">
     <div class="meander" aria-hidden="true"></div>
-    <p><span class="foot-brand">Néo<span>phyte</span></span> · Garder l'esprit vif à l'heure de l'IA</p>
+    <p><span class="foot-brand">Néo<span>phyte</span></span> · Aiguise ton esprit, reste libre</p>
     <p><button class="linkbtn" id="foot-welcome">Présentation</button> · <button class="linkbtn" id="foot-about">À propos</button> · <button class="linkbtn" id="foot-privacy">Tes données</button> · <button class="linkbtn" id="foot-biblio">Bibliothèque</button> · <button class="linkbtn" id="foot-share">Partager</button></p>
     <p class="note">Gratuit, sans publicité ni mesure d'audience.</p>
   </footer>
@@ -1731,24 +1740,25 @@ var fin=function(){if(e.parentNode)e.remove();};e.addEventListener('click',fin);
     <div class="wl-em" id="wl-em" aria-hidden="true"></div>
     <h1 id="wl-title">Néo<span>phyte</span></h1>
     <p class="wl-motto" title="Les belles choses sont difficiles (proverbe grec cité par Platon, République IV, 435c)">ΧΑΛΕΠΑ ΤΑ ΚΑΛΑ</p>
-    <p class="wl-lead">Garder l'esprit vif à l'heure de l'IA.</p>
-    <button class="wl-senior" id="wl-senior" type="button" aria-pressed="false"><span class="wl-aa" aria-hidden="true">A<b>A</b></span><span id="wl-senior-txt">Texte trop petit ? Passer en mode sénior</span></button>
-    <!-- emplacement de la future vidéo interactive : renseigner BF_CONFIG.video (config.js) pour l'afficher -->
-    <div class="wl-video" id="wl-video" hidden></div>
-    <section class="wl-esprit" aria-labelledby="wl-esprit-h">
-      <h2 class="label" id="wl-esprit-h">Notre état d'esprit</h2>
-      <p>Le néophyte, c'est celui qui commence. Néophyte ne promet pas de génie en dix minutes : il propose un exercice par jour, fait à la main et à la tête, comme on entretient un corps par la marche. L'IA est un bel outil, mais un outil qui pense à ta place finit par t'en dispenser. Ici, tu écris avant de demander, tu cherches avant de vérifier, et tu reviens au réel : un livre, une feuille, une conversation. Pas de publicité, pas de course aux écrans : seulement le plaisir patient de progresser, à ton rythme.</p>
-    </section>
-    <ul class="wl-pts">
-      <li><i>I</i><div><b>Bilan</b><span>Sache d'où tu pars : un premier état des lieux, des points d'étape pour mesurer le chemin parcouru, et chaque dimanche un moment pour relire ta semaine.</span></div></li>
-      <li><i>II</i><div><b>Exercice</b><span>Un effort par jour, bref mais exigeant : écrire sans béquille, raisonner avec rigueur, débusquer l'erreur là où l'IA la glisse.</span></div></li>
-      <li><i>III</i><div><b>Retour au réel</b><span>Lève les yeux de l'écran : un défi au dehors, la plume sur le papier, un vrai livre. Ce qui se travaille ici se vit ailleurs.</span></div></li>
-    </ul>
+    <p class="wl-lead">Aiguise ton esprit, reste libre.</p>
+    <p class="wl-sub">Dix minutes par jour d'écriture et de raisonnement pour reprendre le contrôle du réel.</p>
     <div class="wl-act">
       <button class="btn primary" id="wl-signup">Créer mon compte</button>
       <button class="btn ghost" id="wl-login">J'ai déjà un compte</button>
       <button class="linkbtn" id="wl-start">Essayer sans compte</button>
     </div>
+    <button class="wl-senior" id="wl-senior" type="button" aria-pressed="false"><span class="wl-aa" aria-hidden="true">A<b>A</b></span><span id="wl-senior-txt">Agrandir le texte</span></button>
+    <!-- emplacement de la future vidéo interactive : renseigner BF_CONFIG.video (config.js) pour l'afficher -->
+    <div class="wl-video" id="wl-video" hidden></div>
+    <ul class="wl-pts">
+      <li><i>I</i><div><b>Bilan</b><span>Sache d'où tu pars : un premier état des lieux, des points d'étape pour mesurer le chemin parcouru, et chaque dimanche un moment pour relire ta semaine.</span></div></li>
+      <li><i>II</i><div><b>Exercice</b><span>Un effort par jour, bref mais exigeant : écrire sans béquille, raisonner avec rigueur, débusquer l'erreur là où l'IA la glisse.</span></div></li>
+      <li><i>III</i><div><b>Retour au réel</b><span>Lève les yeux de l'écran : un défi au dehors, la plume sur le papier, un vrai livre. Ce qui se travaille ici se vit ailleurs.</span></div></li>
+    </ul>
+    <details class="wl-esprit">
+      <summary class="label">Notre état d'esprit</summary>
+      <p>Le néophyte, c'est celui qui commence. Néophyte ne promet pas de génie en dix minutes : il propose un exercice par jour, fait à la main et à la tête, comme on entretient un corps par la marche. L'IA est un bel outil, mais un outil qui pense à ta place finit par t'en dispenser. Ici, tu écris avant de demander, tu cherches avant de vérifier, et tu reviens au réel : un livre, une feuille, une conversation. Pas de publicité, pas de course aux écrans : seulement le plaisir patient de progresser, à ton rythme.</p>
+    </details>
     <section class="wl-install" id="wl-install" aria-labelledby="wl-install-h">
       <h2 class="label" id="wl-install-h">Néophyte sur ton téléphone</h2>
       <div class="wl-qr" id="wl-qr">
@@ -3659,7 +3669,7 @@ function renderBilanPt(){
 /* ---------- quêtes du jour : trois petits objectifs, un bonus quand les trois sont faits ---------- */
 const PCT=ex=>EX[ex]&&/^%/.test(EX[ex].unit);
 const QUESTS={
-  seance:['Termine ta séance du jour',(k,d)=>routineFor(k,state.settings.minutes).every(x=>d.done[x.ex])],
+  seance:['Termine ta séance du jour',(k,d)=>routineFor(k,seanceMin(k)).every(x=>d.done[x.ex])],
   sansfaute:['Réussis un exercice sans faute',k=>state.results.some(r=>r.d===k&&PCT(r.ex)&&r.s>=100)],
   affilee:['Enchaîne 5 bonnes réponses d’affilée',(k,d)=>!!d.q5],
   enigme:['Résous l’énigme du jour',(k,d)=>!!d.done.enigme],
@@ -3711,21 +3721,32 @@ function renderPlay(steps,d,nextEx){
   $('#play-streak').textContent=today?(cur>1?`Série de ${cur} jours : elle est à l’abri pour aujourd’hui.`:'Ta série a commencé : reviens demain pour la prolonger.')
     :cur?`Une étape suffit pour garder ta série de ${cur} jour${cur>1?'s':''}.`:'Une étape suffit pour commencer une série.';
 }
+// les premiers jours : séance courte, accueil allégé, point de départ au 3e jour
+const NOUVEAU_JOURS=5;
+function joursAvant(k){return Object.keys(state.days).filter(x=>x<k&&isActive(x)).length;}
+const debutant=(k=todayKey())=>joursAvant(k)<NOUVEAU_JOURS;
+// dix minutes d'office pour commencer, tant qu'on n'a pas choisi soi-même une durée
+const seanceMin=(k=todayKey())=>debutant(k)&&!state.settings.minChoisi?Math.min(10,state.settings.minutes):state.settings.minutes;
 function routineFor(k,min){
   // écriture et raisonnement chaque jour ; le reste tourne selon le jour, et le papier gagne du terrain avec les étapes du parcours
   const st=gamiCtx.stage||1, dow=new Date(k+'T12:00:00').getDay(), mem=['span','words','nback'][dow%3], reason=['probleme','erreuria','sophismes','hypotheses','fermi','erreuria','probleme'][dow], warm=['dictee','calc','lecture',st>=2?'dictee':'ortho','fluency','lecture','chrono'][dow], wm=warm==='dictee'?6:2;
   if(st>=3&&dow===6&&min>10)return[{ex:'fiche',m:30}];
+  // tout premier jour : on commence par repérer l'erreur d'une IA, le geste qui dit le mieux ce qu'est Néophyte
+  if(min<=10&&!joursAvant(k)&&!state.settings.minChoisi)return[{ex:'erreuria',m:3},{ex:dow%2?'ortho':'lecture',m:2},{ex:'write',m:5}];
   if(min<=10)return[{ex:dow%2?'ortho':'lecture',m:2},{ex:reason,m:3},{ex:'write',m:5}];
   if(min<=20)return[{ex:warm,m:wm},{ex:mem,m:3},{ex:reason,m:6},{ex:'write',m:9}];
   return[{ex:warm,m:wm},{ex:mem,m:3},{ex:reason,m:7},{ex:'write',m:10},{ex:'focus',m:10}];
 }
 const CHECK='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>';
 function renderToday(){
-  const k=todayKey(), d=day(k), min=state.settings.minutes, steps=routineFor(k,min);
+  const k=todayKey(), d=day(k), min=seanceMin(k), steps=routineFor(k,min);
   // les citations à réviser s'ajoutent en tête de routine, deux minutes
   if(floriDue().length||d.done.citations)steps.unshift({ex:'citations',m:2});
   // le point de départ, puis un point d'étape chaque mois
-  const lb=(state.bilans||[]).slice(-1)[0]; if(!lb||d.done.bilan||Date.now()-lb.t>30*864e5)steps.unshift({ex:'bilan',m:10});
+  // le point de départ attend le 3e jour : d'abord le goût de l'exercice, ensuite l'état des lieux
+  const lb=(state.bilans||[]).slice(-1)[0]; if((!lb&&joursAvant(k)>=2)||d.done.bilan||(lb&&Date.now()-lb.t>30*864e5))steps.unshift({ex:'bilan',m:10});
+  // les premiers jours, l'accueil se limite à la séance, à l'événement du moment et au défi du réel
+  document.body.classList.toggle('debutant',debutant(k));
   $('#today-label').textContent=fd(new Date(),{weekday:'long',day:'numeric',month:'long'}); $('#saint-label').textContent=saintDuJour(k);
   $$('#dur button').forEach(b=>b.setAttribute('aria-pressed',String(+b.dataset.min===min)));
   const done=steps.filter(s=>d.done[s.ex]).length;
@@ -3759,12 +3780,12 @@ function renderToday(){
   setStreak(streaks().cur);
   renderReel();
 }
-$$('#dur button').forEach(b=>b.addEventListener('click',()=>{state.settings.minutes=+b.dataset.min;save();renderToday();}));
+$$('#dur button').forEach(b=>b.addEventListener('click',()=>{state.settings.minutes=+b.dataset.min;state.settings.minChoisi=1;save();renderToday();}));
 
 /* ---------- stats ---------- */
 function activeLevel(k){
   const d=state.days[k]; if(!d)return 0;
-  const steps=routineFor(k,state.settings.minutes);
+  const steps=routineFor(k,seanceMin(k));
   const sd=steps.filter(s=>d.done[s.ex]).length/steps.length;
   const hd=HABITS.filter(h=>d.habits[h[0]]).length/HABITS.length;
   const anyEx=Object.values(d.done).some(Boolean);
@@ -4342,7 +4363,7 @@ const STAG_FACTS=["Chaque fin d'hiver, le cerf perd ses bois, puis les refait en
   "Selon la légende, saint Hubert, grand chasseur, se convertit en voyant une croix lumineuse entre les bois d'un cerf."];
 function stagLines(){
   const t=todayKey(), d=state.days[t]||{}, goal=state.settings.xpGoal||60, xp=gamiCtx.xp[t]||0, cur=streaks().cur, L=gamiCtx.level;
-  const due=floriDue().length, steps=(due||(d.done||{}).citations?[{ex:'citations'}]:[]).concat(routineFor(t,state.settings.minutes)), next=steps.find(s=>!(d.done||{})[s.ex]), tines=Math.min(6,1+Math.floor(L/2));
+  const due=floriDue().length, steps=(due||(d.done||{}).citations?[{ex:'citations'}]:[]).concat(routineFor(t,seanceMin(t))), next=steps.find(s=>!(d.done||{})[s.ex]), tines=Math.min(6,1+Math.floor(L/2));
   const pool=Object.keys(state.flori||{}).map(id=>QBY[id]).filter(Boolean), q=pool.length?pick(pool):quoteOfDay(t,0), r=RULES[Math.floor(Date.now()/864e5)%RULES.length];
   const nom=cerf().nom;
   return[
@@ -4452,7 +4473,7 @@ function renderScreenChart(){
 }
 let samplerP=null;
 function sampler(){if(!samplerP)samplerP=(window.claude&&window.claude.use?window.claude.use('sample'):Promise.resolve(null)).catch(()=>null);return samplerP;}
-const COACH_ERR={signed_out:"Connecte-toi à ton compte (onglet Aujourd'hui) pour parler au coach.",not_granted:"Le coach est réservé au propriétaire de ce Néophyte : il paie chaque réponse. Tout le reste t'est ouvert.",rate_limited:"Le coach est très sollicité. Réessaie dans une minute.",quota:"Tu as utilisé tous tes échanges avec le coach pour aujourd'hui. Reprends demain : tout le reste t'est ouvert.",refused:"Le coach ne peut pas répondre à cette demande. Reformule-la.",network:"Pas de connexion internet : le coach répondra quand tu seras de nouveau en ligne.",cancelled:""};
+const COACH_ERR={signed_out:"Connecte-toi à ton compte (onglet Aujourd'hui) pour parler au coach.",not_granted:"Le coach n'est pas encore ouvert à ton compte. Si tu viens de t'inscrire, confirme d'abord ton e-mail. Tout le reste t'est ouvert.",rate_limited:"Le coach est très sollicité. Réessaie dans une minute.",quota:"Tu as utilisé tous tes échanges avec le coach pour aujourd'hui. Reprends demain : tout le reste t'est ouvert.",refused:"Le coach ne peut pas répondre à cette demande. Reformule-la.",network:"Pas de connexion internet : le coach répondra quand tu seras de nouveau en ligne.",cancelled:""};
 // Appelle le coach et affiche sa réponse en direct dans `out`. Renvoie le texte, ou null.
 async function askCoach(input,out,opts){
   const s=await sampler();
@@ -4487,6 +4508,18 @@ function coachSummary(){
   lines.push('Son objectif du moment : '+(state.goal&&state.goal.text?'« '+state.goal.text+' »':'aucun pour l\u2019instant')+'.');
   const tx=texts.slice(-8);
   if(tx.length)lines.push('Derniers textes écrits : '+tx.map(x=>`${(WMODES[x.mode]||WMODES.libre).label} (${x.words} mots, ${x.wpm} mots/min, ${x.avgSent} mots/phrase)`).join(' ; ')+'.');
+  // le carnet d'erreurs : ce qui le distingue d'un assistant qui oublie tout, le coach se souvient de ce qui coince
+  const E=state.errs||[];
+  if(E.length){
+    const TY={ortho:'orthographe',soph:'sophismes',chrono:'chronologie',cit:'citations',fermi:'estimations',ia:'erreurs d’IA'}, n={};
+    E.forEach(e=>{n[e[0]]=(n[e[0]]||0)+1;});
+    const noms={}; E.filter(e=>e[0]==='soph').forEach(e=>{const x=NB.sophismes.find(y=>y.id===e[1]);if(x)noms[x.nom]=(noms[x.nom]||0)+1;});
+    const regles=[...new Set(E.filter(e=>e[0]==='ortho').slice(-12).map(e=>(NB.ortho.find(y=>y.id===e[1])||{}).regle).filter(Boolean))].slice(-3);
+    lines.push(`Carnet d'erreurs pas encore rattrapées (${E.length}) : `+Object.entries(n).map(([k,v])=>`${TY[k]||k} ${v}`).join(', ')+'.'
+      +(Object.keys(noms).length?` Sophismes où il se trompe : ${Object.entries(noms).sort((a,b)=>b[1]-a[1]).slice(0,4).map(([k,v])=>k+(v>1?` (${v} fois)`:'')).join(', ')}.`:'')
+      +(regles.length?` Règles d'orthographe ratées récemment : ${regles.join(' / ')}`:'')
+      +' Reviens sur ces points quand c\u2019est utile, comme un professeur qui le connaît, sans faire le travail à sa place.');
+  }
   const wk=weekStart(t); lines.push('Défi de la semaine : '+(state.weeks[wk]?'relevé':'pas encore relevé')+'.');
   lines.push('Défi du réel (sortie hors écran) : « '+reelOf(wk)[1]+' », '+(((state.reel||{})[wk]||{}).d?'fait':'pas encore fait')+'. Ville : '+(city()||'non indiquée')+'.');
   return lines.join('\n');
@@ -5382,6 +5415,29 @@ $('#rt-copie').addEventListener('click',()=>{
     sg.map((r,i)=>`${i+1}. [${EX[r.exercice]?EX[r.exercice].name:r.exercice} · ${r.question_id||'?'}] ${r.enonce||''}\n   Signalement : ${r.message}`).join('\n\n');
   shareText(txt);
 });
+// le test des premiers testeurs : combien reviennent 7 puis 30 jours après leur premier jour (supabase/assiduite.sql)
+async function renderAssiduite(sb){
+  const msg=$('#as-msg'), kp=$('#as-kpis'), tw=$('#as-table');
+  const {data,error}=await sb.rpc('assiduite');
+  if(error){kp.replaceChildren();tw.replaceChildren();msg.textContent=/assiduite/.test(error.message||'')?'Lance supabase/assiduite.sql dans Supabase pour voir qui revient.':'Lecture impossible : '+(error.message||'erreur');return;}
+  const t=todayKey(), rows=(data||[]).filter(r=>!r.moi), actifs=rows.filter(r=>r.premier);
+  // seuls comptent ceux dont le premier jour est assez ancien pour avoir pu revenir
+  const taux=n=>{const m=actifs.filter(r=>addDays(r.premier,n)<=t), ok=m.filter(r=>r['j'+n]).length;return{m:m.length,ok,pct:m.length?Math.round(ok/m.length*100):null};};
+  const a7=taux(7), a30=taux(30), sem=actifs.filter(r=>r.dernier>=addDays(t,-6)).length;
+  const kpi=(lab,num,sub)=>el('div',{class:'kpi'},el('span',{class:'label',text:lab}),el('span',{class:'num',text:num}),el('span',{class:'muted',text:sub}));
+  const pc=a=>a.pct==null?'—':a.pct+' %';
+  kp.replaceChildren(
+    kpi('Comptes',String(rows.length),`${actifs.length} ont fait au moins un exercice`),
+    kpi('Cette semaine',String(sem),'actifs ces 7 derniers jours'),
+    kpi('Revenus à 7 jours',pc(a7),a7.m?`${a7.ok} sur ${a7.m}`:'trop tôt'),
+    kpi('Revenus à 30 jours',pc(a30),a30.m?`${a30.ok} sur ${a30.m} · objectif 25 %`:'trop tôt · objectif 25 %'));
+  msg.textContent=rows.length?'Toi exclu. Les visiteurs sans compte ne sont pas comptés : demande aux testeurs d’en créer un.':'Aucun autre compte pour l’instant.';
+  const dm=x=>x?fd(new Date(x+'T12:00:00'),{day:'numeric',month:'short'}):'—', oui=(r,n)=>!r.premier?'—':r['j'+n]?'oui':addDays(r.premier,n)>t?'trop tôt':'non';
+  const hd=el('tr');['N°','Inscrit','1er jour','Dernier','Jours','7 j','30 j'].forEach(x=>hd.append(el('th',{text:x})));
+  tw.replaceChildren(rows.length?el('table',{class:'week'},el('thead',{},hd),el('tbody',{},...rows.slice().reverse().map(r=>el('tr',{},
+    el('td',{class:'num',text:String(r.rang)}),el('td',{text:dm(r.inscrit)}),el('td',{text:dm(r.premier)}),el('td',{text:dm(r.dernier)}),
+    el('td',{class:'num',text:String(r.jours)}),el('td',{text:oui(r,7)}),el('td',{text:oui(r,30)}))))):el('p',{class:'note',text:'Le tableau se remplira avec les premiers testeurs.'}));
+}
 async function renderRetours(focus){
   const sb=sbc(), panel=$('#retours-panel');
   if(focus)rtFocus=true;
@@ -5391,7 +5447,8 @@ async function renderRetours(focus){
   try{
     let own=false;
     try{const s=await sb.auth.getSession();if(s.data.session){const r=await sb.rpc('est_proprietaire');own=r.data===true;}}catch(e){}
-    panel.hidden=!own; if(!own)return;
+    panel.hidden=!own; $('#assid-panel').hidden=!own; if(!own)return;
+    renderAssiduite(sb);
     if(rtFocus){rtFocus=false;setTimeout(()=>panel.scrollIntoView({behavior:'smooth',block:'start'}),60);}
     const msg=$('#rt-msg'), list=$('#rt-list'); msg.textContent='Chargement…';
     const q=(t,cols)=>{let r=sb.from(t).select(cols).order('created_at',{ascending:false}).limit(50);if(rtFiltre==='ouverts')r=r.eq('traite',false);return r;};
@@ -5551,7 +5608,7 @@ function showResult(arena,score,unit,msg,again,extra){
 }
 // pendant la séance du jour, on enchaîne sur l'exercice suivant au lieu de revenir à l'accueil
 function seanceNext(){
-  const k=todayKey(), d=day(k), steps=routineFor(k,state.settings.minutes);
+  const k=todayKey(), d=day(k), steps=routineFor(k,seanceMin(k));
   if(!steps.some(x=>x.ex===curEx))return null;
   const nx=steps.find(x=>!d.done[x.ex]);
   return nx?nx.ex:'fin';
@@ -5573,7 +5630,7 @@ function nextButtons(again){
 }
 // entre deux exercices, le cerf bondit sur le chemin de la séance jusqu'à l'étape suivante
 function seanceTrail(nx){
-  const arena=$('#arena'), steps=routineFor(todayKey(),state.settings.minutes), j=steps.findIndex(x=>x.ex===nx), from=Math.max(0,j-1);
+  const arena=$('#arena'), steps=routineFor(todayKey(),seanceMin()), j=steps.findIndex(x=>x.ex===nx), from=Math.max(0,j-1);
   if(reduceMotion()||j<0){openEx(nx);return;}
   stopRun(); $('#st-skill').textContent='Séance du jour'; $('#st-name').textContent='En route'; $('#st-orig').hidden=true; delete arena.dataset.v;
   const pos=i=>steps.length>1?i/(steps.length-1)*100:50;
@@ -5586,7 +5643,7 @@ function seanceTrail(nx){
 // bilan de fin de séance : ce qui a été fait, les XP du jour, les quêtes et la série
 function seanceRecap(arena){
   stopRun(); $('#st-timer').hidden=true; $('#st-bar').hidden=true;
-  const k=todayKey(), steps=routineFor(k,state.settings.minutes), qs=questState(k), xp=xpByDay()[k]||0, cur=streaks().cur;
+  const k=todayKey(), steps=routineFor(k,seanceMin(k)), qs=questState(k), xp=xpByDay()[k]||0, cur=streaks().cur;
   $('#st-skill').textContent='Séance du jour'; $('#st-name').textContent='Séance terminée'; $('#st-orig').hidden=true;
   const last=ex=>{const rs=state.results.filter(r=>r.d===k&&r.ex===ex);return rs[rs.length-1];};
   arena.replaceChildren(
@@ -6902,10 +6959,10 @@ function renderLecture(){const l=lecture();
   const mark=(id,v)=>$$(id+' button').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.v===v)));
   mark('#senior-seg',l.senior?'1':'0');mark('#taille-seg',l.taille||'normal');mark('#police-seg',l.police||'classique');mark('#aere-seg',l.aere?'1':'0');
   mark('#anim-seg',animDoux(l)||osReduit()?'doux':'complet'); $$('#anim-seg button').forEach(b=>{b.disabled=osReduit();});
-  $('#anim-note').textContent=osReduit()?'Ton téléphone demande de réduire les animations : Néophyte suit ce réglage. Le cerf change seulement d’humeur.':'Douces : le cerf ne bouge plus, il change seulement d’humeur, et l’appli passe d’un écran à l’autre sans effet. C’est le réglage d’office du mode sénior.';
+  $('#anim-note').textContent=osReduit()?'Ton téléphone demande de réduire les animations : Néophyte suit ce réglage. Le cerf change seulement d’humeur.':'Douces : le cerf ne bouge plus, il change seulement d’humeur, et l’appli passe d’un écran à l’autre sans effet. C’est le réglage d’office de la lecture agrandie.';
   // le même mode, proposé dès l'écran d'accueil, avant l'inscription
   $('#wl-senior').setAttribute('aria-pressed',String(!!l.senior));
-  $('#wl-senior-txt').textContent=l.senior?'Mode sénior activé · annuler':'Texte trop petit ? Passer en mode sénior';}
+  $('#wl-senior-txt').textContent=l.senior?'Texte agrandi · revenir à la normale':'Agrandir le texte';}
 const SENIOR={senior:true,taille:'grand',police:'lisible',aere:true};
 $('#wl-senior').addEventListener('click',()=>applyLecture(lecture().senior?{}:Object.assign({},SENIOR)));
 // le mode sénior règle d'un coup texte, police et interligne ; chacun reste ajustable ensuite

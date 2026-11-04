@@ -33,12 +33,16 @@ jobs:
           ALLOWED_EMAIL: ${{ secrets.ALLOWED_EMAIL }}
           COACH_MODEL: ${{ vars.COACH_MODEL }}
           COACH_MAX_JOUR: ${{ vars.COACH_MAX_JOUR }}
+          COACH_OUVERT: ${{ vars.COACH_OUVERT }}
+          COACH_MAX_TESTEUR: ${{ vars.COACH_MAX_TESTEUR }}
         run: |
           args=()
           [ -n "$ANTHROPIC_API_KEY" ] && args+=("ANTHROPIC_API_KEY=$ANTHROPIC_API_KEY")
           [ -n "$ALLOWED_EMAIL" ] && args+=("ALLOWED_EMAIL=$ALLOWED_EMAIL")
           [ -n "$COACH_MODEL" ] && args+=("COACH_MODEL=$COACH_MODEL")
           [ -n "$COACH_MAX_JOUR" ] && args+=("COACH_MAX_JOUR=$COACH_MAX_JOUR")
+          [ -n "$COACH_OUVERT" ] && args+=("COACH_OUVERT=$COACH_OUVERT")
+          [ -n "$COACH_MAX_TESTEUR" ] && args+=("COACH_MAX_TESTEUR=$COACH_MAX_TESTEUR")
           if [ ${#args[@]} -gt 0 ]; then supabase secrets set --project-ref "$PROJECT_ID" "${args[@]}"; fi
 
       - name: Déployer les fonctions

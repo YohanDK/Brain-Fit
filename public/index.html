@@ -31,9 +31,9 @@
 <link rel="preload" as="font" type="font/woff2" href="polices/cinzel-latin-700-normal.woff2" crossorigin>
 <link rel="stylesheet" href="polices/polices.css">
 <script>
-// lecture et confort (mode sénior, taille du texte, police, interligne) : appliqués avant l'affichage, propres à cet appareil
+// lecture et confort (mode sénior, taille du texte, police, interligne, animations) : appliqués avant l'affichage, propres à cet appareil
 (function(){try{var l=JSON.parse(localStorage.getItem('brainfit.lecture')||'{}'),d=document.documentElement;
-if(l.taille==='grand'||l.taille==='tres')d.dataset.texte=l.taille;if(l.police==='lisible')d.dataset.police='lisible';if(l.aere)d.dataset.aere='1';if(l.senior)d.dataset.senior='1';}catch(e){}})();
+if(l.taille==='grand'||l.taille==='tres')d.dataset.texte=l.taille;if(l.police==='lisible')d.dataset.police='lisible';if(l.aere)d.dataset.aere='1';if(l.senior)d.dataset.senior='1';if(l.anim==='doux'||(!l.anim&&l.senior))d.dataset.anim='doux';}catch(e){}})();
 </script>
 <script>
 // les sections restent masquées le temps que l'appli les remplisse : rien ne saute à l'écran (filet : 3 s)
@@ -1025,8 +1025,23 @@ details.fold[open]{display:flex;flex-direction:column;gap:10px}
 @keyframes hop{30%{transform:translateY(-8px) rotate(-4deg)}60%{transform:translateY(0) rotate(2deg)}}
 .stag .eye{transform-box:fill-box;transform-origin:center;animation:blink 5s infinite}
 @keyframes blink{0%,94%,100%{transform:scaleY(1)}96%{transform:scaleY(.1)}}
-.stag .ear-r{transform-box:fill-box;transform-origin:0 50%;animation:twitch 8s infinite}
-@keyframes twitch{0%,90%,100%{transform:rotate(0)}93%{transform:rotate(10deg)}96%{transform:rotate(-4deg)}}
+/* le cerf vivant : le corps respire, la tête se balance, les oreilles frémissent, le regard suit le doigt */
+.stag .corps{transform-box:view-box;transform-origin:50px 100px}
+.stag .tete{transform-box:view-box;transform-origin:50px 80px;transition:transform .5s ease}
+.stag .ear-l{transform-box:view-box;transform-origin:40px 44px;transition:transform .5s ease}
+.stag .ear-r{transform-box:view-box;transform-origin:60px 44px;transition:transform .5s ease}
+.stag .pup{transition:transform .25s ease-out}
+:where(#stag,.stagtalk .stag,.qstag,.stag.big) .corps{animation:souffle 4.2s ease-in-out infinite}
+:where(#stag,.stagtalk .stag,.qstag,.stag.big) .tete{animation:balance 9s ease-in-out infinite}
+:where(#stag,.stagtalk .stag,.qstag,.stag.big) .ear-r{animation:frem 7s infinite}
+:where(#stag,.stagtalk .stag,.qstag,.stag.big) .ear-l{animation:frem2 11s infinite}
+@keyframes souffle{50%{transform:scale(1.025,1.035)}}
+@keyframes balance{0%,100%{transform:rotate(0)}30%{transform:rotate(-1.6deg) translateY(.4px)}65%{transform:rotate(1.2deg)}}
+@keyframes frem{0%,88%,100%{transform:rotate(0)}91%{transform:rotate(9deg)}94%{transform:rotate(-3deg)}}
+@keyframes frem2{0%,60%,70%,100%{transform:rotate(0)}63%{transform:rotate(-8deg)}66%{transform:rotate(2deg)}}
+/* touché, il penche la tête vers toi */
+.stag.penche .tete{animation:none;transform:rotate(-6deg) translateY(-1px)}
+.stag.penche .ear-l{animation:none;transform:rotate(10deg)}
 .stag .zz{animation:zz 2.4s ease-in-out infinite}
 @keyframes zz{50%{transform:translateY(-3px);opacity:.5}}
 .stag .spark{transform-box:fill-box;transform-origin:center;animation:twinkle 1.8s ease-in-out infinite}
@@ -1073,16 +1088,27 @@ details.fold[open]{display:flex;flex-direction:column;gap:10px}
 @keyframes flicker{50%{transform:scaleY(.86) rotate(3deg)}}
 .stag .acc.star{transform-box:fill-box;transform-origin:center;animation:twinkle 2.4s ease-in-out infinite}
 /* le petit cerf des exercices */
-.qstag{width:34px;height:34px;cursor:default;margin:-6px 0 -4px}
-.qstag svg{transform-origin:50% 90%}
-.qstag.nod svg{animation:nod .7s ease-in-out}
-@keyframes nod{25%{transform:translateY(3px) rotate(2deg)}50%{transform:translateY(-1px)}75%{transform:translateY(2px) rotate(-1deg)}}
-.qstag.droop svg{animation:droop .9s ease-in-out}
-@keyframes droop{20%{transform:translateX(-2px) rotate(-5deg)}40%{transform:translateX(2px) rotate(5deg)}60%{transform:translateX(-1px) rotate(-3deg)}100%{transform:translateY(2px)}}
-.qstag.fete svg{animation:fete 1.2s ease-out}
-@keyframes fete{20%{transform:translateY(-9px) scale(1.12)}45%{transform:translateY(0) scale(1.05) rotate(-6deg)}70%{transform:rotate(4deg) scale(1.08)}100%{transform:none}}
+.qstag{width:40px;height:40px;cursor:default;margin:-8px 0 -6px}
+/* bonne réponse : il hoche la tête et ses bois brillent ; erreur : les oreilles s'abaissent un instant, sans reproche ;
+   cinq d'affilée : il se redresse, fier */
+.qstag.nod .tete{animation:hoche .8s ease-in-out}
+@keyframes hoche{25%{transform:translateY(2.2px) rotate(1deg)}55%{transform:translateY(-.8px)}80%{transform:translateY(1px)}}
+.qstag.nod .antlers{animation:reflet .9s ease-out}
+@keyframes reflet{40%{filter:drop-shadow(0 0 3px var(--gold-hi)) brightness(1.15)}}
+.qstag.droop .tete{animation:none;transform:translateY(1.6px) rotate(-2deg)}
+.qstag.droop .ear-l{animation:none;transform:rotate(-22deg)}
+.qstag.droop .ear-r{animation:none;transform:rotate(22deg)}
+.qstag.fete .tete{animation:none;transform:translateY(-3px) scale(1.04)}
 .qstag.fete .antlers{filter:drop-shadow(0 0 3px var(--gold-hi))}
-@media (prefers-reduced-motion: reduce){.stag svg,.stag *{animation:none!important}}
+/* animations douces (Réglages, mode sénior, ou téléphone qui demande de réduire) : le cerf ne bouge plus,
+   seule son humeur change ; il garde le clignement des yeux, qui ne déplace rien */
+@media (prefers-reduced-motion: reduce){.stag svg,.stag *{animation:none!important}.stag :is(.tete,.corps,.ear-l,.ear-r,.pup){transform:none!important}}
+html[data-anim="doux"] :is(.stag svg,.stag *){animation:none!important}
+html[data-anim="doux"] .stag :is(.tete,.corps,.ear-l,.ear-r,.pup){transform:none!important}
+html[data-anim="doux"] .stag .eye{animation:blink 5s infinite!important}
+html[data-anim="doux"] *,html[data-anim="doux"] *::before,html[data-anim="doux"] *::after{animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important;scroll-behavior:auto!important}
+html[data-anim="doux"] .splash{display:none}
+html[data-anim="doux"] .cer-stag .antlers.old{opacity:0}html[data-anim="doux"] .cer-stag .antlers.grow path{stroke-dashoffset:0}
 .stagtalk{display:flex;align-items:flex-end;gap:10px;text-align:left;width:min(520px,100%)}
 .stag.mini{width:58px;height:58px;cursor:default}
 .stagtalk .say{position:relative;flex:1;min-width:0;background:var(--surface);border:1px solid var(--gold);border-radius:12px;padding:9px 13px;line-height:1.45;margin-bottom:10px;animation:pop .3s ease-out}
@@ -1141,7 +1167,7 @@ main#contenu{display:flex;flex-direction:column;gap:20px}
 <body>
 <div class="splash" id="splash" aria-hidden="true"><svg class="sp-stag" viewBox="0 0 100 100" aria-hidden="true"><g class="antlers sp-ant" fill="none" stroke="var(--antler)" stroke-width="3.4" stroke-linecap="round"><path pathLength="1" d="M44.0 37.0C39.0 27.0 19.0 19.0 20.0 6.0"/><path pathLength="1" d="M38.9 30.6q-2.3 -2.7 -5.8 -3.9"/><path pathLength="1" d="M34.7 26.9q1.1 -6.0 2.7 -8.6"/><path pathLength="1" d="M30.3 23.1q1.1 -6.0 2.7 -8.6"/><path pathLength="1" d="M26.1 19.2q1.1 -6.0 2.7 -8.6"/><path pathLength="1" d="M22.7 15.0q1.1 -6.0 2.7 -8.6"/><path pathLength="1" d="M20.5 10.5q1.1 -6.0 2.7 -8.6"/><path pathLength="1" d="M56.0 37.0C61.0 27.0 81.0 19.0 80.0 6.0"/><path pathLength="1" d="M61.1 30.6q2.3 -2.7 5.8 -3.9"/><path pathLength="1" d="M65.3 26.9q-1.1 -6.0 -2.7 -8.6"/><path pathLength="1" d="M69.7 23.1q-1.1 -6.0 -2.7 -8.6"/><path pathLength="1" d="M73.9 19.2q-1.1 -6.0 -2.7 -8.6"/><path pathLength="1" d="M77.3 15.0q-1.1 -6.0 -2.7 -8.6"/><path pathLength="1" d="M79.5 10.5q-1.1 -6.0 -2.7 -8.6"/></g><path d="M39 72C36 84 28 92 16 100H84C72 92 64 84 61 72Z" fill="var(--stag-deep)"/><path d="M44 80C44 88 46 94 50 100C54 94 56 88 56 80Z" fill="var(--stag-light)"/><g class="ear ear-l"><ellipse cx="33" cy="44" rx="10" ry="4.2" transform="rotate(-28 40 44)" fill="var(--stag)"/><ellipse cx="34" cy="44" rx="6" ry="2" transform="rotate(-28 40 44)" fill="var(--stag-light)"/></g><g class="ear ear-r"><ellipse cx="67" cy="44" rx="10" ry="4.2" transform="rotate(28 60 44)" fill="var(--stag)"/><ellipse cx="66" cy="44" rx="6" ry="2" transform="rotate(28 60 44)" fill="var(--stag-light)"/></g><path d="M50 34C59 34 64 40 64 47C64 56 58 66 56 74C55 79 53 82 50 82C47 82 45 79 44 74C42 66 36 56 36 47C36 40 41 34 50 34Z" fill="var(--stag)"/><path d="M50 38C53 38 54 42 53 46C52 50 51 52 50 52C49 52 48 50 47 46C46 42 47 38 50 38Z" fill="var(--stag-light)" opacity=".55"/><ellipse cx="50" cy="75" rx="6.2" ry="7" fill="var(--stag-light)"/><ellipse cx="50" cy="79" rx="4.4" ry="2.9" fill="var(--stag-dark)"/><g class="sp-eye"><circle cx="43.5" cy="52" r="2.9" fill="var(--stag-dark)"/><circle cx="44.4" cy="51" r=".9" fill="#fff"/></g><g class="sp-eye"><circle cx="56.5" cy="52" r="2.9" fill="var(--stag-dark)"/><circle cx="57.4" cy="51" r=".9" fill="#fff"/></g></svg><p class="sp-name">Néo<span>phyte</span></p></div>
 <script>(function(){var e=document.getElementById('splash'),go=false;
-try{go=matchMedia('(max-width:700px)').matches&&!matchMedia('(prefers-reduced-motion:reduce)').matches&&!sessionStorage.getItem('brainfit.splash');sessionStorage.setItem('brainfit.splash','1');}catch(x){}
+try{go=matchMedia('(max-width:700px)').matches&&!matchMedia('(prefers-reduced-motion:reduce)').matches&&document.documentElement.dataset.anim!=='doux'&&!sessionStorage.getItem('brainfit.splash');sessionStorage.setItem('brainfit.splash','1');}catch(x){}
 if(!go){e.remove();return;}
 var fin=function(){if(e.parentNode)e.remove();};e.addEventListener('click',fin);setTimeout(fin,2100);})();</script>
 
@@ -1615,6 +1641,8 @@ var fin=function(){if(e.parentNode)e.remove();};e.addEventListener('click',fin);
       <div class="row"><span class="note">Taille du texte</span><div class="seg" id="taille-seg" role="group" aria-label="Taille du texte"><button data-v="normal">Normale</button><button data-v="grand">Grande</button><button data-v="tres">Très grande</button></div></div>
       <div class="row"><span class="note">Police</span><div class="seg" id="police-seg" role="group" aria-label="Police"><button data-v="classique">Classique</button><button data-v="lisible">Très lisible</button></div></div>
       <div class="row"><span class="note">Interligne</span><div class="seg" id="aere-seg" role="group" aria-label="Interligne"><button data-v="0">Normal</button><button data-v="1">Aéré</button></div></div>
+      <div class="row"><span class="note">Animations</span><div class="seg" id="anim-seg" role="group" aria-label="Animations"><button data-v="complet">Complètes</button><button data-v="doux">Douces</button></div></div>
+      <p class="muted note" id="anim-note">Douces : le cerf ne bouge plus, il change seulement d'humeur, et l'appli passe d'un écran à l'autre sans effet. C'est le réglage d'office du mode sénior.</p>
       <p class="lecture-ex">Le néophyte, c'est celui qui commence : un exercice par jour, fait à la main et à la tête.</p>
     </div>
     <div class="panel">
@@ -4100,9 +4128,12 @@ const cerf=()=>{const c=state.cerf||(state.cerf={nom:'',pel:'fauve',port:[]});c.
 function cerfShape(){const c=cerf(), a={};for(const x of ATTRS){const g=attrGrade(x);if(g&&c.port.includes(x[0]))a[x[0]]=g;}
   const p=PELAGES[c.pel]; return{p:p&&(!p[3]||p[3](gamiCtx))?c.pel:'fauve',a,l:gamiCtx.level||1};}
 function cerfStyle(sh){const p=PELAGES[(sh||cerfShape()).p]; return p&&p[1]?Object.entries(p[1]).map(([k,v])=>k+':'+v).join(';'):'';}
-function cerfAcc(sh){
+// part : 'tete' (plume, lunettes, laurier, qui suivent la tête), 'corps' (lanterne, livre), ou rien pour tous
+const ACC_TETE=['plume','lunettes','laurier'];
+function cerfAcc(sh,part){
   const a=(sh||cerfShape()).a||{}; let o='';
-  for(const x of ATTRS){const g=+a[x[0]]; if(!(g>=1&&g<=3))continue; if(x[0]==='lanterne'&&saison()==='toussaint')continue; o+=x[5](g);}
+  for(const x of ATTRS){const g=+a[x[0]]; if(!(g>=1&&g<=3))continue; if(x[0]==='lanterne'&&saison()==='toussaint')continue;
+    if(part&&(part==='tete')!==ACC_TETE.includes(x[0]))continue; o+=x[5](g);}
   return o;
 }
 // un palier tout juste franchi : le cerf le porte aussitôt et le dit
@@ -4166,22 +4197,23 @@ function stagSVG(L,mood,sh){
   const ears=mood==='worried'?55:28;
   const eye=x=>mood==='proud'?`<path class="eyel" d="M${x-2.6} 53q2.6-3 5.2 0" fill="none" stroke="var(--stag-dark)" stroke-width="1.8" stroke-linecap="round"/>`
     :mood==='sleepy'?`<path d="M${x-2.4} 52.5h4.8" stroke="var(--stag-dark)" stroke-width="1.8" stroke-linecap="round"/>`
-    :`<g class="eye"><circle cx="${x}" cy="52" r="2.9" fill="var(--stag-dark)"/><circle cx="${x+.9}" cy="51" r=".9" fill="#fff"/></g>`;
-  const brows=mood==='worried'?`<path d="M40 47.5l6 1.6M60 47.5l-6 1.6" stroke="var(--stag-dark)" stroke-width="1.4" stroke-linecap="round"/>`:'';
+    :`<g class="eye"><g class="pup"><circle cx="${x}" cy="52" r="2.9" fill="var(--stag-dark)"/><circle cx="${x+.9}" cy="51" r=".9" fill="#fff"/></g></g>`;
+  // sourcils relevés vers le milieu : un air désolé, jamais fâché
+  const brows=mood==='worried'?`<path d="M40 49.2l6-1.7M60 49.2l-6-1.7" stroke="var(--stag-dark)" stroke-width="1.4" stroke-linecap="round"/>`:'';
   const extra=mood==='sleepy'?`<g class="zz" fill="var(--muted)" font-family="var(--f-body)" font-style="italic"><text x="70" y="40" font-size="9">z</text><text x="77" y="31" font-size="7">z</text></g>`
     :mood==='proud'?`<g class="spark" fill="var(--gold)"><path d="M14 30l1.5 3.5 3.5 1.5-3.5 1.5-1.5 3.5-1.5-3.5-3.5-1.5 3.5-1.5z"/><path d="M86 22l1.2 2.8 2.8 1.2-2.8 1.2-1.2 2.8-1.2-2.8-2.8-1.2 2.8-1.2z"/></g>`:'';
   const cs=cerfStyle(sh);
   return `<svg viewBox="0 0 100 100" aria-hidden="true"${cs?` style="${cs}"`:''}>
-<g class="antlers" fill="none" stroke="var(--antler)" stroke-width="3.4" stroke-linecap="round">${ant}</g>
-<path d="M39 72C36 84 28 92 16 100H84C72 92 64 84 61 72Z" fill="var(--stag-deep)"/>
-<path d="M44 80C44 88 46 94 50 100C54 94 56 88 56 80Z" fill="var(--stag-light)"/>
+<g class="corps"><path d="M39 72C36 84 28 92 16 100H84C72 92 64 84 61 72Z" fill="var(--stag-deep)"/>
+<path d="M44 80C44 88 46 94 50 100C54 94 56 88 56 80Z" fill="var(--stag-light)"/></g>
+<g class="tete"><g class="antlers" fill="none" stroke="var(--antler)" stroke-width="3.4" stroke-linecap="round">${ant}</g>
 <g class="ear ear-l"><ellipse cx="33" cy="44" rx="10" ry="4.2" transform="rotate(${-ears} 40 44)" fill="var(--stag)"/><ellipse cx="34" cy="44" rx="6" ry="2" transform="rotate(${-ears} 40 44)" fill="var(--stag-light)"/></g>
 <g class="ear ear-r"><ellipse cx="67" cy="44" rx="10" ry="4.2" transform="rotate(${ears} 60 44)" fill="var(--stag)"/><ellipse cx="66" cy="44" rx="6" ry="2" transform="rotate(${ears} 60 44)" fill="var(--stag-light)"/></g>
 <path d="M50 34C59 34 64 40 64 47C64 56 58 66 56 74C55 79 53 82 50 82C47 82 45 79 44 74C42 66 36 56 36 47C36 40 41 34 50 34Z" fill="var(--stag)"/>
 <path d="M50 38C53 38 54 42 53 46C52 50 51 52 50 52C49 52 48 50 47 46C46 42 47 38 50 38Z" fill="var(--stag-light)" opacity=".55"/>
 <ellipse cx="50" cy="75" rx="6.2" ry="7" fill="var(--stag-light)"/>
 <ellipse cx="50" cy="79" rx="4.4" ry="2.9" fill="var(--stag-dark)"/>
-${eye(43.5)}${eye(56.5)}${brows}${extra}${SAISON_SVG[saison()]||''}${cerfAcc(sh)}
+${eye(43.5)}${eye(56.5)}${brows}${cerfAcc(sh,'tete')}</g>${extra}${SAISON_SVG[saison()]||''}${cerfAcc(sh,'corps')}
 </svg>`;
 }
 let stagKey='', stagI=0, stagTimer=null;
@@ -4247,7 +4279,15 @@ function stagLines(){
     STAG_FACTS[Math.floor(Date.now()/864e5)%STAG_FACTS.length]
   ];
 }
-$('#stag').addEventListener('click',()=>{stagJump();const ls=stagLines();stagSay(ls[stagI++%ls.length]);});
+$('#stag').addEventListener('click',()=>{const b=$('#stag');b.classList.remove('joy');b.classList.add('penche');clearTimeout(b._pt);b._pt=setTimeout(()=>b.classList.remove('penche'),2600);
+  const ls=stagLines();stagSay(ls[stagI++%ls.length]);});
+// le regard du cerf suit le doigt ou la souris (pas en animations douces)
+let gazeRaf=0;
+addEventListener('pointermove',e=>{if(gazeRaf||reduceMotion())return;const X=e.clientX,Y=e.clientY;
+  gazeRaf=requestAnimationFrame(()=>{gazeRaf=0;
+    for(const st of document.querySelectorAll('#stag,.qstag,.stag.big')){const r=st.getBoundingClientRect();if(!r.width||r.bottom<0||r.top>innerHeight)continue;
+      const dx=X-(r.left+r.width/2),dy=Y-(r.top+r.height*.52),d=Math.hypot(dx,dy)||1,k=Math.min(1,d/160)*1.35,t=`translate(${(dx/d*k).toFixed(2)}px,${(dy/d*k).toFixed(2)}px)`;
+      st.querySelectorAll('.pup').forEach(p=>{p.style.transform=t;});}});},{passive:true});
 $('#stag-bubble').addEventListener('click',e=>{e.currentTarget.hidden=true;});
 function renderHud(){
   checkAttrs(); if(!iconTried){iconTried=true;cerfIcon();} renderStag();
@@ -5352,7 +5392,7 @@ function son(k){
   try{AC=AC||new (window.AudioContext||window.webkitAudioContext)();if(AC.state==='suspended')AC.resume();SONS[k](AC,AC.currentTime+.01);}catch(e){}
 }
 // feuilles de laurier dorées pour un record, une séance parfaite ou un niveau gagné
-const reduceMotion=()=>window.matchMedia&&matchMedia('(prefers-reduced-motion: reduce)').matches;
+const reduceMotion=()=>document.documentElement.dataset.anim==='doux'||!!(window.matchMedia&&matchMedia('(prefers-reduced-motion: reduce)').matches);
 function laurels(){
   if(reduceMotion())return;
   const box=el('div',{class:'laurels'+(curEx==='evenement'?' automne':''),'aria-hidden':'true'});
@@ -5382,7 +5422,8 @@ function stagReact(right){
   clearTimeout(st._t); const L=gamiCtx.level||1, fete=right&&combo>=5&&combo%5===0;
   st.innerHTML=stagSVG(L,fete?'proud':right?'idle':'worried');
   st.classList.remove('nod','droop','fete'); void st.offsetWidth; st.classList.add(fete?'fete':right?'nod':'droop');
-  st._t=setTimeout(()=>{st.classList.remove('nod','droop','fete');st.innerHTML=stagSVG(L,'idle');},fete?1800:1100);
+  // il se reprend en douceur : d'abord la posture, puis l'humeur
+  st._t=setTimeout(()=>{st.classList.remove('nod','droop','fete');st._t=setTimeout(()=>{st.innerHTML=stagSVG(L,'idle');},right&&!fete?0:450);},fete?1800:1100);
 }
 function hit(right){
   right=!!right; qmarks[qcur]=right; combo=right?combo+1:0; son(right?'juste':'faux');
@@ -5404,8 +5445,7 @@ function revealNext(){
   },90);
 }
 function countUp(node,to){
-  const reduce=window.matchMedia&&matchMedia('(prefers-reduced-motion: reduce)').matches;
-  if(reduce||!(to>0)){node.textContent=fmt(to);return;}
+  if(reduceMotion()||!(to>0)){node.textContent=fmt(to);return;}
   const t0=performance.now(), dur=Math.min(1200,400+to*8), dec=to%1?1:0;
   const f=now=>{const k=Math.min(1,(now-t0)/dur), v=to*(1-Math.pow(1-k,3));node.textContent=fmt(dec?Math.round(v*10)/10:Math.round(v));if(k<1)requestAnimationFrame(f);};
   requestAnimationFrame(f);
@@ -6768,11 +6808,17 @@ function applyLecture(l){
   if(l.police==='lisible')d.dataset.police='lisible';else delete d.dataset.police;
   if(l.aere)d.dataset.aere='1';else delete d.dataset.aere;
   if(l.senior)d.dataset.senior='1';else delete d.dataset.senior;
-  renderLecture();
+  if(animDoux(l))d.dataset.anim='doux';else delete d.dataset.anim;
+  stagKey='';renderStag();renderLecture();
 }
+// animations douces : choisies, ou d'office en mode sénior tant qu'on n'a rien choisi
+const animDoux=l=>l.anim==='doux'||(!l.anim&&!!l.senior);
+const osReduit=()=>!!(window.matchMedia&&matchMedia('(prefers-reduced-motion: reduce)').matches);
 function renderLecture(){const l=lecture();
   const mark=(id,v)=>$$(id+' button').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.v===v)));
   mark('#senior-seg',l.senior?'1':'0');mark('#taille-seg',l.taille||'normal');mark('#police-seg',l.police||'classique');mark('#aere-seg',l.aere?'1':'0');
+  mark('#anim-seg',animDoux(l)||osReduit()?'doux':'complet'); $$('#anim-seg button').forEach(b=>{b.disabled=osReduit();});
+  $('#anim-note').textContent=osReduit()?'Ton téléphone demande de réduire les animations : Néophyte suit ce réglage. Le cerf change seulement d’humeur.':'Douces : le cerf ne bouge plus, il change seulement d’humeur, et l’appli passe d’un écran à l’autre sans effet. C’est le réglage d’office du mode sénior.';
   // le même mode, proposé dès l'écran d'accueil, avant l'inscription
   $('#wl-senior').setAttribute('aria-pressed',String(!!l.senior));
   $('#wl-senior-txt').textContent=l.senior?'Mode sénior activé · annuler':'Texte trop petit ? Passer en mode sénior';}
@@ -6783,6 +6829,7 @@ $$('#senior-seg button').forEach(b=>b.addEventListener('click',()=>applyLecture(
 $$('#taille-seg button').forEach(b=>b.addEventListener('click',()=>applyLecture(Object.assign(lecture(),{taille:b.dataset.v}))));
 $$('#police-seg button').forEach(b=>b.addEventListener('click',()=>applyLecture(Object.assign(lecture(),{police:b.dataset.v}))));
 $$('#aere-seg button').forEach(b=>b.addEventListener('click',()=>applyLecture(Object.assign(lecture(),{aere:b.dataset.v==='1'}))));
+$$('#anim-seg button').forEach(b=>b.addEventListener('click',()=>applyLecture(Object.assign(lecture(),{anim:b.dataset.v}))));
 renderLecture();
 function renderOrigins(){
   $('#origins').replaceChildren(...Object.entries(ORIG).map(([k,t])=>el('details',{class:'hist'},el('summary',{text:EX[k].name+' · '+EX[k].skill}),el('p',{text:t}))));

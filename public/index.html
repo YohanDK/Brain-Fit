@@ -1210,6 +1210,7 @@ main#contenu{display:flex;flex-direction:column;gap:20px}
 .lvlbar.big{width:100%;height:8px}
 .xp-lvl{display:flex;gap:12px;align-items:center;margin-top:4px}
 .xp-lvl .lvl-badge{flex:none}
+.cer-card .piece{font-style:italic;margin:0}
 .xp-lvl-t{display:flex;flex-direction:column;gap:5px;flex:1;min-width:0}
 .xp-gains dl{display:grid;grid-template-columns:1fr auto;gap:4px 14px;margin:8px 0 0;font-size:.95rem}
 .xp-gains dt{color:var(--fg2)}.xp-gains dd{margin:0;font-weight:600;color:var(--gold-deep);text-align:right;white-space:nowrap}
@@ -4043,8 +4044,13 @@ function xpByDay(){
 function xpTotal(m){let t=Object.values(m).reduce((a,b)=>a+b,0);for(const p of Object.values(state.prog||{}))t+=((p.lect||0)+(p.ecrit||0))*20;return t;}
 const LEVEL_NAMES=['Novice','Disciple','Éphèbe','Scribe','Rhéteur','Logicien','Stratège','Philosophe','Archonte','Sage',
   // après X : les bois se couronnent (XI), la couronne est pleine (XX), les bois deviennent d'or (XXX)
-  'Lettré','Érudit','Humaniste','Orateur','Docteur','Savant','Polymathe','Maître','Mentor','Couronné',
-  'Scholarque','Encyclopédiste','Gardien','Oracle','Augure','Mécène','Bâtisseur','Phare','Vénérable','Cerf d’or'];
+  // XI à XXX : la translatio studii, le savoir qui passe d'Athènes à Rome, Constantinople, puis aux royaumes d'Occident
+  'Grammairien','Orateur','Jurisconsulte','Censeur','Consul',
+  'Didascale','Logothète','Consul des philosophes','Patrice','Couronné',
+  'Barde','Scalde','Clerc','Écolâtre','Maître ès arts','Docteur','Chancelier','Électeur','Archichancelier','Cerf d’or'];
+// d'où vient chaque nom : on voyage d'une civilisation à l'autre en montant de niveau
+const LEVEL_ERAS=[[10,'Athènes'],[15,'Rome'],[20,'Constantinople'],[21,'la Gaule des bardes'],[22,'le Nord des scaldes'],[23,'l’école du palais de Charlemagne'],[24,'les écoles cathédrales du royaume de France'],[26,'l’Université de Paris'],[27,'le royaume de France'],[29,'le Saint-Empire'],[Infinity,'la forêt']];
+const levelEra=L=>LEVEL_ERAS.find(([m])=>L<=m)[1];
 const roman=n=>{let r='';for(const[v,s] of [[1000,'M'],[900,'CM'],[500,'D'],[400,'CD'],[100,'C'],[90,'XC'],[50,'L'],[40,'XL'],[10,'X'],[9,'IX'],[5,'V'],[4,'IV'],[1,'I']])while(n>=v){r+=s;n-=v;}return r;};
 // couronne de laurier en SVG : deux branches qui partent du bas, ouvertes en haut
 function laurel(size){
@@ -4100,13 +4106,27 @@ const METAL={bronze:['#F2C9A0','#C2864F','#7E4B22'],argent:['#FBFCFD','#C3C8CE',
 const METAL_NOM={bronze:'bronze',argent:'argent',or:'or'};
 let medalN=0;
 // médaille frappée : pièce, grènetis, emblème en relief
+// chaque métal a sa pièce d'époque : statère gaulois (bronze), denier carolingien (argent), solidus de Constantinople (or)
+const PIECES={bronze:['une monnaie au flan irrégulier','comme chez les Gaulois'],argent:['un denier','comme sous Charlemagne'],or:['un solidus','comme à Constantinople']};
 function medalSVG(emb,metal){
   const[hi,mid,dk]=METAL[metal]||METAL.gris, id='md'+(medalN++), f=n=>n.toFixed(1); let dots='';
-  for(let i=0;i<40;i++){const a=i/40*2*Math.PI;dots+=`<circle cx="${f(50+41*Math.cos(a))}" cy="${f(50+41*Math.sin(a))}" r="1.2"/>`;}
-  const e=(c,dx)=>`<g transform="translate(${24.2+dx} ${24.2+dx}) scale(2.15)" fill="none" stroke="${c}" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="${EMB[emb]||EMB.etoile}"/></g>`;
+  const rnd=(i=>()=>{i=(i*9301+49297)%233280;return i/233280;})([...emb].reduce((a,c)=>a+c.charCodeAt(0),7));
+  const ring=(r,n,rr)=>{let o='';for(let i=0;i<n;i++){const a=i/n*2*Math.PI;o+=`<circle cx="${f(50+r*Math.cos(a))}" cy="${f(50+r*Math.sin(a))}" r="${rr}"/>`;}return o;};
+  let flan=`<circle cx="50" cy="50" r="46" fill="url(#${id})"/>`, shadow=`<circle cx="50" cy="51.5" r="46" fill="${dk}" opacity=".35"/>`, deco='', sc=2.15;
+  if(metal==='bronze'){ // statère : flan épais et irrégulier, gros globules
+    let d='';for(let i=0;i<=18;i++){const a=i/18*2*Math.PI,r=43+rnd()*4;d+=(i?'L':'M')+f(50+r*Math.cos(a))+' '+f(50+r*Math.sin(a));}
+    flan=`<path d="${d}Z" fill="url(#${id})" stroke="${dk}" stroke-width="1.5" stroke-linejoin="round"/>`; shadow=`<path d="${d}Z" fill="${dk}" opacity=".35" transform="translate(0 1.6)"/>`;
+    deco=`<g fill="${dk}" opacity=".5">${ring(38,16,2.1)}</g>`;
+  }else if(metal==='argent'||metal==='or'){ // denier et solidus : légende tout autour
+    const leg=metal==='or'?'ΧΑΛΕΠΑ · ΤΑ · ΚΑΛΑ · ':'+ NEOPHYTVS · DISCIPVLVS · ';
+    deco=`<path id="${id}l" d="M50 15a35 35 0 1 1-.01 0" fill="none"/><text font-family="Cinzel, serif" font-size="${metal==='or'?10.5:9}" font-weight="700" fill="${dk}" opacity=".8"><textPath href="#${id}l" textLength="212" lengthAdjust="spacing">${leg}</textPath></text>`
+      +`<circle cx="50" cy="50" r="27.5" fill="none" stroke="${dk}" stroke-width="1" opacity=".5"/><g fill="${dk}" opacity=".45">${ring(44,metal==='or'?0:48,.9)}</g>`;
+    sc=1.7;
+  }else deco=`<g fill="${dk}" opacity=".5">${ring(41,40,1.2)}</g><circle cx="50" cy="50" r="35" fill="none" stroke="${dk}" stroke-width="1" opacity=".45"/>`;
+  const o=50-12*sc, e=(c,dx)=>`<g transform="translate(${f(o+dx)} ${f(o+dx)}) scale(${sc})" fill="none" stroke="${c}" stroke-width="${f(4.1/sc)}" stroke-linecap="round" stroke-linejoin="round"><path d="${EMB[emb]||EMB.etoile}"/></g>`;
   return `<svg viewBox="0 0 100 100" aria-hidden="true"><defs><radialGradient id="${id}" cx="35%" cy="30%" r="75%"><stop offset="0" stop-color="${hi}"/><stop offset=".55" stop-color="${mid}"/><stop offset="1" stop-color="${dk}"/></radialGradient></defs>`
-    +`<circle cx="50" cy="51.5" r="46" fill="${dk}" opacity=".35"/><circle cx="50" cy="50" r="46" fill="url(#${id})"/><circle cx="50" cy="50" r="45" fill="none" stroke="${hi}" stroke-width="1.2" opacity=".8"/>`
-    +`<g fill="${dk}" opacity=".5">${dots}</g><circle cx="50" cy="50" r="35" fill="none" stroke="${dk}" stroke-width="1" opacity=".45"/>${e(hi,.7)}${e(dk,0)}<path class="shine" d="M18 30a36 36 0 0 1 28-16" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round" opacity=".35"/></svg>`;
+    +shadow+flan+`<circle cx="50" cy="50" r="45" fill="none" stroke="${hi}" stroke-width="1.2" opacity="${metal==='bronze'?0:.8}"/>`
+    +deco+e(hi,.7)+e(dk,0)+`<path class="shine" d="${sc<2?'M32 40a20 20 0 0 1 12-12':'M18 30a36 36 0 0 1 28-16'}" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round" opacity=".35"/></svg>`;
 }
 // métal d'un palier : le dernier est d'or, l'avant-dernier d'argent, les autres de bronze
 const metalOf=(i,n)=>['bronze','argent','or'][Math.max(0,2-(n-1-i))];
@@ -4169,6 +4189,7 @@ function badgeCeremony(){
   const box=el('div',{class:'ceremony',role:'dialog','aria-modal':'true','aria-label':'Badge gagné',onclick:e=>{if(e.target===box)close();}},
     el('div',{class:'cer-card'},el('span',{class:'medal-big '+s.metal,html:medalSVG(f.emb,s.metal)}),
       el('span',{class:'label',text:i?`Nouveau palier : ${METAL_NOM[s.metal]}`:'Badge gagné'}),el('h2',{text:s.name}),
+      el('p',{class:'note piece',text:`Frappé en ${METAL_NOM[s.metal]} : ${PIECES[s.metal][0]}, ${PIECES[s.metal][1]}.`}),
       el('p',{class:'fg2',text:s.desc+'.'}),
       nx?el('p',{class:'note',text:`Palier suivant, en ${METAL_NOM[nx.metal]} : ${nx.desc.charAt(0).toLowerCase()+nx.desc.slice(1)}.`}):(f.steps.length>1?el('p',{class:'note',text:'C’est le plus haut palier de ce badge.'}):null),
       el('button',{class:'btn primary',text:'Continuer',onclick:close})));
@@ -4449,6 +4470,7 @@ function antlerCeremony(L,total){
   const box=el('div',{class:'ceremony',role:'dialog','aria-modal':'true','aria-label':'Nouveau niveau',onclick:e=>{if(e.target===box)close();}},
     el('div',{class:'cer-card'},el('span',{class:'stag cer-stag',html:svg}),
       el('span',{class:'label',text:'Nouveau niveau'}),el('h2',{text:`Niveau ${roman(L)} : ${levelName(L)}`}),
+      L>10?el('p',{class:'note piece',text:`Ton titre vient de ${levelEra(L)}.`}):null,
       el('p',{class:'fg2',text:`${fmt(total)} XP au total. `+(L===11?'Tes bois se couronnent : deux pointes de plus au sommet.':L===20?'Ta couronne est pleine : quatre pointes au sommet de chaque bois.':L===30?'Tes bois sont devenus d’or.':L<=10?'Tes bois ont grandi.':'Tes bois s’affermissent.')}),
       el('button',{class:'btn primary',text:'Continuer',onclick:close})));
   document.body.append(box); son('niveau'); setTimeout(()=>{laurels();},900);
@@ -4531,6 +4553,7 @@ function renderXpPanel(){
   $('#xp-total').replaceChildren(
     el('div',{class:'xp-lvl'},el('span',{class:'lvl-badge',html:laurel(44)},el('b',{text:roman(L)})),
       el('div',{class:'xp-lvl-t'},el('strong',{text:`Niveau ${roman(L)} · ${levelName(L)}`}),
+        L>10?el('span',{class:'note',text:`Un titre venu de ${levelEra(L)}`}):null,
         el('span',{class:'lvlbar big'},el('i',{style:`width:${pc}%`})),
         el('span',{class:'note',text:`${fmt(gamiCtx.total)} XP au total · encore ${fmt(needFor(L+1)-gamiCtx.total)} XP pour le niveau ${roman(L+1)} (${levelName(L+1)})`}))),
     el('details',{class:'fold xp-gains'},el('summary',{},el('span',{class:'note',text:'Comment gagner des XP'})),

@@ -794,6 +794,36 @@ a{color:var(--accent);text-underline-offset:3px}
 .mini-rank li.me{background:var(--accent-soft)}
 .mini-rank .stag.rk-stag{width:32px;height:32px}
 @media (max-width:620px){.amis-defis{grid-template-columns:1fr}.ami-card{grid-template-columns:72px 1fr}.ami-card .stag.big{width:72px;height:72px}}
+.duels{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:6px}
+.duel-li{display:grid;grid-template-columns:40px 1fr;gap:4px 12px;align-items:center;padding:8px 10px;border-radius:var(--r);background:var(--sunk)}
+.duel-li.k-tour{background:var(--gold-soft)}
+.duel-li .nudge-a{grid-column:2;gap:6px}
+.duel-pips{display:inline-flex;gap:4px;vertical-align:middle}
+.duel-pips i{width:9px;height:9px;border-radius:50%;border:1.5px solid var(--gold)}
+.duel-pips i.half{background:linear-gradient(90deg,var(--gold) 50%,transparent 50%)}
+.duel-pips i.on{background:var(--gold)}
+.duel-head{display:grid;grid-template-columns:1fr auto 1fr;align-items:center;gap:8px;text-align:center;margin-bottom:6px}
+.duel-p{display:flex;flex-direction:column;align-items:center;gap:2px;min-width:0;overflow-wrap:anywhere}
+.duel-p .stag{width:64px;height:64px}
+.duel-mid{display:flex;flex-direction:column;align-items:center;gap:6px}
+.duel-score{font-family:var(--f-display);font-size:2rem;font-weight:700;line-height:1;color:var(--gold-deep)}
+.duel-timer{width:100%;max-width:520px;height:6px;border-radius:3px;background:var(--sunk);overflow:hidden;margin:2px 0 6px}
+.duel-timer i{display:block;height:100%;width:100%;background:var(--accent);transition:width .1s linear}
+.duel-timer.late i{background:var(--bad)}
+.duel-m{text-align:center;margin:0}
+.duel-fams{display:grid;gap:10px;width:100%;max-width:440px;margin:0 auto}
+.duel-fam{display:flex;flex-direction:column;align-items:flex-start;gap:2px;padding:14px 16px;border:1px solid var(--line);border-radius:var(--r);background:var(--surface);font:inherit;color:inherit;text-align:left;cursor:pointer;transition:border-color .15s,transform .15s}
+.duel-fam:hover,.duel-fam:focus-visible{border-color:var(--gold);transform:translateY(-1px)}
+.duel-fam b{font-family:var(--f-display);font-size:1.05rem}
+.duel-grid{display:grid;grid-template-columns:minmax(0,auto) repeat(5,30px) 2ch;gap:6px 6px;align-items:center;justify-content:center;margin:6px auto}
+.duel-who{display:flex;align-items:center;gap:6px;min-width:0;max-width:9em;overflow-wrap:anywhere;font-size:.95rem}
+.duel-grid .m{width:30px;height:30px;border-radius:6px;display:grid;place-items:center;color:var(--surface);font-weight:700;animation:pop .45s both cubic-bezier(.3,1.6,.6,1)}
+.duel-grid .ok{background:var(--good)} .duel-grid .ko{background:var(--bad)} .duel-grid .wait{background:var(--sunk);color:var(--muted)}
+.duel-tot{font-family:var(--f-display);text-align:right}
+.duel-verdict{font-family:var(--f-display);font-size:1.5rem;text-align:center;margin:4px 0 0;color:var(--gold-deep)}
+.duel-verdict.big{font-size:2rem}
+.duel-sum{list-style:none;margin:0 auto;padding:0;display:flex;flex-direction:column;gap:4px;width:100%;max-width:320px}
+.duel-sum li{display:flex;justify-content:space-between;padding:4px 10px;border-radius:var(--r);background:var(--sunk)}
 .tabs button.dot{position:relative}
 .tabs button.dot::after{content:"";position:absolute;top:6px;right:8px;width:8px;height:8px;border-radius:50%;background:var(--gold);box-shadow:0 0 0 2px var(--surface)}
 .sect-h{margin:14px 4px -4px}
@@ -1273,6 +1303,10 @@ var fin=function(){if(e.parentNode)e.remove();};e.addEventListener('click',fin);
       <div class="row spread" style="flex-wrap:nowrap;align-items:baseline"><h2 class="label">Pour toi</h2><span class="note" id="amis-inbox-n"></span></div>
       <ul class="nudges" id="amis-inbox-list"></ul>
     </div>
+    <div class="panel" id="amis-duels" hidden>
+      <div><h2>Duels</h2><p class="muted note">Trois manches de cinq questions contre un ami. Chacun choisit le terrain à son tour ; plus de bonnes réponses gagne, et à égalité, le plus rapide.</p></div>
+      <ul class="duels" id="amis-duels-list"></ul>
+    </div>
     <div class="panel" id="circle-panel">
       <div><h2>Mon cercle</h2><p class="muted note">Entre proches, sous un pseudo. Seuls ton pseudo, ton cerf, tes XP, ta série et tes scores aux défis sont partagés, et seulement avec les membres de ton cercle.</p></div>
       <div id="circle-body" style="display:flex;flex-direction:column;gap:10px"></div>
@@ -1730,6 +1764,7 @@ const EX={
   fluency:{name:'Fluence verbale',skill:'Accès au langage',desc:"Un maximum de mots d'une lettre ou d'une catégorie en 60 secondes.",unit:'mots'},
   enigme:{name:'Énigme du jour',skill:'Défi commun',desc:"Cinq questions, les mêmes pour tout le monde aujourd'hui. Une seule tentative, puis partage ta grille.",unit:'% de bonnes réponses'},
   dimanche:{name:'Énigme du dimanche',skill:'Raisonnement',desc:"Une enquête par semaine, ouverte le dimanche : cinq indices révélés un à un. Écris ta déduction, et réponds avec le moins d'indices possible.",unit:'% des points'},
+  duel:{name:'Duel',skill:'Défi entre amis',desc:"Trois manches de cinq questions contre un ami du cercle, chacun choisissant le terrain à son tour.",unit:'% de bonnes réponses',hidden:true},
   rattrapage:{name:'Rattrapage',skill:'Mémoire des erreurs',desc:"Tes erreurs récentes (orthographe, sophismes, dates, citations, ordres de grandeur, erreurs d'IA) reviennent. Réussis-les pour les rayer de ton carnet.",unit:'erreurs rattrapées'},
   eclair:{name:'Éclair',skill:'Vivacité',desc:"90 secondes de questions mêlées : orthographe, dates, sophismes, citations, calcul, ordres de grandeur. Bats ton record.",unit:'bonnes réponses'},
   evenement:{name:'Événement de saison',skill:'Esprit critique & culture',desc:"Une semaine à thème : vrai, faux ou non prouvé.",unit:'% de bonnes réponses',hidden:true},
@@ -1738,6 +1773,7 @@ const EX={
 };
 // d'où vient chaque exercice : affiché sous le titre du plateau et dans la Bibliothèque
 const ORIG={
+  duel:"Jouer chacun à son tour, quand on veut, vient des parties d'échecs par correspondance, jouées par courrier dès le XIXe siècle. Choisir le terrain de la manche suivante oblige à connaître ses forces et celles de l'autre : c'est la part de stratégie du duel. À égalité de bonnes réponses, le plus rapide l'emporte.",
   rattrapage:"Revenir sur ses erreurs juste avant de les oublier est l'une des méthodes d'apprentissage les mieux établies : c'est l'effet de test (Roediger et Karpicke, 2006) combiné à la répétition espacée. Une erreur rattrapée sort du carnet ; une erreur ratée de nouveau y reste.",
   enigme:"Le principe vient de Wordle (Josh Wardle, 2021) : une seule grille par jour, la même pour tous, et un résultat qu'on partage en petits carrés de couleur sans rien dévoiler. Ici, les questions viennent des banques de Néophyte.",
   dimanche:"Les énigmes de déduction ont leurs classiques : Lewis Carroll en publiait (Symbolic Logic, 1896), Raymond Smullyan en a fait des livres entiers avec ses chevaliers qui disent toujours vrai et ses fripons qui mentent toujours. Les indices révélés un à un viennent des jeux d'enquête. Chaque énigme de Néophyte est vérifiée par un programme qui passe en revue tous les cas possibles : une seule réponse tient.",
@@ -2682,8 +2718,8 @@ function amisInbox(){
   return circleData.nudges.filter(n=>n.from_id!==me&&(n.to_id===me||n.to_id==null)&&n.created_at>=lim&&!vu.includes(n.id));
 }
 // pastille sur l'onglet Amis quand un geste attend
-function amisBadge(){const b=$('.tabs [data-tab="amis"]'); if(!b)return; const n=amisInbox().length; b.classList.toggle('dot',n>0); b.setAttribute('aria-label',n?`Amis, ${n} nouveauté${n>1?'s':''}`:'Amis');}
-function amisPeek(){if(!ref||!state.settings.circle||Date.now()-amisPeekAt<3e5)return;amisPeekAt=Date.now();circleLoad().then(amisBadge).catch(()=>{});}
+function amisBadge(){const b=$('.tabs [data-tab="amis"]'); if(!b)return; const n=amisInbox().length+duelsMine().length; b.classList.toggle('dot',n>0); b.setAttribute('aria-label',n?`Amis, ${n} nouveauté${n>1?'s':''}`:'Amis');}
+function amisPeek(){if(!ref||!state.settings.circle||Date.now()-amisPeekAt<3e5)return;amisPeekAt=Date.now();circleLoad().then(duelsLoad).then(amisBadge).catch(()=>{});}
 const sentToday=(to,kind)=>!!(circleData&&circleData.nudges&&circleData.nudges.some(n=>n.from_id===circleData.me&&n.to_id===to&&n.kind===kind&&String(n.day)===todayUTC()));
 const todayUTC=()=>new Date().toISOString().slice(0,10);
 // un geste vers un ami (ou tout le cercle si to est vide)
@@ -2741,8 +2777,10 @@ function amiCard(r){
     el('div',{class:'ami-facts'},el('b',{text:r.pseudo+(r.me?' (toi)':'')}),...facts.map(f=>el('span',{class:'fg2',text:f}))));
   const acts=el('div',{class:'row ami-acts'});
   if(r.me)acts.append(el('button',{class:'btn ghost',text:'Habiller mon cerf',onclick:()=>{showTab('reglages');$('#mc-stag').scrollIntoView({block:'center'});}}));
-  else if(circleData.nudges){acts.append(nudgeBtn(r,'bravo','Bravo'),nudgeBtn(r,'courage','Courage'),
-    sentToday(r.user_id,'defi')?el('button',{class:'btn ghost',disabled:'',text:'Défi lancé aujourd’hui'}):el('button',{class:'btn primary',text:'Défier à l’Éclair',onclick:()=>defierEclair(r.user_id,r.pseudo)}));}
+  else if(circleData.nudges){const dw=duelWith(r.user_id);
+    acts.append(...[duelsOk?el('button',{class:'btn primary',text:dw?(dw.tour===circleData.me?'À toi de jouer':'Voir notre duel'):'Duel en 3 manches',onclick:()=>lancerDuel(r.user_id,r.pseudo)}):null,
+    sentToday(r.user_id,'defi')?el('button',{class:'btn ghost',disabled:'',text:'Défi lancé aujourd’hui'}):el('button',{class:'btn'+(duelsOk?'':' primary'),text:'Défier à l’Éclair',onclick:()=>defierEclair(r.user_id,r.pseudo)}),
+    nudgeBtn(r,'bravo','Bravo'),nudgeBtn(r,'courage','Courage')].filter(Boolean));}
   else acts.append(el('span',{class:'note',text:'Les encouragements et défis entre amis arrivent bientôt.'}));
   card.append(acts); return card;
 }
@@ -2781,11 +2819,223 @@ function renderDefis(){
   if(circleData.nudges)eb.append(el('div',{class:'row'},sentToday(null,'defi')?el('span',{class:'note',text:'Tu as défié ton cercle aujourd’hui.'}):el('button',{class:'btn',text:'Défier le cercle',onclick:()=>defierEclair(null)}),el('span',{class:'note',text:'Joue ta manche : tes amis recevront tes questions et ton score.'})));
   body.replaceChildren(enig,eb);
 }
+/* ---------- duels en trois manches (duels.sql) : chacun choisit une famille à son tour, cinq questions par manche ---------- */
+const DUEL_FAM={chrono:['Chronologie','Lequel est venu en premier ?'],ortho:['Orthographe','La bonne forme, sans correcteur'],soph:['Sophismes','Débusquer la faille'],
+  cit:['Citations','Qui l’a dit ?'],fermi:['Ordres de grandeur','Le bon zéro près'],ia:['Erreurs de l’IA','La phrase fausse'],calc:['Calcul mental','Juste, et vite']};
+// secondes par question : l'erreur de l'IA demande de lire une réponse entière
+const duelLim=f=>f==='ia'?40:20;
+let duelsData=null, duelsOk=null, DUELCTX=null;
+const DUEL_COLS='id,code,a,b,seed,manches,tour,fini,abandon,updated_at';
+const duelSide=(d,me)=>d.a===me?'a':'b';
+const marksSum=m=>Array.isArray(m)?m.reduce((s,x)=>s+(+x||0),0):0;
+const duelOther=(d,me)=>d.a===me?d.b:d.a;
+// le score ne compte que les manches jouées par les deux : on ne voit pas d'avance ce que l'autre n'a pas encore affronté
+function duelTally(d,me){
+  const s=duelSide(d,me), o=s==='a'?'b':'a'; let mi=0,lu=0,tm=0,tl=0,n=0;
+  for(const m of d.manches)if(Array.isArray(m[s])&&Array.isArray(m[o])){mi+=marksSum(m[s]);lu+=marksSum(m[o]);tm+=+m['t'+s]||0;tl+=+m['t'+o]||0;n++;}
+  return{mi,lu,tm,tl,n};
+}
+// 1 victoire, -1 défaite, 0 égalité parfaite ; à égalité de points, le plus rapide l'emporte
+function duelWinner(d,me){
+  if(d.abandon)return d.abandon===me?-1:1;
+  const t=duelTally(d,me);
+  if(t.mi!==t.lu)return t.mi>t.lu?1:-1;
+  return t.tm===t.tl?0:t.tm<t.tl?1:-1;
+}
+const duelsMine=()=>duelsData&&circleData?duelsData.filter(d=>!d.fini&&d.tour===circleData.me):[];
+const duelWith=o=>duelsData?duelsData.find(d=>!d.fini&&(d.a===o||d.b===o)):null;
+// la prochaine manche à jouer pour moi (numérotée à partir de 1)
+function duelNext(d,me){const n=d.manches.length, last=d.manches[n-1];return Array.isArray(last[duelSide(d,me)])?n+1:n;}
+async function duelsLoad(){
+  if(!ref||!state.settings.circle){duelsData=null;return;}
+  const since=new Date(Date.now()-7*864e5).toISOString();
+  const {data,error}=await sbc().from('duels').select(DUEL_COLS).or(`fini.eq.false,updated_at.gte."${since}"`).order('updated_at',{ascending:false}).limit(30);
+  if(error){duelsOk=false;duelsData=null;return;}
+  duelsOk=true; duelsData=data||[];
+}
+function duelKeep(d){if(!duelsData)duelsData=[];const i=duelsData.findIndex(x=>x.id===d.id);if(i>=0)duelsData[i]=d;else duelsData.unshift(d);amisBadge();}
+// lancer un duel contre un ami, ou reprendre celui qui est en cours avec lui
+function lancerDuel(o,pseudo){
+  const cur=duelWith(o);
+  DUELCTX={d:cur||null,o,pseudo:pseudo||pseudoOf(o)};
+  showTab('exercices'); openEx('duel');
+}
+const duelPips=(d,me)=>el('span',{class:'duel-pips','aria-hidden':'true'},...[0,1,2].map(i=>{
+  const m=d&&d.manches[i], s=d?duelSide(d,me):'a', o=s==='a'?'b':'a';
+  return el('i',{class:m&&Array.isArray(m[s])&&Array.isArray(m[o])?'on':m?'half':null});}));
+function renderDuels(){
+  const box=$('#amis-duels'), list=$('#amis-duels-list');
+  box.hidden=!circleData||!duelsOk||!duelsData||!duelsData.length;
+  if(box.hidden)return;
+  const me=circleData.me;
+  // à toi de jouer d'abord, puis les duels en attente, puis les résultats de la semaine
+  const rank=d=>d.fini?2:d.tour===me?0:1;
+  list.replaceChildren(...[...duelsData].sort((x,y)=>rank(x)-rank(y)).map(d=>{
+    const o=duelOther(d,me), who=pseudoOf(o), r=circleData.rows.find(x=>x.user_id===o), t=duelTally(d,me);
+    const sc=t.n?` · ${t.mi} à ${t.lu}`:'';
+    let txt, sub, mood='idle'; const acts=[];
+    if(d.fini){
+      const w=duelWinner(d,me); mood=w<0?'proud':'worried';
+      txt=d.abandon?(d.abandon===me?`Tu as abandonné face à ${who}`:`${who} a abandonné : victoire`):w>0?`Victoire contre ${who}`:w<0?`${who} gagne le duel`:`Égalité parfaite avec ${who}`;
+      sub=d.abandon?'':`${t.mi} bonnes réponses contre ${t.lu}`+(t.mi===t.lu&&w?' · départagés au temps':'');
+      acts.push(el('button',{class:'btn ghost mini',text:'Voir',onclick:()=>{DUELCTX={d,o,pseudo:who};showTab('exercices');openEx('duel');}}));
+      if(!duelWith(o)&&circleData.rows.some(x=>x.user_id===o))acts.push(el('button',{class:'btn mini',text:'Revanche',onclick:()=>lancerDuel(o,who)}));
+    }else if(d.tour===me){
+      txt=`À toi de jouer contre ${who}`; sub=`Manche ${duelNext(d,me)} sur 3`+sc;
+      acts.push(el('button',{class:'btn primary mini',text:'Jouer',onclick:()=>lancerDuel(o,who)}));
+    }else{txt=`${who} joue son tour`; sub=`Manche ${Math.min(3,d.manches.length)} sur 3`+sc;}
+    if(!d.fini){const ab=el('button',{class:'btn ghost mini',text:'Abandonner',onclick:async()=>{
+      if(!ab.dataset.sure){ab.dataset.sure='1';ab.textContent='Vraiment ?';return;}
+      ab.disabled=true; const {error}=await sbc().rpc('duel_abandonner',{p_id:d.id});
+      if(error){ab.disabled=false;toast('<span>Impossible pour l’instant.</span>');return;}
+      d.fini=true;d.tour=null;d.abandon=me;duelKeep(d);renderDuels();}}); acts.push(ab);}
+    return el('li',{class:'duel-li'+(!d.fini&&d.tour===me?' k-tour':'')},
+      el('span',{class:'stag rk-stag','aria-hidden':'true',html:r?rowStag(r,mood):stagSVG(1,'idle')}),
+      el('span',{class:'nudge-t'},el('b',{text:txt}),el('small',{class:'muted'},duelPips(d,me),document.createTextNode(' '+sub))),
+      el('span',{class:'row nudge-a'},...acts));
+  }));
+}
+// cinq questions d'une famille, les mêmes pour les deux joueurs, de plus en plus difficiles
+function duelQs(seed,i,f){
+  const r=seeded(`neophyte-duel-${seed}-${i}-${f}`), out=[], seen=new Set();
+  for(const n of [1,1,2,2,3]){
+    let q, k, t=0;
+    do{q=quickQ(r,f,n);k=[q.quote,q.prompt,...q.opts].join('|');t++;}while(seen.has(k)&&t<30);
+    seen.add(k); out.push(q);
+  }
+  return out;
+}
+const duelGridRow=(name,marks,stag)=>[el('span',{class:'duel-who'},stag?el('span',{class:'stag rk-stag','aria-hidden':'true',html:stag}):null,el('span',{text:name})),
+  ...[0,1,2,3,4].map(j=>{const m=Array.isArray(marks)?marks[j]:null;
+    return el('span',{class:'m '+(m==null?'wait':m?'ok':'ko'),style:`animation-delay:${j*.1}s`,'aria-label':m==null?'pas encore jouée':m?'juste':'faux',text:m==null?'·':m?'✓':'✗'});}),
+  el('b',{class:'duel-tot',text:Array.isArray(marks)?String(marksSum(marks)):'?'})];
+function runDuel(arena){
+  const C=DUELCTX; DUELCTX=null;
+  if(!C||!circleData||!ref){arena.replaceChildren(stagTalk('idle','Un duel se lance depuis l’onglet Amis : touche le nom d’un ami dans ton cercle, puis « Duel ».'),
+    el('div',{class:'row',style:'justify-content:center'},el('button',{class:'btn primary',text:'Aller à l’onglet Amis',onclick:()=>{stopRun();$('#stage').hidden=true;showTab('amis');}})));return;}
+  const me=circleData.me, o=C.o, who=C.pseudo, orow=circleData.rows.find(x=>x.user_id===o);
+  let d=C.d; const seed=d?d.seed:Math.random().toString(36).slice(2,10);
+  const side=()=>d?duelSide(d,me):'a', os=()=>side()==='a'?'b':'a';
+  const myStag=(mood)=>rowStag({me:true},mood), hisStag=(mood)=>orow?rowStag(orow,mood):stagSVG(1,mood||'idle');
+  const back=()=>{stopRun();$('#stage').hidden=true;$('#exgrid').hidden=false;showTab('amis');};
+  // l'en-tête du duel : les deux cerfs, le score des manches jouées par les deux, les trois manches
+  const head=(mood1,mood2)=>{const t=d?duelTally(d,me):{mi:0,lu:0};
+    return el('div',{class:'duel-head'},
+      el('div',{class:'duel-p'},el('span',{class:'stag','aria-hidden':'true',html:myStag(mood1)}),el('b',{text:'Toi'})),
+      el('div',{class:'duel-mid'},el('span',{class:'duel-score','aria-label':`Score : ${t.mi} à ${t.lu}`,text:`${t.mi} – ${t.lu}`}),duelPips(d,me)),
+      el('div',{class:'duel-p'},el('span',{class:'stag','aria-hidden':'true',html:hisStag(mood2)}),el('b',{text:who})));};
+  const famName=f=>DUEL_FAM[f]?DUEL_FAM[f][0]:f;
+  // une manche : cinq questions, un sablier par question ; une réponse hors délai compte comme fausse
+  function play(i,f,done){
+    const qs=duelQs(seed,i,f), lim=duelLim(f), marks=[]; let qi=0, total=0; qmarks=[]; combo=0;
+    const ask=()=>{
+      const q=qs[qi], t0=Date.now(); let over=false;
+      const fb=el('div',{class:'answer',hidden:''}), next=el('button',{class:'btn primary',text:qi<4?'Suivante':'Fin de la manche',hidden:''});
+      const timer=el('div',{class:'duel-timer',role:'timer','aria-label':`${lim} secondes`},el('i'));
+      const finish=(good)=>{
+        if(over)return; over=true; stopRun(); total+=Math.min(lim*10,Math.round((Date.now()-t0)/100)); marks[qi]=good?1:0;
+        fb.replaceChildren(el('span',{class:'label',text:good?'Exact':'Raté'}),el('span',{class:'fg2',text:q.why}),contestBtn('duel',q.src?q.src.join(':'):q.kind,[q.quote,q.prompt,'Réponse : '+q.opts[q.right]].filter(Boolean).join(' — ')));
+        fb.hidden=false; next.hidden=false; next.focus({preventScroll:true});
+      };
+      next.addEventListener('click',()=>{qi++;if(qi<5)ask();else done(marks,total);});
+      arena.replaceChildren(el('p',{class:'label duel-m',text:`Duel contre ${who} · manche ${i+1} sur 3`}),qprog(qi,5),timer,...quickAsk(q,good=>finish(good)),fb,next);
+      const bar=timer.firstChild, end=t0+lim*1000;
+      const iv=setInterval(()=>{const ms=end-Date.now();bar.style.width=Math.max(0,ms/(lim*10))+'%';timer.classList.toggle('late',ms<5000);
+        if(ms<=0){clearInterval(iv);if(over)return;
+          const box=arena.querySelector('.options');[...(box?box.children:[])].forEach((b,j)=>{b.disabled=true;if(j===q.right)b.classList.add('right');});
+          if(q.src)logErr(...q.src); hit(false); finish(false); fb.firstChild.textContent='Temps écoulé';}},100);
+      cleanup=()=>clearInterval(iv);
+    };
+    ask();
+  }
+  async function send(marks,t,fam){
+    const msg=el('p',{class:'note',role:'status',text:'Envoi de ta manche…'}); arena.replaceChildren(head(),msg);
+    try{
+      if(!d){
+        const row={code:state.settings.circle,b:o,seed,manches:[{f:fam,a:marks,ta:t,b:null,tb:null}],tour:o};
+        const {data,error}=await sbc().from('duels').insert(row).select(DUEL_COLS).single(); if(error)throw error; d=data;
+      }else{
+        const {data,error}=await sbc().rpc('duel_jouer',{p_id:d.id,p_marks:marks,p_temps:t,p_famille:fam}); if(error)throw error;
+        d={...d,...(Array.isArray(data)?data[0]:data)};
+      }
+      duelKeep(d); logResult('duel',marksSum(marks)*20); return true;
+    }catch(e){
+      msg.textContent=e&&e.code==='23505'?`Un duel est déjà en cours avec ${who} : termine-le d’abord.`:'L’envoi n’a pas abouti. Vérifie ta connexion, puis réessaie : ta manche est gardée.';
+      if(!(e&&e.code==='23505'))arena.append(el('div',{class:'row',style:'justify-content:center'},el('button',{class:'btn primary',text:'Réessayer',onclick:async()=>{if(await send(marks,t,fam))step();}})));
+      else arena.append(el('div',{class:'row',style:'justify-content:center'},el('button',{class:'btn',text:'Retour',onclick:back})));
+      return false;
+    }
+  }
+  // choisir le terrain de la manche suivante : trois familles proposées, pas encore jouées dans ce duel
+  function choose(n){
+    const played=d?d.manches.map(m=>m.f):[], r=seeded(`neophyte-duel-${seed}-choix-${n}`);
+    const cands=rshuf(r,QTYPES.filter(f=>!played.includes(f))).slice(0,3);
+    const lead=n===0?`Tu provoques ${who} en duel : trois manches de cinq questions, ${duelLim('soph')} secondes par question. Choisis le terrain de la première manche ; ${who} jouera exactement les mêmes questions, puis choisira la suivante.`
+      :`Manche ${n+1} sur 3 : à toi de choisir le terrain. Joue sur tes forces, ou sur ses faiblesses.`;
+    arena.replaceChildren(head(),el('p',{class:'fg2',style:'max-width:52ch',text:lead}),
+      el('div',{class:'duel-fams'},...cands.map(f=>el('button',{class:'duel-fam',onclick:()=>play(n,f,async(m,t)=>{if(await send(m,t,f))sent(n,m);})},
+        el('b',{text:DUEL_FAM[f][0]}),el('span',{class:'fg2',text:DUEL_FAM[f][1]+(f==='ia'?' · 40 s':'')})))));
+  }
+  // manche ouverte et jouée : c'est à l'autre
+  function sent(n,m){
+    son('fin');
+    arena.replaceChildren(head(),el('div',{class:'duel-grid'},...duelGridRow('Toi',m)),
+      stagTalk('idle',`Manche envoyée. ${who} reçoit les mêmes questions : tu verras son score dès sa manche terminée.`),
+      el('div',{class:'row',style:'justify-content:center'},
+        el('button',{class:'btn',text:`Prévenir ${who}`,onclick:()=>shareText(`À toi de jouer : je t’attends sur Néophyte pour la manche ${n+1} de notre duel (${famName(d.manches[n].f)}).\n${location.origin+location.pathname.replace(/index\.html$/,'')}`)}),
+        el('button',{class:'btn primary',text:'Retour aux amis',onclick:back})));
+  }
+  // les deux ont joué la manche : on compare les grilles
+  function reveal(i){
+    const mm=d.manches[i], a=mm[side()], b=mm[os()], x=marksSum(a), y=marksSum(b);
+    const verdict=x>y?'Manche gagnée':x<y?`Manche pour ${who}`:'Manche nulle';
+    if(x>y)son('record'); else son('fin');
+    const more=d.fini?el('button',{class:'btn primary',text:'Résultat du duel',onclick:final})
+      :d.tour===me?el('button',{class:'btn primary',text:`Choisir la manche ${i+2}`,onclick:()=>choose(i+1)}):el('button',{class:'btn primary',text:'Retour aux amis',onclick:back});
+    arena.replaceChildren(head(x>y?'proud':x<y?'worried':'idle',x<y?'proud':x>y?'worried':'idle'),
+      el('p',{class:'duel-verdict',text:verdict}),el('p',{class:'label',style:'text-align:center',text:`Manche ${i+1} · ${famName(mm.f)}`}),
+      el('div',{class:'duel-grid'},...duelGridRow('Toi',a),...duelGridRow(who,b)),
+      el('div',{class:'row',style:'justify-content:center'},more));
+  }
+  function final(){
+    const w=duelWinner(d,me), t=duelTally(d,me);
+    if(w>0){son('record');laurels();}else son('fin');
+    const title=d.abandon?(d.abandon===me?'Abandon':`${who} abandonne`):w>0?'Victoire':w<0?'Défaite':'Égalité parfaite';
+    const tie=!d.abandon&&t.mi===t.lu&&w?` À égalité de points, ${w>0?'tu as été':who+' a été'} plus rapide : ${fmt(Math.round(Math.min(t.tm,t.tl)/10))} s contre ${fmt(Math.round(Math.max(t.tm,t.tl)/10))} s.`:'';
+    const rows=d.manches.map((mm,i)=>el('li',{},el('span',{text:`${i+1}. ${famName(mm.f)}`}),el('b',{text:`${marksSum(mm[side()])} – ${Array.isArray(mm[os()])?marksSum(mm[os()]):'·'}`})));
+    const rev=circleData.rows.some(x=>x.user_id===o)?el('button',{class:'btn primary',text:'Revanche',onclick:()=>lancerDuel(o,who)}):null;
+    arena.replaceChildren(head(w>0?'proud':w<0?'worried':'idle',w<0?'proud':w>0?'worried':'idle'),
+      el('p',{class:'duel-verdict big',text:title}),
+      el('ol',{class:'duel-sum'},...rows),
+      el('p',{class:'fg2',style:'text-align:center;max-width:46ch;margin:0 auto',text:(w>0?`Bien joué : ${t.mi} bonnes réponses contre ${t.lu}.`:w<0?`${who} l’emporte, ${t.lu} à ${t.mi}. La revanche t’attend.`:`${t.mi} partout, et au dixième de seconde près.`)+tie}),
+      el('div',{class:'row',style:'justify-content:center'},rev,el('button',{class:'btn',text:'Retour aux amis',onclick:back})));
+  }
+  function step(){
+    if(!d){choose(0);return;}
+    if(d.fini){final();return;}
+    const n=d.manches.length, last=d.manches[n-1];
+    if(d.tour!==me){
+      const prev=[...d.manches].reverse().find(m=>Array.isArray(m.a)&&Array.isArray(m.b));
+      arena.replaceChildren(head(),stagTalk('idle',`C’est à ${who} de jouer. Tu verras ses réponses dès sa manche terminée.`),
+        prev?el('div',{class:'duel-grid'},...duelGridRow('Toi',prev[side()]),...duelGridRow(who,prev[os()])):null,
+        el('div',{class:'row',style:'justify-content:center'},el('button',{class:'btn primary',text:'Retour aux amis',onclick:back})));return;
+    }
+    if(!Array.isArray(last[side()])){
+      const his=marksSum(last[os()]), prev=n>1?d.manches[n-2]:null;
+      arena.replaceChildren(head(),...(prev?[el('p',{class:'label',style:'text-align:center',text:`Manche ${n-1} · ${famName(prev.f)}`}),el('div',{class:'duel-grid'},...duelGridRow('Toi',prev[side()]),...duelGridRow(who,prev[os()]))]:[]),el('p',{class:'label',style:'text-align:center',text:`Manche ${n} sur 3 · ${famName(last.f)}`}),
+        stagTalk('idle',`${who} a choisi ${famName(last.f).toLowerCase()} et a joué : ${his} sur 5. À toi, mêmes questions, ${duelLim(last.f)} secondes chacune.`),
+        el('div',{class:'row',style:'justify-content:center'},el('button',{class:'btn primary',text:'Jouer la manche',onclick:()=>play(n-1,last.f,async(m,t)=>{if(await send(m,t,null))reveal(n-1);})})));
+      return;
+    }
+    choose(n);
+  }
+  step();
+}
 // 8 caractères (cercle-codes.sql) ; 6 si la base n'accepte pas encore les codes longs
 const newCode=(n=8)=>{const A='ABCDEFGHJKLMNPQRSTUVWXYZ23456789';return Array.from(crypto.getRandomValues(new Uint8Array(n)),b=>A[b%A.length]).join('');};
 async function renderCircle(quick){
   const body=$('#circle-body'), c=state.settings.circle;
-  if(!ref||!c){$('#amis-inbox').hidden=true;$('#amis-defis').hidden=true;}
+  if(!ref||!c){$('#amis-inbox').hidden=true;$('#amis-defis').hidden=true;$('#amis-duels').hidden=true;}
   if(!ref){body.replaceChildren(stagTalk('idle','Connecte-toi pour créer un cercle ou en rejoindre un. À plusieurs, on tient mieux.'));return;}
   if(!c){
     const msg=el('p',{class:'note',role:'status'});
@@ -2821,7 +3071,7 @@ async function renderCircle(quick){
   }
   if(!quick||!circleData){
     if(!circleData)body.replaceChildren(el('p',{class:'note',text:'Chargement du classement…'}));
-    await circlePush(); await circleLoad(); amisPeekAt=Date.now();
+    await circlePush(); await circleLoad(); await duelsLoad(); amisPeekAt=Date.now();
   }
   if(!circleData){body.replaceChildren(el('p',{class:'note',text:'Classement indisponible pour l’instant.'}));return;}
   const share=`Rejoins mon cercle Néophyte « ${circleData.name} » : ouvre https://yohandk.github.io/Brain-Fit/, crée ton compte, puis onglet Amis, code ${c}.`;
@@ -2843,7 +3093,7 @@ async function renderCircle(quick){
       :!top.xp?stagTalk('idle','La semaine commence : le premier qui s’entraîne prend la tête.')
       :top.me?stagTalk('proud','Tu mènes le cercle cette semaine. Tiens bon jusqu’à dimanche !'):stagTalk('idle',`${top.pseudo} mène cette semaine. Touche son nom pour lui lancer un défi.`),
     el('div',{class:'row',style:'justify-content:flex-end'},leave));
-  renderInbox(); renderDefis();
+  renderInbox(); renderDuels(); renderDefis();
 }
 // effacer son compte : tout part, côté serveur comme sur cet appareil
 $('#erase').addEventListener('click',()=>{$('#erase-confirm').hidden=false;});
@@ -6164,6 +6414,7 @@ eclair(arena){
     });
   }
 },
+duel:runDuel,
 dictee(arena){
   const seg=el('div',{class:'seg',role:'group','aria-label':'Niveau'});
   const setL=n=>{state.settings.dicteeLvl=n;[...seg.children].forEach(b=>b.setAttribute('aria-pressed',String(+b.dataset.n===n)));};

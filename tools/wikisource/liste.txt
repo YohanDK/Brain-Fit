@@ -1,4 +1,4 @@
-# Une recherche par ligne : auteur | titre. Le texte trouvé sur fr.wikisource.org est écrit dans tools/wikisource/textes/.
+# Une ligne par texte : « auteur | titre » (recherche), « = Titre exact » (page précise) ou « ? auteur | titre » (liste les sous-pages dans _rapport.txt). Les textes vont dans tools/wikisource/textes/.
 La Fontaine | La Cigale et la Fourmi
 La Fontaine | Le Loup et l'Agneau
 La Fontaine | Le Chêne et le Roseau
@@ -24,3 +24,91 @@ Thérèse de Lisieux | Histoire d'une âme
 Fénelon | Lettre à l'Académie
 Alain-Fournier | Le Grand Meaulnes chapitre premier
 Jules Verne | Le Tour du monde en quatre-vingts jours chapitre I
+# Lot du 4 novembre 2026 : classiques français du XIXe siècle (dictées et lecture)
+Hugo | Demain dès l'aube
+Hugo | Notre-Dame de Paris livre premier chapitre premier
+Hugo | Les Misérables Cosette seau d'eau forêt
+Balzac | Eugénie Grandet
+Balzac | Le Père Goriot
+Stendhal | Le Rouge et le Noir chapitre premier Une petite ville
+Flaubert | Madame Bovary première partie chapitre premier
+Maupassant | La Parure
+Maupassant | Aux champs
+Maupassant | La Ficelle
+Maupassant | Le Papa de Simon
+Daudet | Le Secret de maître Cornille
+Daudet | Les Étoiles récit d'un berger provençal
+Daudet | La Mule du pape
+Zola | Au Bonheur des Dames chapitre premier
+Jules Verne | Vingt mille lieues sous les mers chapitre premier Un écueil fuyant
+Jules Verne | Voyage au centre de la Terre chapitre premier
+George Sand | La Mare au diable chapitre premier
+George Sand | La Petite Fadette chapitre premier
+Mérimée | Mateo Falcone
+Dumas | Les Trois Mousquetaires chapitre premier
+Dumas | Le Comte de Monte-Cristo chapitre premier Marseille L'arrivée
+Chateaubriand | Atala
+Chateaubriand | René
+Vigny | La Mort du loup
+Musset | La Confession d'un enfant du siècle chapitre II
+Comtesse de Ségur | Les Malheurs de Sophie la poupée de cire
+Hector Malot | Sans famille chapitre premier Au village
+Tocqueville | De la démocratie en Amérique introduction
+Michelet | Le Peuple introduction à M. Edgar Quinet
+Renan | Prière sur l'Acropole
+Fromentin | Dominique chapitre premier
+Lamartine | L'Isolement
+Lacordaire | Lettres à un jeune homme sur la vie chrétienne
+# Second lot du 4 novembre 2026
+Daudet | Lettres de mon moulin Le Curé de Cucugnan
+Daudet | Lettres de mon moulin Les Vieux
+Daudet | Lettres de mon moulin Le Sous-préfet aux champs
+Daudet | Lettres de mon moulin L'Installation
+Maupassant | Mon oncle Jules
+Maupassant | Le Petit Fût
+Maupassant | Pierrot
+Maupassant | La Parure Contes du jour et de la nuit
+Maupassant | Bel-Ami chapitre I
+Hugo | Le Dernier Jour d'un condamné chapitre I
+Hugo | Les Misérables Tome 1 Livre 2 chapitre 12 L'évêque travaille
+George Sand | La Mare au diable chapitre II Le labour
+Jules Verne | Le Tour du monde en quatre-vingts jours Chapitre I Phileas Fogg et Passepartout
+Mérimée | Colomba chapitre premier
+Zola | Germinal Première partie I
+Balzac | Le Père Goriot Madame Vauquer pension
+Hector Malot | Sans famille Première partie I Au village
+Comtesse de Ségur | Les Malheurs de Sophie I La poupée de cire
+Jules Renard | Poil de Carotte Les Poules
+Jules Renard | Poil de Carotte La Trompette
+Pierre Loti | Pêcheur d'Islande première partie I
+Anatole France | Le Livre de mon ami
+Stendhal | La Chartreuse de Parme chapitre III
+Michelet | Histoire de France Jeanne d'Arc
+Erckmann-Chatrian | Histoire d'un conscrit de 1813 chapitre premier
+Fromentin | Dominique chapitre II
+Chateaubriand | Mémoires d'outre-tombe Livre premier Combourg
+# Troisième lot (4 novembre 2026) : repérage des sous-pages, demandé par Yohan (Proust, Huysmans, Bloy…)
+= Du côté de chez Swann/Partie 1
+= En route (Huysmans)/Texte entier
+= La Cathédrale (Huysmans)/I
+= La Cathédrale (Huysmans)/II
+= À rebours/Chapitre I
+= Le Désespéré/01
+= Le Désespéré/02
+= La Femme pauvre/Partie 2/1
+= Exégèse des Lieux Communs/151
+= Exégèse des Lieux Communs/159
+= Exégèse des Lieux Communs/178
+= Lettres de mon moulin/Les vieux
+= Lettres de mon moulin/Installation
+= Lettres de mon moulin/Le phare des Sanguinaires
+= Lettres de mon moulin/L’élixir du Père Gaucher
+= Lettres de mon moulin/Les trois messes basses
+= Lettres de mon moulin/La diligence de Beaucaire
+= Poil de Carotte/01
+= Poil de Carotte/02
+= Poil de Carotte/03
+= Germinal/Partie I/Chapitre 1
+= Les Malheurs de Sophie/1
+= Les Malheurs de Sophie/2
+= La Chartreuse de Parme (édition Martineau, 1927)/Chapitre III

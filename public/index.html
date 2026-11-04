@@ -1703,6 +1703,12 @@ var fin=function(){if(e.parentNode)e.remove();};e.addEventListener('click',fin);
         <div class="row"><button class="btn" id="import-go">Fusionner avec mes progrès</button><span class="note" id="import-msg"></span></div>
       </div>
     </div>
+    <div class="panel" id="assid-panel" hidden>
+      <div><h2>Qui revient ?</h2><p class="muted note">Les comptes, sans e-mail ni nom, dans l'ordre d'inscription. Un jour actif = au moins un exercice fait. Visible de toi seul.</p></div>
+      <div class="kpis" id="as-kpis"></div>
+      <p class="note" id="as-msg" role="status"></p>
+      <details class="fold"><summary><span class="label">Compte par compte</span></summary><div class="tablewrap" id="as-table"></div></details>
+    </div>
     <div class="panel" id="retours-panel" hidden>
       <div><h2>Retours des testeurs</h2><p class="muted note">Signalements et réponses contestées, les plus récents d'abord. Visible de toi seul.</p></div>
       <div class="row"><div class="seg" id="rt-filtre" role="group" aria-label="Quels retours"><button data-f="ouverts" aria-pressed="true">À traiter</button><button data-f="tous" aria-pressed="false">Tous</button></div><button class="btn ghost small" id="rt-maj">Actualiser</button><button class="btn small" id="rt-copie">Copier les questions à corriger</button></div>
@@ -1711,7 +1717,7 @@ var fin=function(){if(e.parentNode)e.remove();};e.addEventListener('click',fin);
     </div>
     <div class="panel" id="privacy">
       <div><h2>Tes données</h2>
-        <p class="fg2" style="max-width:65ch">Avec un compte, Néophyte garde ton e-mail, tes progrès et tes textes chez Supabase, qui héberge sa base de données. Les autres utilisateurs ne peuvent pas les lire ; techniquement, la personne qui gère ce Néophyte y a accès. Si tu rejoins un cercle, ses membres voient seulement ton pseudo, ton cerf, ton niveau, tes XP, ta série, tes scores à l'énigme et à l'Éclair, et les encouragements ou défis que tu leur envoies. Quand tu contestes une réponse ou signales un problème, ton message, la question ou l'écran concernés (avec la capture si tu la laisses) et le type d'appareil sont envoyés pour être relus ; ils sont effacés avec ton compte. Quand tu parles au coach, ta demande et le résumé de tes progrès (et la photo de ta feuille, si tu lui en confies une) sont envoyés à Claude (Anthropic) pour qu'il réponde. Rien n'est vendu, et il n'y a ni publicité ni mesure d'audience.</p></div>
+        <p class="fg2" style="max-width:65ch">Avec un compte, Néophyte garde ton e-mail, tes progrès et tes textes chez Supabase, qui héberge sa base de données. Les autres utilisateurs ne peuvent pas les lire ; techniquement, la personne qui gère ce Néophyte y a accès, et elle voit, sans ton e-mail ni ton nom, combien de jours tu es venu. Si tu rejoins un cercle, ses membres voient seulement ton pseudo, ton cerf, ton niveau, tes XP, ta série, tes scores à l'énigme et à l'Éclair, et les encouragements ou défis que tu leur envoies. Quand tu contestes une réponse ou signales un problème, ton message, la question ou l'écran concernés (avec la capture si tu la laisses) et le type d'appareil sont envoyés pour être relus ; ils sont effacés avec ton compte. Quand tu parles au coach, ta demande et le résumé de tes progrès (et la photo de ta feuille, si tu lui en confies une) sont envoyés à Claude (Anthropic) pour qu'il réponde. Rien n'est vendu, et il n'y a ni publicité ni mesure d'audience.</p></div>
       <div class="row"><button class="btn ghost" id="erase" hidden>Effacer mon compte</button></div>
       <div id="erase-confirm" class="row" hidden>
         <span class="fg2">Effacer ton compte, tes progrès, tes textes et ta place dans ton cercle ? Ce n'est pas réversible.</span>
@@ -4467,7 +4473,7 @@ function renderScreenChart(){
 }
 let samplerP=null;
 function sampler(){if(!samplerP)samplerP=(window.claude&&window.claude.use?window.claude.use('sample'):Promise.resolve(null)).catch(()=>null);return samplerP;}
-const COACH_ERR={signed_out:"Connecte-toi à ton compte (onglet Aujourd'hui) pour parler au coach.",not_granted:"Le coach est réservé au propriétaire de ce Néophyte : il paie chaque réponse. Tout le reste t'est ouvert.",rate_limited:"Le coach est très sollicité. Réessaie dans une minute.",quota:"Tu as utilisé tous tes échanges avec le coach pour aujourd'hui. Reprends demain : tout le reste t'est ouvert.",refused:"Le coach ne peut pas répondre à cette demande. Reformule-la.",network:"Pas de connexion internet : le coach répondra quand tu seras de nouveau en ligne.",cancelled:""};
+const COACH_ERR={signed_out:"Connecte-toi à ton compte (onglet Aujourd'hui) pour parler au coach.",not_granted:"Le coach n'est pas encore ouvert à ton compte. Si tu viens de t'inscrire, confirme d'abord ton e-mail. Tout le reste t'est ouvert.",rate_limited:"Le coach est très sollicité. Réessaie dans une minute.",quota:"Tu as utilisé tous tes échanges avec le coach pour aujourd'hui. Reprends demain : tout le reste t'est ouvert.",refused:"Le coach ne peut pas répondre à cette demande. Reformule-la.",network:"Pas de connexion internet : le coach répondra quand tu seras de nouveau en ligne.",cancelled:""};
 // Appelle le coach et affiche sa réponse en direct dans `out`. Renvoie le texte, ou null.
 async function askCoach(input,out,opts){
   const s=await sampler();
@@ -4502,6 +4508,18 @@ function coachSummary(){
   lines.push('Son objectif du moment : '+(state.goal&&state.goal.text?'« '+state.goal.text+' »':'aucun pour l\u2019instant')+'.');
   const tx=texts.slice(-8);
   if(tx.length)lines.push('Derniers textes écrits : '+tx.map(x=>`${(WMODES[x.mode]||WMODES.libre).label} (${x.words} mots, ${x.wpm} mots/min, ${x.avgSent} mots/phrase)`).join(' ; ')+'.');
+  // le carnet d'erreurs : ce qui le distingue d'un assistant qui oublie tout, le coach se souvient de ce qui coince
+  const E=state.errs||[];
+  if(E.length){
+    const TY={ortho:'orthographe',soph:'sophismes',chrono:'chronologie',cit:'citations',fermi:'estimations',ia:'erreurs d’IA'}, n={};
+    E.forEach(e=>{n[e[0]]=(n[e[0]]||0)+1;});
+    const noms={}; E.filter(e=>e[0]==='soph').forEach(e=>{const x=NB.sophismes.find(y=>y.id===e[1]);if(x)noms[x.nom]=(noms[x.nom]||0)+1;});
+    const regles=[...new Set(E.filter(e=>e[0]==='ortho').slice(-12).map(e=>(NB.ortho.find(y=>y.id===e[1])||{}).regle).filter(Boolean))].slice(-3);
+    lines.push(`Carnet d'erreurs pas encore rattrapées (${E.length}) : `+Object.entries(n).map(([k,v])=>`${TY[k]||k} ${v}`).join(', ')+'.'
+      +(Object.keys(noms).length?` Sophismes où il se trompe : ${Object.entries(noms).sort((a,b)=>b[1]-a[1]).slice(0,4).map(([k,v])=>k+(v>1?` (${v} fois)`:'')).join(', ')}.`:'')
+      +(regles.length?` Règles d'orthographe ratées récemment : ${regles.join(' / ')}`:'')
+      +' Reviens sur ces points quand c\u2019est utile, comme un professeur qui le connaît, sans faire le travail à sa place.');
+  }
   const wk=weekStart(t); lines.push('Défi de la semaine : '+(state.weeks[wk]?'relevé':'pas encore relevé')+'.');
   lines.push('Défi du réel (sortie hors écran) : « '+reelOf(wk)[1]+' », '+(((state.reel||{})[wk]||{}).d?'fait':'pas encore fait')+'. Ville : '+(city()||'non indiquée')+'.');
   return lines.join('\n');
@@ -5397,6 +5415,29 @@ $('#rt-copie').addEventListener('click',()=>{
     sg.map((r,i)=>`${i+1}. [${EX[r.exercice]?EX[r.exercice].name:r.exercice} · ${r.question_id||'?'}] ${r.enonce||''}\n   Signalement : ${r.message}`).join('\n\n');
   shareText(txt);
 });
+// le test des premiers testeurs : combien reviennent 7 puis 30 jours après leur premier jour (supabase/assiduite.sql)
+async function renderAssiduite(sb){
+  const msg=$('#as-msg'), kp=$('#as-kpis'), tw=$('#as-table');
+  const {data,error}=await sb.rpc('assiduite');
+  if(error){kp.replaceChildren();tw.replaceChildren();msg.textContent=/assiduite/.test(error.message||'')?'Lance supabase/assiduite.sql dans Supabase pour voir qui revient.':'Lecture impossible : '+(error.message||'erreur');return;}
+  const t=todayKey(), rows=(data||[]).filter(r=>!r.moi), actifs=rows.filter(r=>r.premier);
+  // seuls comptent ceux dont le premier jour est assez ancien pour avoir pu revenir
+  const taux=n=>{const m=actifs.filter(r=>addDays(r.premier,n)<=t), ok=m.filter(r=>r['j'+n]).length;return{m:m.length,ok,pct:m.length?Math.round(ok/m.length*100):null};};
+  const a7=taux(7), a30=taux(30), sem=actifs.filter(r=>r.dernier>=addDays(t,-6)).length;
+  const kpi=(lab,num,sub)=>el('div',{class:'kpi'},el('span',{class:'label',text:lab}),el('span',{class:'num',text:num}),el('span',{class:'muted',text:sub}));
+  const pc=a=>a.pct==null?'—':a.pct+' %';
+  kp.replaceChildren(
+    kpi('Comptes',String(rows.length),`${actifs.length} ont fait au moins un exercice`),
+    kpi('Cette semaine',String(sem),'actifs ces 7 derniers jours'),
+    kpi('Revenus à 7 jours',pc(a7),a7.m?`${a7.ok} sur ${a7.m}`:'trop tôt'),
+    kpi('Revenus à 30 jours',pc(a30),a30.m?`${a30.ok} sur ${a30.m} · objectif 25 %`:'trop tôt · objectif 25 %'));
+  msg.textContent=rows.length?'Toi exclu. Les visiteurs sans compte ne sont pas comptés : demande aux testeurs d’en créer un.':'Aucun autre compte pour l’instant.';
+  const dm=x=>x?fd(new Date(x+'T12:00:00'),{day:'numeric',month:'short'}):'—', oui=(r,n)=>!r.premier?'—':r['j'+n]?'oui':addDays(r.premier,n)>t?'trop tôt':'non';
+  const hd=el('tr');['N°','Inscrit','1er jour','Dernier','Jours','7 j','30 j'].forEach(x=>hd.append(el('th',{text:x})));
+  tw.replaceChildren(rows.length?el('table',{class:'week'},el('thead',{},hd),el('tbody',{},...rows.slice().reverse().map(r=>el('tr',{},
+    el('td',{class:'num',text:String(r.rang)}),el('td',{text:dm(r.inscrit)}),el('td',{text:dm(r.premier)}),el('td',{text:dm(r.dernier)}),
+    el('td',{class:'num',text:String(r.jours)}),el('td',{text:oui(r,7)}),el('td',{text:oui(r,30)}))))):el('p',{class:'note',text:'Le tableau se remplira avec les premiers testeurs.'}));
+}
 async function renderRetours(focus){
   const sb=sbc(), panel=$('#retours-panel');
   if(focus)rtFocus=true;
@@ -5406,7 +5447,8 @@ async function renderRetours(focus){
   try{
     let own=false;
     try{const s=await sb.auth.getSession();if(s.data.session){const r=await sb.rpc('est_proprietaire');own=r.data===true;}}catch(e){}
-    panel.hidden=!own; if(!own)return;
+    panel.hidden=!own; $('#assid-panel').hidden=!own; if(!own)return;
+    renderAssiduite(sb);
     if(rtFocus){rtFocus=false;setTimeout(()=>panel.scrollIntoView({behavior:'smooth',block:'start'}),60);}
     const msg=$('#rt-msg'), list=$('#rt-list'); msg.textContent='Chargement…';
     const q=(t,cols)=>{let r=sb.from(t).select(cols).order('created_at',{ascending:false}).limit(50);if(rtFiltre==='ouverts')r=r.eq('traite',false);return r;};

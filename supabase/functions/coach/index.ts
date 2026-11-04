@@ -1,5 +1,6 @@
 // Le coach de Brain Fit : reçoit la conversation depuis la page, appelle Claude et renvoie la réponse au fil de l'eau.
-// Seuls les comptes listés dans ALLOWED_EMAIL peuvent s'en servir, pour que personne d'autre ne dépense la clé API.
+// Les comptes listés dans ALLOWED_EMAIL s'en servent toujours. Avec la variable COACH_OUVERT=oui, tout compte à l'e-mail
+// confirmé y a droit aussi, avec son propre plafond (COACH_MAX_TESTEUR, 8 par jour par défaut) : c'est le test des testeurs.
 import Anthropic from "npm:@anthropic-ai/sdk@0.137.0";
 import { createClient } from "npm:@supabase/supabase-js@2.117.3";
 
@@ -8,6 +9,8 @@ const ALLOWED = (Deno.env.get("ALLOWED_EMAIL") || "").toLowerCase().split(/[\s,;
 const IMAGE_TYPES = ["image/jpeg", "image/png", "image/webp", "image/gif"];
 // échanges permis par compte et par jour (supabase/coach.sql) ; la vérification de la page ne compte pas
 const MAX_JOUR = Math.max(1, Number(Deno.env.get("COACH_MAX_JOUR")) || 30);
+const OUVERT = /^(oui|1|true|tous)$/i.test(Deno.env.get("COACH_OUVERT") || "");
+const MAX_TESTEUR = Math.max(1, Number(Deno.env.get("COACH_MAX_TESTEUR")) || 8);
 
 const anthropic = new Anthropic(); // lit ANTHROPIC_API_KEY
 const cors = {
@@ -35,7 +38,8 @@ Deno.serve(async (req) => {
   );
   const token = (req.headers.get("Authorization") ?? "").replace(/^Bearer\s+/i, "");
   const { data: { user } } = token ? await supabase.auth.getUser(token) : { data: { user: null } };
-  if (!user || !ALLOWED.includes((user.email ?? "").toLowerCase())) return fail("not_granted", 403);
+  const proprio = !!user && ALLOWED.includes((user.email ?? "").toLowerCase());
+  if (!user || (!proprio && !(OUVERT && user.email_confirmed_at))) return fail("not_granted", 403);
 
   let body: { messages?: Turn[]; images?: Img[]; json?: boolean; tier?: string; ping?: boolean };
   try {
@@ -55,10 +59,10 @@ Deno.serve(async (req) => {
   const admin = createClient(Deno.env.get("SUPABASE_URL")!, Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!, {
     auth: { persistSession: false },
   });
-  const { data: permis, error: eq } = await admin.rpc("coach_consommer", { p_user: user.id, p_max: MAX_JOUR });
+  const { data: permis, error: eq } = await admin.rpc("coach_consommer", { p_user: user.id, p_max: proprio ? MAX_JOUR : MAX_TESTEUR });
   if (eq) {
-    // coach.sql pas encore lancé : on laisse passer ; toute autre panne bloque, pour ne pas dépenser sans compter
-    if (eq.code !== "PGRST202") {
+    // coach.sql pas encore lancé : on laisse passer le seul propriétaire ; toute autre panne bloque, pour ne pas dépenser sans compter
+    if (eq.code !== "PGRST202" || !proprio) {
       console.error(eq);
       return fail("error", 500);
     }

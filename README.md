@@ -20,6 +20,7 @@ Le site s'installe sur le téléphone comme une appli. Avec un compte, les progr
 | `supabase/functions/coach/` | Supabase | Le coach : il reçoit la demande de la page et appelle Claude avec ta clé API, qui reste secrète. |
 | `supabase/functions/account/` | Supabase | Efface un compte et toutes ses données, à la demande de son propriétaire. |
 | `supabase/rappels.sql`, `supabase/functions/rappels/`, `public/rappels.js` | Supabase, GitHub Pages | Les rappels par notification : à l'heure choisie si la séance du jour n'est pas faite, et à 21 h si une série est en danger. |
+| `supabase/assiduite.sql` | Supabase | Réglages › « Qui revient ? », pour toi seul : par compte, sans e-mail ni nom, les jours actifs et le retour à 7 et 30 jours. À lancer après `alertes.sql`. |
 | `supabase/coach.sql` | Supabase | Le plafond d'échanges avec le coach par compte et par jour (30 par défaut, variable `COACH_MAX_JOUR` du dépôt). À lancer avant d'ouvrir le coach à d'autres comptes. |
 | `supabase/cercle-codes.sql` | Supabase | Codes de cercle à 8 caractères et 10 codes faux par compte et par jour au plus pour rejoindre un cercle (contre les scripts qui devinent les codes). À lancer après `cercle.sql`. |
 | `.github/workflows/pages.yml` | GitHub | Remet le site en ligne à chaque changement. |
@@ -54,6 +55,8 @@ Dans ce dépôt, **Settings › Secrets and variables › Actions › New reposi
 | `ALLOWED_EMAIL` | ton adresse e-mail, celle de ton compte Néophyte : seul ce compte peut utiliser le coach |
 
 Puis **Actions › Déployer le coach › Run workflow** pour mettre le coach en ligne.
+
+Pour ouvrir le coach aux testeurs, lance d'abord [`supabase/coach.sql`](supabase/coach.sql), puis ajoute dans l'onglet **Variables** `COACH_OUVERT` = `oui` et relance le workflow. Tout compte à l'e-mail confirmé y a droit, avec 8 échanges par jour (variable `COACH_MAX_TESTEUR` pour changer ce nombre) ; ton compte garde `COACH_MAX_JOUR`. Sans `coach.sql`, le coach reste fermé aux autres comptes. Pour le refermer, mets `COACH_OUVERT` à `non` et relance.
 
 Pour changer de modèle (par exemple un modèle moins cher), ajoute dans l'onglet **Variables** une variable `COACH_MODEL` avec l'identifiant du modèle, puis relance le workflow. Par défaut : `claude-opus-5-5`.
 

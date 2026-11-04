@@ -1283,7 +1283,7 @@ B.enquetes=[
    lecon:"De « si A, alors B » et « pas B », on tire « pas A » : c'est la contraposée, le raisonnement le plus sûr de la logique.",
    src:"Énigme écrite pour Néophyte, vérifiée par énumération des 24 cas possibles",vu:'2026-11-02'},
   {id:'eq02',dim:'2026-11-15',titre:'Les gardiens du phare',
-   recit:"Une nuit de tempête, le phare de l'île s'est éteint. Trois gardiens étaient de garde : Albéric, Bertille et Corentin. Chacun est soit sincère (il dit toujours vrai), soit menteur (il ment toujours). Le coupable est forcément un menteur. Interrogés au matin, les gardiens parlent tour à tour.",
+   recit:"Une nuit de tempête, au large du Finistère, le phare d'une île bretonne s'est éteint. Trois gardiens étaient de garde : Albéric, Bertille et Corentin. Chacun est soit sincère (il dit toujours vrai), soit menteur (il ment toujours). Le coupable est forcément un menteur. Interrogés au matin, les gardiens parlent tour à tour.",
    question:"Qui a éteint le phare ?",options:['Albéric','Bertille','Corentin','On ne peut pas savoir'],bonne:0,
    indices:["Albéric : « Ce n'est pas moi. »",
     "Bertille : « Albéric ment. »",
@@ -1354,7 +1354,27 @@ B.enquetes=[
 // pas : une case par jour, dans l'ordre, de du à au (dimanches compris si dimanches:true ; sinon ils ne comptent pas,
 // comme au Carême, et l'énigme du dimanche y tient lieu de case). Une case : [texte, exercice lié ou null].
 // L'exercice « dimanche » renvoie à l'énigme du dimanche.
+// Semaine à thème : un parcours de 7 jours avec theme (les dictées, frises et citations marquées sem:theme passent en premier),
+// emb (emblème de la médaille et du panneau), enigme (l'énigme du dimanche qui dore la parure du cerf, voir ATTRS dans index.html).
+// Avant son début, sa médaille et sa parure s'affichent en silhouette noire, pour l'annoncer.
+// Rythme voulu : une par mois s'il y a déjà un temps fort (Avent, Carême), deux sinon ; une province française, puis un pays d'Europe.
 B.parcours=[
+  {id:'bretagne-2026',du:'2026-11-15',au:'2026-11-21',dimanches:true,theme:'bretagne',emb:'hermine',enigme:'eq02',titre:'La semaine de Bretagne',court:'Bretagne',
+   intro:"Sept jours en Bretagne, du dimanche au samedi : ses ducs, ses marins, ses légendes et ses écrivains. Les dictées, les frises et les citations viennent de là-bas. Cinq jours sur sept, et ton cerf gagne le collier de l'ordre de l'Hermine.",
+   origine:"L'hermine, petite belette d'hiver au pelage blanc et au bout de queue noir, est l'emblème des ducs de Bretagne depuis le XIIIe siècle. En 1381, le duc Jean IV crée l'ordre de l'Hermine, l'un des premiers ordres de chevalerie d'Europe, qui admettait aussi des dames. Son collier portait la devise « À ma vie ».",
+   badge:['L’Hermine','5 jours sur 7 pendant la semaine de Bretagne'],seuil:5,
+   semaines:[
+    {du:'2026-11-15',titre:'Ar mor, la mer',fil:"La Bretagne, duché indépendant jusqu'en 1532, a été faite par la mer : marins, corsaires, pêcheurs d'Islande, et une ville engloutie. Cette semaine, chaque exercice y fait escale."}
+   ],
+   pas:[
+    ["L'énigme du dimanche se passe sur une île bretonne : un phare éteint, trois gardiens. Résous-la cette semaine et ton collier sera doré.",'dimanche'],
+    ["Dictée bretonne : cette semaine, les dictées viennent de Bretagne.",'dictee'],
+    ["Chronologie : de Nominoë à Anne de Bretagne, remets l'histoire du duché dans l'ordre.",'chrono'],
+    ["Citations : la devise des ducs et deux Bretons célèbres entrent dans ton florilège.",'citations'],
+    ["Sans écran : sur une carte, papier si possible, retrouve Saint-Malo, Brest, Quimper, Vannes, Nantes et Carnac. Puis redessine de mémoire la côte, du Mont-Saint-Michel à l'estuaire de la Loire.",null],
+    ["Écris en dix lignes la légende de la ville d'Ys telle que tu t'en souviens, ou invente la tienne : une ville engloutie, une clé, une faute.",'write'],
+    ["Dernière frise de la semaine : Cartier, Surcouf, Chateaubriand, Renan, Jules Verne. Qui vient avant qui ?",'chrono']
+   ]},
   {id:'avent-2026',du:'2026-11-29',au:'2026-12-24',dimanches:true,titre:"Le calendrier de l'Avent",court:'Avent',
    intro:"Vingt-six jours, du premier dimanche de l'Avent à la veille de Noël. Chaque matin, une case s'ouvre : un petit geste pour l'esprit, souvent loin de l'écran. Chaque semaine a son fil, et chaque dimanche son énigme.",
    origine:"L'Avent (du latin adventus, « venue ») couvre les quatre dimanches avant Noël ; le calendrier à cases est une coutume allemande du XIXe siècle, imprimé pour la première fois au début du XXe siècle par Gerhard Lang.",

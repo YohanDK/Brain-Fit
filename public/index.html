@@ -824,6 +824,17 @@ a{color:var(--accent);text-underline-offset:3px}
 .duel-verdict.big{font-size:2rem}
 .duel-sum{list-style:none;margin:0 auto;padding:0;display:flex;flex-direction:column;gap:4px;width:100%;max-width:320px}
 .duel-sum li{display:flex;justify-content:space-between;padding:4px 10px;border-radius:var(--r);background:var(--sunk)}
+.qar{display:flex;flex-direction:column;gap:10px}
+.qar textarea{min-height:110px}
+.qar-q .prompt{margin:4px 0 0;text-align:left}
+.qar-copie{display:flex;flex-direction:column;gap:6px;padding:12px;border:1px solid var(--line);border-radius:var(--r);background:var(--surface);animation:rise .3s both ease-out}
+.qar-copie.me{background:var(--accent-soft)}
+.qar-copie.voted{border-color:var(--gold);box-shadow:inset 3px 0 0 var(--gold)}
+.qar-t{margin:0;white-space:pre-wrap;overflow-wrap:anywhere}
+.qar-who{display:flex;align-items:center;gap:8px;min-width:0}
+.qar-who .stag.rk-stag{width:32px;height:32px}
+.qar-n{font-family:var(--f-display);color:var(--gold-deep);white-space:nowrap}
+.qar-sol{display:flex;flex-direction:column;gap:4px}
 .tabs button.dot{position:relative}
 .tabs button.dot::after{content:"";position:absolute;top:6px;right:8px;width:8px;height:8px;border-radius:50%;background:var(--gold);box-shadow:0 0 0 2px var(--surface)}
 .sect-h{margin:14px 4px -4px}
@@ -1312,6 +1323,10 @@ var fin=function(){if(e.parentNode)e.remove();};e.addEventListener('click',fin);
       <div><h2>Duels</h2><p class="muted note">Trois manches de cinq questions contre un ami. Chacun choisit le terrain à son tour ; plus de bonnes réponses gagne, et à égalité, le plus rapide.</p></div>
       <ul class="duels" id="amis-duels-list"></ul>
     </div>
+    <div class="panel" id="amis-qar" hidden>
+      <div><h2>Qui a raison ?</h2><p class="muted note">Un problème par jour pour le cercle. Rends ta copie, lis celles des autres sans les noms, vote pour la plus convaincante. Puis tout se dévoile.</p></div>
+      <div id="amis-qar-body" class="qar"></div>
+    </div>
     <div class="panel" id="circle-panel">
       <div><h2>Mon cercle</h2><p class="muted note">Entre proches, sous un pseudo. Seuls ton pseudo, ton cerf, tes XP, ta série et tes scores aux défis sont partagés, et seulement avec les membres de ton cercle.</p></div>
       <div id="circle-body" style="display:flex;flex-direction:column;gap:10px"></div>
@@ -1770,6 +1785,7 @@ const EX={
   fluency:{name:'Fluence verbale',skill:'Accès au langage',desc:"Un maximum de mots d'une lettre ou d'une catégorie en 60 secondes.",unit:'mots'},
   enigme:{name:'Énigme du jour',skill:'Défi commun',desc:"Cinq questions, les mêmes pour tout le monde aujourd'hui. Une seule tentative, puis partage ta grille.",unit:'% de bonnes réponses'},
   dimanche:{name:'Énigme du dimanche',skill:'Raisonnement',desc:"Une enquête par semaine, ouverte le dimanche : cinq indices révélés un à un. Écris ta déduction, et réponds avec le moins d'indices possible.",unit:'% des points'},
+  qar:{name:'Qui a raison ?',skill:'Raisonnement & persuasion',desc:"Le problème du jour du cercle : ta copie, celles des autres sans les noms, un vote.",unit:'copie rendue',hidden:true},
   duel:{name:'Duel',skill:'Défi entre amis',desc:"Trois manches de cinq questions contre un ami du cercle, chacun choisissant le terrain à son tour.",unit:'% de bonnes réponses',hidden:true},
   rattrapage:{name:'Rattrapage',skill:'Mémoire des erreurs',desc:"Tes erreurs récentes (orthographe, sophismes, dates, citations, ordres de grandeur, erreurs d'IA) reviennent. Réussis-les pour les rayer de ton carnet.",unit:'erreurs rattrapées'},
   eclair:{name:'Éclair',skill:'Vivacité',desc:"90 secondes de questions mêlées : orthographe, dates, sophismes, citations, calcul, ordres de grandeur. Bats ton record.",unit:'bonnes réponses'},
@@ -1779,6 +1795,7 @@ const EX={
 };
 // d'où vient chaque exercice : affiché sous le titre du plateau et dans la Bibliothèque
 const ORIG={
+  qar:"Rendre sa copie avant de lire les autres, puis juger sans connaître l'auteur : c'est le principe de la correction anonyme des copies et de l'évaluation par les pairs. Juger un raisonnement sans savoir qui l'a écrit oblige à peser l'argument plutôt que la personne. La solution ne vient qu'après le vote, pour vérifier que le plus convaincant était aussi le plus juste.",
   duel:"Jouer chacun à son tour, quand on veut, vient des parties d'échecs par correspondance, jouées par courrier dès le XIXe siècle. Choisir le terrain de la manche suivante oblige à connaître ses forces et celles de l'autre : c'est la part de stratégie du duel. À égalité de bonnes réponses, le plus rapide l'emporte.",
   rattrapage:"Revenir sur ses erreurs juste avant de les oublier est l'une des méthodes d'apprentissage les mieux établies : c'est l'effet de test (Roediger et Karpicke, 2006) combiné à la répétition espacée. Une erreur rattrapée sort du carnet ; une erreur ratée de nouveau y reste.",
   enigme:"Le principe vient de Wordle (Josh Wardle, 2021) : une seule grille par jour, la même pour tous, et un résultat qu'on partage en petits carrés de couleur sans rien dévoiler. Ici, les questions viennent des banques de Néophyte.",
@@ -3037,11 +3054,92 @@ function runDuel(arena){
   }
   step();
 }
+/* ---------- « Qui a raison ? » (plaidoyers.sql) : un problème par jour pour le cercle, des copies anonymes, un vote ---------- */
+let qarOk=null, qarData=null, qarBusy=false;
+// le problème du jour, le même pour tous les cercles ; les problèmes de niveau 2 et 3 donnent de quoi argumenter
+const qarDay=()=>todayUTC();
+function qarProblem(day){
+  const ok=NB.problemes.filter(p=>!p.retire&&p.niv>=2);
+  return rpick(seeded('neophyte-qar-'+day),ok);
+}
+async function qarLoad(){
+  const c=state.settings.circle; if(!ref||!c){qarData=null;return;}
+  const day=qarDay(), y=new Date(Date.now()-864e5).toISOString().slice(0,10);
+  const [p,v]=await Promise.all([sbc().from('plaidoyers').select('user_id,day,qid,texte,created_at').eq('code',c).gte('day',y),
+    sbc().from('plaidoyer_votes').select('voter,pour,day').eq('code',c).gte('day',y)]);
+  if(p.error||v.error){qarOk=false;qarData=null;return;}
+  qarOk=true;
+  const of=(rows,d)=>rows.filter(r=>String(r.day)===d);
+  qarData={day,y,copies:of(p.data||[],day),votes:of(v.data||[],day),hier:{copies:of(p.data||[],y),votes:of(v.data||[],y)}};
+}
+// la plume d'hier : la copie qui a reçu le plus de voix
+function qarHier(){
+  const h=qarData&&qarData.hier; if(!h||!h.votes.length)return null;
+  const n={}; h.votes.forEach(v=>{n[v.pour]=(n[v.pour]||0)+1;});
+  const best=Object.entries(n).sort((a,b)=>b[1]-a[1]); if(!best.length)return null;
+  const ex=best.filter(b=>b[1]===best[0][1]).map(b=>b[0]===circleData.me?'toi':pseudoOf(b[0]));
+  return `Hier, la plume revient à ${ex.join(' et ')} (${best[0][1]} voix).`;
+}
+function renderQar(){
+  const box=$('#amis-qar'), body=$('#amis-qar-body');
+  box.hidden=!circleData||!qarOk||!qarData||circleData.rows.length<2; if(box.hidden)return;
+  const me=circleData.me, P=qarProblem(qarData.day), mine=qarData.copies.find(r=>r.user_id===me);
+  const myVote=qarData.votes.find(v=>v.voter===me), hier=qarHier();
+  const prob=el('div',{class:'qar-q'},el('span',{class:'label',text:'Le problème du jour'}),el('p',{class:'prompt',text:P.q}));
+  const foot=hier?el('p',{class:'note',text:hier}):null;
+  // 1. écrire sa copie, avant de voir les autres
+  if(!mine){
+    const ta=el('textarea',{'aria-label':'Ta réponse et ton raisonnement',maxlength:'800',placeholder:'Ta réponse, puis pourquoi. Convaincs tes amis : ils liront ta copie sans ton nom.'});
+    const msg=el('p',{class:'note',role:'status'});
+    const send=el('button',{class:'btn primary',text:'Rendre ma copie',onclick:async()=>{
+      const t=ta.value.trim(); if(t.length<10){msg.textContent='Écris au moins une phrase : ta réponse et ce qui la justifie.';ta.focus();return;}
+      if(qarBusy)return; qarBusy=true; send.disabled=true; msg.textContent='Envoi…';
+      const {error}=await sbc().from('plaidoyers').insert({code:state.settings.circle,qid:P.id,texte:t.slice(0,800)});
+      qarBusy=false;
+      if(error&&error.code!=='23505'){send.disabled=false;msg.textContent='L’envoi n’a pas abouti. Réessaie dans un instant : ton texte est gardé.';return;}
+      try{localStorage.removeItem('brainfit.qar');}catch(e){}
+      logResult('qar',100); await qarLoad(); renderQar();}});
+    try{const d=JSON.parse(localStorage.getItem('brainfit.qar')||'null');if(d&&d.day===qarData.day)ta.value=d.t;}catch(e){}
+    ta.addEventListener('input',()=>{try{localStorage.setItem('brainfit.qar',JSON.stringify({day:qarData.day,t:ta.value}));}catch(e){}});
+    body.replaceChildren(prob,ta,el('div',{class:'row'},send),msg,
+      el('p',{class:'note',text:'Ta copie est définitive. Ensuite seulement, tu liras celles des autres, sans les noms, et tu voteras pour la plus convaincante. La solution vient après le vote.'}),foot);
+    return;
+  }
+  const others=qarData.copies.filter(r=>r.user_id!==me);
+  // l'ordre des copies est tiré au sort pour chacun, et les lettres ne trahissent pas l'ordre d'arrivée
+  const order=rshuf(seeded('qar-'+qarData.day+me),others);
+  const count=id=>qarData.votes.filter(v=>v.pour===id).length;
+  // 2. lire les autres sans les noms, et voter
+  if(!myVote){
+    const cards=order.map((r,i)=>el('div',{class:'qar-copie'},el('span',{class:'label',text:'Copie '+'ABCDEFGHIJKLMNOP'[i]}),el('p',{class:'qar-t',text:r.texte}),
+      el('div',{class:'row'},el('button',{class:'btn mini',text:'La plus convaincante',onclick:async e=>{
+        e.currentTarget.disabled=true;
+        const {error}=await sbc().from('plaidoyer_votes').insert({code:state.settings.circle,pour:r.user_id});
+        if(error&&error.code!=='23505'){e.currentTarget.disabled=false;toast('<span>Vote impossible pour l’instant.</span>');return;}
+        son('juste'); await qarLoad(); renderQar();}}))));
+    body.replaceChildren(prob,
+      others.length?el('p',{class:'fg2',text:`${others.length} copie${others.length>1?'s':''} à lire. Laquelle te convainc le plus ? Pas forcément celle qui a ta réponse : celle qui raisonne le mieux.`})
+        :stagTalk('idle','Personne d’autre n’a encore rendu sa copie. Reviens plus tard : tu pourras lire les leurs et voter.'),
+      ...cards,el('details',{class:'fold'},el('summary',{},el('span',{class:'note',text:'Ma copie'})),el('p',{class:'qar-t',text:mine.texte})),foot);
+    return;
+  }
+  // 3. tout se dévoile : les auteurs, les voix, la solution
+  const all=[...qarData.copies].sort((a,b)=>count(b.user_id)-count(a.user_id));
+  const top=all.length?count(all[0].user_id):0;
+  body.replaceChildren(prob,
+    ...all.map(r=>{const n=count(r.user_id), who=r.user_id===me?'Toi':pseudoOf(r.user_id), row=circleData.rows.find(x=>x.user_id===r.user_id);
+      return el('div',{class:'qar-copie'+(r.user_id===me?' me':'')+(myVote.pour===r.user_id?' voted':'')},
+        el('div',{class:'row spread',style:'flex-wrap:nowrap;align-items:center'},el('span',{class:'qar-who'},el('span',{class:'stag rk-stag','aria-hidden':'true',html:row?rowStag(row,n&&n===top?'proud':'idle'):stagSVG(1,'idle')}),el('b',{text:who})),
+          el('span',{class:'qar-n',text:n?`${n} voix`+(n===top?' · la plume':''):'—'})),
+        el('p',{class:'qar-t',text:r.texte}),myVote.pour===r.user_id?el('span',{class:'note',text:'Ton vote'}):null);}),
+    el('div',{class:'answer qar-sol'},el('span',{class:'label',text:'La solution : '+P.r}),el('span',{class:'fg2',text:P.expl}),
+      el('span',{class:'note',text:'La copie la plus convaincante n’est pas toujours la plus juste : relis-les à la lumière de la solution.'})),foot);
+}
 // 8 caractères (cercle-codes.sql) ; 6 si la base n'accepte pas encore les codes longs
 const newCode=(n=8)=>{const A='ABCDEFGHJKLMNPQRSTUVWXYZ23456789';return Array.from(crypto.getRandomValues(new Uint8Array(n)),b=>A[b%A.length]).join('');};
 async function renderCircle(quick){
   const body=$('#circle-body'), c=state.settings.circle;
-  if(!ref||!c){$('#amis-inbox').hidden=true;$('#amis-defis').hidden=true;$('#amis-duels').hidden=true;}
+  if(!ref||!c){$('#amis-inbox').hidden=true;$('#amis-defis').hidden=true;$('#amis-duels').hidden=true;$('#amis-qar').hidden=true;}
   if(!ref){body.replaceChildren(stagTalk('idle','Connecte-toi pour créer un cercle ou en rejoindre un. À plusieurs, on tient mieux.'));return;}
   if(!c){
     const msg=el('p',{class:'note',role:'status'});
@@ -3077,7 +3175,7 @@ async function renderCircle(quick){
   }
   if(!quick||!circleData){
     if(!circleData)body.replaceChildren(el('p',{class:'note',text:'Chargement du classement…'}));
-    await circlePush(); await circleLoad(); await duelsLoad(); amisPeekAt=Date.now();
+    await circlePush(); await circleLoad(); await duelsLoad(); await qarLoad(); amisPeekAt=Date.now();
   }
   if(!circleData){body.replaceChildren(el('p',{class:'note',text:'Classement indisponible pour l’instant.'}));return;}
   const share=`Rejoins mon cercle Néophyte « ${circleData.name} » : ouvre https://yohandk.github.io/Brain-Fit/, crée ton compte, puis onglet Amis, code ${c}.`;
@@ -3099,7 +3197,7 @@ async function renderCircle(quick){
       :!top.xp?stagTalk('idle','La semaine commence : le premier qui s’entraîne prend la tête.')
       :top.me?stagTalk('proud','Tu mènes le cercle cette semaine. Tiens bon jusqu’à dimanche !'):stagTalk('idle',`${top.pseudo} mène cette semaine. Touche son nom pour lui lancer un défi.`),
     el('div',{class:'row',style:'justify-content:flex-end'},leave));
-  renderInbox(); renderDuels(); renderDefis();
+  renderInbox(); renderDuels(); renderQar(); renderDefis();
 }
 // effacer son compte : tout part, côté serveur comme sur cet appareil
 $('#erase').addEventListener('click',()=>{$('#erase-confirm').hidden=false;});

@@ -1664,13 +1664,13 @@ var fin=function(){if(e.parentNode)e.remove();};e.addEventListener('click',fin);
     </div>
     <div class="panel" id="lecture">
       <div><h2>Lecture et confort</h2><p class="muted note">Propres à cet appareil. Les changements s'appliquent tout de suite.</p></div>
-      <div class="row"><span class="note">Mode sénior</span><div class="seg" id="senior-seg" role="group" aria-label="Mode sénior"><button data-v="1">Activé</button><button data-v="0">Désactivé</button></div></div>
+      <div class="row"><span class="note">Lecture agrandie</span><div class="seg" id="senior-seg" role="group" aria-label="Lecture agrandie"><button data-v="1">Activé</button><button data-v="0">Désactivé</button></div></div>
       <p class="muted note">Texte plus grand, police très lisible, boutons plus grands et contrastes renforcés. L'XP, la série et les minuteurs restent les mêmes.</p>
       <div class="row"><span class="note">Taille du texte</span><div class="seg" id="taille-seg" role="group" aria-label="Taille du texte"><button data-v="normal">Normale</button><button data-v="grand">Grande</button><button data-v="tres">Très grande</button></div></div>
       <div class="row"><span class="note">Police</span><div class="seg" id="police-seg" role="group" aria-label="Police"><button data-v="classique">Classique</button><button data-v="lisible">Très lisible</button></div></div>
       <div class="row"><span class="note">Interligne</span><div class="seg" id="aere-seg" role="group" aria-label="Interligne"><button data-v="0">Normal</button><button data-v="1">Aéré</button></div></div>
       <div class="row"><span class="note">Animations</span><div class="seg" id="anim-seg" role="group" aria-label="Animations"><button data-v="complet">Complètes</button><button data-v="doux">Douces</button></div></div>
-      <p class="muted note" id="anim-note">Douces : le cerf ne bouge plus, il change seulement d'humeur, et l'appli passe d'un écran à l'autre sans effet. C'est le réglage d'office du mode sénior.</p>
+      <p class="muted note" id="anim-note">Douces : le cerf ne bouge plus, il change seulement d'humeur, et l'appli passe d'un écran à l'autre sans effet. C'est le réglage d'office de la lecture agrandie.</p>
       <p class="lecture-ex">Le néophyte, c'est celui qui commence : un exercice par jour, fait à la main et à la tête.</p>
     </div>
     <div class="panel">
@@ -6917,7 +6917,7 @@ function renderLecture(){const l=lecture();
   const mark=(id,v)=>$$(id+' button').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.v===v)));
   mark('#senior-seg',l.senior?'1':'0');mark('#taille-seg',l.taille||'normal');mark('#police-seg',l.police||'classique');mark('#aere-seg',l.aere?'1':'0');
   mark('#anim-seg',animDoux(l)||osReduit()?'doux':'complet'); $$('#anim-seg button').forEach(b=>{b.disabled=osReduit();});
-  $('#anim-note').textContent=osReduit()?'Ton téléphone demande de réduire les animations : Néophyte suit ce réglage. Le cerf change seulement d’humeur.':'Douces : le cerf ne bouge plus, il change seulement d’humeur, et l’appli passe d’un écran à l’autre sans effet. C’est le réglage d’office du mode sénior.';
+  $('#anim-note').textContent=osReduit()?'Ton téléphone demande de réduire les animations : Néophyte suit ce réglage. Le cerf change seulement d’humeur.':'Douces : le cerf ne bouge plus, il change seulement d’humeur, et l’appli passe d’un écran à l’autre sans effet. C’est le réglage d’office de la lecture agrandie.';
   // le même mode, proposé dès l'écran d'accueil, avant l'inscription
   $('#wl-senior').setAttribute('aria-pressed',String(!!l.senior));
   $('#wl-senior-txt').textContent=l.senior?'Texte agrandi · revenir à la normale':'Agrandir le texte';}

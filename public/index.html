@@ -785,6 +785,21 @@ a{color:var(--accent);text-underline-offset:3px}
 .ami-facts{display:flex;flex-direction:column;gap:2px;min-width:0}
 .ami-facts .fg2{font-size:.92rem}
 .ami-acts{grid-column:1/-1;gap:8px}
+/* parrainage */
+.parrain-body{display:flex;flex-direction:column;gap:12px}
+.parrain-link{align-items:center}
+.parrain-link code{font-family:var(--f-mono);overflow-wrap:anywhere;min-width:0}
+.parrain-kpis{grid-template-columns:repeat(2,minmax(0,1fr));max-width:360px}
+.parrain-paliers{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:8px}
+.parrain-paliers li{display:grid;grid-template-columns:44px minmax(0,1fr) auto;gap:10px;align-items:center;padding:8px 10px;border:1px solid var(--line);border-radius:var(--r);background:var(--surface)}
+.parrain-paliers li>div{display:flex;flex-direction:column;gap:2px;min-width:0}
+.parrain-paliers li:not(.on){color:var(--fg2)}
+.parrain-paliers li:not(.on) .pp-ic{opacity:.45;filter:grayscale(1)}
+.parrain-paliers li.on{border-color:var(--gold, var(--accent))}
+.parrain-paliers li.on .pp-st{color:var(--good);font-weight:600}
+.pp-ic{width:44px;height:44px;display:grid;place-items:center;color:var(--gold-deep, var(--accent))}
+.pp-ic svg{width:100%;height:100%}
+.wl-invite{margin:0 auto;max-width:34ch;padding:8px 12px;border-radius:var(--r);background:var(--accent-soft);color:var(--fg)}
 .nudges{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:6px}
 .nudge{display:grid;grid-template-columns:40px 1fr;gap:4px 12px;align-items:center;padding:8px 10px;border-radius:var(--r);background:var(--sunk)}
 .nudge.k-defi{background:var(--gold-soft)}
@@ -1428,6 +1443,10 @@ var fin=function(){if(e.parentNode)e.remove();};e.addEventListener('click',fin);
       <div><h2>Mon cercle</h2><p class="muted note">Entre proches, sous un pseudo. Seuls ton pseudo, ton cerf, tes XP, ta série et tes scores aux défis sont partagés, et seulement avec les membres de ton cercle.</p></div>
       <div id="circle-body" style="display:flex;flex-direction:column;gap:10px"></div>
     </div>
+    <div class="panel parrain" id="parrain-panel" hidden>
+      <div><h2>Parrainer un ami</h2><p class="muted note">Envoie ton lien à quelqu'un que tu aimes. Chaque ami fait voyager ton cerf en Europe, d'Athènes au palais des Doges. Le premier cadeau vient dès que ton ami s'inscrit ; les suivants viennent quand tes amis sont vraiment venus s'entraîner (3 jours d'exercices). Tu ne vois que des nombres, jamais leurs progrès.</p></div>
+      <div id="parrain-body" class="parrain-body"></div>
+    </div>
     <div class="panel" id="amis-defis" hidden>
       <div><h2>Défis du cercle</h2><p class="muted note">Les mêmes questions pour tous. Joue d'abord, compare ensuite.</p></div>
       <div id="amis-defis-body" class="amis-defis"></div>
@@ -1789,7 +1808,7 @@ var fin=function(){if(e.parentNode)e.remove();};e.addEventListener('click',fin);
     </div>
     <div class="panel" id="privacy">
       <div><h2>Tes données</h2>
-        <p class="fg2" style="max-width:65ch">Avec un compte, Néophyte garde ton e-mail, tes progrès et tes textes chez Supabase, qui héberge sa base de données. Les autres utilisateurs ne peuvent pas les lire ; techniquement, la personne qui gère ce Néophyte y a accès, et elle voit, sans ton e-mail ni ton nom, combien de jours tu es venu. Si tu rejoins un cercle, ses membres voient seulement ton pseudo, ton cerf, ton niveau, tes XP, ta série, tes scores à l'énigme et à l'Éclair, et les encouragements ou défis que tu leur envoies. Quand tu contestes une réponse ou signales un problème, ton message, la question ou l'écran concernés (avec la capture si tu la laisses) et le type d'appareil sont envoyés pour être relus ; ils sont effacés avec ton compte. Quand tu parles au coach, ta demande et le résumé de tes progrès (et la photo de ta feuille, si tu lui en confies une) sont envoyés à Claude (Anthropic) pour qu'il réponde. Rien n'est vendu, et il n'y a ni publicité ni mesure d'audience.</p></div>
+        <p class="fg2" style="max-width:65ch">Avec un compte, Néophyte garde ton e-mail, tes progrès et tes textes chez Supabase, qui héberge sa base de données. Les autres utilisateurs ne peuvent pas les lire ; techniquement, la personne qui gère ce Néophyte y a accès, et elle voit, sans ton e-mail ni ton nom, combien de jours tu es venu. Si tu rejoins un cercle, ses membres voient seulement ton pseudo, ton cerf, ton niveau, tes XP, ta série, tes scores à l'énigme et à l'Éclair, et les encouragements ou défis que tu leur envoies. Si tu parraines des amis, tu vois seulement combien se sont inscrits par ton lien et combien sont venus au moins 3 jours, jamais qui ils sont ni leurs progrès ; ton parrain voit la même chose de toi. Quand tu contestes une réponse ou signales un problème, ton message, la question ou l'écran concernés (avec la capture si tu la laisses) et le type d'appareil sont envoyés pour être relus ; ils sont effacés avec ton compte. Quand tu parles au coach, ta demande et le résumé de tes progrès (et la photo de ta feuille, si tu lui en confies une) sont envoyés à Claude (Anthropic) pour qu'il réponde. Rien n'est vendu, et il n'y a ni publicité ni mesure d'audience.</p></div>
       <div class="row"><button class="btn ghost" id="erase" hidden>Effacer mon compte</button></div>
       <div id="erase-confirm" class="row" hidden>
         <span class="fg2">Effacer ton compte, tes progrès, tes textes et ta place dans ton cercle ? Ce n'est pas réversible.</span>
@@ -1814,6 +1833,7 @@ var fin=function(){if(e.parentNode)e.remove();};e.addEventListener('click',fin);
     <p class="wl-motto" title="Les belles choses sont difficiles (proverbe grec cité par Platon, République IV, 435c)">ΧΑΛΕΠΑ ΤΑ ΚΑΛΑ</p>
     <p class="wl-lead">Aiguise ton esprit, reste libre.</p>
     <p class="wl-sub">Dix minutes par jour d'écriture et de raisonnement pour reprendre le contrôle du réel.</p>
+    <p class="wl-invite" id="wl-invite" hidden>Un ami t'invite. Crée ton compte : son cerf gagne un cadeau tout de suite, et le tien après tes 3 premiers jours.</p>
     <div class="wl-act">
       <button class="btn primary" id="wl-signup">Créer mon compte</button>
       <button class="btn ghost" id="wl-login">J'ai déjà un compte</button>
@@ -2829,7 +2849,7 @@ async function initStore(){
     saveTexts();
     applyFreezes(); gami(true);
     $('#syncwarn').hidden=true; $('#logout').hidden=false; setSync('ok'); persist(); renderAll(); flushContest(); coachCheck();
-    weeklyBilan(); weekBilanNotice();
+    weeklyBilan(); weekBilanNotice(); parrainSync();
   }catch(e){ref=null;localOnly();}
 }
 // au retour sur la page (téléphone resté ouvert, autre appareil utilisé entre-temps) : on reprend les progrès du compte
@@ -4033,7 +4053,7 @@ $('#login').addEventListener('submit',async e=>{
   if(isNew&&!$('#login-age').checked){msg.textContent="Un compte demande d'avoir 15 ans ou plus. Plus jeune, tu peux utiliser Néophyte sans compte : tout reste sur cet appareil.";$('#login-age').focus();return;}
   const email=$('#login-email').value.trim(), password=$('#login-pw').value;
   msg.textContent=isNew?'Création du compte…':'Connexion…';
-  const {data,error}=isNew?await sb.auth.signUp({email,password}):await sb.auth.signInWithPassword({email,password});
+  const {data,error}=isNew?await sb.auth.signUp({email,password,options:parrainPending()?{data:{parrain:parrainPending()}}:undefined}):await sb.auth.signInWithPassword({email,password});
   if(error){msg.textContent=/invalid login/i.test(error.message)?'E-mail ou mot de passe incorrect.':/not confirmed/i.test(error.message)?"Confirme d'abord ton compte avec le lien reçu par e-mail.":'Connexion impossible : '+error.message;return;}
   if(isNew&&!data.session){msg.textContent="Compte créé. Ouvre le lien reçu par e-mail pour le confirmer, puis reviens ici et clique sur « Se connecter ».";return;}
   msg.textContent=''; $('#login-pw').value=''; initStore();
@@ -4342,7 +4362,8 @@ const PELAGES={
   roux:['Roux',{'--stag':'#B8643A','--stag-deep':'#94482A','--stag-light':'#F6E2CF'}],
   brun:['Brun',{'--stag':'#7E5634','--stag-deep':'#5E3E24','--stag-light':'#E9D6BE'}],
   cendre:['Cendré',{'--stag':'#9A8E80','--stag-deep':'#776B5E','--stag-light':'#EFEAE2'}],
-  blanc:['Blanc',{'--stag':'#EDE6DA','--stag-deep':'#D2C7B6','--stag-light':'#FFFFFF','--antler':'#B49A6E'},'Atteindre le niveau V : le cerf blanc des légendes',c=>c.level>=5]
+  blanc:['Blanc',{'--stag':'#EDE6DA','--stag-deep':'#D2C7B6','--stag-light':'#FFFFFF','--antler':'#B49A6E'},'Atteindre le niveau V : le cerf blanc des légendes',c=>c.level>=5],
+  argent:['Argenté',{'--stag':'#B9BEC4','--stag-deep':'#8D949C','--stag-light':'#F4F6F8','--antler':'#C9CED4'},'Parrainer 10 amis actifs : l’argent de l’Espagne du Siècle d’or',()=>parrN().actifs>=10,' · 10 filleuls']
 };
 // trois paliers par attribut : le dessin s'enrichit, puis se dore
 const ATTRS=[
@@ -4377,7 +4398,26 @@ const ATTRS=[
     if(g>=2)for(const t of[.2,.35,.65,.8]){const[x,y]=B(t);o+=`<ellipse cx="${f(x)}" cy="${f(y)}" rx="1.9" ry="1.5" fill="#FBF8F2" stroke="${st}" stroke-width=".35"/>`+mo(x,y+.2,.42);}
     const[cx,cy]=B(.5);
     o+=`<path d="M${f(cx)} ${f(cy)}v2" stroke="${st}" stroke-width=".7"/><ellipse cx="${f(cx)}" cy="${f(cy+5)}" rx="3.4" ry="3.9" fill="${g>=3?'#E9C766':'#FBF8F2'}" stroke="${st}" stroke-width=".6"/>`+mo(cx,cy+5,.78);
-    return o+'</g>';},g=>semNote('bretagne-2026',g),'bretagne-2026']
+    return o+'</g>';},g=>semNote('bretagne-2026',g),'bretagne-2026'],
+  // la parure d'Europe, gagnée par le parrainage : I le lierre d'Athènes (premier ami inscrit), II le manteau normand (premier ami actif),
+  // III la fraise et le manteau noir de l'Espagne du Siècle d'or (dix amis actifs)
+  ['parure','La parure d’Europe','parrainage',[1,2,3],()=>parureGrade(),g=>{
+    if(g===1){const B=t=>[(1-t)*(1-t)*36.5+2*(1-t)*t*50+t*t*63.5,(1-t)*(1-t)*82+2*(1-t)*t*91+t*t*82];
+      let o=`<g class="acc"><path d="M36.5 82Q50 91 63.5 82" fill="none" stroke="#2F5426" stroke-width=".8"/>`;
+      [.3,.5,.7].forEach((t,i)=>{const [x,y]=B(t), r=(i%2?-1:1)*(28+t*30); o+=`<path d="M${x.toFixed(1)} ${y.toFixed(1)}c-1.6-.4-2.6-1.8-1.6-2.8c.5.4 1 .4 1.6-.3c.6.7 1.1.7 1.6.3c1 1 0 2.4-1.6 2.8z" fill="#4E7A3A" stroke="#2F5426" stroke-width=".3" transform="rotate(${r.toFixed(0)} ${x.toFixed(1)} ${y.toFixed(1)})"/>`;});
+      return o+'</g>';}
+    // un manteau sur les épaules, bordé d'une broderie et fermé d'une broche d'or
+    const sp=g>=3, c=sp?'#23222A':'#8E2F2B', tr=sp?'#C9A440':'#D9B44A';
+    let o=`<g class="acc"><path d="M40.5 74C35 83 27 92 17 100H32C36 93 40 87 45.5 84Z" fill="${c}"/><path d="M59.5 74C65 83 73 92 83 100H68C64 93 60 87 54.5 84Z" fill="${c}"/>`+
+      `<path d="M45.5 84C40 87 36 93 32 100M54.5 84C60 87 64 93 68 100" fill="none" stroke="${tr}" stroke-width="1.2" stroke-dasharray="${sp?'none':'1.6 1'}"/>`;
+    if(sp){let r='';for(let i=0;i<22;i++){const a=Math.PI*2*i/22, x=50+13*Math.cos(a), y=86+3.6*Math.sin(a);r+=`<circle cx="${x.toFixed(1)}" cy="${y.toFixed(1)}" r="2.3"/>`;}
+      o+=`<g fill="#FBF8F2" stroke="#A39B8E" stroke-width=".4">${r}</g><ellipse cx="50" cy="86" rx="10.5" ry="2" fill="none" stroke="#A39B8E" stroke-width=".4"/>`;}
+    else o+=`<path d="M45.5 84H54.5" stroke="${tr}" stroke-width=".8"/><circle cx="50" cy="84.5" r="2.7" fill="#D9B44A" stroke="#8C6A2C" stroke-width=".6"/><circle cx="50" cy="84.5" r="1.1" fill="#8E2F2B"/>`;
+    return o+'</g>';},g=>g>=3?'Palier d’or : la fraise et le manteau noir de l’Espagne du Siècle d’or':g>=2?'Palier suivant : dix amis actifs, pour l’Espagne du Siècle d’or (Amis · Parrainer)':g?'Palier suivant : un ami actif, pour le manteau normand (Amis · Parrainer)':'Se gagne en parrainant un ami (Amis · Parrainer)'],
+  // le bonnet du doge de Venise (corno ducale), pour les Mécènes : vingt-cinq amis actifs
+  ['doge','Le bonnet du Doge','parrainage',[1,2,3],()=>parrN().actifs>=25?3:0,()=>
+    `<g class="acc"><path d="M41.5 41C41 33 45 28.5 51 28c4.4-.3 7.4 2.6 8.3 6.6L58.8 41Z" fill="#B8862E" stroke="#7A5A18" stroke-width=".6"/><path d="M44 39.5c.5-4 2.6-7.4 6.4-8.6M48 39.5c.4-3.6 2-6.6 5.4-7.6" fill="none" stroke="#E9C766" stroke-width=".5"/><rect x="40.6" y="38.6" width="19" height="3.2" rx="1.2" fill="#F4EFE6" stroke="#A39B8E" stroke-width=".4"/><circle cx="50" cy="40.2" r=".8" fill="#8E2F2B"/></g>`,
+    g=>g?'Le corno ducale de Venise, réservé aux Mécènes de Néophyte':'Réservé aux Mécènes : vingt-cinq amis actifs (Amis · Parrainer)']
 ];
 // semaines à thème (B.parcours avec un « theme ») : le palier de leur parure, et ce qu'il reste à faire
 const semOf=id=>(NB.parcours||[]).find(p=>p.id===id)||null;
@@ -4402,7 +4442,7 @@ function cerfShape(){const c=cerf(), a={};for(const x of ATTRS){const g=attrGrad
   const p=PELAGES[c.pel]; return{p:p&&(!p[3]||p[3](gamiCtx))?c.pel:'fauve',a,l:gamiCtx.level||1};}
 function cerfStyle(sh){const p=PELAGES[(sh||cerfShape()).p]; return p&&p[1]?Object.entries(p[1]).map(([k,v])=>k+':'+v).join(';'):'';}
 // part : 'tete' (plume, lunettes, laurier, qui suivent la tête), 'corps' (lanterne, livre), ou rien pour tous
-const ACC_TETE=['plume','lunettes','laurier'];
+const ACC_TETE=['plume','lunettes','laurier','doge'];
 function cerfAcc(sh,part){
   const a=(sh||cerfShape()).a||{}; let o='';
   for(const x of ATTRS){const g=+a[x[0]]; if(!(g>=1&&g<=3))continue; if(x[0]==='lanterne'&&saison()==='toussaint')continue;
@@ -4414,7 +4454,7 @@ function checkAttrs(){
   const c=cerf(); let nu=null;
   for(const a of ATTRS){const g=attrGrade(a);if(g>(c.won[a[0]]||0)){c.won[a[0]]=g;if(!c.port.includes(a[0]))c.port.push(a[0]);nu=[a,g];}}
   if(nu){persist();stagKey='';cerfIcon();}
-  if(nu&&state.results.length>1)toast(`<span>${nu[1]>1?'Ton cerf passe au palier '+roman(nu[1])+' : ':'Ton cerf a gagné '}${nu[0][1].charAt(0).toLowerCase()+nu[0][1].slice(1)}</span><span class="note">Réglages · Mon cerf</span>`);
+  if(nu&&!['parure','doge'].includes(nu[0][0])&&state.results.length>1)toast(`<span>${nu[1]>1?'Ton cerf passe au palier '+roman(nu[1])+' : ':'Ton cerf a gagné '}${nu[0][1].charAt(0).toLowerCase()+nu[0][1].slice(1)}</span><span class="note">Réglages · Mon cerf</span>`);
   return nu;
 }
 function renderCerf(){
@@ -4423,7 +4463,7 @@ function renderCerf(){
   if(document.activeElement!==$('#mc-name'))$('#mc-name').value=c.nom||'';
   $('#mc-icon').setAttribute('aria-pressed',String(!!c.icon)); $('#mc-icon').textContent=c.icon?'Icône : ton cerf':'Faire de mon cerf l’icône';
   $('#mc-pel').replaceChildren(...Object.entries(PELAGES).map(([k,p])=>{const ok=!p[3]||p[3](gamiCtx);
-    return el('button',{'aria-pressed':String(c.pel===k),disabled:ok?null:'',title:ok?p[0]:p[2],style:'--sw:'+((p[1]||{})['--stag']||'#B07D4E'),onclick:()=>{c.pel=k;save();stagKey='';renderStag();renderCerf();cerfIcon();}},el('i',{class:'sw'}),document.createTextNode(p[0]+(ok?'':' · niveau V')));}));
+    return el('button',{'aria-pressed':String(c.pel===k),disabled:ok?null:'',title:ok?p[0]:p[2],style:'--sw:'+((p[1]||{})['--stag']||'#B07D4E'),onclick:()=>{c.pel=k;save();stagKey='';renderStag();renderCerf();cerfIcon();}},el('i',{class:'sw'}),document.createTextNode(p[0]+(ok?'':p[4]||' · niveau V')));}));
   $('#mc-attrs').replaceChildren(...ATTRS.filter(a=>attrGrade(a)||!semPassee(a)).map(a=>{const n=a[4](), g=attrGrade(a), nx=a[3][g], prev=g?a[3][g-1]:0, on=g&&c.port.includes(a[0]);
     const pips=el('span',{class:'pips3',role:'img','aria-label':`Palier ${g} sur 3`},...[1,2,3].map(i=>el('i',{class:i<=g?'on g'+i:''})));
     return el('li',{class:g?'':semAnnonce(a)?'locked annonce':'locked'},el('span',{class:'stag mini','aria-hidden':'true',html:attrIcon(a,Math.max(a[7]?3:1,g))}),
@@ -4432,7 +4472,109 @@ function renderCerf(){
         nx&&!a[6]?el('span',{class:'mini-bar'},el('i',{style:`width:${Math.min(100,(n-prev)/(nx-prev)*100)}%`})):null),
       g?el('button',{class:'btn mini'+(on?' gold':''),'aria-pressed':String(on),text:on?'Porté':'Porter',onclick:()=>{c.port=on?c.port.filter(x=>x!==a[0]):[...c.port,a[0]];save();stagKey='';renderStag();renderCerf();cerfIcon();}}):el('span',{class:'note',text:'À gagner'}));}));
 }
-const attrIcon=(a,g)=>`<svg viewBox="${a[0]==='plume'?'60 20 34 34':a[0]==='lunettes'?'32 40 36 24':a[0]==='lanterne'?'72 66 26 30':a[0]==='livre'?'4 80 30 20':a[0]==='hermine'?'35 78 30 22':'34 26 32 18'}">${a[5](g)}</svg>`;
+const attrIcon=(a,g)=>`<svg viewBox="${a[0]==='plume'?'60 20 34 34':a[0]==='lunettes'?'32 40 36 24':a[0]==='lanterne'?'72 66 26 30':a[0]==='livre'?'4 80 30 20':a[0]==='parure'?(g>1?'24 72 52 28':'34 74 32 20'):a[0]==='doge'?'38 26 24 18':a[0]==='hermine'?'35 78 30 22':'34 26 32 18'}">${a[5](g)}</svg>`;
+/* ---------- parrainage : un lien par compte, des cadeaux pour le cerf ---------- */
+// le code d'un lien ?parrain=XXXXXXXX est gardé jusqu'à l'inscription, puis remis au serveur
+const LS_PARR='brainfit.parrain', SITE_URL='https://yohandk.github.io/Brain-Fit/';
+(()=>{try{const v=new URLSearchParams(location.search).get('parrain');if(v&&/^[A-Z0-9]{8}$/i.test(v.trim())){localStorage.setItem(LS_PARR,v.trim().toUpperCase());
+  const u=new URL(location.href);u.searchParams.delete('parrain');history.replaceState(null,'',u.pathname+u.search+u.hash);}}catch(e){}})();
+function parrainPending(){try{return localStorage.getItem(LS_PARR)||'';}catch(e){return '';}}
+// ce que le serveur a dit la dernière fois (gardé dans les progrès, pour dessiner le cerf même hors ligne)
+const parrN=()=>{const p=state.parr||{};return{inscrits:+p.inscrits||0,actifs:+p.actifs||0,filleul:!!p.filleul,code:p.code||''};};
+const joursActifs=()=>Object.keys(state.days).filter(isActive).length;
+const filleulActif=()=>parrN().filleul&&joursActifs()>=3;
+function parureGrade(){const p=parrN();return p.actifs>=10?3:p.actifs>=1?2:(p.inscrits>=1||filleulActif())?1:0;}
+// un tour d'Europe, de palier en palier : Athènes, la Normandie de 1066, Venise, l'Espagne du Siècle d'or, le palais des Doges
+const PARR_PALIERS=[
+  // id, cadeau, condition affichée, atteint ?
+  ['athenes','Le lierre d’Athènes','dès que ton premier ami s’inscrit',p=>p.inscrits>=1],
+  ['normand','Le manteau normand','1 ami actif',p=>p.actifs>=1],
+  ['ducat','Le ducat d’or de Venise','3 amis actifs',p=>p.actifs>=3],
+  ['plus','Le sauf-conduit : un mois de Néophyte Plus','5 amis actifs',p=>p.actifs>=5],
+  ['espagne','La fraise du Siècle d’or et le pelage d’argent','10 amis actifs',p=>p.actifs>=10],
+  ['doge','Le bonnet du Doge : Mécène de Néophyte','25 amis actifs',p=>p.actifs>=25]
+];
+const PARR_DETAIL={
+  athenes:'Le lierre des poètes grecs, consacré à Dionysos.',
+  normand:'Rouge, brodé et fermé d’une broche d’or, comme sur la tapisserie de Bayeux (1066).',
+  ducat:'La pièce d’or des doges, frappée pendant cinq siècles : une médaille rien qu’à toi.',
+  plus:'Gardé pour toi : il s’activera à l’ouverture de Néophyte Plus.',
+  espagne:'La collerette blanche et le manteau noir des portraits de Vélasquez, et un pelage argenté à choisir dans Réglages · Mon cerf.',
+  doge:'Le corno ducale de Venise pour ton cerf, Néophyte Plus à vie, ton nom dans les remerciements et ton énigme du dimanche publiée.'
+};
+// le ducat : avers du doge à genoux devant saint Marc, simplifié en croix, étoiles et légende DVX
+const ducatSVG=on=>{const f=on?'#D9B44A':'var(--sunk)', d=on?'#7A5A18':'var(--muted)';
+  return `<svg viewBox="0 0 40 40" aria-hidden="true"><circle cx="20" cy="20" r="18" fill="${f}" stroke="${on?'#9A7420':'var(--line)'}" stroke-width="1.4"/><circle cx="20" cy="20" r="14.8" fill="none" stroke="${d}" stroke-width=".8" stroke-dasharray=".1 1.6" stroke-linecap="round"/>`+
+  `<path d="M20 8.5v12M16 12.5h8" stroke="${d}" stroke-width="1.6" stroke-linecap="round"/><text x="20" y="30" text-anchor="middle" font-family="Georgia,serif" font-size="7.5" font-weight="700" letter-spacing=".6" fill="${d}">DVX</text>`+
+  `<path d="M11.5 18.5l.6 1.3 1.4.2-1 1 .2 1.4-1.2-.7-1.2.7.2-1.4-1-1 1.4-.2zM28.5 18.5l.6 1.3 1.4.2-1 1 .2 1.4-1.2-.7-1.2.7.2-1.4-1-1 1.4-.2z" fill="${d}"/></svg>`;};
+let parrOff=false, parrBusy=false;
+async function parrainSync(){
+  const sb=window.bfSupabase; if(!sb||!ref||parrBusy)return; parrBusy=true;
+  try{
+    const code=parrainPending(), p=state.parr||(state.parr={});
+    // un lien d'invitation en attente, ou un compte neuf dont l'inscription portait le code
+    if(code||(!p.filleul&&!p.essai)){
+      const r=await sb.rpc('devenir_filleul',{p_code:code});
+      if(r.error){if(/function|schema cache|not exist/i.test(r.error.message||'')){parrOff=true;return;}}
+      else{
+        p.essai=true; try{localStorage.removeItem(LS_PARR);}catch(e){}
+        if(r.data==='ok')setTimeout(()=>toast('<span>Bienvenue ! Ton parrain vient de gagner le lierre d’Athènes pour son cerf.<small>Le tien, et une égide (le bouclier d’Athéna), t’attendent après 3 jours d’exercices.</small></span>'),900);
+        else if(code&&r.data==='soi')setTimeout(()=>toast('<span>C’est ton propre lien d’invitation : envoie-le à un ami.</span>'),900);
+        else if(code&&r.data==='trop_tard')setTimeout(()=>toast('<span>Ton compte existait déjà depuis plus de 14 jours : ce lien ne peut plus faire de toi un filleul.</span>'),900);
+      }
+    }
+    const {data,error}=await sb.rpc('mon_parrainage');
+    if(error){if(/function|schema cache|not exist/i.test(error.message||''))parrOff=true;return;}
+    let mine=data&&data.code;
+    if(!mine){const c=await sb.rpc('mon_code_parrain');if(!c.error)mine=c.data;}
+    Object.assign(p,{code:mine||'',inscrits:+data.inscrits||0,actifs:+data.actifs||0,filleul:!!data.filleul,maj:Date.now()});
+    parrOff=false; checkParrain(); persist(); renderHud(); renderParrain();
+  }catch(e){}
+  finally{parrBusy=false;}
+}
+// un cadeau tout juste gagné : on le dit une fois, et le cerf porte aussitôt sa parure
+function checkParrain(){
+  if(!state.parr)return; let ch=false;
+  const p=parrN(), vu=state.parr.vu||(state.parr.vu=[]);
+  // plusieurs paliers franchis d'un coup (retour après une absence) : on n'annonce que le plus haut
+  let nu=null; for(const x of PARR_PALIERS)if(x[3](p)&&!vu.includes(x[0])){vu.push(x[0]); ch=true; nu=x;}
+  if(nu){const quoi=nu[0]==='doge'?'tu deviens Mécène de Néophyte':'tu gagnes '+nu[1].charAt(0).toLowerCase()+nu[1].slice(1);
+    toast(`<span>Parrainage : ${quoi} !<small>${nu[0]==='athenes'?'Ton ami vient de s’inscrire. Les cadeaux suivants viendront quand tes amis seront actifs.':PARR_DETAIL[nu[0]]}</small></span>`);}
+  // le filleul, après ses 3 premiers jours : le lierre d'Athènes et une égide (une seule fois)
+  if(filleulActif()){const f=freezeState();if(!f.earned.includes('filleul')){f.earned.push('filleul');f.n=Math.min(3,f.n+1);ch=true;
+    setTimeout(()=>toast('<span>Trois jours d’exercices : ton cadeau de filleul est là.<small>Le lierre d’Athènes pour ton cerf, et une égide, le bouclier d’Athéna, pour protéger ta série.</small></span>'),1200);}}
+  if(ch)persist();
+}
+function renderParrain(){
+  const panel=$('#parrain-panel'), body=$('#parrain-body'); if(!panel)return;
+  const sb=window.bfSupabase; panel.hidden=!sb; if(!sb)return;
+  if(ref&&!parrOff&&Date.now()-((state.parr||{}).maj||0)>6e4)parrainSync();
+  if(!ref){body.replaceChildren(el('p',{class:'fg2',text:'Crée un compte (ou connecte-toi) pour recevoir ton lien d’invitation.'}),
+    el('button',{class:'btn',text:'Me connecter',onclick:()=>{showTab('aujourdhui');openLogin();setTimeout(()=>$('#login-email').focus(),50);}}));return;}
+  if(parrOff){body.replaceChildren(el('p',{class:'muted',text:'Le parrainage n’est pas encore ouvert. Reviens bientôt.'}));return;}
+  const p=parrN();
+  if(!p.code){body.replaceChildren(el('p',{class:'muted',text:'Préparation de ton lien…'}));return;}
+  const link=SITE_URL+'?parrain='+p.code;
+  const share=async()=>{const data={title:'Néophyte',text:'Je m’entraîne avec Néophyte, dix minutes par jour pour garder l’esprit vif. Viens avec moi : nos deux cerfs y gagnent un cadeau.',url:link};
+    try{if(navigator.share){await navigator.share(data);return;}}catch(e){if(e&&e.name==='AbortError')return;}
+    try{await navigator.clipboard.writeText(data.text+' '+link);toast('<span>Invitation copiée : colle-la dans un message.</span>');}catch(e){toast('<span>'+link+'</span>');}};
+  const next=PARR_PALIERS.find(x=>!x[3](p));
+  const kids=[
+    el('div',{class:'row parrain-link'},el('button',{class:'btn primary',text:'Envoyer mon invitation',onclick:share}),el('code',{class:'note',text:link.replace(/^https:\/\//,'')})),
+    el('div',{class:'kpis parrain-kpis'},
+      el('div',{class:'kpi'},el('span',{class:'label',text:'Amis inscrits'}),el('b',{class:'num',text:fmt(p.inscrits)})),
+      el('div',{class:'kpi'},el('span',{class:'label',text:'Amis actifs'}),el('b',{class:'num',text:fmt(p.actifs)}))),
+    next?el('p',{class:'note',text:next[0]==='athenes'?'Premier cadeau dès qu’un ami s’inscrit par ton lien.':`Prochain cadeau : ${next[1].charAt(0).toLowerCase()+next[1].slice(1)}, à ${next[2]}${p.actifs?' (encore '+(+next[2].match(/\d+/)[0]-p.actifs)+')':''}. Un ami est actif après 3 jours d’exercices.`}):null,
+    el('ol',{class:'parrain-paliers'},...PARR_PALIERS.map(x=>{const on=x[3](p);
+      const ic=x[0]==='ducat'?ducatSVG(on):x[0]==='doge'?attrIcon(ATTRS.find(a=>a[0]==='doge'),3):x[0]==='plus'?'':attrIcon(ATTRS.find(a=>a[0]==='parure'),x[0]==='athenes'?1:x[0]==='normand'?2:3);
+      return el('li',{class:on?'on':''},el('span',{class:'pp-ic','aria-hidden':'true',html:ic||`<svg viewBox="0 0 40 40"><circle cx="20" cy="20" r="17" fill="none" stroke="currentColor" stroke-width="1.4"/><text x="20" y="25.5" text-anchor="middle" font-size="14" font-weight="700" fill="currentColor">+</text></svg>`}),
+        el('div',{},el('b',{text:x[1]}),el('span',{class:'note',text:x[2]+(PARR_DETAIL[x[0]]?' · '+PARR_DETAIL[x[0]]:'')})),
+        el('span',{class:'note pp-st',text:on?'Gagné':'À gagner'}));})),
+    p.actifs>=25?el('button',{class:'btn',text:'Donner mon nom et mon énigme',onclick:()=>{openReport();setTimeout(()=>{const t=document.querySelector('.rp-wrap textarea');if(t){t.value='Mécène de Néophyte : le nom à écrire dans les remerciements : …\nMon énigme du dimanche : …';t.focus();}},80);}}):null,
+    el('p',{class:'note',text:p.filleul?(filleulActif()?'Toi aussi, tu as été invité : ton lierre d’Athènes et ton égide sont gagnés.':`Tu as été invité par un ami : le lierre d’Athènes et une égide t’attendent après 3 jours d’exercices (${Math.min(3,joursActifs())} sur 3).`):'Ton ami reçoit lui aussi le lierre d’Athènes et une égide après ses 3 premiers jours.'})
+  ];
+  body.replaceChildren(...kids.filter(Boolean));
+}
 // le cerf en image : les couleurs du thème résolues, pour l'icône de l'appli
 function stagImage(sh,size){
   const cs=getComputedStyle(document.documentElement), pel=(PELAGES[sh.p]||[])[1]||{};
@@ -4623,7 +4765,7 @@ addEventListener('pointermove',e=>{if(gazeRaf||reduceMotion())return;const X=e.c
       st.querySelectorAll('.pup').forEach(p=>{p.style.transform=t;});}});},{passive:true});
 $('#stag-bubble').addEventListener('click',e=>{e.currentTarget.hidden=true;});
 function renderHud(){
-  checkAttrs(); if(!iconTried){iconTried=true;cerfIcon();} renderStag();
+  checkParrain(); checkAttrs(); if(!iconTried){iconTried=true;cerfIcon();} renderStag();
   const t=todayKey(), goal=state.settings.xpGoal||60, today=gamiCtx.xp[t]||0, L=gamiCtx.level;
   $('#xp-today').textContent=today; $('#xp-goal').textContent='/ '+goal+' XP';
   $('#ring-fg').setAttribute('stroke-dasharray',Math.min(100,today/goal*100)+' 100');
@@ -5246,7 +5388,7 @@ function showTab(t){
   $('#go-biblio').toggleAttribute('aria-current',t==='conseils'); $('#go-settings').toggleAttribute('aria-current',t==='reglages');
   if(t==='conseils'||t==='reglages')$('#go-'+(t==='conseils'?'biblio':'settings')).setAttribute('aria-current','page');
   if(t==='progres'){renderProgress();renderCarnet();renderXpPanel();renderScreenChart();renderWeekBilan();}
-  if(t==='amis')renderCircle();
+  if(t==='amis'){renderCircle();renderParrain();}
   if(t==='reglages'){$('#city-in').value=city();renderRetours();renderCerf();}
   if(t==='coach'){renderSas();renderCoach();renderTutor();}
   if(location.hash!=='#'+t)try{history.replaceState(null,'','#'+t);}catch(e){}
@@ -7322,7 +7464,7 @@ function showWelcome(){
   const v=(window.BF_CONFIG||{}).video, box=$('#wl-video');
   if(v&&!box.childElementCount){box.append(/\.(mp4|webm)(\?|$)/.test(v)?el('video',{src:v,controls:'',playsinline:'',preload:'metadata'}):el('iframe',{src:v,title:'Présentation de Néophyte',allow:'fullscreen; picture-in-picture',loading:'lazy'}));}
   box.hidden=!v;
-  setupInstall();
+  setupInstall(); $('#wl-invite').hidden=!parrainPending()||!sb;
   $('#welcome').hidden=false; document.body.style.overflow='hidden'; $('#welcome').scrollTop=0;
   setTimeout(()=>$('#welcome').focus({preventScroll:true}),0);
 }

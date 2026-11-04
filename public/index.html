@@ -781,6 +781,21 @@ a{color:var(--accent);text-underline-offset:3px}
 .ami-facts{display:flex;flex-direction:column;gap:2px;min-width:0}
 .ami-facts .fg2{font-size:.92rem}
 .ami-acts{grid-column:1/-1;gap:8px}
+/* parrainage */
+.parrain-body{display:flex;flex-direction:column;gap:12px}
+.parrain-link{align-items:center}
+.parrain-link code{font-family:var(--f-mono);overflow-wrap:anywhere;min-width:0}
+.parrain-kpis{grid-template-columns:repeat(2,minmax(0,1fr));max-width:360px}
+.parrain-paliers{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:8px}
+.parrain-paliers li{display:grid;grid-template-columns:44px minmax(0,1fr) auto;gap:10px;align-items:center;padding:8px 10px;border:1px solid var(--line);border-radius:var(--r);background:var(--surface)}
+.parrain-paliers li>div{display:flex;flex-direction:column;gap:2px;min-width:0}
+.parrain-paliers li:not(.on){color:var(--fg2)}
+.parrain-paliers li:not(.on) .pp-ic{opacity:.45;filter:grayscale(1)}
+.parrain-paliers li.on{border-color:var(--gold, var(--accent))}
+.parrain-paliers li.on .pp-st{color:var(--good);font-weight:600}
+.pp-ic{width:44px;height:44px;display:grid;place-items:center;color:var(--gold-deep, var(--accent))}
+.pp-ic svg{width:100%;height:100%}
+.wl-invite{margin:0 auto;max-width:34ch;padding:8px 12px;border-radius:var(--r);background:var(--accent-soft);color:var(--fg)}
 .nudges{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:6px}
 .nudge{display:grid;grid-template-columns:40px 1fr;gap:4px 12px;align-items:center;padding:8px 10px;border-radius:var(--r);background:var(--sunk)}
 .nudge.k-defi{background:var(--gold-soft)}
@@ -1370,6 +1385,10 @@ var fin=function(){if(e.parentNode)e.remove();};e.addEventListener('click',fin);
       <div><h2>Mon cercle</h2><p class="muted note">Entre proches, sous un pseudo. Seuls ton pseudo, ton cerf, tes XP, ta série et tes scores aux défis sont partagés, et seulement avec les membres de ton cercle.</p></div>
       <div id="circle-body" style="display:flex;flex-direction:column;gap:10px"></div>
     </div>
+    <div class="panel parrain" id="parrain-panel" hidden>
+      <div><h2>Parrainer un ami</h2><p class="muted note">Envoie ton lien à quelqu'un que tu aimes. Ton cerf gagne un premier cadeau dès que ton ami s'inscrit ; les suivants viennent quand tes amis sont vraiment venus s'entraîner (3 jours d'exercices). Tu ne vois que des nombres, jamais leurs progrès.</p></div>
+      <div id="parrain-body" class="parrain-body"></div>
+    </div>
     <div class="panel" id="amis-defis" hidden>
       <div><h2>Défis du cercle</h2><p class="muted note">Les mêmes questions pour tous. Joue d'abord, compare ensuite.</p></div>
       <div id="amis-defis-body" class="amis-defis"></div>
@@ -1717,7 +1736,7 @@ var fin=function(){if(e.parentNode)e.remove();};e.addEventListener('click',fin);
     </div>
     <div class="panel" id="privacy">
       <div><h2>Tes données</h2>
-        <p class="fg2" style="max-width:65ch">Avec un compte, Néophyte garde ton e-mail, tes progrès et tes textes chez Supabase, qui héberge sa base de données. Les autres utilisateurs ne peuvent pas les lire ; techniquement, la personne qui gère ce Néophyte y a accès, et elle voit, sans ton e-mail ni ton nom, combien de jours tu es venu. Si tu rejoins un cercle, ses membres voient seulement ton pseudo, ton cerf, ton niveau, tes XP, ta série, tes scores à l'énigme et à l'Éclair, et les encouragements ou défis que tu leur envoies. Quand tu contestes une réponse ou signales un problème, ton message, la question ou l'écran concernés (avec la capture si tu la laisses) et le type d'appareil sont envoyés pour être relus ; ils sont effacés avec ton compte. Quand tu parles au coach, ta demande et le résumé de tes progrès (et la photo de ta feuille, si tu lui en confies une) sont envoyés à Claude (Anthropic) pour qu'il réponde. Rien n'est vendu, et il n'y a ni publicité ni mesure d'audience.</p></div>
+        <p class="fg2" style="max-width:65ch">Avec un compte, Néophyte garde ton e-mail, tes progrès et tes textes chez Supabase, qui héberge sa base de données. Les autres utilisateurs ne peuvent pas les lire ; techniquement, la personne qui gère ce Néophyte y a accès, et elle voit, sans ton e-mail ni ton nom, combien de jours tu es venu. Si tu rejoins un cercle, ses membres voient seulement ton pseudo, ton cerf, ton niveau, tes XP, ta série, tes scores à l'énigme et à l'Éclair, et les encouragements ou défis que tu leur envoies. Si tu parraines des amis, tu vois seulement combien se sont inscrits par ton lien et combien sont venus au moins 3 jours, jamais qui ils sont ni leurs progrès ; ton parrain voit la même chose de toi. Quand tu contestes une réponse ou signales un problème, ton message, la question ou l'écran concernés (avec la capture si tu la laisses) et le type d'appareil sont envoyés pour être relus ; ils sont effacés avec ton compte. Quand tu parles au coach, ta demande et le résumé de tes progrès (et la photo de ta feuille, si tu lui en confies une) sont envoyés à Claude (Anthropic) pour qu'il réponde. Rien n'est vendu, et il n'y a ni publicité ni mesure d'audience.</p></div>
       <div class="row"><button class="btn ghost" id="erase" hidden>Effacer mon compte</button></div>
       <div id="erase-confirm" class="row" hidden>
         <span class="fg2">Effacer ton compte, tes progrès, tes textes et ta place dans ton cercle ? Ce n'est pas réversible.</span>
@@ -1742,6 +1761,7 @@ var fin=function(){if(e.parentNode)e.remove();};e.addEventListener('click',fin);
     <p class="wl-motto" title="Les belles choses sont difficiles (proverbe grec cité par Platon, République IV, 435c)">ΧΑΛΕΠΑ ΤΑ ΚΑΛΑ</p>
     <p class="wl-lead">Aiguise ton esprit, reste libre.</p>
     <p class="wl-sub">Dix minutes par jour d'écriture et de raisonnement pour reprendre le contrôle du réel.</p>
+    <p class="wl-invite" id="wl-invite" hidden>Un ami t'invite. Crée ton compte : son cerf gagne un cadeau tout de suite, et le tien après tes 3 premiers jours.</p>
     <div class="wl-act">
       <button class="btn primary" id="wl-signup">Créer mon compte</button>
       <button class="btn ghost" id="wl-login">J'ai déjà un compte</button>
@@ -2732,7 +2752,7 @@ async function initStore(){
     saveTexts();
     applyFreezes(); gami(true);
     $('#syncwarn').hidden=true; $('#logout').hidden=false; setSync('ok'); persist(); renderAll(); flushContest(); coachCheck();
-    weeklyBilan(); weekBilanNotice();
+    weeklyBilan(); weekBilanNotice(); parrainSync();
   }catch(e){ref=null;localOnly();}
 }
 // au retour sur la page (téléphone resté ouvert, autre appareil utilisé entre-temps) : on reprend les progrès du compte
@@ -3934,7 +3954,7 @@ $('#login').addEventListener('submit',async e=>{
   if(isNew&&!$('#login-age').checked){msg.textContent="Un compte demande d'avoir 15 ans ou plus. Plus jeune, tu peux utiliser Néophyte sans compte : tout reste sur cet appareil.";$('#login-age').focus();return;}
   const email=$('#login-email').value.trim(), password=$('#login-pw').value;
   msg.textContent=isNew?'Création du compte…':'Connexion…';
-  const {data,error}=isNew?await sb.auth.signUp({email,password}):await sb.auth.signInWithPassword({email,password});
+  const {data,error}=isNew?await sb.auth.signUp({email,password,options:parrainPending()?{data:{parrain:parrainPending()}}:undefined}):await sb.auth.signInWithPassword({email,password});
   if(error){msg.textContent=/invalid login/i.test(error.message)?'E-mail ou mot de passe incorrect.':/not confirmed/i.test(error.message)?"Confirme d'abord ton compte avec le lien reçu par e-mail.":'Connexion impossible : '+error.message;return;}
   if(isNew&&!data.session){msg.textContent="Compte créé. Ouvre le lien reçu par e-mail pour le confirmer, puis reviens ici et clique sur « Se connecter ».";return;}
   msg.textContent=''; $('#login-pw').value=''; initStore();
@@ -4141,7 +4161,8 @@ const PELAGES={
   roux:['Roux',{'--stag':'#B8643A','--stag-deep':'#94482A','--stag-light':'#F6E2CF'}],
   brun:['Brun',{'--stag':'#7E5634','--stag-deep':'#5E3E24','--stag-light':'#E9D6BE'}],
   cendre:['Cendré',{'--stag':'#9A8E80','--stag-deep':'#776B5E','--stag-light':'#EFEAE2'}],
-  blanc:['Blanc',{'--stag':'#EDE6DA','--stag-deep':'#D2C7B6','--stag-light':'#FFFFFF','--antler':'#B49A6E'},'Atteindre le niveau V : le cerf blanc des légendes',c=>c.level>=5]
+  blanc:['Blanc',{'--stag':'#EDE6DA','--stag-deep':'#D2C7B6','--stag-light':'#FFFFFF','--antler':'#B49A6E'},'Atteindre le niveau V : le cerf blanc des légendes',c=>c.level>=5],
+  argent:['Argenté',{'--stag':'#B9BEC4','--stag-deep':'#8D949C','--stag-light':'#F4F6F8','--antler':'#C9CED4'},'Parrainer 10 amis actifs : le cerf d’argent',()=>parrN().actifs>=10,' · 10 filleuls']
 };
 // trois paliers par attribut : le dessin s'enrichit, puis se dore
 const ATTRS=[
@@ -4165,7 +4186,15 @@ const ATTRS=[
   ['laurier','La couronne de laurier','jours de série (meilleure)',[30,100,365],()=>gamiCtx.best||0,g=>{
     const c=g>=3?'#C9A440':'#5B7A3A', n=g>=2?7:5; let o=`<g class="acc" fill="${c}">`;
     for(const sd of[-1,1])for(let i=0;i<n;i++){const x=(50+sd*(3.6+i*(14.5/n))).toFixed(1), y=(35+i*i*(10/(n*n))*1.7).toFixed(1);o+=`<ellipse cx="${x}" cy="${y}" rx="${n>5?2.9:3.3}" ry="1.4" transform="rotate(${sd*(8+i*(52/n))} ${x} ${y})"/>`;}
-    return o+`<circle cx="50" cy="34.6" r="1.3" fill="${g>=3?'#8E2F2B':'#8C6A2C'}"/></g>`;}]
+    return o+`<circle cx="50" cy="34.6" r="1.3" fill="${g>=3?'#8E2F2B':'#8C6A2C'}"/></g>`;}],
+  // le lierre, signe du lien : gagné par le parrainage (palier I dès le premier ami inscrit, II au premier ami actif, III à dix)
+  ['lierre','Le lierre','parrainage',[1,2,3],()=>lierreGrade(),g=>{
+    const lf=g>=3?'#C9A440':'#4E7A3A', st=g>=3?'#8C6A2C':'#2F5426', ts=g>=2?[.08,.22,.36,.5,.64,.78,.92]:[.3,.5,.7];
+    const B=t=>[(1-t)*(1-t)*36.5+2*(1-t)*t*50+t*t*63.5,(1-t)*(1-t)*82+2*(1-t)*t*91+t*t*82];
+    let o=`<g class="acc"><path d="M36.5 82Q50 91 63.5 82" fill="none" stroke="${st}" stroke-width=".8"/>`;
+    ts.forEach((t,i)=>{const [x,y]=B(t), r=(i%2?-1:1)*(28+t*30); o+=`<path d="M${x.toFixed(1)} ${y.toFixed(1)}c-1.6-.4-2.6-1.8-1.6-2.8c.5.4 1 .4 1.6-.3c.6.7 1.1.7 1.6.3c1 1 0 2.4-1.6 2.8z" fill="${lf}" stroke="${st}" stroke-width=".3" transform="rotate(${r.toFixed(0)} ${x.toFixed(1)} ${y.toFixed(1)})"/>`;});
+    if(g>=2)o+=[.15,.57,.85].map(t=>{const [x,y]=B(t);return `<circle cx="${x.toFixed(1)}" cy="${(y+1.6).toFixed(1)}" r=".8" fill="${g>=3?'#8E2F2B':'#2A2A3A'}"/>`;}).join('');
+    return o+'</g>';},g=>g>=3?'Palier d’or : le lierre doré, pour dix amis actifs':g>=2?'Palier suivant : dix amis actifs (Amis · Parrainer)':g?'Palier suivant : un ami actif, venu 3 jours (Amis · Parrainer)':'Se gagne en parrainant un ami (Amis · Parrainer)']
 ];
 // le palier atteint (0 à 3) et la suite
 const attrGrade=a=>{const n=a[4]();return a[3].filter(t=>n>=t).length;};
@@ -4187,7 +4216,7 @@ function checkAttrs(){
   const c=cerf(); let nu=null;
   for(const a of ATTRS){const g=attrGrade(a);if(g>(c.won[a[0]]||0)){c.won[a[0]]=g;if(!c.port.includes(a[0]))c.port.push(a[0]);nu=[a,g];}}
   if(nu){persist();stagKey='';cerfIcon();}
-  if(nu&&state.results.length>1)toast(`<span>${nu[1]>1?'Ton cerf passe au palier '+roman(nu[1])+' : ':'Ton cerf a gagné '}${nu[0][1].toLowerCase()}</span><span class="note">Réglages · Mon cerf</span>`);
+  if(nu&&nu[0][0]!=='lierre'&&state.results.length>1)toast(`<span>${nu[1]>1?'Ton cerf passe au palier '+roman(nu[1])+' : ':'Ton cerf a gagné '}${nu[0][1].toLowerCase()}</span><span class="note">Réglages · Mon cerf</span>`);
   return nu;
 }
 function renderCerf(){
@@ -4196,16 +4225,111 @@ function renderCerf(){
   if(document.activeElement!==$('#mc-name'))$('#mc-name').value=c.nom||'';
   $('#mc-icon').setAttribute('aria-pressed',String(!!c.icon)); $('#mc-icon').textContent=c.icon?'Icône : ton cerf':'Faire de mon cerf l’icône';
   $('#mc-pel').replaceChildren(...Object.entries(PELAGES).map(([k,p])=>{const ok=!p[3]||p[3](gamiCtx);
-    return el('button',{'aria-pressed':String(c.pel===k),disabled:ok?null:'',title:ok?p[0]:p[2],style:'--sw:'+((p[1]||{})['--stag']||'#B07D4E'),onclick:()=>{c.pel=k;save();stagKey='';renderStag();renderCerf();cerfIcon();}},el('i',{class:'sw'}),document.createTextNode(p[0]+(ok?'':' · niveau V')));}));
+    return el('button',{'aria-pressed':String(c.pel===k),disabled:ok?null:'',title:ok?p[0]:p[2],style:'--sw:'+((p[1]||{})['--stag']||'#B07D4E'),onclick:()=>{c.pel=k;save();stagKey='';renderStag();renderCerf();cerfIcon();}},el('i',{class:'sw'}),document.createTextNode(p[0]+(ok?'':p[4]||' · niveau V')));}));
   $('#mc-attrs').replaceChildren(...ATTRS.map(a=>{const n=a[4](), g=attrGrade(a), nx=a[3][g], prev=g?a[3][g-1]:0, on=g&&c.port.includes(a[0]);
     const pips=el('span',{class:'pips3',role:'img','aria-label':`Palier ${g} sur 3`},...[1,2,3].map(i=>el('i',{class:i<=g?'on g'+i:''})));
     return el('li',{class:g?'':'locked'},el('span',{class:'stag mini','aria-hidden':'true',html:attrIcon(a,Math.max(1,g))}),
       el('div',{},el('b',{},document.createTextNode(a[1]),pips),
-        el('span',{class:'note',text:nx?`${g?'Palier suivant':'Premier palier'} : ${fmt(nx)} ${a[2]} · ${fmt(n)} sur ${fmt(nx)}`:`Palier d’or : ${fmt(n)} ${a[2]}`}),
-        nx?el('span',{class:'mini-bar'},el('i',{style:`width:${Math.min(100,(n-prev)/(nx-prev)*100)}%`})):null),
+        el('span',{class:'note',text:a[6]?a[6](g):nx?`${g?'Palier suivant':'Premier palier'} : ${fmt(nx)} ${a[2]} · ${fmt(n)} sur ${fmt(nx)}`:`Palier d’or : ${fmt(n)} ${a[2]}`}),
+        nx&&!a[6]?el('span',{class:'mini-bar'},el('i',{style:`width:${Math.min(100,(n-prev)/(nx-prev)*100)}%`})):null),
       g?el('button',{class:'btn mini'+(on?' gold':''),'aria-pressed':String(on),text:on?'Porté':'Porter',onclick:()=>{c.port=on?c.port.filter(x=>x!==a[0]):[...c.port,a[0]];save();stagKey='';renderStag();renderCerf();cerfIcon();}}):el('span',{class:'note',text:'À gagner'}));}));
 }
-const attrIcon=(a,g)=>`<svg viewBox="${a[0]==='plume'?'60 20 34 34':a[0]==='lunettes'?'32 40 36 24':a[0]==='lanterne'?'72 66 26 30':a[0]==='livre'?'4 80 30 20':'34 26 32 18'}">${a[5](g)}</svg>`;
+const attrIcon=(a,g)=>`<svg viewBox="${a[0]==='plume'?'60 20 34 34':a[0]==='lunettes'?'32 40 36 24':a[0]==='lanterne'?'72 66 26 30':a[0]==='livre'?'4 80 30 20':a[0]==='lierre'?'34 74 32 20':'34 26 32 18'}">${a[5](g)}</svg>`;
+/* ---------- parrainage : un lien par compte, des cadeaux pour le cerf ---------- */
+// le code d'un lien ?parrain=XXXXXXXX est gardé jusqu'à l'inscription, puis remis au serveur
+const LS_PARR='brainfit.parrain', SITE_URL='https://yohandk.github.io/Brain-Fit/';
+(()=>{try{const v=new URLSearchParams(location.search).get('parrain');if(v&&/^[A-Z0-9]{8}$/i.test(v.trim())){localStorage.setItem(LS_PARR,v.trim().toUpperCase());
+  const u=new URL(location.href);u.searchParams.delete('parrain');history.replaceState(null,'',u.pathname+u.search+u.hash);}}catch(e){}})();
+function parrainPending(){try{return localStorage.getItem(LS_PARR)||'';}catch(e){return '';}}
+// ce que le serveur a dit la dernière fois (gardé dans les progrès, pour dessiner le cerf même hors ligne)
+const parrN=()=>{const p=state.parr||{};return{inscrits:+p.inscrits||0,actifs:+p.actifs||0,filleul:!!p.filleul,code:p.code||''};};
+const joursActifs=()=>Object.keys(state.days).filter(isActive).length;
+const filleulActif=()=>parrN().filleul&&joursActifs()>=3;
+function lierreGrade(){const p=parrN();return p.actifs>=10?3:p.actifs>=1?2:(p.inscrits>=1||filleulActif())?1:0;}
+const PARR_PALIERS=[
+  // id, cadeau, condition affichée, atteint ?
+  ['brin','Un brin de lierre pour ton cerf','dès que ton premier ami s’inscrit',p=>p.inscrits>=1],
+  ['collier','Le collier de lierre','1 ami actif',p=>p.actifs>=1],
+  ['passeur','La médaille du Passeur','3 amis actifs',p=>p.actifs>=3],
+  ['plus','Un mois de Néophyte Plus offert','5 amis actifs',p=>p.actifs>=5],
+  ['argent','Le cerf d’argent et le lierre doré','10 amis actifs',p=>p.actifs>=10],
+  ['mecene','Mécène de Néophyte','25 amis actifs',p=>p.actifs>=25]
+];
+const PARR_DETAIL={
+  plus:'Gardé pour toi : il s’activera à l’ouverture de Néophyte Plus.',
+  argent:'Un pelage rare, à choisir dans Réglages · Mon cerf.',
+  mecene:'Néophyte Plus à vie, ton nom dans les remerciements, et ton énigme du dimanche publiée pour tous.'
+};
+const passeurSVG=on=>`<svg viewBox="0 0 40 40" aria-hidden="true"><circle cx="20" cy="20" r="18" fill="${on?'#D9B44A':'var(--sunk)'}" stroke="${on?'#9A7420':'var(--line)'}" stroke-width="1.4"/><circle cx="20" cy="20" r="14.5" fill="none" stroke="${on?'#9A7420':'var(--line)'}" stroke-width=".7" stroke-dasharray="1.4 1.1"/>`+
+  `<path d="M18.2 21.5h3.6l-1 10.5h-1.6z" fill="${on?'#7A5A18':'var(--muted)'}"/><path d="M16.5 19.5h7l-1 2.2h-5z" fill="${on?'#7A5A18':'var(--muted)'}"/><path d="M20 8.5c3 3 3.6 6 1.6 9.6c.2-1.8-.4-3-1.4-3.8c-.3 1.6-1.2 2.4-2 3.8c-1.6-3.2-.6-6.3 1.8-9.6z" fill="${on?'#B8461E':'var(--muted)'}"/></svg>`;
+let parrOff=false, parrBusy=false;
+async function parrainSync(){
+  const sb=window.bfSupabase; if(!sb||!ref||parrBusy)return; parrBusy=true;
+  try{
+    const code=parrainPending(), p=state.parr||(state.parr={});
+    // un lien d'invitation en attente, ou un compte neuf dont l'inscription portait le code
+    if(code||(!p.filleul&&!p.essai)){
+      const r=await sb.rpc('devenir_filleul',{p_code:code});
+      if(r.error){if(/function|schema cache|not exist/i.test(r.error.message||'')){parrOff=true;return;}}
+      else{
+        p.essai=true; try{localStorage.removeItem(LS_PARR);}catch(e){}
+        if(r.data==='ok')setTimeout(()=>toast('<span>Bienvenue ! Ton parrain vient de gagner un brin de lierre pour son cerf.<small>Le tien, et une égide, t’attendent après 3 jours d’exercices.</small></span>'),900);
+        else if(code&&r.data==='soi')setTimeout(()=>toast('<span>C’est ton propre lien d’invitation : envoie-le à un ami.</span>'),900);
+        else if(code&&r.data==='trop_tard')setTimeout(()=>toast('<span>Ton compte existait déjà depuis plus de 14 jours : ce lien ne peut plus faire de toi un filleul.</span>'),900);
+      }
+    }
+    const {data,error}=await sb.rpc('mon_parrainage');
+    if(error){if(/function|schema cache|not exist/i.test(error.message||''))parrOff=true;return;}
+    let mine=data&&data.code;
+    if(!mine){const c=await sb.rpc('mon_code_parrain');if(!c.error)mine=c.data;}
+    Object.assign(p,{code:mine||'',inscrits:+data.inscrits||0,actifs:+data.actifs||0,filleul:!!data.filleul,maj:Date.now()});
+    parrOff=false; checkParrain(); persist(); renderHud(); renderParrain();
+  }catch(e){}
+  finally{parrBusy=false;}
+}
+// un cadeau tout juste gagné : on le dit une fois, et le cerf porte aussitôt son lierre
+function checkParrain(){
+  if(!state.parr)return; let ch=false;
+  const p=parrN(), vu=state.parr.vu||(state.parr.vu=[]);
+  // plusieurs paliers franchis d'un coup (retour après une absence) : on n'annonce que le plus haut
+  let nu=null; for(const x of PARR_PALIERS)if(x[3](p)&&!vu.includes(x[0])){vu.push(x[0]); ch=true; nu=x;}
+  if(nu){const quoi=nu[0]==='mecene'?'tu deviens Mécène de Néophyte':'tu gagnes '+nu[1].charAt(0).toLowerCase()+nu[1].slice(1);
+    toast(`<span>Parrainage : ${quoi} !<small>${nu[0]==='brin'?'Ton ami vient de s’inscrire. Les cadeaux suivants viendront quand tes amis seront actifs.':nu[0]==='collier'?'Ton cerf le porte déjà.':PARR_DETAIL[nu[0]]||'Amis · Parrainer'}</small></span>`);}
+  // le filleul, après ses 3 premiers jours : son brin de lierre et une égide (une seule fois)
+  if(filleulActif()){const f=freezeState();if(!f.earned.includes('filleul')){f.earned.push('filleul');f.n=Math.min(3,f.n+1);ch=true;
+    setTimeout(()=>toast('<span>Trois jours d’exercices : ton cadeau de filleul est là.<small>Un brin de lierre pour ton cerf, et une égide pour protéger ta série.</small></span>'),1200);}}
+  if(ch)persist();
+}
+function renderParrain(){
+  const panel=$('#parrain-panel'), body=$('#parrain-body'); if(!panel)return;
+  const sb=window.bfSupabase; panel.hidden=!sb; if(!sb)return;
+  if(ref&&!parrOff&&Date.now()-((state.parr||{}).maj||0)>6e4)parrainSync();
+  if(!ref){body.replaceChildren(el('p',{class:'fg2',text:'Crée un compte (ou connecte-toi) pour recevoir ton lien d’invitation.'}),
+    el('button',{class:'btn',text:'Me connecter',onclick:()=>{showTab('aujourdhui');openLogin();setTimeout(()=>$('#login-email').focus(),50);}}));return;}
+  if(parrOff){body.replaceChildren(el('p',{class:'muted',text:'Le parrainage n’est pas encore ouvert. Reviens bientôt.'}));return;}
+  const p=parrN();
+  if(!p.code){body.replaceChildren(el('p',{class:'muted',text:'Préparation de ton lien…'}));return;}
+  const link=SITE_URL+'?parrain='+p.code;
+  const share=async()=>{const data={title:'Néophyte',text:'Je m’entraîne avec Néophyte, dix minutes par jour pour garder l’esprit vif. Viens avec moi : nos deux cerfs y gagnent un cadeau.',url:link};
+    try{if(navigator.share){await navigator.share(data);return;}}catch(e){if(e&&e.name==='AbortError')return;}
+    try{await navigator.clipboard.writeText(data.text+' '+link);toast('<span>Invitation copiée : colle-la dans un message.</span>');}catch(e){toast('<span>'+link+'</span>');}};
+  const next=PARR_PALIERS.find(x=>!x[3](p));
+  const kids=[
+    el('div',{class:'row parrain-link'},el('button',{class:'btn primary',text:'Envoyer mon invitation',onclick:share}),el('code',{class:'note',text:link.replace(/^https:\/\//,'')})),
+    el('div',{class:'kpis parrain-kpis'},
+      el('div',{class:'kpi'},el('span',{class:'label',text:'Amis inscrits'}),el('b',{class:'num',text:fmt(p.inscrits)})),
+      el('div',{class:'kpi'},el('span',{class:'label',text:'Amis actifs'}),el('b',{class:'num',text:fmt(p.actifs)}))),
+    next?el('p',{class:'note',text:next[0]==='brin'?'Premier cadeau dès qu’un ami s’inscrit par ton lien.':`Prochain cadeau : ${next[1].charAt(0).toLowerCase()+next[1].slice(1)}, à ${next[2]}${p.actifs?' (encore '+(+next[2].match(/\d+/)[0]-p.actifs)+')':''}. Un ami est actif après 3 jours d’exercices.`}):null,
+    el('ol',{class:'parrain-paliers'},...PARR_PALIERS.map(x=>{const on=x[3](p);
+      const ic=x[0]==='passeur'?passeurSVG(on):x[0]==='brin'||x[0]==='collier'||x[0]==='argent'?attrIcon(ATTRS.find(a=>a[0]==='lierre'),x[0]==='brin'?1:x[0]==='collier'?2:3):'';
+      return el('li',{class:on?'on':''},el('span',{class:'pp-ic','aria-hidden':'true',html:ic||`<svg viewBox="0 0 40 40"><circle cx="20" cy="20" r="17" fill="none" stroke="currentColor" stroke-width="1.4"/><text x="20" y="25.5" text-anchor="middle" font-size="14" font-weight="700" fill="currentColor">${x[0]==='plus'?'+':'M'}</text></svg>`}),
+        el('div',{},el('b',{text:x[1]}),el('span',{class:'note',text:x[2]+(PARR_DETAIL[x[0]]?' · '+PARR_DETAIL[x[0]]:'')})),
+        el('span',{class:'note pp-st',text:on?'Gagné':'À gagner'}));})),
+    p.actifs>=25?el('button',{class:'btn',text:'Donner mon nom et mon énigme',onclick:()=>{openReport();setTimeout(()=>{const t=document.querySelector('.rp-wrap textarea');if(t){t.value='Mécène de Néophyte : le nom à écrire dans les remerciements : …\nMon énigme du dimanche : …';t.focus();}},80);}}):null,
+    el('p',{class:'note',text:p.filleul?(filleulActif()?'Toi aussi, tu as été invité : ton brin de lierre et ton égide sont gagnés.':`Tu as été invité par un ami : ton brin de lierre et une égide t’attendent après 3 jours d’exercices (${Math.min(3,joursActifs())} sur 3).`):'Ton ami reçoit lui aussi un brin de lierre et une égide après ses 3 premiers jours.'})
+  ];
+  body.replaceChildren(...kids.filter(Boolean));
+}
 // le cerf en image : les couleurs du thème résolues, pour l'icône de l'appli
 function stagImage(sh,size){
   const cs=getComputedStyle(document.documentElement), pel=(PELAGES[sh.p]||[])[1]||{};
@@ -4395,7 +4519,7 @@ addEventListener('pointermove',e=>{if(gazeRaf||reduceMotion())return;const X=e.c
       st.querySelectorAll('.pup').forEach(p=>{p.style.transform=t;});}});},{passive:true});
 $('#stag-bubble').addEventListener('click',e=>{e.currentTarget.hidden=true;});
 function renderHud(){
-  checkAttrs(); if(!iconTried){iconTried=true;cerfIcon();} renderStag();
+  checkParrain(); checkAttrs(); if(!iconTried){iconTried=true;cerfIcon();} renderStag();
   const t=todayKey(), goal=state.settings.xpGoal||60, today=gamiCtx.xp[t]||0, L=gamiCtx.level;
   $('#xp-today').textContent=today; $('#xp-goal').textContent='/ '+goal+' XP';
   $('#ring-fg').setAttribute('stroke-dasharray',Math.min(100,today/goal*100)+' 100');
@@ -4987,7 +5111,7 @@ function showTab(t){
   $('#go-biblio').toggleAttribute('aria-current',t==='conseils'); $('#go-settings').toggleAttribute('aria-current',t==='reglages');
   if(t==='conseils'||t==='reglages')$('#go-'+(t==='conseils'?'biblio':'settings')).setAttribute('aria-current','page');
   if(t==='progres'){renderProgress();renderCarnet();renderXpPanel();renderScreenChart();renderWeekBilan();}
-  if(t==='amis')renderCircle();
+  if(t==='amis'){renderCircle();renderParrain();}
   if(t==='reglages'){$('#city-in').value=city();renderRetours();renderCerf();}
   if(t==='coach'){renderSas();renderCoach();renderTutor();}
   if(location.hash!=='#'+t)try{history.replaceState(null,'','#'+t);}catch(e){}
@@ -7044,7 +7168,7 @@ function showWelcome(){
   const v=(window.BF_CONFIG||{}).video, box=$('#wl-video');
   if(v&&!box.childElementCount){box.append(/\.(mp4|webm)(\?|$)/.test(v)?el('video',{src:v,controls:'',playsinline:'',preload:'metadata'}):el('iframe',{src:v,title:'Présentation de Néophyte',allow:'fullscreen; picture-in-picture',loading:'lazy'}));}
   box.hidden=!v;
-  setupInstall();
+  setupInstall(); $('#wl-invite').hidden=!parrainPending()||!sb;
   $('#welcome').hidden=false; document.body.style.overflow='hidden'; $('#welcome').scrollTop=0;
   setTimeout(()=>$('#welcome').focus({preventScroll:true}),0);
 }

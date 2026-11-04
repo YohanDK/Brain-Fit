@@ -14,8 +14,17 @@ const strip=h=>h.replace(/<(style|script)[\s\S]*?<\/\1>/g,'').replace(/<span cla
   const report=[];
   for(const l of lines){
     try{
-      const s=await get({action:'query',list:'search',srsearch:l.replace('|',' '),srnamespace:'0',srlimit:'5'});
-      const hits=s.query.search.map(h=>h.title); if(!hits.length){report.push(`? ${l} : rien trouvé`);continue;}
+      // « = Titre exact » : prend cette page telle quelle ; « ? auteur | titre » : liste les sous-pages du premier résultat, pour choisir ensuite
+      if(l.startsWith('?')){
+        const s=await get({action:'query',list:'search',srsearch:l.slice(1).replace('|',' '),srnamespace:'0',srlimit:'5'});
+        const hits=s.query.search.map(h=>h.title); if(!hits.length){report.push(`? ${l} : rien trouvé`);continue;}
+        const lk=await get({action:'parse',page:hits[0],prop:'links',redirects:'1'});
+        const subs=(lk.parse.links||[]).map(x=>x.title).filter(t=>t.startsWith(lk.parse.title+'/'));
+        report.push(`? ${l} -> ${lk.parse.title} ; autres : ${hits.slice(1).join(' ; ')}\n    sous-pages : ${subs.slice(0,80).join(' | ')}`);continue;
+      }
+      const exact=l.startsWith('=');
+      const hits=exact?[l.slice(1).trim()]:(await get({action:'query',list:'search',srsearch:l.replace('|',' '),srnamespace:'0',srlimit:'5'})).query.search.map(h=>h.title);
+      if(!hits.length){report.push(`? ${l} : rien trouvé`);continue;}
       const title=hits[0], p=await get({action:'parse',page:title,prop:'text',redirects:'1'});
       const text=strip(p.parse.text).slice(0,30000);
       const url='https://fr.wikisource.org/wiki/'+encodeURIComponent(p.parse.title.replace(/ /g,'_'));

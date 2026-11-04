@@ -1,4 +1,4 @@
-# Une recherche par ligne : auteur | titre. Le texte trouvé sur fr.wikisource.org est écrit dans tools/wikisource/textes/.
+# Une ligne par texte : « auteur | titre » (recherche), « = Titre exact » (page précise) ou « ? auteur | titre » (liste les sous-pages dans _rapport.txt). Les textes vont dans tools/wikisource/textes/.
 La Fontaine | La Cigale et la Fourmi
 La Fontaine | Le Loup et l'Agneau
 La Fontaine | Le Chêne et le Roseau
@@ -87,3 +87,17 @@ Michelet | Histoire de France Jeanne d'Arc
 Erckmann-Chatrian | Histoire d'un conscrit de 1813 chapitre premier
 Fromentin | Dominique chapitre II
 Chateaubriand | Mémoires d'outre-tombe Livre premier Combourg
+# Troisième lot (4 novembre 2026) : repérage des sous-pages, demandé par Yohan (Proust, Huysmans, Bloy…)
+? Proust | Du côté de chez Swann
+? Huysmans | En route
+? Huysmans | La Cathédrale
+? Huysmans | À rebours
+? Léon Bloy | La Femme pauvre
+? Léon Bloy | Le Désespéré
+? Léon Bloy | Exégèse des lieux communs
+? Daudet | Lettres de mon moulin
+? Jules Renard | Poil de Carotte
+? Anatole France | Le Livre de mon ami
+? Stendhal | La Chartreuse de Parme
+? Zola | Germinal
+? Comtesse de Ségur | Les Malheurs de Sophie

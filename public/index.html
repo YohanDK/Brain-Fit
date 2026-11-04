@@ -1223,6 +1223,26 @@ main#contenu{display:flex;flex-direction:column;gap:20px}
 .xpg-badge{display:flex;gap:10px;align-items:center;text-align:left;border-top:1px dashed var(--line);padding-top:8px}
 .xpg-badge .medal{width:40px;height:40px;flex:none}.xpg-badge .medal svg{width:100%;height:100%;display:block}
 @media (max-width:620px){.badge .medal,.badge.locked .medal{width:52px;height:52px}}
+
+/* Bilan regroupé en quatre cartes : Ma semaine, Mon niveau, Mon chemin, En détail */
+.groupe{gap:0;padding:18px 20px 6px}
+.groupe>.g-titre{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)}
+.groupe>.sous:first-of-type{padding-top:4px}
+.bilan-nav{display:flex;width:100%}
+.bilan-nav button{flex:1;min-width:0;padding:8px 4px}
+.bilan-nav button[aria-selected="true"]{background:var(--surface);color:var(--fg);box-shadow:0 1px 3px rgba(60,50,30,.12)}
+.groupe-d{display:flex;flex-direction:column;gap:14px}
+.groupe .kpis{grid-template-columns:repeat(4,minmax(0,1fr))!important;gap:8px;text-align:center}
+.groupe .kpi .num{font-size:1.45rem;line-height:1.1}
+.groupe .kpi .label{font-size:.68rem;letter-spacing:.05em;line-height:1.2;min-height:2.4em}
+.groupe .kpi .muted{font-size:.78rem;line-height:1.2}
+.groupe>.sous{display:flex;flex-direction:column;gap:10px;padding:14px 0;min-width:0}
+.groupe>.sous+.sous{border-top:1px solid var(--line)}
+.groupe .sous h2{font-family:var(--f-body);font-size:1.08rem;font-weight:600;letter-spacing:0;margin:0}
+.groupe .sous>.panel{border:0;padding:0}
+.defis{display:grid!important;grid-template-columns:1fr 1fr;gap:18px}
+.defi{display:flex;flex-direction:column;gap:8px;min-width:0}
+@media (max-width:620px){.defis{grid-template-columns:1fr}.groupe{padding:16px 16px 4px}}
 </style>
 </head>
 <body>
@@ -1508,81 +1528,94 @@ var fin=function(){if(e.parentNode)e.remove();};e.addEventListener('click',fin);
 
   <!-- PROGRES -->
   <section class="view" id="v-progres" hidden>
-    <div class="panel" id="bilan-pt">
-      <div class="row spread bl-head"><div><h2>Point d'étape</h2><p class="muted note" id="bl-sub"></p></div><button class="btn" id="pc-bilan">Faire le point</button></div>
-      <div id="bl-body"></div>
+    <div class="seg bilan-nav" role="tablist" aria-label="Parties du bilan">
+      <button role="tab" data-g="semaine">Semaine</button><button role="tab" data-g="niveau">Niveau</button><button role="tab" data-g="chemin">Chemin</button><button role="tab" data-g="detail">Détails</button>
     </div>
-    <div class="panel" id="wbilan">
-      <div><h2>Bilan de la semaine</h2><p class="muted" id="wb-week"></p></div>
-      <div class="wb" id="wb-body"></div>
-    </div>
-    <h2 class="label sect-h" id="ma-semaine">Ma semaine</h2>
-    <div class="panel goal">
-      <span class="label">Mon objectif du moment</span>
-      <div id="goal-view" class="row spread" hidden>
-        <div style="min-width:0;display:flex;flex-direction:column;gap:2px"><p class="big" id="goal-text"></p><span class="note" id="goal-since"></span></div>
-        <button class="btn ghost" id="goal-edit">Modifier</button>
+    <div class="panel groupe" id="g-semaine">
+      <h2 class="g-titre" id="ma-semaine">Ma semaine</h2>
+      <div class="sous" id="wbilan">
+        <div><h2>Bilan de la semaine</h2><p class="muted" id="wb-week"></p></div>
+        <div class="wb" id="wb-body"></div>
       </div>
-      <form id="goal-form" class="row" style="flex-wrap:nowrap">
-        <input type="text" id="goal-in" placeholder="Ex. : écrire des argumentaires plus clairs d'ici décembre" style="flex:1;min-width:0" autocomplete="off">
-        <button class="btn primary" type="submit">Fixer</button>
-      </form>
-      <p class="note">Ton coach en tient compte dans ses bilans. Il peut aussi t'en proposer un.</p>
-    </div>
-    <div class="panel">
-      <div>
-        <h2>Programme de la semaine</h2>
-        <p class="muted">Comme à la salle : des séances longues, régulières, qui font transpirer.</p>
+      <div class="sous">
+        <div>
+          <h2>Programme de la semaine</h2>
+          <p class="muted">Comme à la salle : des séances longues, régulières, qui font transpirer.</p>
+        </div>
+        <div class="prog" id="prog"></div>
       </div>
-      <div class="prog" id="prog"></div>
-    </div>
-    <div class="panel">
-      <span class="label">Défi de la semaine</span>
-      <div class="challenge" id="challenge"></div>
-    </div>
-    <div class="panel" id="reel">
-      <div class="row spread" style="flex-wrap:nowrap;align-items:flex-start"><span class="label">Défi du réel</span><button class="btn ghost mini" id="reel-next" style="flex:none">Un autre</button></div>
-      <div class="challenge" id="reel-box"></div>
-      <div class="row reel-city"><span class="note" id="reel-city-txt"></span><button class="btn ghost mini" id="reel-city-edit"></button></div>
-      <form class="row reel-city" id="reel-city-form" hidden><input type="text" id="reel-city-in" placeholder="Ta ville" aria-label="Ta ville" autocomplete="address-level2"><button class="btn mini">Valider</button></form>
-    </div>
-    <div class="panel" id="parcours">
-      <div><h2>Mon parcours</h2><p class="muted note" id="pc-sub"></p></div>
-      <ol class="etapes" id="pc-steps"></ol>
-      <p class="fg2" id="pc-desc"></p>
-      <div class="crit" id="pc-next"></div>
-      <div class="tablewrap" id="pc-skills"></div>
-    </div>
-    <div class="panel" id="xp-panel">
-      <div class="row spread">
-        <div><h2>Tes XP cette semaine</h2><p class="muted note" id="xp-week-sub"></p></div>
-        <div class="seg" role="group" aria-label="Objectif quotidien" id="xp-goal-seg">
-          <button data-g="30" title="Tranquille">30 XP</button><button data-g="60" title="Sérieux">60 XP</button><button data-g="100" title="Intense">100 XP</button>
+      <div class="sous defis">
+        <div class="defi">
+          <span class="label">Défi de la semaine</span>
+          <div class="challenge" id="challenge"></div>
+        </div>
+        <div class="defi" id="reel">
+          <div class="row spread" style="flex-wrap:nowrap;align-items:flex-start"><span class="label">Défi du réel</span><button class="btn ghost mini" id="reel-next" style="flex:none">Un autre</button></div>
+          <div class="challenge" id="reel-box"></div>
+          <div class="row reel-city"><span class="note" id="reel-city-txt"></span><button class="btn ghost mini" id="reel-city-edit"></button></div>
+          <form class="row reel-city" id="reel-city-form" hidden><input type="text" id="reel-city-in" placeholder="Ta ville" aria-label="Ta ville" autocomplete="address-level2"><button class="btn mini">Valider</button></form>
         </div>
       </div>
-      <div class="bars" id="xp-bars" role="img" aria-label="XP gagnés chaque jour de la semaine"></div>
-      <div id="xp-total"></div>
     </div>
-    <div class="panel">
-      <div class="row spread"><h2>Badges</h2><span class="muted" id="badge-count"></span></div>
-      <div class="badges" id="badges"></div>
-      <button class="btn ghost badges-more" id="badges-more" hidden>Voir tous les badges</button>
-      <details class="fold"><summary><span class="note">Pourquoi une série et des XP ?</span></summary><p class="note"> Chez Duolingo, les apprenants qui atteignent 7 jours de série ont 3,6 fois plus de chances de terminer leur cours, et les « gels de série » (ici, les égides) évitent qu'un seul jour manqué fasse tout abandonner. <a href="https://blog.duolingo.com/how-duolingo-streak-builds-habit" target="_blank" rel="noopener">Source</a>. Le but reste le même : que l'envie de penser par toi-même prenne le relais des récompenses.</p></details>
-    </div>
-    <div class="panel">
-      <div class="kpis">
-        <div class="kpi"><span class="label">Série actuelle</span><span class="num" id="k-streak">0</span><span class="muted">jours</span></div>
-        <div class="kpi"><span class="label">Meilleure série</span><span class="num" id="k-best">0</span><span class="muted">jours</span></div>
-        <div class="kpi"><span class="label">Jours actifs</span><span class="num" id="k-active">0</span><span class="muted">sur 30 jours</span></div>
-        <div class="kpi"><span class="label">Hygiène IA</span><span class="num" id="k-habits">0 %</span><span class="muted">habitudes cochées, 7 j</span></div>
+    <div class="panel groupe" id="g-niveau">
+      <h2 class="g-titre">Mon niveau</h2>
+      <div class="sous" id="xp-panel">
+        <div class="row spread">
+          <div><h2>Tes XP cette semaine</h2><p class="muted note" id="xp-week-sub"></p></div>
+          <div class="seg" role="group" aria-label="Objectif quotidien" id="xp-goal-seg">
+            <button data-g="30" title="Tranquille">30 XP</button><button data-g="60" title="Sérieux">60 XP</button><button data-g="100" title="Intense">100 XP</button>
+          </div>
+        </div>
+        <div class="bars" id="xp-bars" role="img" aria-label="XP gagnés chaque jour de la semaine"></div>
+        <div id="xp-total"></div>
+      </div>
+      <div class="sous">
+        <div class="kpis">
+          <div class="kpi"><span class="label">Série actuelle</span><span class="num" id="k-streak">0</span><span class="muted">jours</span></div>
+          <div class="kpi"><span class="label">Meilleure série</span><span class="num" id="k-best">0</span><span class="muted">jours</span></div>
+          <div class="kpi"><span class="label">Jours actifs</span><span class="num" id="k-active">0</span><span class="muted">sur 30 jours</span></div>
+          <div class="kpi"><span class="label">Hygiène IA</span><span class="num" id="k-habits">0 %</span><span class="muted">habitudes cochées, 7 j</span></div>
+        </div>
+      </div>
+      <div class="sous">
+        <div class="row spread"><h2>Badges</h2><span class="muted" id="badge-count"></span></div>
+        <div class="badges" id="badges"></div>
+        <button class="btn ghost badges-more" id="badges-more" hidden>Voir tous les badges</button>
+        <details class="fold"><summary><span class="note">Pourquoi une série et des XP ?</span></summary><p class="note"> Chez Duolingo, les apprenants qui atteignent 7 jours de série ont 3,6 fois plus de chances de terminer leur cours, et les « gels de série » (ici, les égides) évitent qu'un seul jour manqué fasse tout abandonner. <a href="https://blog.duolingo.com/how-duolingo-streak-builds-habit" target="_blank" rel="noopener">Source</a>. Le but reste le même : que l'envie de penser par toi-même prenne le relais des récompenses.</p></details>
       </div>
     </div>
+    <div class="panel groupe" id="g-chemin">
+      <h2 class="g-titre">Mon chemin</h2>
+      <div class="sous" id="bilan-pt">
+        <div class="row spread bl-head"><div><h2>Point d'étape</h2><p class="muted note" id="bl-sub"></p></div><button class="btn" id="pc-bilan">Faire le point</button></div>
+        <div id="bl-body"></div>
+      </div>
+      <div class="sous" id="etapes">
+        <div><h2>Mon parcours</h2><p class="muted note" id="pc-sub"></p></div>
+        <ol class="etapes" id="pc-steps"></ol>
+        <p class="fg2" id="pc-desc"></p>
+        <div class="crit" id="pc-next"></div>
+        <div class="tablewrap" id="pc-skills"></div>
+      </div>
+      <div class="sous goal">
+        <span class="label">Mon objectif du moment</span>
+        <div id="goal-view" class="row spread" hidden>
+          <div style="min-width:0;display:flex;flex-direction:column;gap:2px"><p class="big" id="goal-text"></p><span class="note" id="goal-since"></span></div>
+          <button class="btn ghost" id="goal-edit">Modifier</button>
+        </div>
+        <form id="goal-form" class="row" style="flex-wrap:nowrap">
+          <input type="text" id="goal-in" placeholder="Ex. : écrire des argumentaires plus clairs d'ici décembre" style="flex:1;min-width:0" autocomplete="off">
+          <button class="btn primary" type="submit">Fixer</button>
+        </form>
+        <p class="note">Ton coach en tient compte dans ses bilans. Il peut aussi t'en proposer un.</p>
+      </div>
+    </div>
+    <div class="groupe-d" id="g-detail">
     <details class="panel fp" id="calib-panel">
       <summary><h2>Sûr à combien ?</h2></summary><div><p class="muted note">Quand tu te dis sûr à 90 %, as-tu raison 9 fois sur 10 ? C'est le réflexe à garder face à une IA qui parle avec aplomb, et l'entraînement des meilleurs prévisionnistes (Tetlock, 2015).</p></div>
       <div class="tablewrap" id="calib"></div>
       <p class="note" id="calib-sum"></p>
     </details>
-    <h2 class="label prog-more">En détail</h2>
     <details class="panel fp">
       <summary><h2>Cette semaine en chiffres</h2></summary>
       <p class="muted note">Moyenne de tes scores depuis lundi, comparée à la semaine précédente.</p>
@@ -1614,6 +1647,7 @@ var fin=function(){if(e.parentNode)e.remove();};e.addEventListener('click',fin);
       <div class="heatwrap"><div class="heat" id="heat" role="img" aria-label="Calendrier d'activité"></div></div>
       <p class="note">Chaque case est un jour : sa couleur reflète la part de la routine et des habitudes accomplies.</p>
     </details>
+    </div>
   </section>
 
   <!-- CONSEILS -->
@@ -3636,7 +3670,7 @@ function stageCrit(){
     [['90 jours actifs',a,90],['30 séances hors écran',off,30],["3 points d'étape",b,3],['Autonomie en actes à 70 ou plus',deeds(todayKey()),70]]];
 }
 function stageOf(){const c=stageCrit();let s=1;while(s<4&&c[s].every(([,v,n])=>v>=n))s++;return s;}
-function renderParcours(){
+function renderEtapes(){ // « Mon parcours » du Bilan (à ne pas confondre avec le parcours de saison)
   const B=state.bilans||[], s=gamiCtx.stage||1, t=todayKey(), c=stageCrit();
   $('#pc-sub').textContent=`Étape ${s} sur 4 · ${STAGES[s-1][0]}`;
   renderBilanPt();
@@ -3866,7 +3900,7 @@ function renderCalib(){
 }
 function renderProgress(){
   if($('#v-progres').hidden)return; // recalculé à l'ouverture de l'onglet
-  renderParcours(); renderCalib();
+  renderEtapes(); renderCalib();
   const st=streaks(), t=todayKey();
   $('#k-streak').textContent=st.cur; $('#k-best').textContent=st.best;
   let a=0; for(let i=0;i<30;i++)if(isActive(addDays(t,-i)))a++; $('#k-active').textContent=a;
@@ -4564,6 +4598,9 @@ function renderXpPanel(){
   const tk=todayKey(), horsSaison=r=>r.f.saison&&!r.st.best&&(tk>r.f.saison.au||tk<r.f.saison.du);
   const vis=rows.filter(r=>!horsSaison(r)).filter(r=>badgesAll||r.st.best||proches.includes(r.f.k)||(pb&&pb.f===r.f));
   if(!vis.length)vis.push(...rows.slice(0,3));
+  // repliés, six pièces : le prochain badge, puis les plus beaux métaux gagnés, puis les plus proches
+  const rang=r=>(pb&&pb.f===r.f)?9:r.st.best?['bronze','argent','or'].indexOf(r.st.best.metal)+3:r.st.pct;
+  if(!badgesAll){vis.sort((a,b)=>rang(b)-rang(a));vis.splice(6);}
   for(const{f,st} of vis){
     const shown=st.best||st.next, metal=st.best?st.best.metal:'gris', multi=f.steps.length>1;
     const sub=st.next?(st.next.seuil===1?el('span',{text:st.next.desc}):el('span',{class:'jauge'},el('span',{class:'bar'},el('i',{style:`width:${Math.round(st.pct*100)}%`})),el('span',{text:`${fmt(Math.min(f.v,st.next.seuil))} / ${fmt(st.next.seuil)}`+(st.best&&st.next.metal!=='bronze'?` vers l’${METAL_NOM[st.next.metal]}`:'')})))
@@ -4578,7 +4615,16 @@ const XP_GAINS=[['Un exercice','10 XP'],['Un texte écrit sans IA','20 XP'],['Un
 let badgesAll=false;
 $$('#xp-goal-seg button').forEach(b=>b.addEventListener('click',()=>{state.settings.xpGoal=+b.dataset.g;save();renderXpPanel();}));
 $('#badges-more').addEventListener('click',()=>{badgesAll=!badgesAll;renderXpPanel();});
-$('#goalring').addEventListener('click',()=>{showTab('progres');setTimeout(()=>$('#xp-panel').scrollIntoView({behavior:'smooth',block:'start'}),50);});
+// le Bilan en quatre sous-onglets ; on retrouve le dernier ouvert
+function bilanTab(k){
+  if(!['semaine','niveau','chemin','detail'].includes(k))k='semaine';
+  try{localStorage.setItem('neo.bilan',k);}catch(e){}
+  $$('.bilan-nav button').forEach(b=>{b.setAttribute('aria-selected',String(b.dataset.g===k));});
+  for(const g of ['semaine','niveau','chemin','detail'])$('#g-'+g).hidden=g!==k;
+}
+$$('.bilan-nav button').forEach(b=>b.addEventListener('click',()=>bilanTab(b.dataset.g)));
+bilanTab((()=>{try{return localStorage.getItem('neo.bilan');}catch(e){return null;}})());
+$('#goalring').addEventListener('click',()=>{bilanTab('niveau');showTab('progres');setTimeout(()=>$('#xp-panel').scrollIntoView({behavior:'smooth',block:'start'}),50);});
 function toast(html,kind){
   const t=el('div',{class:'toast'+(kind?' '+kind:''),html}), box=$('#toasts'); box.append(t);
   while(box.children.length>3)box.firstElementChild.remove();
@@ -4980,7 +5026,7 @@ function sageClose(){sageRun=null;$('#sage-run').hidden=true;$('#sage-menu').hid
 function sageStart(m){
   if(m.k==='semaine'){
     if(coachOn){$('#coach-review').click();$('#coach-review-out').scrollIntoView({behavior:'smooth',block:'center'});}
-    else{showTab('progres');setTimeout(()=>{const w=$('#wbilan');if(w)w.scrollIntoView({behavior:'smooth',block:'start'});},50);}
+    else{bilanTab('semaine');showTab('progres');setTimeout(()=>{const w=$('#wbilan');if(w)w.scrollIntoView({behavior:'smooth',block:'start'});},50);}
     return;}
   sageRun={m,sujet:'',qa:[],step:'sujet'}; $('#sage-menu').hidden=true; $('#sage-run').hidden=false; sageDraw();
 }

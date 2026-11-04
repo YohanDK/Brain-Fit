@@ -198,8 +198,32 @@ for(const m of B.modeles){
   if(qs.size<3)warn(m.id,`seulement ${qs.size} énoncés différents`);
 }
 
+// arbres de la connaissance : notions bien formées, prérequis existants et sans boucle, trois notions par partie au plus
+const PARTIES=['racines','tronc','branches','fruit'];
+(B.arbres||[]).forEach(a=>{
+  const id=a.id||'arbre', N=a.notions||[], by=new Map();
+  if(!str(a.id)||!str(a.titre)||!str(a.intro))err(id,'id, titre et intro obligatoires');
+  N.forEach((x,i)=>{const nid=x&&x.id||`${id}[${i}]`;
+    if(by.has(nid)||ids.has(nid))err(nid,'id déjà utilisé');by.set(nid,x);ids.add(nid);
+    if(!PARTIES.includes(x.partie))err(nid,'partie inconnue : '+x.partie);
+    for(const f of ['court','titre','fiche','src'])if(!str(x[f]))err(nid,`champ « ${f} » vide`);
+    if(!date(x.vu))err(nid,'vu obligatoire (AAAA-MM-JJ)');
+    if(!Array.isArray(x.q)||x.q.length!==3)err(nid,'trois questions attendues');
+    (x.q||[]).forEach((q,j)=>{const qi=`${nid} q${j+1}`;
+      if(!str(q.q)||!str(q.e))err(qi,'question ou explication vide');
+      if(!Array.isArray(q.o)||q.o.length<2||q.o.some(o=>!str(o)))err(qi,'options mal formées');
+      else if(new Set(q.o).size!==q.o.length)err(qi,'deux options identiques');
+      if(q.b!==0)err(qi,'la bonne réponse doit être la première option (b:0)');});
+    if(x.terrain&&(!str(x.terrain.sortie)||!str(x.terrain.retour)))err(nid,'terrain : sortie et retour obligatoires');});
+  PARTIES.forEach(p=>{const c=N.filter(x=>x.partie===p).length;if(c>3)err(id,`${c} notions dans « ${p} » (3 au plus)`);});
+  for(const x of N)for(const r of (x.req||[]))if(!by.has(r))err(x.id,'prérequis inconnu : '+r);
+  if(!N.some(x=>!(x.req||[]).length))err(id,'aucune notion de départ');
+  const st={}, visit=k=>{if(st[k]===2)return;if(st[k]===1){err(id,'boucle de prérequis autour de '+k);return;}st[k]=1;for(const r of ((by.get(k)||{}).req||[]))if(by.has(r))visit(r);st[k]=2;};
+  N.forEach(x=>visit(x.id));
+});
+
 const n=k=>B[k].filter(x=>!x.retire).length;
-console.log(`Banques : ${n('problemes')} problèmes, ${n('sophismes')} arguments, ${n('erreursIA')} erreurs d'IA, ${n('fermi')} estimations, ${n('ortho')} phrases, ${n('textes')} textes, ${n('graphiques')} graphiques, ${B.modeles.length} modèles de variantes, ${B.bilan.series.length} séries de bilan, ${(B.enquetes||[]).length} énigmes du dimanche, ${(B.parcours||[]).length} parcours de saison.`);
+console.log(`Banques : ${n('problemes')} problèmes, ${n('sophismes')} arguments, ${n('erreursIA')} erreurs d'IA, ${n('fermi')} estimations, ${n('ortho')} phrases, ${n('textes')} textes, ${n('graphiques')} graphiques, ${B.modeles.length} modèles de variantes, ${B.bilan.series.length} séries de bilan, ${(B.enquetes||[]).length} énigmes du dimanche, ${(B.parcours||[]).length} parcours de saison, ${(B.arbres||[]).length} arbre(s) de la connaissance.`);
 warns.forEach(w=>console.log('Attention · '+w));
 if(errs.length){errs.forEach(e=>console.error('Erreur · '+e));console.error(`${errs.length} erreur(s) : à corriger avant de publier.`);process.exit(1);}
 console.log('Tout est en ordre.');

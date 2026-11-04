@@ -88,16 +88,27 @@ Erckmann-Chatrian | Histoire d'un conscrit de 1813 chapitre premier
 Fromentin | Dominique chapitre II
 Chateaubriand | Mémoires d'outre-tombe Livre premier Combourg
 # Troisième lot (4 novembre 2026) : repérage des sous-pages, demandé par Yohan (Proust, Huysmans, Bloy…)
-? Proust | Du côté de chez Swann
-? Huysmans | En route
-? Huysmans | La Cathédrale
-? Huysmans | À rebours
-? Léon Bloy | La Femme pauvre
-? Léon Bloy | Le Désespéré
-? Léon Bloy | Exégèse des lieux communs
-? Daudet | Lettres de mon moulin
-? Jules Renard | Poil de Carotte
-? Anatole France | Le Livre de mon ami
-? Stendhal | La Chartreuse de Parme
-? Zola | Germinal
-? Comtesse de Ségur | Les Malheurs de Sophie
+= Du côté de chez Swann/Partie 1
+= En route (Huysmans)/Texte entier
+= La Cathédrale (Huysmans)/I
+= La Cathédrale (Huysmans)/II
+= À rebours/Chapitre I
+= Le Désespéré/01
+= Le Désespéré/02
+= La Femme pauvre/Partie 2/1
+= Exégèse des Lieux Communs/151
+= Exégèse des Lieux Communs/159
+= Exégèse des Lieux Communs/178
+= Lettres de mon moulin/Les vieux
+= Lettres de mon moulin/Installation
+= Lettres de mon moulin/Le phare des Sanguinaires
+= Lettres de mon moulin/L’élixir du Père Gaucher
+= Lettres de mon moulin/Les trois messes basses
+= Lettres de mon moulin/La diligence de Beaucaire
+= Poil de Carotte/01
+= Poil de Carotte/02
+= Poil de Carotte/03
+= Germinal/Partie I/Chapitre 1
+= Les Malheurs de Sophie/1
+= Les Malheurs de Sophie/2
+= La Chartreuse de Parme (édition Martineau, 1927)/Chapitre III

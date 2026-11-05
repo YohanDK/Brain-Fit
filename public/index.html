@@ -2064,7 +2064,7 @@ const EX={
   dictee:{name:'Dictée sur papier',skill:'Écoute & orthographe',desc:"L'appli dicte à voix haute, tu écris à la main. Correction par photo de ta copie ou par toi-même.",unit:'% de mots justes'},
   lecture:{name:'Lecture chronométrée',skill:'Lecture & compréhension',desc:"Lis un texte à ton rythme, puis réponds à deux questions. Vitesse et compréhension mesurées.",unit:'mots/min compris'},
   citations:{name:'Florilège',skill:'Mémoire & culture',desc:"Retiens les citations qui comptent : qui l'a dit, le mot manquant, vraie ou fausse attribution. Répétition espacée.",unit:'% de bonnes réponses'},
-  carte:{name:'Sur la carte',skill:'Géographie & repères',desc:"Place une ville, un monument, un pays de France, une vallée ou un massif, en France ou dans le monde. Plus tu es près, plus tu marques.",unit:'points sur 100'},
+  carte:{name:'Sur la carte',skill:'Géographie & repères',desc:"Place une ville, un monument, un pays de France ou un empire disparu, une vallée, un massif. Plus tu es près, plus tu marques, et tu peux défier un ami sur les mêmes lieux.",unit:'points sur 100'},
   chrono:{name:'Chronologie',skill:'Culture & repères',desc:"Remets les événements dans l'ordre sur une frise, en les faisant glisser. Trois frises, des écarts de plus en plus serrés.",unit:'% de bonnes réponses'},
   fiche:{name:'Fiche papier',skill:'Hors écran',desc:"Des PDF à imprimer : la fiche du jour qui mélange tout, ou un cahier entier de problèmes, sophismes, orthographe, estimations, erreurs d'IA ou chronologie. Corrigé à la fin.",unit:'% de bonnes réponses'},
   focus:{name:'Séance sans écran',skill:'Attention soutenue',desc:"Lecture, écriture à la main ou réflexion, minuteur lancé. Si tu quittes la page, c'est une interruption.",unit:'minutes'},
@@ -3634,7 +3634,7 @@ const esc=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;'
 // lancer l'Éclair pour défier quelqu'un (ou tout le cercle) : son score lui sera envoyé à la fin
 function defierEclair(to,pseudo){defiCible={to:to||null,pseudo:pseudo||null};showTab('exercices');openEx('eclair');}
 // relever un défi reçu dans l'appli : mêmes questions que l'ami
-function relever(n){amisSeen(n.id);DEFI={seed:n.seed,score:n.score,from:pseudoOf(n.from_id),fromId:n.from_id};showTab('exercices');openEx('eclair');}
+function relever(n){amisSeen(n.id);DEFI={seed:n.seed,score:n.score,from:pseudoOf(n.from_id),fromId:n.from_id};showTab('exercices');openEx(/^k[a-z0-9]{10}$/.test(n.seed||'')?'carte':'eclair');}
 // à la fin d'un Éclair : envoyer le défi à la personne visée, ou répondre à celle qui nous a défié
 async function eclairDefiDone(seed,ok,D){
   const to=defiCible?defiCible.to:D&&D.fromId?D.fromId:undefined; const who=defiCible?defiCible.pseudo:D&&D.from; defiCible=null;
@@ -3650,6 +3650,7 @@ function renderInbox(){
   list.replaceChildren(...items.slice(0,8).map(n=>{
     const r=circleData.rows.find(x=>x.user_id===n.from_id), who=pseudoOf(n.from_id), all=n.to_id==null;
     const txt=n.kind==='pique'?`${who} te lance : « ${PIQUES[n.pique]||PIQUES[0]} »`:n.kind==='bravo'?`${who} te dit bravo pour ta semaine.`:n.kind==='courage'?`${who} t’envoie du courage. Une séance, et c’est reparti.`
+      :/^k[a-z0-9]{10}$/.test(n.seed||'')?`${who} ${all?'défie le cercle':'te défie'} sur la carte : ${n.score} points sur 500. Qui place le plus près ?`
       :`${who} ${all?'défie le cercle':'te défie'} à l’Éclair : ${n.score} point${n.score>1?'s':''} en 90 secondes.`;
     const li=el('li',{class:'nudge k-'+n.kind});
     const close=()=>{amisSeen(n.id);li.remove();renderInbox();};
@@ -7076,7 +7077,7 @@ function missAgain(bank,arr,item){const i=arr.indexOf(item), m=META.get(arr);if(
 let cleanup=null;
 // un défi reçu par lien : ?defi=graine.score.pseudo
 let DEFI=(()=>{try{const v=new URLSearchParams(location.search).get('defi');if(!v)return null;const m=v.match(/^([a-z0-9]{4,12})\.(\d{1,3})\.(.{1,24})$/i);return m?{seed:m[1],score:+m[2],from:m[3].trim()||'Un ami'}:null;}catch(e){return null;}})();
-function launchDefi(){if(!DEFI)return;try{history.replaceState(null,'',location.pathname+location.hash);}catch(e){}showTab('exercices');openEx('eclair');}
+function launchDefi(){if(!DEFI)return;try{history.replaceState(null,'',location.pathname+location.hash);}catch(e){}showTab('exercices');openEx(/^k[a-z0-9]{10}$/.test(DEFI.seed)?'carte':'eclair');}
 function stopRun(){if(cleanup){cleanup();cleanup=null;}$('#st-timer').hidden=true;$('#st-bar').hidden=true;}
 function openEx(key){
   stopRun();
@@ -7410,7 +7411,7 @@ function bougies(n){
 }
 /* ---------- Sur la carte : placer un lieu sur un fond Natural Earth (public/cartes.js, chargé à la demande) ---------- */
 const CARTE_ZONES={mix:['France et monde'],fr:['France'],monde:['Monde']};
-const GENRE_LIEU={ville:'Ville',site:'Lieu',bataille:'Bataille',ile:'Île',pays:'Pays de France',vallee:'Vallée',massif:'Massif'};
+const GENRE_LIEU={ville:'Ville',site:'Lieu',bataille:'Bataille',ile:'Île',pays:'Pays de France',empire:'Pays disparu',vallee:'Vallée',massif:'Massif'};
 let cartesP=null;
 const chargerCartes=()=>cartesP||(cartesP=window.NEO_CARTES?Promise.resolve():new Promise((ok,ko)=>{const sc=document.createElement('script');sc.src='cartes.js';sc.onload=ok;sc.onerror=()=>{cartesP=null;ko(new Error('cartes'));};document.head.append(sc);}));
 // distance à vol d'oiseau (haversine), en km
@@ -7421,10 +7422,19 @@ function lieuxFrais(carte,n){
   const idx=[...A.keys()].filter(i=>A[i].carte===carte&&!A[i].retire).sort(()=>Math.random()-.5)
     .sort((a,b)=>(sn[a]?1:0)-(sn[b]?1:0)||Math.abs(A[a].niv-L)-Math.abs(A[b].niv-L)||(sn[a]||0)-(sn[b]||0));
   const grp=g=>g==='bataille'||g==='ile'?'site':g, pris=[], genres=new Set();
+  // pendant une semaine à thème, jusqu'à deux lieux de la région passent devant
+  const th=carte==='fr'&&typeof semTh==='function'?semTh():''; if(th)idx.filter(i=>A[i].sem===th).slice(0,2).forEach(i=>{pris.push(i);genres.add(grp(A[i].genre));});
   for(const i of idx){if(pris.length>=n)break;if(!genres.has(grp(A[i].genre))){pris.push(i);genres.add(grp(A[i].genre));}}
   for(const i of idx){if(pris.length>=n)break;if(!pris.includes(i))pris.push(i);}
   pris.forEach(i=>{sn[i]=now;}); persist();
   return pris.sort(()=>Math.random()-.5).map(i=>A[i]);
+}
+// un défi « Sur la carte » tient dans la graine des défis de l'Éclair : k suivi des positions des cinq lieux dans B.lieux
+const graineDuDefi=items=>{const ix=items.map(l=>NB.lieux.indexOf(l));return ix.length===5&&ix.every(i=>i>=0&&i<1296)?'k'+ix.map(i=>i.toString(36).padStart(2,'0')).join(''):null;};
+function lieuxDuDefi(seed){
+  if(!/^k[a-z0-9]{10}$/.test(seed||''))return null;
+  const L=seed.slice(1).match(/../g).map(x=>NB.lieux[parseInt(x,36)]);
+  return L.every(l=>l&&!l.retire)?L:null;
 }
 const svgEl=(tag,attrs={})=>{const e=document.createElementNS('http://www.w3.org/2000/svg',tag);for(const[k,v] of Object.entries(attrs))if(v!=null)e.setAttribute(k,v);return e;};
 // la carte : zoom aux deux doigts, à la molette ou aux boutons ; un doigt fait glisser la carte zoomée ; un toucher pose l'épingle
@@ -8395,20 +8405,22 @@ fermi(arena){
 carte(arena){
   const Z=CARTE_ZONES, z0=Z[state.carteZone]?state.carteZone:'mix';
   const seg=el('div',{class:'seg',role:'group','aria-label':'Quelle carte'},...Object.entries(Z).map(([k,[t]])=>el('button',{type:'button','aria-pressed':String(k===z0),text:t,onclick:e=>{state.carteZone=k;persist();[...seg.children].forEach(b=>b.setAttribute('aria-pressed',String(b===e.currentTarget)));}})));
-  const L=lvl('carte');
-  intro(arena,L===1
-    ?"Cinq lieux à retrouver : villes, monuments, pays de France, vallées et massifs. Quatre points s'allument sur la carte : touche celui qui convient, puis valide."
-    :"Cinq lieux à placer : villes, monuments, pays de France, vallées et massifs. Touche la carte pour poser ton épingle, déplace-la du doigt, puis valide. Plus tu es près, plus tu marques, jusqu'à 100 points par lieu.",
-    el('div',{class:'carte-zone'},el('span',{class:'label',text:'Quelle carte ?'}),seg),go);
+  // un défi reçu rejoue les cinq lieux de l'ami, toujours à l'épingle libre pour que les scores se comparent
+  const D=DEFI&&lieuxDuDefi(DEFI.seed)?DEFI:null; if(D)DEFI=null;
+  const L=lvl('carte'), libre=!!D||L>1;
+  intro(arena,D?`${D.from} te défie sur la carte : ${D.score} points sur 500. Tu auras les mêmes cinq lieux, à placer librement. À toi de viser plus près.`
+    :L===1?"Cinq lieux à retrouver : villes, monuments, pays de France ou disparus, vallées et massifs. Quatre points s'allument sur la carte : touche celui qui convient, puis valide."
+    :"Cinq lieux à placer : villes, monuments, pays de France ou disparus, vallées et massifs. Touche la carte pour poser ton épingle, déplace-la du doigt, puis valide. Plus tu es près, plus tu marques, jusqu'à 100 points par lieu.",
+    D?null:el('div',{class:'carte-zone'},el('span',{class:'label',text:'Quelle carte ?'}),seg),go);
   function go(){
     const zone=Z[state.carteZone]?state.carteZone:'mix';
     const cartes=zone==='mix'?['fr','fr','fr','monde','monde']:Array(5).fill(zone);
     arena.replaceChildren(el('p',{class:'muted',style:'text-align:center',text:'Dépliage de la carte…'}));
     chargerCartes().then(()=>{
-      const items=['fr','monde'].flatMap(c=>{const n=cartes.filter(x=>x===c).length;return n?lieuxFrais(c,n):[];});
+      const items=D?lieuxDuDefi(D.seed):['fr','monde'].flatMap(c=>{const n=cartes.filter(x=>x===c).length;return n?lieuxFrais(c,n):[];});
       let qi=0; const scores=[], seen=[];
       const ask=()=>{
-        const it=items[qi], C=NEO_CARTES[it.carte], niv1=lvl('carte')===1;
+        const it=items[qi], niv1=!libre;
         const map=carteSVG(it.carte), fb=el('div',{class:'answer',hidden:''});
         const next=el('button',{class:'btn primary',text:qi<items.length-1?'Lieu suivant':'Voir le résultat',hidden:''});
         const ok=el('button',{class:'btn primary',text:'Valider',disabled:''});
@@ -8447,9 +8459,20 @@ carte(arena){
           map.node,hint,ok,fb,next);
       };
       const fin=()=>{
-        const avg=scores.reduce((a,b)=>a+b,0)/scores.length, m=recordMsg('carte',avg); logResult('carte',avg); const up=adaptLevel('carte',avg);
+        const tot=scores.reduce((a,b)=>a+b,0), avg=tot/scores.length, m=recordMsg('carte',avg); logResult('carte',avg); const up=D?'':adaptLevel('carte',avg);
         const recap=el('div',{class:'recap wide'},el('span',{class:'label',text:'Tes lieux du jour'}),el('ol',{class:'frise'},...seen.map(([l,s])=>el('li',{class:s>=60?null:'miss'},el('b',{text:s+' pts'}),document.createTextNode(l.nom)))));
-        showResult(arena,Math.round(avg),'points sur 100, en moyenne',m+' Pour fixer un lieu, accroche-le à un repère sûr : un fleuve, une côte, une grande ville.'+up,()=>RUN.carte(arena),recap);
+        const vs=D?(tot>D.score?`Tu bats ${D.from} : ${tot} points contre ${D.score}. `:tot===D.score?`Égalité parfaite avec ${D.from}. `:`${D.from} garde l’avantage : ${D.score} points contre ${tot}. `):'';
+        showResult(arena,Math.round(avg),'points sur 100, en moyenne',vs+m+' Pour fixer un lieu, accroche-le à un repère sûr : un fleuve, une côte, une grande ville.'+up,()=>RUN.carte(arena),recap);
+        // « Qui place le plus près ? » : les mêmes cinq lieux pour un ami, à l'épingle libre ; le score se compte sur 500
+        const seed=graineDuDefi(items), rows=arena.querySelectorAll(':scope > .row'), where=rows[rows.length-1]||arena;
+        const who=(state.settings.pseudo||'').trim()||'Un ami', url=location.origin+location.pathname.replace(/index\.html$/,'')+'?defi='+encodeURIComponent(seed+'.'+tot+'.'+who.slice(0,24));
+        if(seed){
+          where.append(el('button',{class:'btn',text:D?'Renvoyer le défi':'Qui place le plus près ?',onclick:()=>shareText(`${who} te défie sur Néophyte : ${tot} points sur 500 en plaçant cinq lieux sur la carte. Mêmes lieux pour toi. Tu vises plus près ?\n${url}`)}));
+          if(D&&D.fromId)eclairDefiDone(seed,tot,D).then(t=>{if(t)where.after(el('p',{class:'note',role:'status',text:t}));}).catch(()=>{});
+          else if(!D&&ref&&state.settings.circle&&circleData&&circleData.nudges&&circleData.rows.length>1){
+            const all=el('button',{class:'btn',text:'Défier mon cercle',onclick:async()=>{all.disabled=true;defiCible={to:null};const t=await eclairDefiDone(seed,tot,null);all.replaceWith(el('span',{class:'note',role:'status',text:t||'Envoi impossible pour l’instant.'}));}});
+            where.append(all);}
+        }
       };
       ask();
     }).catch(()=>arena.replaceChildren(el('p',{class:'fg2',text:'La carte n’a pas pu se charger. Vérifie ta connexion, puis réessaie.'}),el('button',{class:'btn',text:'Réessayer',onclick:()=>RUN.carte(arena)})));

@@ -25,6 +25,8 @@ self.addEventListener('notificationclick',e=>{
   const url=new URL((e.notification.data&&e.notification.data.url)||'./',self.registration.scope).href;
   e.waitUntil(self.clients.matchAll({type:'window',includeUncontrolled:true}).then(ws=>{
     const w=ws.find(c=>c.url.startsWith(self.registration.scope));
-    return w?w.focus():self.clients.openWindow(url);
+    // une notification du cercle mène à l'onglet Amis, même si Néophyte est déjà ouvert
+    if(!w)return self.clients.openWindow(url);
+    return w.focus().then(c=>new URL(url).hash&&c.navigate?c.navigate(url).catch(()=>c):c);
   }));
 });

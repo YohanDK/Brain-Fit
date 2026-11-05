@@ -22,6 +22,7 @@ type Config = { vapid: ClesVapid | null; jeton: string; actif: boolean };
 type Ligne = Abonnement & {
   user_id: string; heure: string; serie: boolean; fuseau: string;
   dernier_rappel: string | null; dernier_serie: string | null;
+  amis?: boolean; dernier_amis?: string | null; // cercle-vivant.sql
 };
 type Jours = Record<string, { done?: Record<string, unknown> }>;
 type Progres = { days?: Jours; freeze?: { used?: string[] } };
@@ -127,6 +128,8 @@ Deno.serve(async (req) => {
     console.error(error);
     return reply({ error: "error" }, 500);
   }
+  const amis = await tourneeAmis(admin, toutes as Ligne[], envoi);
+
   // qui doit recevoir quoi maintenant (au plus un rappel et une relance par jour)
   const dues: { l: Ligne; jour: string; type: "rappel" | "serie" }[] = [];
   for (const l of toutes as Ligne[]) {
@@ -135,7 +138,7 @@ Deno.serve(async (req) => {
     if (heure >= h && l.dernier_rappel !== jour) dues.push({ l, jour, type: "rappel" });
     else if (l.serie && h < RELANCE && heure >= RELANCE && l.dernier_serie !== jour) dues.push({ l, jour, type: "serie" });
   }
-  if (!dues.length) return reply({ ok: true, envoyes: 0 });
+  if (!dues.length) return reply({ ok: true, envoyes: 0, amis });
 
   // les progrès des personnes concernées, pour ne rien envoyer à qui a déjà fait sa séance
   const ids = [...new Set(dues.map((d) => d.l.user_id))];
@@ -153,5 +156,73 @@ Deno.serve(async (req) => {
     if (type === "serie" && serie < 2) return; // pas de série à sauver
     if (await envoi(l, message(type, serie))) envoyes++;
   }));
-  return reply({ ok: true, envoyes });
+  return reply({ ok: true, envoyes, amis });
 });
+
+// ───── « À toi de jouer » (cercle-vivant.sql) : un ami t'attend dans un duel, te défie, te pique ou te pose une question ─────
+// Une seule notification qui résume tout ce qui est arrivé depuis la dernière, entre 8 h et 21 h 30, heure de la personne.
+const CALME = ["08:00", "21:30"];
+async function tourneeAmis(
+  admin: SupabaseClient,
+  lignes: Ligne[],
+  envoi: (l: Ligne, texte: string) => Promise<boolean>,
+): Promise<number> {
+  const prets = lignes.filter((l) => l.amis !== undefined && l.amis && (() => {
+    const h = ici(l.fuseau).heure;
+    return h >= CALME[0] && h < CALME[1];
+  })());
+  if (!prets.length) return 0;
+  const ids = [...new Set(prets.map((l) => l.user_id))];
+  const depuis = new Date(Math.min(...prets.map((l) => Date.parse(l.dernier_amis ?? "") || Date.now()))).toISOString();
+  const maintenant = new Date().toISOString();
+  const [duels, gestes, questions] = await Promise.all([
+    admin.from("duels").select("code,a,b,tour,updated_at").in("tour", ids).eq("fini", false).gt("updated_at", depuis),
+    admin.from("circle_nudges").select("code,from_id,to_id,kind,created_at").in("to_id", ids).in("kind", ["defi", "pique"]).gt("created_at", depuis),
+    admin.from("circle_questions").select("code,from_id,to_id,created_at").gt("created_at", depuis),
+  ]);
+  if (duels.error || gestes.error || questions.error) {
+    console.error(duels.error ?? gestes.error ?? questions.error);
+    return 0;
+  }
+  // les questions posées à tout le cercle vont à chaque membre (sauf l'auteur)
+  const codes = [...new Set((questions.data ?? []).filter((q) => !q.to_id).map((q) => q.code as string))];
+  const membres = new Map<string, string[]>();
+  const pseudos = new Map<string, string>();
+  const tousCodes = [...new Set([...(duels.data ?? []), ...(gestes.data ?? []), ...(questions.data ?? [])].map((x) => x.code as string))];
+  if (tousCodes.length) {
+    const { data } = await admin.from("circle_members").select("code,user_id,pseudo").in("code", tousCodes);
+    for (const m of data ?? []) {
+      pseudos.set(m.code + ":" + m.user_id, m.pseudo);
+      if (codes.includes(m.code)) membres.set(m.code, [...(membres.get(m.code) ?? []), m.user_id]);
+    }
+  }
+  const nom = (code: string, id: string) => pseudos.get(code + ":" + id) ?? "Un ami";
+  let n = 0;
+  await Promise.all(prets.map(async (l) => {
+    const t0 = Date.parse(l.dernier_amis ?? maintenant);
+    const apres = (x: string) => Date.parse(x) > t0;
+    const moi = l.user_id;
+    const items: string[] = [];
+    for (const d of duels.data ?? []) {
+      if (d.tour === moi && apres(d.updated_at)) items.push(`${nom(d.code, d.a === moi ? d.b : d.a)} t'attend dans votre duel`);
+    }
+    for (const g of gestes.data ?? []) {
+      if (g.to_id === moi && apres(g.created_at)) {
+        items.push(g.kind === "defi" ? `${nom(g.code, g.from_id)} te défie à l'Éclair` : `${nom(g.code, g.from_id)} te lance une pique`);
+      }
+    }
+    for (const q of questions.data ?? []) {
+      if (!apres(q.created_at) || q.from_id === moi) continue;
+      if (q.to_id === moi || (!q.to_id && (membres.get(q.code) ?? []).includes(moi))) {
+        items.push(`${nom(q.code, q.from_id)} ${q.to_id ? "t'a écrit une question piège" : "pose une question au cercle"}`);
+      }
+    }
+    await admin.from("rappels").update({ dernier_amis: maintenant }).eq("endpoint", l.endpoint);
+    if (!items.length) return;
+    const uniques = [...new Set(items)];
+    const corps = uniques.length === 1 ? uniques[0] + "." : uniques.slice(0, 3).join(" ; ") + (uniques.length > 3 ? "…" : ".");
+    const texte = JSON.stringify({ title: "À toi de jouer", body: corps, url: SITE + "#amis", tag: "neophyte-amis" });
+    if (await envoi(l, texte)) n++;
+  }));
+  return n;
+}

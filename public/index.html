@@ -892,6 +892,34 @@ a{color:var(--accent);text-underline-offset:3px}
 .qar-who .stag.rk-stag{width:32px;height:32px}
 .qar-n{font-family:var(--f-display);color:var(--gold-deep);white-space:nowrap}
 .qar-sol{display:flex;flex-direction:column;gap:4px}
+.obj-bar{height:10px;border-radius:5px;background:var(--sunk);overflow:hidden}
+.obj-bar i{display:block;height:100%;background:linear-gradient(90deg,var(--accent),var(--gold));transition:width .6s ease-out}
+.obj-bar.full i{background:var(--gold)}
+.obj-who{list-style:none;margin:0;padding:0;display:flex;flex-wrap:wrap;gap:6px 14px}
+.obj-who li{display:flex;align-items:center;gap:6px;font-size:.9rem}
+.obj-who .stag.rk-stag{width:28px;height:28px}
+.obj-days{display:inline-flex;gap:2px}
+.obj-days i{width:7px;height:7px;border-radius:50%;background:var(--line)}
+.obj-days i.on{background:var(--gold)}
+.fil{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:6px}
+.fil-li{display:grid;grid-template-columns:36px 1fr;gap:2px 10px;align-items:center;padding:8px 10px;border-radius:var(--r);background:var(--sunk)}
+.fil-li .stag.rk-stag{width:36px;height:36px}
+.fil-li.me{background:var(--accent-soft)}
+.reacs{grid-column:2;display:flex;flex-wrap:wrap;gap:4px}
+.reac{font:inherit;font-size:.85rem;line-height:1;padding:4px 7px;border-radius:999px;border:1px solid var(--line);background:var(--surface);color:inherit;cursor:pointer}
+.reac[aria-pressed="true"]{border-color:var(--gold);background:var(--gold-soft)}
+.reac:disabled{cursor:default}
+.reac b{font-weight:600;margin-left:3px}
+.piques{grid-column:1/-1;display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:6px;width:100%;margin-top:4px}
+.piques button{text-align:left;white-space:normal;font-weight:500}
+.qm{display:flex;flex-direction:column;gap:10px}
+.qm-card{display:flex;flex-direction:column;gap:8px;padding:12px;border:1px solid var(--line);border-radius:var(--r);background:var(--surface)}
+.qm-card.k-new{border-color:var(--gold);box-shadow:inset 3px 0 0 var(--gold)}
+.qm-card .options{display:grid;gap:6px}
+.qm-form{display:flex;flex-direction:column;gap:8px}
+.qm-form textarea{min-height:70px}
+.qm-opt{display:flex;align-items:center;gap:8px}
+.qm-opt input[type=text]{flex:1;min-width:0}
 .tabs button.dot{position:relative}
 .tabs button.dot::after{content:"";position:absolute;top:6px;right:8px;width:8px;height:8px;border-radius:50%;background:var(--gold);box-shadow:0 0 0 2px var(--surface)}
 .sect-h{margin:14px 4px -4px}
@@ -1497,9 +1525,22 @@ var fin=function(){if(e.parentNode)e.remove();};e.addEventListener('click',fin);
       <div><h2>Duels</h2><p class="muted note">Trois manches de cinq questions contre un ami. Chacun choisit le terrain à son tour ; plus de bonnes réponses gagne, et à égalité, le plus rapide.</p></div>
       <ul class="duels" id="amis-duels-list"></ul>
     </div>
+    <div class="panel" id="amis-obj" hidden>
+      <div><h2>Ensemble cette semaine</h2><p class="muted note">Un objectif commun : les jours d'entraînement de chacun s'additionnent. Atteint avant dimanche soir, il vaut à chaque cerf du cercle un ruban.</p></div>
+      <div id="amis-obj-body" style="display:flex;flex-direction:column;gap:10px"></div>
+    </div>
+    <div class="panel" id="amis-fil" hidden>
+      <div class="row spread" style="align-items:baseline"><h2>Le fil du cercle</h2><label class="note" style="display:flex;gap:6px;align-items:center;cursor:pointer"><input type="checkbox" id="fil-part"> Partager mes exploits</label></div>
+      <p class="muted note">Les exploits de la semaine : niveaux, badges, records, séries, duels gagnés. Un geste suffit pour saluer.</p>
+      <ul class="fil" id="amis-fil-list"></ul>
+    </div>
     <div class="panel" id="amis-qar" hidden>
       <div><h2>Qui a raison ?</h2><p class="muted note">Un problème par jour pour le cercle. Rends ta copie, lis celles des autres sans les noms, vote pour la plus convaincante. Puis tout se dévoile.</p></div>
       <div id="amis-qar-body" class="qar"></div>
+    </div>
+    <div class="panel" id="amis-qm" hidden>
+      <div><h2>Questions piège</h2><p class="muted note">Écris une question de ta main pour piéger un ami, ou tout le cercle. Une seule réponse possible ; tu verras qui s'est fait prendre.</p></div>
+      <div id="amis-qm-body" class="qm"></div>
     </div>
     <div class="panel" id="circle-panel">
       <div><h2>Mon cercle</h2><p class="muted note">Entre proches, sous un pseudo. Seuls ton pseudo, ton cerf, tes XP, ta série et tes scores aux défis sont partagés, et seulement avec les membres de ton cercle.</p></div>
@@ -1993,6 +2034,7 @@ const EX={
   enigme:{name:'Énigme du jour',skill:'Défi commun',desc:"Cinq questions, les mêmes pour tout le monde aujourd'hui. Une seule tentative, puis partage ta grille.",unit:'% de bonnes réponses'},
   dimanche:{name:'Énigme du dimanche',skill:'Raisonnement',desc:"Une enquête par semaine, ouverte le dimanche : cinq indices révélés un à un. Écris ta déduction, et réponds avec le moins d'indices possible.",unit:'% des points'},
   qar:{name:'Qui a raison ?',skill:'Raisonnement & persuasion',desc:"Le problème du jour du cercle : ta copie, celles des autres sans les noms, un vote.",unit:'copie rendue',hidden:true},
+  qpiege:{name:'Question piège',skill:'Défi entre amis',desc:"Une question écrite par un ami du cercle pour te piéger.",unit:'question déjouée',hidden:true},
   duel:{name:'Duel',skill:'Défi entre amis',desc:"Trois manches de cinq questions contre un ami du cercle, chacun choisissant le terrain à son tour.",unit:'% de bonnes réponses',hidden:true},
   rattrapage:{name:'Rattrapage',skill:'Mémoire des erreurs',desc:"Tes erreurs récentes (orthographe, sophismes, dates, citations, ordres de grandeur, erreurs d'IA) reviennent. Réussis-les pour les rayer de ton carnet.",unit:'erreurs rattrapées'},
   eclair:{name:'Éclair',skill:'Vivacité',desc:"90 secondes de questions mêlées : orthographe, dates, sophismes, citations, calcul, ordres de grandeur. Bats ton record.",unit:'bonnes réponses'},
@@ -2982,6 +3024,8 @@ function logResult(ex,s,extra){
   // une égide (gel de série) gagnée tous les 7 jours de série (2 au maximum)
   const f=freezeState(), cur=streaks().cur, t=todayKey();
   if(cur>0&&cur%7===0&&!f.earned.includes(t)){f.earned.push(t);if(f.n<2){f.n++;toast(`<span>Série de ${cur} jours : tu gagnes une égide.<small>Comme le bouclier d'Athéna, elle protégera ta série si tu manques un jour.</small></span>`);}}
+  if(r.rec&&!EX[ex].hidden)filPost('record',r.s,ex);
+  if([7,30,50,100,200,365,500,1000].includes(cur))filPost('serie',cur,'s'+cur);
   save(); renderToday(); renderExGrid(); checkQuests();
 }
 
@@ -3060,23 +3104,25 @@ async function circlePush(force){
   // énigme du jour et meilleur Éclair de la semaine (defis.sql), cerf (cerf.sql), XP depuis le début et niveau (amis.sql)
   const k=todayKey(), en=state.enigme&&state.enigme.d===k?state.enigme.m.filter(Boolean).length:null, wk=row.week;
   const ecl=Math.max(0,...state.results.filter(r=>r.ex==='eclair'&&r.d>=wk).map(r=>r.s));
-  const defis={enig_day:en==null?null:k,enig:en,eclair_week:wk,eclair:ecl}, cerf={cerf:cerfShape()}, tot={xp_total:Math.min(1e7,gamiCtx.total||0),niveau:Math.min(99,gamiCtx.level||1)};
-  const key=JSON.stringify([row.code,row.week,row.xp,row.streak,row.pseudo,defis,cerf,tot]); if(key===circleSent&&!force)return;
-  // base pas encore à jour : on retire d'abord ce qu'ajoute amis.sql, puis le cerf, puis les défis
+  const defis={enig_day:en==null?null:k,enig:en,eclair_week:wk,eclair:ecl}, cerf={cerf:cerfShape()}, tot={xp_total:Math.min(1e7,gamiCtx.total||0),niveau:Math.min(99,gamiCtx.level||1)}, viv={jours:joursSemaine()};
+  const key=JSON.stringify([row.code,row.week,row.xp,row.streak,row.pseudo,defis,cerf,tot,viv]); if(key===circleSent&&!force)return;
+  // base pas encore à jour : on retire d'abord ce qu'ajoute cercle-vivant.sql, puis amis.sql, puis le cerf, puis les défis
   let error;
-  for(const r of [{...row,...defis,...cerf,...tot},{...row,...defis,...cerf},{...row,...defis},row]){({error}=await sbc().from('circle_members').upsert(r));if(!colErr(error))break;}
+  for(const r of [{...row,...defis,...cerf,...tot,...viv},{...row,...defis,...cerf,...tot},{...row,...defis,...cerf},{...row,...defis},row]){({error}=await sbc().from('circle_members').upsert(r));if(!colErr(error))break;}
   if(!error)circleSent=key; return error;
 }
+const NUDGE_COLS='id,from_id,to_id,kind,seed,score,day,created_at';
 async function circleLoad(){
   const c=state.settings.circle; if(!c||!ref){circleData=null;return;}
-  const base='user_id,pseudo,week,xp,streak', cols=[base+',enig_day,enig,eclair_week,eclair,cerf,xp_total,niveau',base+',enig_day,enig,eclair_week,eclair,cerf',base+',enig_day,enig,eclair_week,eclair',base];
+  const base='user_id,pseudo,week,xp,streak', cols=[base+',enig_day,enig,eclair_week,eclair,cerf,xp_total,niveau,jours',base+',enig_day,enig,eclair_week,eclair,cerf,xp_total,niveau',base+',enig_day,enig,eclair_week,eclair,cerf',base+',enig_day,enig,eclair_week,eclair',base];
   const since=new Date(Date.now()-14*864e5).toISOString();
   let [m,ci,nu]=await Promise.all([sbc().from('circle_members').select(cols[0]).eq('code',c),sbc().from('circles').select('name').eq('code',c).maybeSingle(),
-    sbc().from('circle_nudges').select('id,from_id,to_id,kind,seed,score,day,created_at').eq('code',c).gte('created_at',since).order('created_at',{ascending:false}).limit(150)]);
+    sbc().from('circle_nudges').select(NUDGE_COLS+',pique').eq('code',c).gte('created_at',since).order('created_at',{ascending:false}).limit(150)]);
+  const piques=!nu.error; if(nu.error&&colErr(nu.error))nu=await sbc().from('circle_nudges').select(NUDGE_COLS).eq('code',c).gte('created_at',since).order('created_at',{ascending:false}).limit(150);
   for(let i=1;m.error&&i<cols.length;i++)m=await sbc().from('circle_members').select(cols[i]).eq('code',c);
   if(m.error)return; const wk=weekStart(todayKey()), me=await myUserId();
   const rows=(m.data||[]).map(r=>({...r,xp:String(r.week)===wk?r.xp:0,me:r.user_id===me})).sort((a,b)=>b.xp-a.xp||b.streak-a.streak);
-  circleData={name:ci.data?ci.data.name:'',me,rows,total:rows.some(r=>'xp_total' in r),nudges:nu.error?null:(nu.data||[])};
+  circleData={name:ci.data?ci.data.name:'',me,rows,total:rows.some(r=>'xp_total' in r),nudges:nu.error?null:(nu.data||[]),piques};
 }
 // le cerf d'un ami, tel qu'il l'a habillé ; une donnée venue d'ailleurs est filtrée avant d'être dessinée
 function friendStag(c,mood){
@@ -3099,14 +3145,14 @@ function amisInbox(){
   return circleData.nudges.filter(n=>n.from_id!==me&&(n.to_id===me||n.to_id==null)&&n.created_at>=lim&&!vu.includes(n.id));
 }
 // pastille sur l'onglet Amis quand un geste attend
-function amisBadge(){const b=$('.tabs [data-tab="amis"]'); if(!b)return; const n=amisInbox().length+duelsMine().length; b.classList.toggle('dot',n>0); b.setAttribute('aria-label',n?`Amis, ${n} nouveauté${n>1?'s':''}`:'Amis');}
-function amisPeek(){if(!ref||!state.settings.circle||Date.now()-amisPeekAt<3e5)return;amisPeekAt=Date.now();circleLoad().then(duelsLoad).then(amisBadge).catch(()=>{});}
+function amisBadge(){const b=$('.tabs [data-tab="amis"]'); if(!b)return; const n=amisInbox().length+duelsMine().length+qmPending().length; b.classList.toggle('dot',n>0); b.setAttribute('aria-label',n?`Amis, ${n} nouveauté${n>1?'s':''}`:'Amis');}
+function amisPeek(){if(!ref||!state.settings.circle||Date.now()-amisPeekAt<3e5)return;amisPeekAt=Date.now();circleLoad().then(duelsLoad).then(vivLoad).then(amisBadge).catch(()=>{});}
 const sentToday=(to,kind)=>!!(circleData&&circleData.nudges&&circleData.nudges.some(n=>n.from_id===circleData.me&&n.to_id===to&&n.kind===kind&&String(n.day)===todayUTC()));
 const todayUTC=()=>new Date().toISOString().slice(0,10);
 // un geste vers un ami (ou tout le cercle si to est vide)
 async function nudge(to,kind,extra){
   const c=state.settings.circle; if(!c||!ref)return 'off';
-  const {data,error}=await sbc().from('circle_nudges').insert({code:c,to_id:to||null,kind,...(extra||{})}).select('id,from_id,to_id,kind,seed,score,day,created_at').single();
+  const {data,error}=await sbc().from('circle_nudges').insert({code:c,to_id:to||null,kind,...(extra||{})}).select(NUDGE_COLS+(kind==='pique'?',pique':'')).single();
   if(error)return error.code==='23505'?'twice':'err';
   if(circleData&&circleData.nudges)circleData.nudges.unshift(data);
   return 'ok';
@@ -3139,21 +3185,23 @@ function renderInbox(){
   $('#amis-inbox-n').textContent=items.length>1?items.length+' nouveautés':'';
   list.replaceChildren(...items.slice(0,8).map(n=>{
     const r=circleData.rows.find(x=>x.user_id===n.from_id), who=pseudoOf(n.from_id), all=n.to_id==null;
-    const txt=n.kind==='bravo'?`${who} te dit bravo pour ta semaine.`:n.kind==='courage'?`${who} t’envoie du courage. Une séance, et c’est reparti.`
+    const txt=n.kind==='pique'?`${who} te lance : « ${PIQUES[n.pique]||PIQUES[0]} »`:n.kind==='bravo'?`${who} te dit bravo pour ta semaine.`:n.kind==='courage'?`${who} t’envoie du courage. Une séance, et c’est reparti.`
       :`${who} ${all?'défie le cercle':'te défie'} à l’Éclair : ${n.score} point${n.score>1?'s':''} en 90 secondes.`;
     const li=el('li',{class:'nudge k-'+n.kind});
     const close=()=>{amisSeen(n.id);li.remove();renderInbox();};
     li.append(el('span',{class:'stag rk-stag','aria-hidden':'true',html:r?rowStag(r,n.kind==='defi'?'idle':'proud'):stagSVG(1,'idle')}),
       el('span',{class:'nudge-t'},el('span',{text:txt}),el('small',{class:'muted',text:fd(new Date(n.created_at),{weekday:'long',hour:'2-digit',minute:'2-digit'})})),
       el('span',{class:'row nudge-a'},n.kind==='defi'?el('button',{class:'btn primary mini',text:'Relever',onclick:()=>relever(n)}):null,
-        el('button',{class:'btn ghost mini',text:n.kind==='defi'?'Plus tard':'Merci',onclick:close})));
+        n.kind==='pique'&&r?el('button',{class:'btn primary mini',text:'Riposter',onclick:e=>{amisSeen(n.id);piqueBox(r,e.currentTarget);}}):null,
+        n.kind==='pique'&&r&&duelsOk&&!duelWith(r.user_id)?el('button',{class:'btn mini',text:'Duel',onclick:()=>{amisSeen(n.id);lancerDuel(r.user_id,r.pseudo);}}):null,
+        el('button',{class:'btn ghost mini',text:n.kind==='defi'?'Plus tard':n.kind==='pique'?'Ignorer':'Merci',onclick:close})));
     return li;}));
 }
 // la fiche d'un ami, dépliée sous son nom
 function amiCard(r){
   const L=r.niveau||(r.cerf&&Number.isInteger(r.cerf.l)?r.cerf.l:null), en=enigOf(r), ec=eclairOf(r);
   const facts=[L?`Niveau ${roman(L)} · ${levelName(L)}`:null,`Série de ${r.streak} jour${r.streak>1?'s':''}`,`${fmt(r.xp)} XP cette semaine`+(r.xp_total?` · ${fmt(r.xp_total)} depuis le début`:''),
-    `Énigme du jour : ${en==null?'pas encore faite':en+'/5'}`,`Éclair de la semaine : ${ec?ec+' points':'pas encore joué'}`].filter(Boolean);
+    `Énigme du jour : ${en==null?'pas encore faite':en+'/5'}`,`Éclair de la semaine : ${ec?ec+' points':'pas encore joué'}`,r.me?null:rivalite(r.user_id,r.pseudo)].filter(Boolean);
   const card=el('div',{class:'ami-card'},el('span',{class:'stag big','aria-hidden':'true',html:rowStag(r,r.me?'proud':'idle')}),
     el('div',{class:'ami-facts'},el('b',{text:r.pseudo+(r.me?' (toi)':'')}),...facts.map(f=>el('span',{class:'fg2',text:f}))));
   const acts=el('div',{class:'row ami-acts'});
@@ -3161,7 +3209,9 @@ function amiCard(r){
   else if(circleData.nudges){const dw=duelWith(r.user_id);
     acts.append(...[duelsOk?el('button',{class:'btn primary',text:dw?(dw.tour===circleData.me?'À toi de jouer':'Voir notre duel'):'Duel en 3 manches',onclick:()=>lancerDuel(r.user_id,r.pseudo)}):null,
     sentToday(r.user_id,'defi')?el('button',{class:'btn ghost',disabled:'',text:'Défi lancé aujourd’hui'}):el('button',{class:'btn'+(duelsOk?'':' primary'),text:'Défier à l’Éclair',onclick:()=>defierEclair(r.user_id,r.pseudo)}),
-    nudgeBtn(r,'bravo','Bravo'),nudgeBtn(r,'courage','Courage')].filter(Boolean));}
+    nudgeBtn(r,'bravo','Bravo'),nudgeBtn(r,'courage','Courage'),
+    circleData.piques?el('button',{class:'btn',text:'Une pique',onclick:e=>piqueBox(r,e.currentTarget)}):null,
+    qmOk?el('button',{class:'btn',text:'Question piège',onclick:()=>{qmOpen=r.user_id;renderQm();$('#amis-qm').scrollIntoView({block:'start',behavior:'smooth'});}}):null].filter(Boolean));}
   else acts.append(el('span',{class:'note',text:'Les encouragements et défis entre amis arrivent bientôt.'}));
   card.append(acts); return card;
 }
@@ -3444,7 +3494,7 @@ function renderQar(){
   const me=circleData.me, P=qarProblem(qarData.day), mine=qarData.copies.find(r=>r.user_id===me);
   const myVote=qarData.votes.find(v=>v.voter===me), hier=qarHier();
   const prob=el('div',{class:'qar-q'},el('span',{class:'label',text:'Le problème du jour'}),el('p',{class:'prompt',text:P.q}));
-  const foot=hier?el('p',{class:'note',text:hier}):null;
+  const foot=hier?el('p',{class:'note',text:hier}):'';
   // 1. écrire sa copie, avant de voir les autres
   if(!mine){
     const ta=el('textarea',{'aria-label':'Ta réponse et ton raisonnement',maxlength:'800',placeholder:'Ta réponse, puis pourquoi. Convaincs tes amis : ils liront ta copie sans ton nom.'});
@@ -3493,11 +3543,193 @@ function renderQar(){
     el('div',{class:'answer qar-sol'},el('span',{class:'label',text:'La solution : '+P.r}),el('span',{class:'fg2',text:P.expl}),
       el('span',{class:'note',text:'La copie la plus convaincante n’est pas toujours la plus juste : relis-les à la lumière de la solution.'})),foot);
 }
+/* ---------- un cercle plus vivant (cercle-vivant.sql) : l'objectif commun, le fil et ses réactions, les piques, les questions piège ---------- */
+let vivOk=null, filData=null, reacData=null, qmData=null, qmAns=null, qmMine=null, qmOk=null, qmOpen=null;
+const REACS=[['bravo','👏','Bravo'],['cerf','🦌','Brame'],['feu','🔥','En feu'],['chapeau','🎩','Chapeau'],['rire','😄','Ça me fait rire']];
+// les piques : une liste fermée, pour taquiner sans jamais blesser (et sans texte libre à modérer)
+const PIQUES=['Tu trembles ?','Je t’attends sur le pré, à l’aube.','Mon cerf brame déjà victoire.','À ce rythme, ton cerf va perdre ses bois.','Alea jacta est : à toi de jouer.',
+  'Veni, vidi… il ne manque plus que toi pour vici.','Les belles choses sont difficiles. Me battre aussi.','Ma série est plus longue que la tienne. Je dis ça, je dis rien.','Une revanche ? Si tu l’oses.','Même Socrate aurait répondu plus vite.'];
+// les jours d'entraînement de la semaine en cours, pour l'objectif commun
+function joursSemaine(){const wk=weekStart(todayKey()), t=todayKey();let n=0;for(let i=0;i<7;i++){const k=addDays(wk,i);if(k>t)break;const d=state.days[k];if(d&&Object.values(d.done||{}).some(Boolean))n++;}return n;}
+// l'objectif : quatre jours par membre (dix membres comptés au plus), et jamais moins de huit
+const objCible=n=>Math.max(8,4*Math.min(10,n));
+function objState(){
+  if(!circleData||!circleData.rows.some(r=>'jours' in r))return null;
+  const wk=weekStart(todayKey());
+  const rows=circleData.rows.map(r=>({r,j:r.me?joursSemaine():String(r.week)===wk?Math.min(7,r.jours||0):0}));
+  const cible=objCible(rows.length), tot=rows.reduce((s,x)=>s+x.j,0);
+  return{wk,rows,cible,tot,ok:tot>=cible};
+}
+const cercleObj=()=>state.cercleObj||(state.cercleObj=[]);
+function renderObj(){
+  const box=$('#amis-obj'), body=$('#amis-obj-body'), o=objState();
+  box.hidden=!o||circleData.rows.length<2; if(box.hidden)return;
+  // l'objectif atteint se garde : le ruban est acquis même si quelqu'un quitte le cercle ensuite
+  if(o.ok&&!cercleObj().includes(o.wk)){cercleObj().push(o.wk);save();
+    toast(`<span>Objectif commun atteint ! <small>Le cercle a cumulé ${o.tot} jours d’entraînement : un ruban pour chaque cerf.</small></span>`,'big');confetti();filPost('objectif',o.tot,o.wk);}
+  const pct=Math.min(100,Math.round(o.tot/o.cible*100)), reste=Math.max(0,o.cible-o.tot);
+  const dots=j=>el('span',{class:'obj-days','aria-label':`${j} jour${j>1?'s':''}`},...[0,1,2,3,4,5,6].map(i=>el('i',{class:i<j?'on':null})));
+  const fin=addDays(o.wk,6)===todayKey();
+  body.replaceChildren(
+    el('div',{class:'row spread',style:'align-items:baseline'},el('b',{text:`${o.tot} jours sur ${o.cible}`}),el('span',{class:'note',text:o.ok?'Objectif atteint ✓':fin?'Dernier jour !':`encore ${reste} jour${reste>1?'s':''}`})),
+    el('div',{class:'obj-bar'+(o.ok?' full':''),role:'progressbar','aria-valuemin':'0','aria-valuemax':String(o.cible),'aria-valuenow':String(o.tot)},el('i',{style:`width:${pct}%`})),
+    el('ul',{class:'obj-who'},...[...o.rows].sort((a,b)=>b.j-a.j).map(x=>el('li',{},el('span',{class:'stag rk-stag','aria-hidden':'true',html:rowStag(x.r,x.j?'proud':'idle')}),el('span',{text:x.r.me?'Toi':x.r.pseudo}),dots(x.j)))),
+    o.ok?stagTalk('proud','Bravo au cercle : le ruban est gagné pour cette semaine. Chaque semaine réussie le rend plus beau.')
+      :joursSemaine()===0?stagTalk('idle','Ton cercle compte sur toi : une séance aujourd’hui, et c’est un jour de plus pour tous.')
+      :el('p',{class:'note',text:`${cercleObj().length?`Ton cerf a déjà ${cercleObj().length} semaine${cercleObj().length>1?'s':''} de ruban. `:''}Un jour compte dès qu’on fait un exercice.`}));
+}
+// ── le fil ──
+async function vivLoad(){
+  const c=state.settings.circle; if(!ref||!c){filData=null;qmData=null;return;}
+  const since=new Date(Date.now()-7*864e5).toISOString();
+  const [e,q]=await Promise.all([sbc().from('circle_events').select('id,user_id,kind,n,ref,created_at').eq('code',c).gte('created_at',since).order('created_at',{ascending:false}).limit(40),
+    sbc().from('circle_questions').select('id,from_id,to_id,question,opts,created_at').eq('code',c).gte('created_at',new Date(Date.now()-14*864e5).toISOString()).order('created_at',{ascending:false}).limit(30)]);
+  vivOk=!e.error; filData=e.error?null:(e.data||[]); qmOk=!q.error; qmData=q.error?null:(q.data||[]);
+  const ids=(filData||[]).map(x=>x.id), qids=(qmData||[]).map(x=>x.id);
+  const [r,a,m]=await Promise.all([ids.length?sbc().from('circle_reactions').select('event_id,user_id,emoji').in('event_id',ids):{data:[]},
+    qids.length?sbc().from('circle_answers').select('question_id,user_id,choix,juste').in('question_id',qids):{data:[]},
+    qmData&&qmData.some(x=>x.from_id===circleData.me)?sbc().rpc('mes_questions'):{data:[]}]);
+  reacData=r.error?[]:(r.data||[]); qmAns=a.error?[]:(a.data||[]);
+  qmMine={}; for(const x of (m&&!m.error&&m.data)||[])qmMine[x.id]=x;
+}
+// publier un exploit dans le fil (rien si l'on a coupé le partage ou si la base n'est pas prête)
+async function filPost(kind,n,r){
+  if(!ref||!state.settings.circle||state.settings.filOff||vivOk===false)return;
+  try{const {data,error}=await sbc().from('circle_events').insert({code:state.settings.circle,kind,n:n==null?null:Math.round(n),ref:r==null?null:String(r).slice(0,40)}).select('id,user_id,kind,n,ref,created_at').single();
+    if(!error&&filData)filData.unshift(data);}catch(e){}
+}
+function filTxt(e){
+  const who=e.user_id===circleData.me?'Tu':pseudoOf(e.user_id), me=e.user_id===circleData.me;
+  switch(e.kind){
+    case'niveau':return `${who} ${me?'passes':'passe'} au niveau ${roman(e.n)} · ${levelName(e.n)}`;
+    case'badge':{const b=badgeDefs(gamiCtx).find(x=>x[0]===e.ref);return b?`${who} ${me?'gagnes':'gagne'} le badge « ${b[1]} »`:null;}
+    case'record':return EX[e.ref]?`${who} ${me?'bats ton':'bat son'} record en ${EX[e.ref].name.toLowerCase()} : ${fmt(e.n)}`:null;
+    case'serie':return `${who} ${me?'tiens':'tient'} une série de ${e.n} jours`;
+    case'duel':return `${who} ${me?'remportes ton':'remporte son'} duel contre ${e.ref===circleData.me?'toi':pseudoOf(e.ref)}`;
+    case'objectif':return 'Le cercle atteint son objectif commun : un ruban pour chaque cerf';
+    case'sansfaute':return EX[e.ref]?`${who} ${me?'fais':'fait'} un sans-faute en ${EX[e.ref].name.toLowerCase()}`:null;
+    case'plume':return `${who} ${me?'remportes':'remporte'} la plume de « Qui a raison ? »`;
+  }
+  return null;
+}
+async function react(e,k,btn){
+  const me=circleData.me, cur=reacData.find(x=>x.event_id===e.id&&x.user_id===me);
+  btn.disabled=true; let error;
+  if(cur&&cur.emoji===k)({error}=await sbc().from('circle_reactions').delete().eq('event_id',e.id).eq('user_id',me));
+  else ({error}=await sbc().from('circle_reactions').upsert({event_id:e.id,user_id:me,emoji:k}));
+  btn.disabled=false;
+  if(error){toast('<span>Impossible pour l’instant.</span>');return;}
+  reacData=reacData.filter(x=>!(x.event_id===e.id&&x.user_id===me)); if(!(cur&&cur.emoji===k)){reacData.push({event_id:e.id,user_id:me,emoji:k});son('juste');}
+  renderFil();
+}
+function renderFil(){
+  const box=$('#amis-fil'), list=$('#amis-fil-list');
+  box.hidden=!circleData||!vivOk||circleData.rows.length<2; if(box.hidden)return;
+  $('#fil-part').checked=!state.settings.filOff;
+  const items=(filData||[]).map(e=>({e,t:filTxt(e)})).filter(x=>x.t).slice(0,15);
+  if(!items.length){list.replaceChildren(el('li',{class:'note',text:'Rien encore cette semaine. Le premier record, le premier badge, la première victoire en duel s’afficheront ici.'}));return;}
+  const me=circleData.me;
+  list.replaceChildren(...items.map(({e,t})=>{
+    const r=circleData.rows.find(x=>x.user_id===e.user_id), mine=e.user_id===me, rs=reacData.filter(x=>x.event_id===e.id), my=rs.find(x=>x.user_id===me);
+    const reacs=el('span',{class:'reacs'},...REACS.map(([k,emo,lab])=>{const n=rs.filter(x=>x.emoji===k).length;
+      if(mine&&!n)return null;
+      const b=el('button',{class:'reac','aria-pressed':String(!!my&&my.emoji===k),'aria-label':`${lab}${n?', '+n:''}`,title:rs.filter(x=>x.emoji===k).map(x=>x.user_id===me?'toi':pseudoOf(x.user_id)).join(', ')||lab,disabled:mine?'':null},document.createTextNode(emo),n?el('b',{text:String(n)}):null);
+      if(!mine)b.addEventListener('click',()=>react(e,k,b)); return b;}));
+    return el('li',{class:'fil-li'+(mine?' me':'')},el('span',{class:'stag rk-stag','aria-hidden':'true',html:r?rowStag(r,'proud'):stagSVG(1,'idle')}),
+      el('span',{class:'nudge-t'},el('span',{text:t+'.'}),el('small',{class:'muted',text:fd(new Date(e.created_at),{weekday:'long',hour:'2-digit',minute:'2-digit'})})),
+      mine&&!rs.length?null:reacs);
+  }));
+}
+$('#fil-part').addEventListener('change',e=>{state.settings.filOff=!e.target.checked;save();toast(`<span>${e.target.checked?'Tes exploits apparaîtront dans le fil du cercle.':'Tes exploits ne seront plus partagés dans le fil.'}</span>`);});
+// ── la rivalité : le bilan des duels contre chaque ami, gardé avec ses progrès ──
+function duelsBilanMaj(){
+  if(!duelsData||!circleData)return;
+  const me=circleData.me, B=state.duelBilan||(state.duelBilan={}), vus=state.duelVus||(state.duelVus=[]); let ch=false;
+  for(const d of duelsData){if(!d.fini||vus.includes(d.id))continue;
+    const o=duelOther(d,me), w=duelWinner(d,me), b=B[o]||(B[o]={v:0,d:0,e:0});
+    if(w>0)b.v++;else if(w<0)b.d++;else b.e++;
+    vus.push(d.id); ch=true;
+    if(w>0&&!d.abandon&&Date.now()-Date.parse(d.updated_at)<2*864e5)filPost('duel',duelTally(d,me).mi,o);}
+  if(vus.length>200)vus.splice(0,vus.length-200);
+  if(ch)save();
+}
+function rivalite(o,pseudo){
+  const b=(state.duelBilan||{})[o]; if(!b||!(b.v+b.d+b.e))return null;
+  const t=`${b.v} victoire${b.v>1?'s':''}, ${b.d} défaite${b.d>1?'s':''}`+(b.e?`, ${b.e} nul${b.e>1?'s':''}`:'');
+  return `Vos duels : ${t}`+(b.v>b.d?' · tu mènes':b.v<b.d?` · ${pseudo} mène`:' · à égalité');
+}
+// ── les piques ──
+function piqueBox(r,anchor){
+  const old=anchor.parentElement.querySelector('.piques'); if(old){old.remove();return;}
+  const done=sentToday(r.user_id,'pique');
+  const box=el('div',{class:'piques'},done?el('p',{class:'note',text:`Tu as déjà piqué ${r.pseudo} aujourd’hui. Demain, une autre !`}):null,
+    ...(done?[]:PIQUES.map((t,i)=>el('button',{class:'btn mini',text:'« '+t+' »',onclick:async ev=>{
+      ev.currentTarget.disabled=true; const res=await nudge(r.user_id,'pique',{pique:i});
+      if(res==='ok'||res==='twice'){box.remove();toast(`<span>Pique envoyée à ${esc(r.pseudo)}.</span>`);son('juste');}
+      else{ev.currentTarget.disabled=false;toast('<span>Envoi impossible pour l’instant.</span>');}}}))));
+  anchor.parentElement.after(box);
+}
+// ── les questions piège ──
+const qmToMe=q=>q.from_id!==circleData.me&&(q.to_id===circleData.me||q.to_id==null);
+const qmMyAns=q=>(qmAns||[]).find(a=>a.question_id===q.id&&a.user_id===circleData.me);
+const qmPending=()=>qmData&&circleData?qmData.filter(q=>qmToMe(q)&&!qmMyAns(q)):[];
+function qmForm(to){
+  const msg=el('p',{class:'note',role:'status'});
+  const q=el('textarea',{maxlength:'300','aria-label':'Ta question',placeholder:'Ta question. Par exemple : « Qui a écrit Les Essais ? » ou « Combien de pattes a une araignée ? »'});
+  const opts=[0,1,2].map(i=>el('input',{type:'text',maxlength:'120','aria-label':`Réponse ${i+1}`,placeholder:i===0?'La bonne réponse':i===1?'Une réponse fausse':'Une autre réponse fausse (facultative)'}));
+  const ex=el('input',{type:'text',maxlength:'300','aria-label':'Explication',placeholder:'Une explication, révélée après la réponse (facultative)'});
+  const sel=el('select',{'aria-label':'À qui'},el('option',{value:'',text:'Tout le cercle'}),...circleData.rows.filter(r=>!r.me).map(r=>el('option',{value:r.user_id,text:r.pseudo})));
+  if(to)sel.value=to;
+  const go=el('button',{class:'btn primary',text:'Envoyer la question',onclick:async()=>{
+    const txt=q.value.trim(), os=opts.map(o=>o.value.trim()).filter(Boolean);
+    if(txt.length<8){msg.textContent='Écris une vraie question (8 caractères au moins).';q.focus();return;}
+    if(!opts[0].value.trim()||os.length<2){msg.textContent='Il faut la bonne réponse et au moins une réponse fausse.';return;}
+    if(new Set(os.map(x=>x.toLowerCase())).size<os.length){msg.textContent='Deux réponses sont identiques.';return;}
+    go.disabled=true; msg.textContent='Envoi…';
+    // les réponses sont mélangées une fois pour toutes ; la bonne n'est jamais lisible par les autres
+    const order=rshuf(Math.random,os.map((t,i)=>({t,i}))), bonne=order.findIndex(x=>x.i===0);
+    const {error}=await sbc().from('circle_questions').insert({code:state.settings.circle,to_id:sel.value||null,question:txt,opts:order.map(x=>x.t),bonne,expl:ex.value.trim()||null});
+    if(error){go.disabled=false;msg.textContent=/row-level/.test(error.message||'')?'Trois questions par jour au plus : reviens demain.':'L’envoi n’a pas abouti. Réessaie dans un instant.';return;}
+    qmOpen=null; toast(`<span>Question envoyée${sel.value?' à '+esc(pseudoOf(sel.value)):' au cercle'}. Tu verras qui s’est fait piéger.</span>`);
+    await vivLoad(); renderQm();}});
+  return el('div',{class:'qm-form'},q,...opts,ex,el('div',{class:'row'},el('span',{class:'note',text:'Pour'}),sel,go,el('button',{class:'btn ghost',text:'Annuler',onclick:()=>{qmOpen=null;renderQm();}})),msg);
+}
+function qmCard(q){
+  const me=circleData.me, mine=q.from_id===me, a=qmMyAns(q), ans=(qmAns||[]).filter(x=>x.question_id===q.id&&x.user_id!==q.from_id);
+  const who=mine?'Ta question':`${pseudoOf(q.from_id)} ${q.to_id?'te pose':'pose au cercle'}`;
+  const card=el('div',{class:'qm-card'+(!mine&&!a?' k-new':'')},el('div',{class:'row spread',style:'align-items:baseline'},el('span',{class:'label',text:who}),el('small',{class:'muted',text:fd(new Date(q.created_at),{weekday:'long',day:'numeric',month:'short'})})),
+    el('p',{class:'prompt',style:'text-align:left;margin:0',text:q.question}));
+  const opts=Array.isArray(q.opts)?q.opts.map(String):[];
+  if(mine){const M=qmMine[q.id], pris=ans.filter(x=>!x.juste);
+    card.append(el('p',{class:'fg2',text:M?'Bonne réponse : '+opts[M.bonne]:''}),
+      el('p',{class:'note',text:ans.length?`${ans.length} réponse${ans.length>1?'s':''} · ${pris.length?`piégé${pris.length>1?'s':''} : ${pris.map(x=>pseudoOf(x.user_id)).join(', ')}`:'personne ne s’est fait piéger'}`:'Personne n’a encore répondu'+(q.to_id?` (pour ${pseudoOf(q.to_id)})`:'')+'.'}));
+    return card;}
+  if(a){card.append(el('p',{class:'fg2',text:`Tu as répondu « ${opts[a.choix]||'?'} » : ${a.juste?'juste !':'piégé.'}`}));return card;}
+  const box=el('div',{class:'options'},...opts.map((t,i)=>el('button',{class:'opt',text:t,onclick:async()=>{
+    [...box.children].forEach(b=>b.disabled=true);
+    const {data,error}=await sbc().rpc('question_repondre',{p_id:q.id,p_choix:i});
+    if(error){[...box.children].forEach(b=>b.disabled=false);toast('<span>Réponse impossible pour l’instant.</span>');return;}
+    const r=Array.isArray(data)?data[0]:data; box.children[r.bonne]&&box.children[r.bonne].classList.add('right'); if(!r.juste)box.children[i].classList.add('wrong');
+    son(r.juste?'juste':'faux'); qmAns.push({question_id:q.id,user_id:me,choix:i,juste:r.juste});
+    card.append(el('div',{class:'answer'},el('span',{class:'label',text:r.juste?'Pas piégé !':`${pseudoOf(q.from_id)} t’a eu`}),r.expl?el('span',{class:'fg2',text:r.expl}):null));
+    if(r.juste)logResult('qpiege',100); amisBadge();}})));
+  card.append(box); return card;
+}
+function renderQm(){
+  const box=$('#amis-qm'), body=$('#amis-qm-body');
+  box.hidden=!circleData||!qmOk||circleData.rows.length<2; if(box.hidden)return;
+  const L=(qmData||[]).filter(q=>q.from_id===circleData.me||qmToMe(q));
+  const pend=L.filter(q=>q.from_id!==circleData.me&&!qmMyAns(q)), rest=L.filter(q=>!pend.includes(q)).slice(0,4);
+  body.replaceChildren(
+    qmOpen!=null?qmForm(qmOpen||null):el('div',{class:'row'},el('button',{class:'btn primary',text:'Écrire une question piège',onclick:()=>{qmOpen='';renderQm();}})),
+    ...pend.map(qmCard),
+    rest.length?el('details',{class:'fold',open:pend.length?null:''},el('summary',{},el('span',{class:'note',text:'Questions récentes'})),...rest.map(qmCard)):'');
+}
 // 8 caractères (cercle-codes.sql) ; 6 si la base n'accepte pas encore les codes longs
 const newCode=(n=8)=>{const A='ABCDEFGHJKLMNPQRSTUVWXYZ23456789';return Array.from(crypto.getRandomValues(new Uint8Array(n)),b=>A[b%A.length]).join('');};
 async function renderCircle(quick){
   const body=$('#circle-body'), c=state.settings.circle;
-  if(!ref||!c){$('#amis-inbox').hidden=true;$('#amis-defis').hidden=true;$('#amis-duels').hidden=true;$('#amis-qar').hidden=true;}
+  if(!ref||!c){$('#amis-inbox').hidden=true;$('#amis-defis').hidden=true;$('#amis-duels').hidden=true;$('#amis-qar').hidden=true;$('#amis-obj').hidden=true;$('#amis-fil').hidden=true;$('#amis-qm').hidden=true;}
   if(!ref){body.replaceChildren(stagTalk('idle','Connecte-toi pour créer un cercle ou en rejoindre un. À plusieurs, on tient mieux.'));return;}
   if(!c){
     const msg=el('p',{class:'note',role:'status'});
@@ -3533,7 +3765,7 @@ async function renderCircle(quick){
   }
   if(!quick||!circleData){
     if(!circleData)body.replaceChildren(el('p',{class:'note',text:'Chargement du classement…'}));
-    await circlePush(); await circleLoad(); await duelsLoad(); await qarLoad(); amisPeekAt=Date.now();
+    await circlePush(); await circleLoad(); await duelsLoad(); await qarLoad(); if(circleData)await vivLoad().catch(()=>{}); duelsBilanMaj(); amisPeekAt=Date.now();
   }
   if(!circleData){body.replaceChildren(el('p',{class:'note',text:'Classement indisponible pour l’instant.'}));return;}
   const share=`Rejoins mon cercle Néophyte « ${circleData.name} » : ouvre https://yohandk.github.io/Brain-Fit/, crée ton compte, puis onglet Amis, code ${c}.`;
@@ -3555,7 +3787,7 @@ async function renderCircle(quick){
       :!top.xp?stagTalk('idle','La semaine commence : le premier qui s’entraîne prend la tête.')
       :top.me?stagTalk('proud','Tu mènes le cercle cette semaine. Tiens bon jusqu’à dimanche !'):stagTalk('idle',`${top.pseudo} mène cette semaine. Touche son nom pour lui lancer un défi.`),
     el('div',{class:'row',style:'justify-content:flex-end'},leave));
-  renderInbox(); renderDuels(); renderQar(); renderDefis();
+  renderInbox(); renderDuels(); renderObj(); renderFil(); renderQar(); renderQm(); renderDefis();
 }
 // effacer son compte : tout part, côté serveur comme sur cet appareil
 $('#erase').addEventListener('click',()=>{$('#erase-confirm').hidden=false;});
@@ -4450,12 +4682,13 @@ function gami(silent){
   if(stage>(state.stage||1)){if(!silent)toast(`<span>Étape ${stage} du parcours : ${STAGES[stage-1][0]}<small>${STAGES[stage-1][1]}</small></span>`,'big');state.stage=stage;changed=true;setTimeout(renderToday,0);}
   const today=m[t]||0, d=state.days[t];
   if(today>=goal&&!(d&&d.goalHit)){day().goalHit=true;changed=true;if(!silent){toast(`<span>Objectif du jour atteint ! <small>${today} XP aujourd'hui. Ta série continue.</small></span>`,'big');confetti();stagJump();}}
-  if(level>(state.lastLevel||1)){if(!silent)setTimeout(()=>antlerCeremony(level,total),600);state.lastLevel=level;changed=true;}
+  if(level>(state.lastLevel||1)){if(!silent){setTimeout(()=>antlerCeremony(level,total),600);filPost('niveau',level,'n'+level);}state.lastLevel=level;changed=true;}
   state.badges=state.badges||{};
   // à l'arrivée des paliers (nov. 2026), ce qui était déjà mérité est rangé sans fanfare
   const quiet=silent||!state.badgesV2; if(!state.badgesV2){state.badgesV2=1;changed=true;}
   for(const f of badgeFams(gamiCtx))for(const s of f.steps)if(s.ok&&!state.badges[s.id]){state.badges[s.id]=Date.now();changed=true;
     if(quiet)continue;
+    filPost('badge',null,s.id);
     // les premiers jours, une simple bulle ; ensuite, une cérémonie
     if(debutant())toast(`<span>Badge gagné : ${s.name}<small>${s.desc}</small></span>`);else{badgeQ.push({f,s});setTimeout(badgeCeremony,level>(state.lastLevel||1)?2600:900);}}
   if(changed)persist();
@@ -4576,7 +4809,14 @@ const ATTRS=[
   // le bonnet du doge de Venise (corno ducale), pour les Mécènes : vingt-cinq amis actifs
   ['doge','Le bonnet du Doge','parrainage',[1,2,3],()=>parrN().actifs>=25?3:0,()=>
     `<g class="acc"><path d="M41.5 41C41 33 45 28.5 51 28c4.4-.3 7.4 2.6 8.3 6.6L58.8 41Z" fill="#B8862E" stroke="#7A5A18" stroke-width=".6"/><path d="M44 39.5c.5-4 2.6-7.4 6.4-8.6M48 39.5c.4-3.6 2-6.6 5.4-7.6" fill="none" stroke="#E9C766" stroke-width=".5"/><rect x="40.6" y="38.6" width="19" height="3.2" rx="1.2" fill="#F4EFE6" stroke="#A39B8E" stroke-width=".4"/><circle cx="50" cy="40.2" r=".8" fill="#8E2F2B"/></g>`,
-    g=>g?'Le corno ducale de Venise, réservé aux Mécènes de Néophyte':'Réservé aux Mécènes : vingt-cinq amis actifs (Amis · Parrainer)']
+    g=>g?'Le corno ducale de Venise, réservé aux Mécènes de Néophyte':'Réservé aux Mécènes : vingt-cinq amis actifs (Amis · Parrainer)'],
+  // le ruban du cercle, noué au bois droit : une semaine d'objectif commun atteint (I), quatre (II), douze, et il devient d'or (III)
+  ['ruban','Le ruban du cercle','semaines d’objectif commun atteint',[1,4,12],()=>(state.cercleObj||[]).length,g=>{
+    const c=g>=3?'#C9A440':g>=2?'#8E2F2B':'#3B5C8C', d=g>=3?'#8C6A2C':g>=2?'#5E1E1B':'#24406A';
+    return `<g class="acc" transform="translate(-5.6 1.6)"><path d="M66.2 29.6c-2.4-2.6-5.6-2.4-5.4-.4c.2 1.8 3.2 1.6 5.4.4zM66.2 29.6c2.2-3 5.4-3.2 5.4-1.2c0 1.8-3 2-5.4 1.2z" fill="${c}" stroke="${d}" stroke-width=".4"/>`+
+      `<path d="M66.2 29.6l-2.6 8.2l1.6-.6l.8 1.6zM66.2 29.6l2.2 8.4l-1.6-.7l-.9 1.5z" fill="${c}" stroke="${d}" stroke-width=".35"/><circle cx="66.2" cy="29.6" r="1.1" fill="${d}"/>`+
+      (g>=2?`<circle cx="64.6" cy="41.2" r="1.9" fill="#D9B44A" stroke="#8C6A2C" stroke-width=".4"/><path d="M63.6 41.2h2M64.6 40.2v2" stroke="#8C6A2C" stroke-width=".35"/>`:'')+'</g>';},
+    g=>g>=3?'Palier d’or : douze semaines d’objectif commun avec ton cercle':g>=2?`Palier d’or : douze semaines d’objectif commun · ${(state.cercleObj||[]).length} sur 12`:g?`Palier suivant : quatre semaines d’objectif commun · ${(state.cercleObj||[]).length} sur 4`:'Se gagne avec ton cercle : atteindre ensemble l’objectif de la semaine (Amis)']
 ];
 // semaines à thème (B.parcours avec un « theme ») : le palier de leur parure, et ce qu'il reste à faire
 const semOf=id=>(NB.parcours||[]).find(p=>p.id===id)||null;

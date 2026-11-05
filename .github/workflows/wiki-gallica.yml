@@ -26,4 +26,4 @@ jobs:
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git add tools/wikidata/resultats tools/gallica/textes
           git diff --cached --quiet || git commit -m "Données importées de Wikidata et Gallica"
-          git push
+          git pull --rebase && git push

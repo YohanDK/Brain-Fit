@@ -26,6 +26,7 @@
     <div class="row"><span class="note">Sur cet appareil</span><div class="seg" id="rp-seg" role="group" aria-label="Rappels"><button data-r="on" aria-pressed="false">Activés</button><button data-r="off" aria-pressed="true">Coupés</button></div></div>
     <div class="row" id="rp-opts"><label class="note" for="rp-heure">Heure du rappel</label><select id="rp-heure">${heures.map(h=>`<option${h==='19:00'?' selected':''}>${h}</option>`).join('')}</select></div>
     <label class="row" id="rp-serie-l" style="cursor:pointer"><input type="checkbox" id="rp-serie" checked><span class="note">Relance à 21 h si ma série est en danger</span></label>
+    <label class="row" id="rp-amis-l" style="cursor:pointer" hidden><input type="checkbox" id="rp-amis" checked><span class="note">Prévenir quand un ami m’attend (duel, défi, question piège), entre 8 h et 21 h 30</span></label>
     <div class="row" id="rp-essai-r" hidden><button class="btn ghost small" id="rp-essai">Envoyer un essai</button></div>
     <p class="note" id="rp-msg" role="status"></p>
     <p class="note muted">L’adresse d’envoi de cet appareil et l’heure choisie sont gardées avec ton compte ; « Coupés » les efface.</p>`;
@@ -50,10 +51,14 @@
     const s=await session();
     if(!s){on=false;show();lock('Connecte-toi pour recevoir des rappels : c’est ton compte qui sait si ta séance du jour est faite.');return;}
     lock(null); msg('');
+    // « amis » vient de cercle-vivant.sql : sans lui, la case reste cachée
+    sb.from('rappels').select('amis').limit(0).then(({error})=>{$('#rp-amis-l').hidden=!!error;},()=>{});
     if(Notification.permission==='denied'){on=false;show();msg('Les notifications sont bloquées pour Néophyte : autorise-les dans les réglages du téléphone ou du navigateur, puis reviens ici.');return;}
     const sub=await abonnement().catch(()=>null);
     if(!sub){on=false;show();return;}
-    const {data}=await sb.from('rappels').select('heure,serie').eq('endpoint',sub.endpoint).maybeSingle();
+    let {data,error}=await sb.from('rappels').select('heure,serie,amis').eq('endpoint',sub.endpoint).maybeSingle();
+    if(error)({data}=await sb.from('rappels').select('heure,serie').eq('endpoint',sub.endpoint).maybeSingle());
+    else if(data)$('#rp-amis').checked=data.amis!==false;
     on=!!data;
     if(data){const h=String(data.heure).slice(0,5);if(!heures.includes(h))$('#rp-heure').append(new Option(h));$('#rp-heure').value=h;$('#rp-serie').checked=!!data.serie;}
     show();
@@ -77,6 +82,7 @@
     const o=sub.toJSON(), fuseau=Intl.DateTimeFormat().resolvedOptions().timeZone||'Europe/Paris';
     const {error}=await sb.rpc('rappel_inscrire',{p_endpoint:o.endpoint,p_p256dh:o.keys.p256dh,p_auth:o.keys.auth,p_heure:$('#rp-heure').value,p_serie:$('#rp-serie').checked,p_fuseau:fuseau});
     if(error){msg('L’enregistrement n’a pas abouti. Vérifie ta connexion et réessaie.');return false;}
+    if(!$('#rp-amis').checked)await sb.rpc('rappel_amis',{p_endpoint:o.endpoint,p_on:false}).catch(()=>{});
     return true;
   }
   async function couper(){
@@ -100,6 +106,9 @@
   const changer=()=>{if(on)tache(async()=>{const sub=await abonnement();if(sub&&await enregistrer(sub))msg(`Rappel déplacé vers ${$('#rp-heure').value}.`);});};
   $('#rp-heure').addEventListener('change',changer);
   $('#rp-serie').addEventListener('change',()=>{if(on)tache(async()=>{const sub=await abonnement();if(sub&&await enregistrer(sub))msg($('#rp-serie').checked?'Relance du soir activée.':'Relance du soir coupée.');});});
+  $('#rp-amis').addEventListener('change',()=>{if(on)tache(async()=>{const sub=await abonnement();if(!sub)return;
+    const {error}=await sb.rpc('rappel_amis',{p_endpoint:sub.endpoint,p_on:$('#rp-amis').checked});
+    msg(error?'Le changement n’a pas abouti. Réessaie dans un instant.':$('#rp-amis').checked?'Tu seras prévenu quand un ami t’attend.':'Plus de notification quand un ami t’attend.');});});
   $('#rp-essai').addEventListener('click',()=>tache(async()=>{
     const s=await session(); if(!s)return;
     msg('Envoi…');

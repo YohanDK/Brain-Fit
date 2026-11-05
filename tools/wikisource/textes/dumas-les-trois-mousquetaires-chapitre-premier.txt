@@ -1,238 +1,544 @@
-# Les Trois Mousquetaires/Chapitre 1
-# https://fr.wikisource.org/wiki/Les_Trois_Mousquetaires%2FChapitre_1
-# autres résultats : Les Trois Mousquetaires/Chapitre 47 ; Les Trois Mousquetaires/Chapitre 6 ; Les Trois Mousquetaires/Chapitre 7 ; Les Trois Mousquetaires/Chapitre 5
-
-Chapitre 1
-Fichier •  • Portail
+# Les Trois Mousquetaires/Chapitre 47
+# https://fr.wikisource.org/wiki/Les_Trois_Mousquetaires%2FChapitre_47
+# autres résultats : Les Trois Mousquetaires/Chapitre 1 ; Les Trois Mousquetaires/Chapitre 6 ; Les Trois Mousquetaires/Chapitre 7 ; Les Trois Mousquetaires/Chapitre 28
 
 Alexandre Dumas
 Les Trois Mousquetaires
-MM. Dufour et Mulat, éditeurs, 1849 (p. 5-15).
+MM. Dufour et Mulat, éditeurs, 1849 (p. 365-377).
 
-&#x25c4;  Préface
-L’antichambre de M. de Tréville  &#x25ba;
-Les trois présents de M. d’Artagnan père
+&#x25c4;  Le bastion Saint-Gervais
+Affaire de famille  &#x25ba;
+Le conseil des Mousquetaires
 
-bookLes Trois MousquetairesAlexandre DumasMM. Dufour et Mulat, éditeurs1849ParisTLes trois présents de M. d’Artagnan pèreDumas - Les Trois Mousquetaires - 1849.pdfDumas - Les Trois Mousquetaires - 1849 (page 2 crop).jpg5-15
+bookLes Trois MousquetairesAlexandre DumasMM. Dufour et Mulat, éditeurs1849ParisTLe conseil des MousquetairesDumas - Les Trois Mousquetaires - 1849.pdfDumas - Les Trois Mousquetaires - 1849 (page 2 crop).jpg365-377
 
- CHAPITRE PREMIER.
-LES TROIS PRÉSENTS DE M. D’ARTAGNAN PÈRE.
+ CHAPITRE XLVII.
+LE CONSEIL DES MOUSQUETAIRES.
 
-Le premier lundi du mois d’avril 1626, le bourg de Meung, où naquit l’auteur du Roman de la Rose, semblait être dans une révolution aussi entière que si les huguenots en fussent venus faire une seconde Rochelle. Plusieurs bourgeois, voyant s’enfuir les femmes le long de la grande rue, entendant les enfants crier sur le seuil des portes, se hâtaient d’endosser la cuirasse, et appuyant leur contenance quelque peu incertaine d’un mousquet ou d’une pertuisane, se dirigeaient vers l’hôtellerie du Franc-Meunier, devant laquelle s’empressait, en grossissant de minute en minute, un groupe compacte, bruyant et plein de curiosité.
+omme l’avait prévu Athos, le bastion n’était occupé que par une douzaine de morts, tant Français que Rochelois.
 
-En ce temps-là les paniques étaient fréquentes, et peu de jours se passaient sans qu’une ville ou l’autre enregistrât sur ses archives quelque événement de ce genre. Il y avait les seigneurs qui guerroyaient entre eux ; il y avait le cardinal qui faisait la guerre au roi et aux seigneurs ; il y avait l’Espagnol qui faisait la guerre aux seigneurs, au cardinal et au roi. Puis, outre ces guerres sourdes ou publiques, secrètes ou patentes, il y avait encore les voleurs, les mendiants, les huguenots, les loups et les laquais, qui faisaient la guerre à tout le monde. Les bourgeois s’armaient toujours contre les voleurs, contre les loups, contre les laquais ; — souvent contre les seigneurs et les huguenots ; — quelquefois contre le roi ; — mais jamais contre le cardinal et l’Espagnol. Il résulta donc de ces habitudes prises, que ce susdit premier lundi du mois d’avril 1626, les bourgeois &#32;entendant du bruit, et ne voyant ni le guidon jaune et rouge, ni la livrée du duc de Richelieu, se précipitèrent du côté de l’hôtel du Franc-Meunier.
+— Messieurs, dit Athos, qui avait pris le commandement de l’expédition, tandis que Grimaud va mettre la table, commençons par recueillir les fusils et les cartouches. Nous pouvons d’ailleurs causer tout en accomplissant cette besogne. Ces messieurs, ajouta-t-il en montrant les morts, ne nous écoutent pas.
 
-Arrivé là, chacun put reconnaître la cause de cette rumeur.
+— Mais nous pourrions toujours les jeter dans le fossé, observa Porthos, après toutefois nous être assurés qu’ils n’ont rien dans leurs poches.
 
-Un jeune homme… — traçons son portrait d’un seul trait de plume : — figurez-vous don Quichotte à dix-huit ans ; don Quichotte décorcelé, sans haubert et sans cuissard ; don Quichotte revêtu d’un pourpoint de laine, dont la couleur bleue s’était transformée en une nuance insaisissable de lie de vin et d’azur céleste. Visage long et brun ; la pommette des joues saillante, signe d’astuce ; les muscles maxillaires énormément développés, indice infaillible où l’on reconnaît le Gascon, même sans béret, et notre jeune homme portait un béret orné d’une espèce de plume ; l’œil ouvert et intelligent ; le nez crochu, mais finement dessiné ; trop grand pour un adolescent, trop petit pour un homme fait, et qu’un œil exercé eût pris pour un fils de fermier en voyage, sans la longue épée qui, pendue à un baudrier de peau, battait les mollets de son propriétaire, quand il était à pied, et le poil hérissé de sa monture quand il était à cheval.
+— Oui, dit Aramis, mais c’est l’affaire de Grimaud.
 
-Car notre jeune homme avait une monture, et cette monture était même si remarquable qu’elle fut remarquée : c’était un bidet du Béarn, âgé de 12 ou 14 ans, jaune de robe, sans crins à la queue, mais non pas sans javarts aux jambes, et qui, tout en marchant la tête plus bas que les genoux, ce qui rendait inutile l’application de la martingale, faisait encore galamment ses huit lieues par jour. Malheureusement les qualités cachées de ce cheval étaient si bien cachées sous son poil étrange et son allure incongrue, que, dans un temps où tout le monde se connaissait en chevaux, l’apparition du susdit bidet à Meung, où il était entré, il y avait un quart d’heure à peu près, par la porte de Beaugency, produisit une sensation dont la défaveur rejaillit jusqu’à son cavalier.
+— Eh bien alors ! dit d’Artagnan, que Grimaud les fouille et les jette par-dessus les murailles.
 
-Et cette sensation avait été d’autant plus pénible au jeune d’Artagnan (ainsi s’appelait le don Quichotte de cet autre Rossinante), qu’il ne se cachait pas le côté ridicule que lui donnait, si bon cavalier qu’il fût, une pareille monture. Aussi avait-il fort soupiré en acceptant le don que lui en avait fait M. d’Artagnan père : il n’ignorait pas qu’une pareille bête valait au moins vingt livres. Il est vrai que les paroles dont le présent avait été accompagné n’avaient pas de prix.
+— Qu’il les fouille, oui, dit Athos ; mais qu’il les jette par-dessus les murailles, non, car ils peuvent nous servir.
 
-— « Mon fils, avait dit le gentilhomme gascon, dans ce pur patois du Béarn, dont Henri IV n’avait jamais pu parvenir à se défaire, — mon fils, ce cheval est né dans la maison de votre père, il y a tantôt treize ans, et y est resté depuis ce temps-là, ce qui doit vous porter à l’aimer. Ne le vendez jamais, laissez-le mourir tranquillement et honorablement de vieillesse, et si vous faites campagne avec lui, ménagez-le comme vous ménageriez un vieux serviteur. À la cour, continua M. d’Artagnan père, si toutefois vous avez l’honneur d’y aller, honneur auquel, du reste, votre vieille noblesse vous donne des droits, soutenez dignement votre nom de gentilhomme, qui a été porté dignement par vos ancêtres depuis plus de cinq cents ans ; pour vous et pour les vôtres, — par les vôtres, j’entends vos parents et vos amis, — ne supportez jamais rien que de M. le cardinal et du roi. C’est par son courage, entendez-vous bien, par son courage seul, qu’un gentilhomme fait son chemin aujourd’hui. Quiconque tremble une seconde laisse peut-être échapper l’appât que, pendant cette seconde justement, la fortune lui tendait. Vous êtes jeune, vous devez être brave par deux raisons : la première, c’est que&#32;vous êtes Gascon, et la seconde, c’est que vous êtes mon fils. Ne craignez pas les occasions et cherchez les aventures. Je vous ai fait apprendre à manier l’épée ; vous avez un jarret de fer, un poignet d’acier, battez-vous à tout propos ; battez-vous, d’autant plus que les duels sont défendus, et que, par conséquent, il y a deux fois du courage à se battre. Je n’ai, mon fils, à vous donner que quinze écus, mon cheval et les conseils que vous venez d’entendre. Votre mère y ajoutera la recette d’un certain baume qu’elle tient d’une bohémienne, et qui a une vertu miraculeuse pour guérir toute blessure qui n’atteint pas le cœur. Faites votre profit du tout, et vivez heureusement et longtemps.
+— Ces morts peuvent nous servir ? dit Porthos ; ah çà, vous devenez fou.
 
-« Je n’ai plus qu’un mot à ajouter, et c’est un exemple que je vous propose, non pas le mien, car je n’ai, moi, jamais paru à la cour, et n’ai fait que les guerres de religion en volontaire : je veux parler de M. de Tréville, qui était mon voisin autrefois, et qui a eu l’honneur de jouer tout enfant avec notre roi Louis XIII, que Dieu conserve. Quelquefois leurs jeux dégénéraient en batailles, et dans ces batailles le roi n’était pas toujours le plus fort. Les coups qu’il en reçut lui donnèrent beaucoup d’estime et d’amitié pour M. de Tréville. Plus tard M. de Tréville se battit contre d’autres : dans son premier voyage à Paris, cinq fois ; depuis la mort du feu roi jusqu’à la majorité du jeune, sans compter les guerres et les siéges, sept fois ; et depuis cette majorité jusqu’aujourd’hui, cent fois peut-être ! — Aussi, malgré les édits, les ordonnances et les arrêts, le voilà capitaine des mousquetaires, c’est-à-dire chef d’une légion de Césars dont le roi fait un très grand cas, et que M. le cardinal redoute, lui qui ne redoute pas grand’chose, comme chacun sait. De plus, M. de Tréville gagne dix mille écus par an ; c’est donc un fort grand seigneur. — Il a commencé comme vous ; allez le voir avec cette lettre, et réglez-vous sur lui, afin de faire comme lui. »
+— Ne jugez pas témérairement, disent l’Évangile et M. le cardinal, reprit Athos ; combien de fusils, messieurs ?
 
-Sur quoi M. d’Artagnan père remit à son fils une lettre qu’il avait préparée, lui ceignit sa propre épée, l’embrassa tendrement sur les deux joues et lui donna sa bénédiction.
+— Douze, répondit Aramis.
 
-En sortant de la chambre paternelle, le jeune homme trouva sa mère qui l’attendait avec la fameuse recette dont les conseils que nous venons de rapporter devaient nécessiter un assez fréquent emploi. Les adieux furent de ce côté plus longs et plus tendres qu’ils ne l’avaient été de l’autre, non pas que M. d’Artagnan n’aimât son fils, qui était sa seule progéniture, mais M. d’Artagnan était un homme, et il eût regardé comme indigne d’un homme de se laisser aller à son émotion, tandis que M d’Artagnan était femme et de plus, était mère. — Elle pleura abondamment, et, disons-le à la louange de M. d’Artagnan fils, quelques efforts qu’il tentât pour rester ferme comme devait l’être un futur mousquetaire, la nature l’emporta, et il versa force larmes, dont il parvint à grand’peine à cacher la moitié.
+— Combien de coups à tirer ?
 
-Le même jour le jeune homme se mit en route, muni des trois présents paternels, et qui se composaient, comme nous l’avons dit, de quinze écus, du cheval et de la lettre pour M. de Tréville ; comme on le pense bien, les conseils avaient été donnés par-dessus le marché.
+— Une centaine.
 
-Avec un pareil vade mecum, d’Artagnan se trouva, au moral comme au physique, une copie exacte du héros de Cervantes, auquel nous l’avons si heureusement comparé lorsque nos devoirs d’historien nous ont fait une nécessité de &#32;tracer son portrait. Don Quichotte prenait les moulins à vent pour des géants et les moutons pour des armées ; Artagnan prit chaque sourire pour une insulte et chaque regard pour une provocation. Il en résulta qu’il eut toujours le poing fermé depuis Tarbes jusqu’à Meung, et que l’un dans l’autre il porta la main au pommeau de son épée dix fois par jour ; toutefois, le poing ne descendit sur aucune mâchoire, et l’épée ne sortit point de son fourreau. Ce n’est pas que la vue du malencontreux bidet jaune n’épanouît bien des sourires sur les visages des passants ; mais, comme au-dessus du bidet sonnait une épée de taille respectable et qu’au-dessus de cette épée brillait un œil plutôt féroce que fier, les passants réprimaient leur hilarité, ou si l’hilarité l’emportait sur la prudence, ils tâchaient au moins de ne rire que d’un seul côté, comme les masques antiques. D’Artagnan demeura donc majestueux et intact dans sa susceptibilité jusqu’à cette malheureuse ville de Meung.
+— C’est tout autant qu’il nous en faut ; chargeons les armes.
 
-Mais là, comme il descendait de cheval à la porte du Franc-Meunier sans que personne, hôte, garçon ou palefrenier, fût venu lui tenir l’étrier, d’Artagnan avisa à une fenêtre entrouverte du rez-de-chaussée un gentilhomme de belle taille et de haute mine, quoique au visage légèrement renfrogné, lequel causait avec deux personnes qui paraissaient l’écouter avec déférence. D’Artagnan crut tout naturellement, selon son habitude, être l’objet de la conversation et tendit l’oreille. Cette fois d’Artagnan ne s’était trompé qu’à moitié : ce n’était pas de lui qu’il était question, mais de son cheval. Le gentilhomme paraissait énumérer à ses auditeurs toutes les qualités de l’animal, et comme, ainsi que je l’ai dit, les auditeurs paraissaient avoir une grande déférence pour le narrateur, ils éclataient de rire à tout moment. Or, comme un demi-sourire suffisait pour éveiller l’irascibilité du jeune homme, on comprend quel effet produisit sur lui tant de bruyante hilarité.
+Les quatre mousquetaires se mirent à la besogne. Comme ils achevaient de
+charger le dernier fusil, Grimaud fit signe que le déjeuner était servi.
 
-Cependant d’Artagnan voulut d’abord se rendre compte de la physionomie de l’impertinent qui se moquait de lui. Il fixa son regard fier sur l’étranger, et reconnut un homme de quarante à quarante-cinq ans, aux yeux sombres et perçants, au teint pâle, au nez fortement accentué, à la moustache noire et parfaitement taillée : il était vêtu d’un pourpoint et d’un haut-de-chausses violet avec des aiguillettes de même couleur, sans aucun ornement que les crevés habituels par lesquels passait la chemise. Ce haut-de-chausses et ce pourpoint, quoique neufs, paraissaient froissés comme des habits de voyage longtemps renfermés dans un porte-manteau. D’Artagnan fit toutes ces remarques avec la rapidité de l’observateur le plus minutieux, et sans doute par un sentiment instinctif qui lui disait que cet inconnu devait avoir une grande influence sur sa vie à venir.
+Athos répondit, toujours par geste, que c’était bien, et indiqua à Grimaud une espèce de poivrière où celui-ci comprit qu’il se devait tenir en sentinelle.&#32;Seulement, pour adoucir l’ennui de la faction, Athos lui permit d’emporter un pain, deux côtelettes et une bouteille de vin.
 
-Or, comme au moment où d’Artagnan fixait son regard sur le gentilhomme au pourpoint violet, le gentilhomme faisait à l’endroit du bidet béarnais une de ses plus savantes et de ses plus profondes démonstrations, ses deux auditeurs éclatèrent de rire, et lui-même laissa visiblement, contre son habitude, errer, si l’on peut parler ainsi, un pâle sourire sur son visage. Cette fois, il n’y avait plus de doute : d’Artagnan était réellement insulté. Aussi, plein de cette conviction, enfonça-t-il son béret sur ses yeux, et, tâchant de copier quelques-uns des airs de cour qu’il avait surpris en Gascogne chez des seigneurs en voyage, il s’avança&#32;une main sur la garde de son épée et l’autre appuyée sur la hanche. Malheureusement, au fur et à mesure qu’il avançait, la colère l’aveuglait de plus en plus, et au lieu du discours digne et hautain qu’il avait préparé pour formuler sa provocation, il ne trouva plus au bout de sa langue qu’une personnalité grossière qu’il accompagna d’un geste furieux.
+— Et maintenant, à table ! dit Athos.
 
-— Eh ! monsieur, s’écria-t-il, monsieur, qui vous cachez derrière ce volet ; oui, vous ! dites-moi donc un peu de quoi vous riez, et nous rirons ensemble.
+Les quatre amis s’assirent à terre, les jambes croisées comme des Turcs ou comme des tailleurs.
 
-Le gentilhomme amena lentement les yeux de la monture au cavalier, comme s’il lui eût fallu un certain temps pour comprendre que c’était à lui que s’adressaient de si étranges paroles ; puis, lorsqu’il ne put plus conserver aucun doute, ses sourcils se froncèrent, et, après une longue pause, avec un accent d’ironie et d’insolence impossible à décrire, il répondit à d’Artagnan :
+— Ah ça ! maintenant, dit d’Artagnan, que nous n’avons plus la crainte d’être entendus, j’espère que vous allez nous faire part de votre secret, Athos ?
 
-— Je ne vous parle pas, monsieur !
+— Je me vante de vous procurer à la fois de l’agrément et de la gloire, messieurs, dit Athos. Je vous ai fait faire une promenade charmante ; voici un déjeuner des plus succulents ; cinq cents personnes là-bas, comme vous pouvez les voir à travers les meurtrières, qui nous prennent pour des fous ou pour des héros, deux classes d’imbéciles qui se ressemblent assez.
 
-— Mais je vous parle, moi ! s’écria le jeune homme exaspéré de ce mélange d’insolence et de bonnes manières, de convenance et de dédain.
+— Mais ce secret ? demanda d’Artagnan.
 
-L’inconnu le regarda encore un instant avec son léger sourire, et se retirant de la fenêtre, sortit lentement de l’hôtellerie pour venir, à deux pas de d’Artagnan, se planter en face du cheval. Sa contenance tranquille et sa physionomie railleuse avaient redoublé l’hilarité de ceux avec lesquels il causait, et qui, eux, étaient restés à la fenêtre.
+— Le secret, dit Athos, c’est que j’ai vu milady hier soir.
 
-D’Artagnan, le voyant à sa portée, tira son épée d’un pied hors du fourreau.
+D’Artagnan portait son verre à ses lèvres, mais à ce nom de milady la main lui trembla si fort qu’il le posa à terre pour ne pas en répandre le contenu.
 
-— Ce cheval est décidément ou plutôt a été dans sa jeunesse bouton d’or, reprit l’inconnu, continuant les investigations commencées et s’adressant à ses auditeurs de la fenêtre, sans paraître aucunement remarquer l’exaspération de d’Artagnan. C’est une couleur fort connue en botanique, mais jusqu’à présent fort rare chez les chevaux.
+— Vous avez vu votre ?…
 
-— Tel rit du cheval qui n’oserait pas rire du maître ! s’écria l’émule de Tréville, furieux.
+— Chut donc ! interrompit Athos ; vous oubliez, mon cher, que ces messieurs ne sont pas initiés comme vous dans le secret de mes affaires de ménage. J’ai vu milady.
 
-— Je ne ris pas souvent, monsieur, reprit l’inconnu, ainsi que vous pouvez le voir vous-même à l’air de mon visage ; mais je tiens cependant à conserver le privilége de rire quand il me plaît.
+— Et où cela ? demanda d’Artagnan.
 
-— Et moi, s’écria d’Artagnan, je ne veux pas qu’on rie quand il me déplaît, et surtout quand c’est à mes dépens qu’on rit.
+— À deux lieues d’ici à peu près, à l’auberge du Colombier-Rouge.
 
-— En vérité, monsieur ? continua l’inconnu, plus calme que jamais. Eh bien ! c’est parfaitement juste ;  et, tournant sur ses talons, il s’apprêta à rentrer dans l’hôtellerie par la grande porte, sous laquelle en arrivant d’Artagnan avait remarqué un cheval tout sellé.
+— En ce cas, je suis perdu, dit d’Artagnan.
 
-Mais d’Artagnan n’était pas de caractère à lâcher ainsi un homme qui avait eu l’insolence de se moquer de lui. Il tira son épée entièrement du fourreau et se mit à sa poursuite en criant :
+— Non, pas tout à fait encore, reprit Athos, car à cette heure elle doit avoir quitté les côtes de France.
 
-— Tournez, tournez donc, monsieur le railleur, que je ne vous frappe point par derrière !
+D’Artagnan respira.
 
-— Me frapper, moi ! dit l’autre en pivotant sur ses talons et en regardant le jeune homme avec autant d’étonnement que de mépris. Allons donc, mon cher, vous êtes fou ! Puis, à demi-voix, et comme s’il se fût parlé à lui-même : quelle trouvaille pour Sa Majesté, qui cherche des braves de tous côtés pour recruter&#32;ses mousquetaires ! Il est fâcheux, continua-t-il, qu’elle ne connaisse pas celui-là.
+— Mais au bout du compte, demanda Porthos, qu’est-ce donc que cette milady ?
 
-Il achevait à peine, que d’Artagnan lui allongea un si furieux coup de pointe, que, s’il n’eût fait vivement un bond en arrière, il est probable qu’il eût plaisanté pour la dernière fois. L’inconnu vit alors que la chose passait la raillerie, tira son épée, salua son adversaire et se mit gravement en garde. Mais au même moment ses deux auditeurs, accompagnés de l’hôte, tombèrent sur d’Artagnan à grands coups de bâtons, de pelles et de pincettes. Cela fit une diversion si rapide et si complète à l’attaque, que l’adversaire de d’Artagnan, pendant que celui-ci se retournait pour faire face à cette grêle de coups, rengaînait avec la même précision, et d’acteur qu’il avait manqué d’être, redevenait spectateur du combat, rôle dont il s’acquitta avec son impartialité ordinaire, tout en marmottant néanmoins :
+— Une femme charmante, dit Athos en dégustant un verre de vin mousseux. Canaille d’hôtelier ! s’écria-t-il, qui nous donne du vin d’Anjou pour du vin de Champagne, et qui croit que nous nous y laisserons prendre ! Oui, continua-t-il, une femme charmante qui a eu des bontés pour notre ami d’Artagnan, lequel, en échange, lui a fait je ne sais quelle noirceur dont elle a essayé de se venger, il y a un mois, en voulant le faire tuer à coups de mousquet ; il y a huit jours, en essayant de l’empoisonner, et hier en demandant sa tête au cardinal.
 
-— La peste soit des Gascons ! Remettez-le sur son cheval orange, et qu’il s’en aille.
+— Comment ! en demandant ma tête au cardinal ? s’écria d’Artagnan pâle de terreur.
 
-— Pas avant de t’avoir tué, lâche ! criait d’Artagnan, tout en faisant face du mieux qu’il pouvait et sans reculer d’un pas à ses trois ennemis, qui le moulaient de coups.
+— Ça, dit Porthos, c’est vrai comme l’Évangile, je l’ai entendu de mes deux oreilles.
 
-— Encore une rodomontade, murmura le gentilhomme. Sur mon honneur,
-ces Gascons sont incorrigibles. Continuez donc la danse, puisqu’il le veut absolument. Quand il sera las, il dira qu’il en a assez.
+— Moi aussi, dit Aramis.
 
-Mais l’inconnu ne savait pas à quel genre d’entêté il avait affaire : d’Artagnan n’était pas homme à jamais demander merci. Le combat continua donc quelques minutes encore ; cependant d’Artagnan, épuisé, laissa échapper son épée, qu’un coup de bâton brisa en deux morceaux ; enfin un autre coup lui entama le front et le renversa en même temps tout sanglant et presque évanoui.
+— Alors, dit d’Artagnan en laissant tomber son bras avec découragement, il est inutile de lutter plus longtemps ; autant que je me brûle la cervelle et que tout soit fini.
 
-C’est à ce moment que de tous côtés on accourut sur le lieu de la scène ; mais l’hôte, craignant du scandale, emporta avec l’aide de ses garçons le blessé dans la cuisine, où quelques soins lui furent accordés.
+— C’est la dernière sottise qu’il faut faire, dit Athos, attendu que c’est la seule à laquelle il n’y ait pas de remède.
 
-Quant au gentilhomme, il était revenu prendre sa place à sa fenêtre, et regardait avec une certaine impatience toute cette foule qui semblait, en demeurant là, lui causer une vive contrariété.
+— Mais je n’en réchapperai jamais, dit d’Artagnan, avec des ennemis&#32;pareils. D’abord mon inconnu de Meung ; ensuite de Wardes, à qui j’ai donné trois coups d’épée ; puis milady, dont j’ai surpris le secret ; enfin, le cardinal, dont j’ai fait échouer la vengeance.
 
-— Eh bien ! comment va cet enragé ? demanda-t-il en se retournant au bruit
-de la porte qui s’ouvrait et en s’adressant à l’hôte, qui venait s’informer de sa santé.
+— Eh bien ! dit Athos, tout cela ne fait que quatre, et nous sommes quatre, un contre un, pardieu ! Si nous en croyons les signes que nous fait Grimaud, nous allons avoir affaire à un bien plus grand nombre de gens. Qu’y a-t-il, Grimaud ? Considérant la gravité de la circonstance, je vous permets de parler, mon ami ; mais soyez laconique, je vous prie. Que voyez-vous ?
 
-— Votre Excellence est saine et sauve ? demanda l’hôte.
+— Une troupe.
 
-— Oui, parfaitement saine et sauve, mon cher hôtelier, et c’est moi qui vous demande ce qu’est devenu notre jeune homme.
+— De combien de personnes ?
 
-— Il va mieux, dit l’hôte, il s’est évanoui tout à fait.
+— De vingt hommes.
 
-— Vraiment, fit le gentilhomme.
+— Quels hommes ?
 
-— Mais avant de s’évanouir, il a rassemblé toutes ses forces pour vous appeler et vous défier en vous appelant.
+— Seize pionniers, quatre soldats.
 
-— Mais c’est donc le diable en personne, que ce gaillard-là, s’écria l’inconnu.
+— À combien de pas sont-ils ?
 
-— Oh ! non, Votre Excellence ; ce n’est pas le diable, reprit l’hôte avec une grimace de mépris, car pendant son évanouissement nous l’avons fouillé, et il n’a dans son paquet qu’une chemise, et dans sa bourse que onze écus, ce qui ne l’a pas empêché de dire en s’évanouissant que si pareille chose était arrivée à&#32;
+— À cinq cents pas.
 
-D’Artagnan.
+— Bon ! nous avons encore le temps d’achever cette volaille et de boire un verre de vin. À votre santé, d’Artagnan !
 
-&#32;Paris, vous vous en repentiriez tout de suite, tandis que, la chose étant arrivée ici, vous ne vous en repentirez que plus tard.
-— Alors, dit froidement l’inconnu, c’est quelque prince du sang déguisé.
+— À votre santé, répétèrent Porthos et Aramis.
 
-— Je vous dis cela, mon gentilhomme, reprit l’hôte, afin que, si besoin est, vous vous teniez sur vos gardes.
+— Eh bien donc, à ma santé ! quoique je ne croie pas que vos souhaits me servent à grand’chose.
 
-— Et il n’a nommé personne dans sa colère ?
+— Bah ! dit Athos, Dieu est grand, comme disent les sectateurs de Mahomet, et l’avenir est dans ses mains.
 
-— Si fait, il frappait sur sa poche, et il disait : — Nous verrons ce que M. de Tréville pensera de cette insulte faite à son protégé.
+Puis, ayant avalé le contenu de son verre, qu’il posa ensuite près de lui, Athos se leva nonchalamment, prit le premier fusil venu et s’approcha d’une meurtrière.
 
-— M. de Tréville, dit l’inconnu en devenant attentif ; il frappait sur sa poche en prononçant le nom de M. de Tréville !… Voyons, mon cher hôte, pendant que votre jeune homme était évanoui, vous n’avez pas été, j’en suis bien sûr, sans regarder aussi dans cette poche-là. Qu’y avait-il ?
+Porthos, Aramis et d’Artagnan en firent autant. Quant à Grimaud, il reçut l’ordre de se placer derrière les quatre amis afin de recharger les armes.
 
-— Une lettre adressée à M. de Tréville, capitaine des mousquetaires.
+Au bout d’un instant on vit paraître la troupe, elle suivait une espèce de boyau de tranchée qui établissait une communication entre le bastion et la ville.
 
-— En vérité ?
+— Pardieu ! dit Athos, c’est bien la peine de nous déranger pour une vingtaine de drôles armés de pioches, de hoyaux et de pelles ! Grimaud n’aurait eu qu’à leur faire signe de s’en aller, et je suis convaincu qu’ils nous eussent laissés tranquilles.
 
-— C’est comme j’ai l’honneur de vous le dire, Excellence.
+— J’en doute, observa d’Artagnan, car ils avancent fort résolument de ce côté. D’ailleurs il y a avec les travailleurs quatre soldats et un brigadier armés de mousquets.
 
-L’hôte, qui n’était pas doué d’une grande perspicacité, ne remarqua point l’expression que ses paroles avaient donnée à la physionomie de l’inconnu. Celui-ci quitta le rebord de la croisée sur lequel il était toujours resté appuyé du bout du coude, et fronça le sourcil en homme inquiet.
+— C’est qu’ils ne nous ont pas vus, reprit Athos.
 
-— Diable ! murmura-t-il entre ses dents ; Tréville m’aurait-il envoyé ce gascon. Il est bien jeune ! Mais un coup d’épée est un coup d’épée, quel que soit l’âge de celui qui le donne, et l’on se défie moins d’un enfant que de tout autre ; il suffit parfois d’un faible obstacle pour contrarier un grand dessein.
+— Ma foi, dit Aramis, j’avoue que j’ai répugnance à tirer sur ces pauvres diables de bourgeois.
 
-Et l’inconnu tomba dans une réflexion qui dura quelques minutes.
+— Mauvais prêtre, répondit Porthos, qui a pitié des hérétiques !
 
-— Voyons, l’hôte, dit-il, est-ce que vous ne me débarrasserez pas de ce frénétique ? En conscience, je ne puis le tuer, et cependant, ajouta-t-il avec une expression froidement menaçante, cependant il me gêne. Où est-il ?
+— En vérité, dit Athos, Aramis a raison, et je vais les prévenir.
 
-— Dans la chambre de ma femme, où on le panse, au premier étage.
+— Que diable faites-vous donc ? s’écria d’Artagnan. Vous allez vous faire fusiller, mon cher.
 
-— Ses hardes et son sac sont avec lui ? Il n’a pas quitté son pourpoint ?
+Mais Athos ne tint aucun compte de l’avis, et montant sur la brèche, son fusil d’une main et son chapeau de l’autre :
 
-— Tout cela, au contraire, est en bas, dans la cuisine. Mais puisqu’il vous gêne, ce jeune fou…
+— Messieurs, dit-il en s’adressant aux soldats et aux travailleurs, qui, &#32;étonnés de son apparition, s’arrêtaient à cinquante pas environ du bastion, et en les saluant courtoisement ; messieurs, nous sommes quelques amis et moi en train de déjeuner dans ce bastion. Or, vous savez que rien n’est désagréable comme d’être dérangé quand on déjeune ; nous vous prions donc, si vous avez absolument affaire ici, d’attendre que nous ayons fini notre repas, ou de repasser plus tard, à moins qu’il ne vous prenne la salutaire envie de quitter le parti de la rébellion et de venir boire avec nous à la santé du roi de France.
 
-— Sans doute. Il cause dans votre hôtellerie un scandale auquel d’honnêtes gens ne sauraient s’associer. Montez chez vous, faites mon compte et avertissez mon laquais.
+— Prenez garde, Athos, interrompit d’Artagnan ; ne voyez-vous pas qu’ils vous mettent en joue ?
 
-— Quoi ! monsieur nous quitte déjà ?
+— Si fait, si fait, dit Athos ; mais ce sont des bourgeois qui tirent fort mal et qui n’auront garde de me toucher.
 
-— Vous le savez bien, puisque je vous avais donné l’ordre de seller mon cheval. Ne m’a-t-on point obéi ?
+En effet, au même instant quatre coups de fusil partirent, et les balles vinrent s’aplatir autour d’Athos, mais sans qu’une seule le touchât.
 
-— Si fait, et comme Votre Excellence a pu le voir, son cheval est sous la grande porte, tout appareillé pour partir.
+Quatre coups de fusil leur répondirent presque en même temps, mais ils étaient mieux dirigés que ceux des agresseurs ; trois soldats tombèrent tués raide, et un des travailleurs fut blessé.
 
-— C’est bien, faites ce que je vous ai dit alors.
+— Grimaud, un autre mousquet ! dit Athos toujours sur la brèche.
 
-— Ouais ! se dit l’hôte, aurait-il peur du petit garçon ?
+Grimaud obéit aussitôt. De leur côté, les trois amis avaient chargé leurs armes ; une seconde décharge suivit la première ; le brigadier et deux pionniers tombèrent morts, le reste de la troupe prit la fuite.
 
-Mais un coup d’œil impératif de l’inconnu vint l’arrêter court. Il salua humblement et sortit.
+— Allons, messieurs, une sortie, dit Athos.
 
-— Il ne faut pas que milady soit aperçue de ce drôle, continua l’étranger : elle&#32;ne doit pas tarder à passer ; déjà même elle est en retard. Décidément mieux vaut que je monte à cheval et que j’aille au-devant d’elle… Si seulement je pouvais savoir ce que contient cette lettre adressée à Tréville !
+Et les quatre amis s’élançant hors du fort parvinrent jusqu’au champ de bataille, ramassèrent les quatre mousquets des soldats et la demi-pique du brigadier ; et convaincus que les fuyards ne s’arrêteraient qu’à la ville, reprirent le chemin du bastion, rapportant les trophées de leur victoire.
 
-Et l’inconnu, tout en marmottant, se dirigea vers la cuisine.
+— Rechargez les armes, Grimaud, dit Athos, et nous, messieurs, reprenons notre déjeuner et continuons notre conversation. Où en étions-nous ?
 
-Pendant ce temps l’hôte, qui ne doutait pas que ce ne fût la présence du jeune garçon qui chassât l’inconnu de son hôtellerie, était remonté chez sa femme et avait trouvé d’Artagnan maître enfin de ses esprits. Alors, tout en lui faisant comprendre que la police pourrait bien lui faire un mauvais parti pour avoir été chercher querelle à un grand seigneur, car, à l’avis de l’hôte, l’inconnu ne pouvait être qu’un grand seigneur, il le détermina, malgré sa faiblesse, à se lever et à continuer son chemin. D’Artagnan, à moitié abasourdi, sans pourpoint et la tête tout emmaillotée de linges, se leva donc, et poussé par l’hôte, commença de descendre ; mais en arrivant à la cuisine, la première chose qu’il aperçut fut son provocateur qui causait tranquillement au marchepied d’un lourd carrosse attelé de deux gros chevaux normands.
+— Je me le rappelle, dit d’Artagnan ; vous disiez qu’après avoir demandé ma tête au cardinal, milady avait quitté les côtes de France.
 
-Son interlocutrice, dont la tête apparaissait encadrée par la portière, était une femme de vingt à vingt-deux ans. Nous avons déjà dit avec quelle rapidité d’investigation d’Artagnan embrassait toute une physionomie ; il vit donc du premier coup d’œil que la femme était jeune et belle. Or, cette beauté le frappa d’autant plus qu’elle était parfaitement étrangère aux pays méridionaux que jusque-là d’Artagnan avait habités. C’était une pâle et blonde personne, aux longs cheveux bouclés, tombant sur ses épaules, aux grands yeux bleus languissants, aux lèvres rosées et aux mains d’albâtre ; elle causait très vivement avec l’inconnu.
+— C’est vrai.
 
-— Ainsi, Son Éminence m’ordonne… disait la dame.
+— Et où va-t-elle ? ajouta d’Artagnan, qui se préoccupait fort de l’itinéraire que devait suivre milady.
 
-— De retourner à l’instant même en Angleterre, et de la prévenir directement si le duc quittait Londres, ou l’avait déjà quitté.
+— Elle va en Angleterre, répondit Athos.
 
-— Et quant à mes autres instructions ? demanda la belle voyageuse.
+— Et dans quel but ?
 
-— Elles sont renfermées dans cette boîte, que vous n’ouvrirez que de l’autre côté de la Manche.
+— Dans le but d’assassiner ou de faire assassiner Buckingham.
 
-— Très-bien ; et vous, que faites-vous ?
+D’Artagnan poussa une exclamation de surprise et d’indignation.
 
-— Moi, je retourne à Paris.
+— Mais c’est infâme ! s’écria-t-il.
 
-— Sans châtier cet insolent petit garçon ? demanda la dame.
+— Oh ! quant à cela, dit Athos, je vous prie de croire que je m’en inquiète fort peu. Maintenant que vous avez fini, Grimaud, continua Athos, prenez la demi-pique de notre brigadier, attachez-y une serviette et plantez-la au haut de notre bastion ; que ces rebelles de Rochelois voient qu’ils ont affaire à de braves et loyaux soldats du roi.
 
-L’inconnu allait répondre, mais au moment où il ouvrait la bouche, d’Artagnan, qui avait tout entendu, s’élança sur le seuil de la porte.
+Grimaud obéit sans répondre ; un instant après, le drapeau blanc flottait au-dessus de la tête des quatre amis. Un cri de joie et un tonnerre d’applaudissements saluèrent son apparition. La moitié du camp était aux barrières.&#32;
 
-— C’est cet insolent petit garçon qui châtie les autres, s’écria-t-il, et j’espère bien que cette fois-ci celui qu’il doit châtier ne lui échappera pas comme la première.
+&#32;
+— Comment, reprit d’Artagnan, vous vous inquiétez fort peu qu’elle tue ou qu’elle fasse tuer Buckingham ? mais le duc est notre ami.
 
-— Ne lui échappera pas ? reprit l’inconnu en fronçant le sourcil.
+— Le duc est Anglais, le duc combat contre nous ; qu’elle fasse du duc ce qu’elle voudra, je m’en soucie comme d’une bouteille vide.
 
-— Non, devant une femme, vous n’oseriez pas fuir, je présume.
+Et Athos envoya à quinze pas de lui une bouteille qu’il tenait, et dont il venait de transvaser jusqu’à la dernière goutte dans son verre.
 
-— Songez, s’écria milady en voyant le gentilhomme porter la main à son épée, songez que le moindre retard peut tout perdre.
+— Un instant, dit d’Artagnan, je n’abandonne pas Buckingham ainsi, il nous avait donné de fort beaux chevaux.
 
-— Vous avez raison, s’écria le gentilhomme ; partez donc de votre côté, moi je pars du mien.
+— Et surtout de fort belles selles, ajouta Porthos, qui, à ce moment même, portait à son manteau le galon de la sienne.
 
-Et saluant la dame d’un signe de tête, il s’élança sur son cheval tandis que le cocher du carrosse fouettait vigoureusement son attelage. Les deux interlocuteurs partirent donc au galop, s’éloignant chacun par un côté opposé de la rue.&#32;
+— Puis, observa Aramis, Dieu veut la conversion et non la mort du pécheur.
 
-— Eh ! votre dépense, vociféra l’hôte, dont l’affection pour son voyageur se changeait en un profond dédain en voyant qu’il s’éloignait sans solder ses comptes.
+— Amen, dit Athos, et nous reviendrons là-dessus plus tard, si tel est votre plaisir. Mais ce qui pour le moment me préoccupait le plus, et je suis sûr que tu me comprendras, d’Artagnan, c’était de reprendre à cette femme une espèce de blanc-seing qu’elle avait extorqué au cardinal et à l’aide duquel elle devait impunément se débarrasser de vous et peut-être de nous.
 
-— Paie, maroufle, s’écria le voyageur toujours galopant, à son laquais, lequel jeta aux pieds de l’hôte deux ou trois pièces d’argent et se mit à galoper après son maître.
+— Mais c’est donc un démon que cette créature ? dit Porthos, en tendant son assiette à Aramis, qui découpait une volaille… Passez-moi la cuisse, Aramis.
 
-— Ah ! lâche, ah ! misérable, ah ! faux gentilhomme ! cria d’Artagnan s’élançant à son tour après le laquais.
+— Et ce blanc-seing, dit d’Artagnan, ce blanc-seing est-il resté entre ses mains ?
 
-Mais le blessé était trop faible encore pour supporter une pareille secousse. À peine eut-il fait dix pas que ses oreilles tintèrent, qu’un éblouissement le prit, qu’un nuage de sang passa sur ses yeux et qu’il tomba au milieu de la rue en criant encore :
+— Non, il est passé dans les miennes ; je ne dirai pas que ça a été sans peine, par exemple, car je mentirais.
 
-— Lâche ! lâche ! lâche !
+— Mon cher Athos, dit d’Artagnan, je ne compte plus les fois que je vous dois la vie.
 
-— Il est, en effet, bien lâche, murmura l’hôte en s’approchant de d’Artagnan, et essayant par cette flatterie de se raccommoder avec le pauvre gascon, comme le héron de la fable avec son limaçon du soir.
+— Alors c’était donc pour revenir près d’elle que vous nous avez quittés ? demanda Aramis.
 
-— Oui, bien lâche, murmura d’Artagnan, mais elle, bien belle !
+— Justement.
 
-— Qui elle ? demanda l’hôte.
+— Et vous avez cette lettre du cardinal ? continua d’Artagnan.
 
-— Milady, balbutia d’Artagnan qui avait entendu le gentilhomme prononcer ce nom, et il s’évanouit une seconde fois.
+— La voici, dit Athos.
 
-— C’est égal, dit l’hôte, j’en perds deux, mais il me reste celui-là, que je suis sûr de conserver au moins quelques jours. C’est toujours onze écus de gagnés.
+Et il tira le précieux papier de la poche de sa casaque.
 
-On sait que onze écus faisaient juste la somme qui restait dans la bourse de d’Artagnan.
+D’Artagnan le déplia d’une main dont il n’essayait pas même de dissimuler le tremblement, et lut à son tour :
 
-L’hôte avait compté, comme on voit, sur onze jours de maladie à un écu par jour ; mais il avait compté sans son voyageur. Le lendemain, dès cinq heures du matin, d’Artagnan se leva, descendit lui-même à la cuisine, demanda, outre quelques autres ingrédients dont la liste n’est pas parvenue jusqu’à nous, du vin, de l’huile, du romarin, et, la recette de sa mère à la main, se composa un baume dont il oignit ses nombreuses blessures, renouvelant ses compresses lui-même et ne voulant admettre l’adjonction d’aucun médecin. Grâce sans doute à l’efficacité du baume de Bohême, et peut-être aussi grâce à l’absence de tout docteur, d’Artagnan se trouva sur pied dès le soir même, et à peu près guéri le lendemain.
+« C’est par mon ordre et pour le bien de l’État que le porteur du présent a fait ce qu’il a fait.
 
-Mais au moment de payer ce romarin, cette huile et ce vin, seule dépense du maître qui avait gardé une diète absolue, tandis qu’au contraire le cheval jaune, au dire de l’hôtelier du moins, avait mangé trois fois plus qu’on n’eût raisonnablement pu le supposer pour sa taille, d’Artagnan ne trouva plus dans sa poche que sa petite bourse de velours râpé ainsi que les onze écus qu’elle contenait ; mais quant à la lettre adressée à M. de Tréville, elle avait disparu.
+» 3 décembre 1627. Richelieu. »
 
-Le jeune homme commença par chercher cette lettre avec une grande patience, tournant et retournant vingt fois ses poches et ses goussets, fouillant et refouillant dans son sac, ouvrant et refermant sa bourse ; mais lorsqu’il eut acquis la conviction que la lettre était introuvable, il entra dans un troisième accès de rage, qui faillit lui occasionner une nouvelle consommation de vin et d’huile aromatisés, car en voyant cette jeune mauvaise tête s’échauffer et menacer de tout casser dans l’établissement si l’on ne retrouvait pas sa lettre, l’hôte s’était déjà saisi d’un&#32;épieu, sa femme d’un manche à balai, et son garçon des mêmes bâtons qui avaient servi la surveille.
+— En effet, dit Aramis, c’est une absolution dans toutes les règles.
 
-— Ma lettre de recommandation ! s’écriait d’Artagnan, ma lettre de recommandation, ou sangdieu je vous embroche tous comme des ortolans.
+— Il faut déchirer ce papier, s’écria d’Artagnan, qui semblait lire sa sentence de mort.
 
-Malheureusement une circonstance s’opposait à ce que le jeune homme accomplît sa menace : c’est que, comme nous l’avons dit, son épée avait été, dans sa première lutte, brisée en deux morceaux, ce qu’il avait parfaitement oublié. Il en résulta que lorsque d’Artagnan voulut, en effet, dégaîner, il se trouva purement et simplement armé d’un tronçon d’épée de huit ou dix pouces à peu près, que l’hôte avait soigneusement renfoncé dans le fourreau. Quant au reste de la lame, le chef l’avait adroitement détourné pour s’en faire une lardoire.
+— Bien au contraire, dit Athos, il faut le conserver précieusement, et je ne donnerais pas ce papier quand on le couvrirait de pièces d’or.
 
-Cependant cette déception n’eût probablement pas arrêté notre fougueux jeune homme, si l’hôte n’avait réfléchi que la réclamation que lui adressait son voyageur était parfaitement juste.
+— Et que va-t-elle faire maintenant ? demanda le jeune homme.
 
-— Mais, au fait, dit-il en abaissant son épieu, où est cette lettre ?
+— Mais, dit négligemment Athos, elle va probablement écrire au cardinal qu’un damné mousquetaire, nommé Athos, lui a arraché son sauf-conduit ; elle lui donnera dans la même lettre le conseil de se débarrasser, en même&#32;temps que de lui, de ses deux amis, Porthos et Aramis. Le cardinal se rappellera que ce sont les mêmes hommes qu’il rencontre toujours sur son chemin. Alors, un beau matin il fera arrêter d’Artagnan et, pour qu’il ne s’ennuie pas tout seul, il nous enverra lui tenir compagnie à la Bastille.
 
-— Oui, où est cette lettre ? cria d’Artagnan. D’abord, je vous en préviens, cette lettre est pour M. de Tréville, et il faut qu’elle se retrouve, ou si elle ne se retrouve pas, il saura bien la faire retrouver, lui !
+— Ah çà mais, dit Porthos, il me semble que vous faites là de tristes plaisanteries, mon cher Athos ! Avec cela que cette volaille est horriblement dure.
 
-Cette menace acheva d’intimider l’hôte. Après le roi et M. le cardinal, M. de Tréville était l’homme dont le nom peut-être était le plus souvent répété par les militaires et même par les bourgeois. Il y avait bien le père Joseph, c’est vrai, mais son nom, à lui, n’était jamais prononcé que tout bas, tant était grande la terreur qu’inspirait l’éminence grise, comme on appelait alors le familier du cardinal.
+— Je ne plaisante pas, répondit Athos.
 
-Aussi, jetant son épieu loin de lui, et ordonnant à sa femme d’en faire autant de son manche à balai et à ses valets de leurs bâtons, il donna le premier l’exemple en se mettant lui-même à la recherche de la lettre perdue.
+— Savez-vous, dit Porthos, que tordre le cou à cette damnée milady serait un péché moins grand que de le tordre à ces pauvres diables de huguenots, qui n’ont jamais commis d’autres crimes que de chanter en français des psaumes que nous chantons en latin ?
 
-— Est-ce que cette lettre renfermait quelque chose de précieux ? demanda l’hôte au bout d’un instant d’investigations inutiles.
+— Qu’en dit l’abbé ? demanda tranquillement Athos.
 
-— Mordioux ! je le crois bien, s’écria le Gascon, qui comptait s
+— Je dis que je suis de l’avis de Porthos, répondit Aramis.
+
+— Et moi donc ! fit d’Artagnan.
+
+— Heureusement qu’elle est loin, observa Porthos, car j’avoue qu’elle me gênerait fort ici.
+
+— Elle me gêne en Angleterre aussi bien qu’en France, dit Athos.
+
+— Elle me gêne partout, continua d’Artagnan.
+
+— Mais puisque vous la teniez, dit Porthos, que ne l’avez-vous noyée, étranglée, pendue ? — Il n’y a que les morts qui ne reviennent pas.
+
+— Vous croyez cela, Porthos, répondit le mousquetaire avec un sombre sourire que d’Artagnan comprit seul.
+
+— J’ai une idée, dit d’Artagnan.
+
+— Voyons, dirent les mousquetaires.
+
+— Aux armes ! cria Grimaud.
+
+Les jeunes gens se levèrent vivement et coururent aux fusils.
+
+Cette fois, une petite troupe s’avançait, composée de vingt ou vingt-cinq hommes ; mais ce n’étaient plus des travailleurs, c’étaient des soldats de la garnison.
+
+— Si nous retournions au camp ? dit Porthos ; il me semble que la partie n’est pas égale.
+
+— Impossible pour trois raisons, répondit Athos : la première, c’est que nous n’avons pas fini de déjeuner ; la seconde, c’est que nous avons encore des choses d’importance à dire ; la troisième, c’est qu’il s’en manque encore de dix minutes que l’heure ne soit écoulée.
+
+— Voyons, dit Aramis, il faut cependant arrêter un plan de bataille.
+
+— Il est bien simple, répondit Athos. Aussitôt que l’ennemi est à portée de mousquet, nous faisons feu ; s’il continue d’avancer, nous faisons feu encore, nous faisons feu tant que nous avons des fusils chargés ; si ce qui reste de la troupe veut alors monter à l’assaut, nous laissons les assiégeants descendre jusque dans le fossé, et alors nous leur poussons sur la tête ce pan de mur qui ne tient plus que par un miracle d’équilibre.
+
+— Bravo ! s’écria Porthos ; décidément, Athos, vous étiez né pour être général, et le cardinal, qui se croit un grand homme de guerre, est bien peu de chose auprès de vous.&#32;
+
+— Messieurs, reprit Athos, pas de double emploi, je vous prie, visez bien chacun votre homme.
+
+— Je tiens le mien, dit d’Artagnan.
+
+— Et moi le mien dit Porthos.
+
+— Et moi idem, dit Aramis.
+
+— Allons, feu !  dit Athos.
+
+Les quatre coups de fusil ne firent qu’une détonation, et quatre hommes tombèrent.
+
+Aussitôt le tambour battit et la petite troupe s’avança au pas de charge.
+
+Alors les coups de fusil se succédèrent sans régularité, mais toujours envoyés avec la même justesse ; cependant, comme s’ils eussent connu la faiblesse numérique des ennemis, les Rochelois continuaient d’avancer au pas de course.
+
+Sur trois autres coups de fusil, deux hommes tombèrent ; néanmoins la marche de ceux qui restaient debout ne se ralentissait pas.
+
+Arrivés au pied du bastion, les ennemis étaient encore douze ou quinze ; une dernière décharge les accueillit, mais ne les arrêta point ; ils sautèrent dans le fossé et s’apprêtèrent à escalader la brèche.
+
+— Allons, mes amis, dit Athos, finissons-en d’un coup. À la muraille ! à la muraille !
+
+Et les quatre amis, secondés par Grimaud, se mirent à pousser avec le canon de leurs fusils un énorme pan de mur qui s’inclina comme si le vent le poussait, et, se détachant de sa base, tomba avec un bruit horrible dans le fossé ; puis on entendit un grand cri, un nuage de poussière monta vers le ciel, et tout fut dit.
+
+— Les aurions-nous écrasés depuis le premier jusqu’au dernier ? demanda Athos.
+
+— Ma foi, cela m’en a l’air, dit d’Artagnan.
+
+— Non, dit Porthos, en voilà deux ou trois qui se sauvent tout éclopés.
+
+En effet, trois ou quatre de ces malheureux, couverts de boue et de sang, fuyaient dans le chemin creux et regagnaient la ville : c’était tout ce qui restait de la petite troupe.
+
+Athos regarda à sa montre.
+
+— Messieurs, dit-il, il y a une heure que nous sommes ici, et maintenant le pari est gagné, mais il faut être beaux joueurs ; d’ailleurs d’Artagnan ne nous avait pas dit son idée.
+
+Et le mousquetaire, avec son sang-froid habituel, alla s’asseoir devant les restes du déjeûner.
+
+— Mon idée ? dit d’Artagnan.
+
+— Oui, répliqua Athos, vous disiez que vous aviez une idée.
+
+— Ah ! j’y suis, reprit d’Artagnan : je passe en Angleterre une seconde fois, je vais trouver M. de Buckingham, et je l’avertis du complot tramé contre sa vie.
+
+— Vous ne ferez pas cela, d’Artagnan, dit froidement Athos.
+
+— Et pourquoi cela ? ne l’ai-je pas fait déjà ?
+
+— Oui, mais à cette époque nous n’étions pas en guerre ; à cette époque, M. de Buckingham était un allié et non un ennemi : ce que vous voulez faire serait taxé de trahison.
+
+D’Artagnan comprit la force de ce raisonnement et se tut.&#32;
+
+— Mais, dit Porthos, il me semble que j’ai une idée à mon tour.
+
+— Silence pour l’idée de M. Porthos, dit Aramis.
+
+— Je demande un congé à M. de Tréville sous un prétexte quelconque que vous trouverez ; je ne suis pas fort sur les prétextes, moi. Milady ne me connaît pas, je m’approche d’elle sans qu’elle me redoute, et lorsque je trouve ma belle, je l’étrangle.
+
+— Eh ! dit Athos, je ne suis pas très éloigné d’adopter l’idée de M. Porthos.
+
+— Fi donc ! dit Aramis, tuer une femme, Non ! Tenez, moi, j’ai la véritable idée.
+
+— Voyons votre idée, Aramis, demanda Athos, qui avait beaucoup de déférence pour le jeune mousquetaire.
+
+— Il faudrait prévenir la reine.
+
+— Ah ! ma foi, oui ! s’écrièrent ensemble Porthos et d’Artagnan ; je crois que nous touchons au moyen.
+
+— Prévenir la reine ? dit Athos, et comment cela ? Avons-nous des relations à la cour ? Pouvons-nous envoyer quelqu’un à Paris sans qu’on le sache au camp ? D’ici à Paris il y a cent quarante lieues ; notre lettre ne sera pas à Angers que nous serons au cachot, nous.
+
+— Quant à ce qui est de faire remettre sûrement une lettre à Sa Majesté, dit Aramis en rougissant, moi, je m’en charge ; je connais à Tours une personne adroite…
+
+Aramis s’arrêta en voyant sourire Athos.
+
+— Eh bien ! vous n’adoptez pas ce moyen, Athos ? dit d’Artagnan.
+
+— Je ne le repousse pas tout à fait, répondit Athos, mais je voulais seulement faire observer à Aramis qu’il ne peut quitter le camp, que tout autre qu’un de nous n’est pas sûr, que deux heures après que le messager sera parti, tous les capucins, tous les alguazils, tous les bonnets noirs du cardinal sauront votre lettre par cœur, et qu’on vous arrêtera, vous et votre adroite personne.
+
+— Sans compter, objecta Porthos, que la reine sauvera M. de Buckingham, mais ne nous sauvera pas du tout, nous autres.
+
+— Messieurs, dit d’Artagnan, ce que Porthos objecte est plein de sens.
+
+— Ah ! ah ! que se passe-t-il dans la ville ? dit Athos.
+
+— On bat la générale.
+
+Les quatre amis écoutèrent, et le bruit du tambour parvint effectivement jusqu’à eux.
+
+— Vous allez voir qu’ils vont nous envoyer un régiment tout entier, dit Athos.
+
+— Vous ne comptez pas tenir contre un régiment tout entier ? demanda Porthos.
+
+— Pourquoi pas ? dit le mousquetaire ; je me sens en train, et je tiendrais devant une armée, si nous avions seulement eu la précaution de prendre une douzaine de bouteilles en plus.
+
+— Sur ma parole, le tambour se rapproche, dit d’Artagnan.
+
+— Laissez-le se rapprocher, reprit Athos ; il y a pour un quart d’heure de chemin d’ici à la ville, et par conséquent de la ville ici. C’est plus de temps qu’il ne nous en faut pour arrêter notre plan ; si nous nous en allons d’ici, nous ne&#32;retrouverons jamais un endroit aussi convenable. Et tenez, justement, messieurs, voici la vraie idée qui me vient.
+
+— Dites, alors.
+
+— Permettez que je donne à Grimaud quelques ordres indispensables.
+
+Athos fit signe à son valet d’approcher.
+
+— Grimaud, dit Athos, en montrant les morts qui gisaient dans le bastion, vous allez prendre ces messieurs, vous allez les dresser contre la muraille, vous leur mettrez leur chapeau sur la tête et leur fusil à la main.
+
+— Ô grand homme ! s’écria d’Artagnan, je vous comprends !
+
+— Vous comprenez ? dit Porthos.
+
+— Et toi, comprends-tu, Grimaud ? demanda Aramis.
+
+Grimaud fit signe que oui.
+
+— C’est tout ce qu’il faut, dit Athos ; revenons à mon idée.
+
+— Je voudrais pourtant bien comprendre, observa Porthos.
+
+— C’est inutile.
+
+— Oui, oui, l’idée d’Athos ! dirent en même temps d’Artagnan et Aramis.
+
+— Cette milady, cette femme, cette créature, ce démon a un beau-frère, à ce que vous m’avez dit, je crois, d’Artagnan.
+
+— Oui, je le connais beaucoup même, et je crois aussi qu’il n’a pas une grande sympathie pour sa belle-sœur.
+
+— Il n’y a point de mal à cela, répondit Athos, et il la détesterait même, que cela n’en vaudrait que mieux.
+
+— En ce cas nous sommes servis à souhait.
+
+— Cependant, dit Porthos, je voudrais bien comprendre ce que fait Grimaud.
+
+— Silence, Porthos ! dit Aramis.
+
+— Comment se nomme ce beau-frère ?
+
+— Lord de Winter.
+
+— Où est-il maintenant ?
+
+— Il est retourné à Londres au premier bruit de guerre.
+
+— Eh bien ! voilà justement l’homme qu’il nous faut, dit Athos, c’est lui qu’il nous convient de prévenir ; nous lui ferons savoir que sa belle-sœur est sur le point d’assassiner quelqu’un, et nous le prions de ne pas la perdre de vue. Il y a bien à Londres, je l’espère, quelque établissement dans le genre des Madelonnettes ou des Filles-Repenties ; il y fait mettre sa belle-sœur, et nous sommes tranquilles.
+
+— Oui, dit d’Artagnan, jusqu’à ce qu’elle en sorte.
+
+— Ah ! ma foi, reprit Athos, vous en demandez trop, d’Artagnan. Je vous ai donné tout ce que j’avais, et je vous préviens que c’est le fond de mon sac.
+
+— Moi, je trouve que c’est ce qu’il y a de mieux, dit Aramis. Nous prévenons à la fois la reine et lord de Winter.
+
+— Oui, mais par qui ferons-nous porter la lettre à Tours et la lettre à Londres ?
+
+— Je réponds de Bazin, dit Aramis.
+
+— Et moi de Planchet, continua d’Artagnan.
+
+— En effet, dit Porthos, si nous ne pouvons nous absenter du camp, nos laquais peuvent le quitter.&#32;
+
+— Sans doute, dit Aramis, et dès aujourd’hui nous écrivons les lettres, nous leur donnons de l’argent et ils partent.
+
+— Nous leur donnons de l’argent ? reprit Athos ; vous en avez donc, de l’argent ?
+
+Les quatre amis se regardèrent, et un nuage passa sur les fronts, qui s’étaient un instant éclaircis.
+
+— Alerte, cria d’Artagnan, je vois des points noirs et des points rouges qui s’agitent là-bas. Que disiez-vous donc d’un régiment, Athos ? c’est une véritable armée.
+
+— Ma foi, oui, dit Athos, les voilà. Voyez-vous les sournois qui venaient sans tambours ni trompettes. Ah ! ah ! tu as fini, Grimaud ?
+
+Grimaud fit signe que oui et montra une douzaine de morts qu’il avait placés dans les attitudes les plus pittoresques, les uns au port d’armes, les autres ayant l’air de mettre en joue, les autres l’épée à la main.
+
+— Bravo ! reprit Athos, voilà qui fait honneur à ton imagination.
+
+— C’est égal, dit Porthos, je voudrais cependant bien comprendre…
+
+— Décampons d’abord, interrompit d’Artagnan, tu comprendras après.
+
+— Un instant, messieurs, un instant, donnons le temps à Grimaud de desservir.
+
+— Ah ! dit Aramis, voici les points noirs et les points rouges qui grandissent fort visiblement, et je suis de l’avis de d’Artagnan, je crois que nous n’avons pas de temps à perdre pour regagner le camp.
+
+— Ma foi, dit Athos, je n’ai plus rien contre la retraite ; nous avions parié pour une heure, nous sommes restés une heure et demie ; il n’y a rien à dire ; partons, messieurs, partons.
+
+Grimaud avait déjà pris les devants avec le panier et la desserte.
+
+Les quatre amis sortirent derrière lui et firent une dizaine de pas.
+
+— Eh ! s’écria Athos, que diable faisons-nous, messieurs ?
+
+— Avez-vous oublié quelque chose ? demanda Aramis.
+
+— Et le drapeau, morbleu ! Il ne faut pas laisser un drapeau aux mains de l’ennemi, même quand ce drapeau ne serait qu’une serviette.
+
+Et Athos s’élança dans le bastion, monta sur la plate-forme et enleva le drapeau : seulement, comme les Rochelois étaient arrivés à portée de mousquet, ils firent un feu terrible sur cet homme, qui, comme par plaisir, allait s’exposer aux coups.
+
+Mais on eût dit qu’Athos avait un charme attaché à sa personne ; les balles passèrent en sifflant tout autour de lui ; pas une ne le toucha.
+
+Athos agita son étendard en tournant le dos aux gens de la ville et en saluant ceux du camp. Des deux côtés, de grands cris retentirent, d’un côté des cris de colère, de l’autre des cris d’enthousiasme.
+
+Une seconde décharge suivit la première, et trois balles en la trouant firent réellement de la serviette un drapeau.
+
+On entendit tout le camp qui criait : Descendez ! descendez !
+
+Athos descendit ; ses camarades, qui l’attendaient avec anxiété, le virent reparaître avec joie.
+
+— Allons, Athos, allons, dit d’Artagnan, allongeons, allongeons ; maintenant&#32;que nous avons tout trouvé, excepté l’argent, il serait stupide d’être tués.
+
+Mais Athos continua de marcher majestueusement, et ses compagnons, voyant toute observation inutile, réglèrent leur pas sur le sien.
+
+Grimaud et son panier avaient pris les devants et se trouvaient tous deux hors d’atteinte.
+
+Au bout d’un instant on entendit le bruit d’une fusillade enragée.
+
+— Qu’est-ce que cela ? demanda Porthos, et sur quoi tirent-ils ? je n’entends pas siffler les balles et je ne vois personne.
+
+— Ils tirent sur nos morts, répondit Athos.
+
+— Mais nos morts ne répondront pas.
+
+— Justement ; alors ils croiront à une embuscade, ils délibéreront ; ils enverront un parlementaire, et quand ils s’apercevront de la plaisanterie, nous serons hors de la portée des balles. Voilà pourquoi il est inutile de gagner une pleurésie en nous pressant.
+
+— Oh ! je comprends ! s’écria Porthos émerveillé.
+
+— C’est bien heureux ! dit Athos en haussant les épaules.
+
+De leur côté, les Français, en voyant revenir les quatre amis au pas, poussaient des cris d’enthousiasme.
+
+Enfin une nouvelle mousquetade se fit entendre, et cette fois les balles vinrent s’aplatir sur les cailloux, autour des quatre amis, et siffler lugubrement à leurs oreilles. Les Rochelois venaient de s’emparer du bastion.
+
+— Voilà des gens bien maladroits, dit Athos. Combien en avons-nous tué ? douze ?
+
+— Ou quinze.
+
+— Combien en avons-nous écrasé ?
+
+— Huit ou dix.
+
+— Et en échange de tout cela, pas une égratignure ? Ah ! si fait ! Qu’avez-vous donc là à la main, d’Artagnan ? du sang, ce me semble ?
+
+— Ce n’est rien, dit d’Artagnan.
+
+— Une balle perdue ?
+
+— Pas même.
+
+— Qu’est-ce donc alors ?
+
+Nous l’avons dit, Athos aimait d’Artagnan comme son enfant, et ce caractère sombre et inflexible avait parfois pour le jeune homme des sollicitudes de père.
+
+— Une écorchure, reprit d’Artagnan, mes doigts ont été pris entre deux pierres, celle du mur et celle de ma bague, alors la peau s’est ouverte.
+
+— Voilà ce que c’est que d’avoir des diamants, mon maître ! dit dédaigneusement Athos.
+
+— Ah çà mais, s’écria Porthos, il y a un diamant, en effet, et pourquoi diable, alors, puisqu’il y a un diamant, nous plaignons-nous de ne pas avoir d’argent ?
+
+— Tiens, au fait ! dit Aramis.
+
+— À la bonne heure, Porthos. Cette fois-ci voilà une idée.
+
+— Sans doute, dit Porthos, en se rengorgeant sur le compliment d’Athos, puisqu’il y a un diamant, vendons-le.&#32;
+
+— Mais, dit d’Artagnan, c’est le diamant de la reine.
+
+— Raison de plus, reprit Athos. La reine sauvant M. de Buckingham, son amant, rien de plus juste ; la reine nous sauvant, nous ses amis, rien de plus moral. Vendons le diamant. Qu’en pense M. l’abbé ? Je ne demande pas l’avis de Porthos, il est donné.
+
+— Mais, je pense, dit Aramis en rougissant, que la bague ne venant pas d’une maîtresse, et par conséquent n’étant pas un gage d’amour, d’Artagnan peut la vendre.
+
+— Mon cher, vous parlez comme la théologie en personne. Ainsi votre avis est… ?
+
+— De vendre le diamant, répondit Aramis.
+
+— Eh bien ! dit gaiement d’Artagnan, vendons le diamant et n’en parlons plus.
+
+La fusillade continuait, mais les amis étaient hors de portée, et les Rochelois ne tiraient plus que pour l’acquit de leur conscience.
+
+— Ma foi, dit Athos, il était temps que cette idée vînt à Porthos ; nous voici au camp. Ainsi, messieurs, pas un mot de plus sur cette affaire. On nous observe, on vient à notre rencontre, nous allons être portés en triomphe.
+
+En effet, comme nous l’avons dit, tout le camp était en émoi ; plus de deux mille personnes avaient assisté, comme à un spectacle, à l’heureuse forfanterie des quatre amis ; forfanterie dont on était bien loin de soupçonner le véritable motif. On n’entendait que le cri de : Vivent les gardes ! Vivent les mousquetaires ! M. de Busigny était venu le premier serrer la main à Athos, et reconnaître que le pari était perdu. Le dragon et

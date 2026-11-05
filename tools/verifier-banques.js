@@ -208,7 +208,7 @@ const CADRE={fr:[41.2,51.3,-5.6,10],monde:[-58,84,-180,180]};
   const [a,b,c,d]=CADRE[l.carte];
   if(!(l.lat>a&&l.lat<b&&l.lon>c&&l.lon<d))err(id,'hors de la carte');
   if(!(l.r>=0))err(id,'rayon r manquant');
-  const w=releve[l.wp]; if(!w||w.lat==null)return;
+  const w=releve[l.wp]; if(!w||w.lat==null){if(Object.keys(releve).length)warn(id,`${l.nom} : pas de coordonnées Wikidata pour « ${l.wp} »`);return;}
   const e=km(l.lat,l.lon,w.lat,w.lon), tol=Math.max(l.r,l.carte==='fr'?12:40);
   if(e>tol)err(id,`${l.nom} : ${Math.round(e)} km d'écart avec Wikidata (${w.lat}, ${w.lon})`);
 });

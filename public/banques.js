@@ -1724,7 +1724,7 @@ B.lieux=[
   {id:'l129',niv:3,carte:'fr',genre:'pays',nom:"Le Gévaudan",wp:"Gévaudan",lat:44.550,lon:3.500,r:40,dit:"Pays de la Lozère, célèbre pour sa bête au XVIIIe siècle.",src:'Wikidata, coordonnées (P625)',vu:'2026-11-05'},
   {id:'l130',niv:3,carte:'fr',genre:'pays',nom:"Le Vivarais",wp:"Vivarais",lat:44.800,lon:4.400,r:45,dit:"Le pays de l'Ardèche, sur la rive droite du Rhône.",src:'Wikidata, coordonnées (P625)',vu:'2026-11-05'},
   {id:'l131',niv:3,carte:'fr',genre:'pays',nom:"Le Velay",wp:"Velay",lat:45.100,lon:3.900,r:30,dit:"Le pays du Puy-en-Velay, terre de volcans et de dentelle.",src:'Wikidata, coordonnées (P625)',vu:'2026-11-05'},
-  {id:'l132',niv:3,carte:'fr',genre:'pays',nom:"La Brie",wp:"Coulommiers",lat:48.600,lon:3.000,r:45,dit:"Plateau entre Seine et Marne, connu pour son fromage.",src:'Wikidata, coordonnées (P625)',vu:'2026-11-05'},
+  {id:'l132',niv:3,carte:'fr',genre:'pays',nom:"La Brie",wp:"Coulommiers (Seine-et-Marne)",lat:48.600,lon:3.000,r:45,dit:"Plateau entre Seine et Marne, connu pour son fromage.",src:'Wikidata, coordonnées (P625)',vu:'2026-11-05'},
   {id:'l133',niv:3,carte:'fr',genre:'pays',nom:"Le Vexin",wp:"Magny-en-Vexin",lat:49.150,lon:1.800,r:30,dit:"Partagé entre France et Normandie, de part et d'autre de l'Epte.",src:'Wikidata, coordonnées (P625)',vu:'2026-11-05'},
   {id:'l134',niv:3,carte:'fr',genre:'pays',nom:"Le pays de Caux",wp:"Pays de Caux",lat:49.650,lon:0.750,r:35,dit:"Plateau normand qui finit en falaises, d'Étretat au Tréport.",src:'Wikidata, coordonnées (P625)',vu:'2026-11-05'},
   {id:'l135',niv:3,carte:'fr',genre:'pays',nom:"Le pays d'Auge",wp:"Pays d'Auge",lat:49.100,lon:0.200,r:30,dit:"Pommiers, camembert, livarot et pont-l'évêque.",src:'Wikidata, coordonnées (P625)',vu:'2026-11-05'},

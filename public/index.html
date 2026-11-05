@@ -1625,7 +1625,7 @@ var fin=function(){if(e.parentNode)e.remove();};e.addEventListener('click',fin);
           <div class="challenge" id="reel-box"></div>
           <div class="row reel-city"><span class="note" id="reel-city-txt"></span><button class="btn ghost mini" id="reel-city-edit"></button></div>
           <form class="row reel-city" id="reel-city-form" hidden><input type="text" id="reel-city-in" placeholder="Ta ville" aria-label="Ta ville" autocomplete="address-level2"><button class="btn mini">Valider</button></form>
-          <details class="pa-cal" id="chasse"><summary></summary><div class="chasse-ville note" id="chasse-ville" hidden></div><p class="note fg2" id="chasse-intro"></p><ul class="besace chasse" id="chasse-l"></ul><div class="row" id="chasse-fin"></div></details>
+          <details class="pa-cal" id="chasse"><summary></summary><div class="chasse-ville note" id="chasse-ville" hidden></div><p class="note fg2" id="chasse-intro"></p><ul class="besace chasse" id="chasse-l"></ul><div class="row" id="chasse-fin"></div><div id="chasse-villes"></div></details>
         </div>
       </div>
     </div>
@@ -5096,7 +5096,7 @@ const CHASSE=[
 // Ouverts par un lien de test (?chasse=saumur) tant qu'ils n'ont pas été vérifiés sur le terrain.
 // [énigme, question, réponse attendue ('' si à relever), lieu, pour la suite]
 // pret:true quand le parcours a été vérifié sur place : il s'ouvre alors à ceux qui ont indiqué cette ville
-const VILLES={saumur:{nom:'Saumur',titre:'La chasse de Saumur',du:'l’hôtel de ville',km:3,duree:'2 h',pret:false,etapes:[
+const VILLES={saumur:{nom:'Saumur',titre:'La chasse de Saumur',du:'l’hôtel de ville',km:3,duree:'2 h',pret:false,prudence:'ne descends pas vers l’eau quand la Loire est haute',etapes:[
   ["Au bord de la Loire, la maison commune garde du XVe siècle deux tourelles en encorbellement et un chemin de ronde.","Combien de tourelles comptes-tu côté Loire ? Quelle lettre d’or figure dans les armes de la ville ?","2 tourelles ; un S d’or, sous trois fleurs de lis.","Hôtel de ville, quai Lucien-Gautier","Remonte la Loire à contre-courant, en t’éloignant du pont, par le quai Mayaud. Arrête-toi quand une tour ronde s’avance vers le fleuve, au pied du château."],
   ["Un oiseau de bois fixé en haut de cette tour du XVe siècle servait de cible aux tireurs de la milice bourgeoise.","Quel oiseau ?","Un perroquet : le papegai.","Tour Papegault, place Saint-Michel","Monte vers le château, puis redescends vers le clocher de Saint-Pierre par la rue qui y mène en pente douce. En chemin, des anges prient au-dessus de ta tête."],
   ["Au XVIIe siècle, des angelots sculptés ont été placés sur cette façade pour prier au-dessus des passants.","Qu’est-ce que les angelots portent ?","Des chapelets.","Maison des Anges, 13-15 rue Fourrier","Continue dans la même direction : la place de l’église est au bout de la rue."],
@@ -5108,10 +5108,48 @@ const VILLES={saumur:{nom:'Saumur',titre:'La chasse de Saumur',du:'l’hôtel de
   ["Colonnes corinthiennes, achevé en 1866, des noms gravés au-dessus des colonnes. Aujourd’hui on m’appelle le Dôme.","Relève un nom gravé sur la façade.","","Théâtre le Dôme, place de la Bilange","Suis la Loire dans le sens du courant. La maison des vignerons est à côté de l’office de tourisme, face au fleuve."],
   ["Le tuffeau a été creusé en caves pendant des siècles, et ses galeries gardent le vin. Les vignerons de la région ont leur vitrine au bord de l’eau.","Combien d’appellations d’Anjou et de Saumur la maison présente-t-elle ?","26 appellations d’origine contrôlée.","Maison des vins d’Anjou et de Saumur, 7 quai Carnot","Continue vers l’ouest, en t’éloignant du pont. Des écuries bâties à partir de 1827 gardent la mémoire des cavaliers."],
   ["Arrivée. En 1828, l’école d’équitation de Versailles s’installe à Saumur. Ses écuyers portent encore l’uniforme qui leur a donné leur nom.","De quelle couleur est l’uniforme, et quel nom a-t-il donné aux écuyers ?","Noir : le Cadre Noir.","Musée de la Cavalerie, anciennes écuries du Manège",""]
+]},
+'saint-malo':{nom:'Saint-Malo',titre:'La chasse de Saint-Malo',du:'la porte Saint-Vincent',km:2.5,duree:'1 h 30',pret:false,prudence:'reste loin du bord du chemin de ronde, et ne va sur un îlot qu’à marée basse, horaire des marées en main',etapes:[
+  ["Départ. La grande porte de la ville close, ouverte en 1709, porte au-dessus de son arche les armes de la cité et celles de la province.","Quelles armes reconnais-tu au-dessus de la porte ?","Les armes de Saint-Malo et celles de la Bretagne, avec l’hermine.","Porte Saint-Vincent","Monte sur le rempart et fais le tour de la ville en gardant toujours l’eau à ta gauche. Arrête-toi à la porte la plus ancienne, entre deux grosses tours."],
+  ["Je suis la plus vieille porte de Saint-Malo : le XVe siècle m’a donné deux tours massives pour me garder.","Combien de tours encadrent la porte ?","Deux.","Grand’Porte","Continue sur le rempart, l’eau à ta gauche, jusqu’au bastion où un corsaire de bronze veille sur le port."],
+  ["Corsaire du roi, né à Saint-Malo en 1673, il prit Rio de Janeiro en 1711. Sa statue garde le bastion Saint-Louis.","Qui est ce corsaire ?","René Duguay-Trouin.","Bastion Saint-Louis","Continue jusqu’à la porte qui porte le nom d’une ville de l’intérieur, au bout de l’estuaire de la Rance."],
+  ["Mon nom est celui d’une ville de l’intérieur, mais je m’ouvre sur la mer. En face, de l’autre côté de l’estuaire, une station balnéaire te regarde.","Quelle ville vois-tu en face, de l’autre côté de l’eau ?","Dinard.","Porte de Dinan","Continue sur le rempart vers le large. Sur le bastion suivant, un explorateur malouin regarde vers l’ouest."],
+  ["Parti de Saint-Malo en 1534, il remonta un grand fleuve d’Amérique où l’on parle encore français.","Qui est cet explorateur, et quel pays a-t-il fait connaître ?","Jacques Cartier, le Canada.","Bastion de la Hollande","Reste sur le rempart et regarde la mer : sur un îlot tout proche, un écrivain repose face au large."],
+  ["Né à Saint-Malo en 1768, il a voulu être enterré sur un îlot qu’on rejoint à pied à marée basse, face à la mer.","Qui repose sur l’îlot du Grand Bé ?","François-René de Chateaubriand.","Rempart face au Grand Bé, près de la porte Saint-Pierre","Continue le tour, l’eau toujours à ta gauche, jusqu’à l’ancienne poudrière ronde qui porte une table d’orientation."],
+  ["Ancienne poudrière, cette tour ronde offre l’un des plus beaux panoramas des remparts.","Sur la table d’orientation, relève le cap le plus lointain indiqué.","Le cap Fréhel, d’après l’office de tourisme : à vérifier sur la table.","Tour Bidouane","Continue sur le rempart, puis prends la passerelle vers l’esplanade où un autre corsaire montre le large du doigt."],
+  ["Le roi des corsaires, né ici en 1773, tend le bras vers le pays qu’il a tant combattu.","Vers quel pays pointe son doigt ?","Vers l’Angleterre.","Statue de Robert Surcouf, près de la Maison du Québec","Reviens sur le rempart et termine le tour jusqu’au château, au bout de la grande plage."],
+  ["Une tour du château porte un nom voulu par la duchesse Anne, contre l’avis des Malouins : « qu’importe qui en grogne ».","Comment s’appelle cette tour ?","Quic-en-Groigne.","Château de Saint-Malo, porte Saint-Thomas","Entre dans la ville par la porte Saint-Vincent, prends la rue Saint-Vincent, puis monte par les petites rues vers la flèche de la cathédrale."],
+  ["Arrivée. Cathédrale de la ville, bâtie du XIe au XVIIIe siècle, elle porte le nom du saint de la grande porte.","Quel saint donne son nom à la cathédrale ? Une plaque y rappelle-t-elle un départ célèbre ? Si oui, lequel ?","Saint Vincent. La plaque est à relever.","Cathédrale Saint-Vincent, place Jean-de-Châtillon",""]
+]},
+beziers:{nom:'Béziers',titre:'La chasse de Béziers',du:'le Pont-Vieux',km:2.5,duree:'1 h 30',pret:false,prudence:'traverse les grandes avenues aux passages piétons',etapes:[
+  ["Départ. Bâti sur une base romaine, je résiste aux crues de l’Orb depuis le Moyen Âge. Longtemps, j’ai été le seul passage sur le fleuve entre Marseille et Toulouse.","Combien d’arches comptes-tu ?","15 arches, sur 241 mètres.","Pont-Vieux","Traverse le pont vers la ville haute. Monte les escaliers du parc, traverse l’avenue Valentin-Duc avec prudence, puis l’escalier ou l’ascenseur et la passerelle vers la cathédrale."],
+  ["En 1209, pendant la croisade contre les Albigeois, la ville fut massacrée et l’église d’ici détruite. La cathédrale gothique a mis deux siècles à renaître.","Depuis le parvis, quel fleuve vois-tu en contrebas ?","L’Orb.","Cathédrale Saint-Nazaire","Passe par le jardin des Évêques, prends à droite la rue Plan-Monseigneur-Blaquière et rejoins la place qui porte le nom de 1789."],
+  ["Mon nom rappelle 1789. Au centre, un monument veille sur la place.","Quel monument se dresse sur la place ?","","Place de la Révolution","Continue par la rue du Docteur-Vernhes, traverse la place des Bons-Amis et suis la rue qui porte le nom d’un fabuliste."],
+  ["Né à Béziers en 1777, ce fabuliste entra à l’Académie française. Sa rue mène au cœur de la ville.","Quel est son nom, lu sur la plaque de la rue ?","Viennet.","Rue Viennet","Au bout, tourne à gauche sur la place au nom curieux, qui vient du commerce du vin."],
+  ["Ce nom vient de l’eau-de-vie de vin qui fit la fortune de Béziers : trois mesures, coupées d’eau, en donnaient six.","Comment s’appelle la place ?","La place des Trois-Six.","Place des Trois-Six","Passe devant l’office de tourisme, traverse l’avenue et rejoins la mairie, sur la place Gabriel-Péri."],
+  ["La maison commune de Béziers donne sur une place au nom d’un résistant.","Relève une date ou une inscription sur la façade de la mairie.","","Hôtel de ville, place Gabriel-Péri","Prends la rue du 4-Septembre jusqu’aux grandes allées plantées de platanes. En haut, un théâtre de 1844."],
+  ["Construit en 1844, on dit de ma salle qu’elle est une bonbonnière. Je ferme les allées par le haut.","Relève un nom ou une date sur la façade du théâtre.","","Théâtre municipal, haut des allées Paul-Riquet","Descends les allées sur environ 500 mètres. Au milieu, un homme de bronze regarde vers la mer qu’il a reliée à l’océan."],
+  ["Né à Béziers au XVIIe siècle, il a relié l’Atlantique à la Méditerranée. David d’Angers a sculpté sa statue en 1838.","Qui est-ce, et quel ouvrage a-t-il construit ?","Pierre-Paul Riquet, le canal du Midi.","Statue de Paul Riquet, au milieu des allées","Au bas des allées, traverse l’avenue du Maréchal-Joffre et entre dans le grand jardin de 1867."],
+  ["Arrivée. Un jardin de 1867 garde les bustes de poètes de langue occitane et une fontaine sculptée par un enfant du pays.","Relève le nom d’un poète dont le buste est dans le jardin. Qui a sculpté la fontaine du Titan ?","Injalbert, sculpteur biterrois. Le nom du poète est à relever.","Plateau des Poètes",""]
 ]}};
 (()=>{try{const v=new URLSearchParams(location.search).get('chasse');if(v&&VILLES[v.toLowerCase()])localStorage.setItem('brainfit.chasse',v.toLowerCase());}catch(e){}})();
+// la chasse ouverte : celle du lien de test, sinon une ville prête que l'on a choisie (« m'intéresse ») ou indiquée comme sa ville
+const villesInt=()=>(state.settings.villesInt||[]).filter(k=>VILLES[k]);
+const kmFr=v=>String(v.km).replace('.',',');
 const chasseVille=()=>{try{const v=localStorage.getItem('brainfit.chasse');if(VILLES[v])return v;}catch(e){}
-  const c=(city()||'').toLowerCase(); return Object.keys(VILLES).find(k=>VILLES[k].pret&&VILLES[k].nom.toLowerCase()===c)||null;};
+  const c=(city()||'').toLowerCase(), ok=Object.keys(VILLES).filter(k=>VILLES[k].pret);
+  return ok.find(k=>VILLES[k].nom.toLowerCase()===c)||ok.find(k=>villesInt().includes(k))||null;};
+// la liste des chasses de ville, dans le Bilan : on coche celles qui nous intéressent ; les autres ne voient rien
+function renderChasseVilles(){
+  const box=$('#chasse-villes'); if(!box)return;
+  const mine=villesInt(), c=(city()||'').toLowerCase();
+  box.replaceChildren(el('p',{class:'label',text:'Les chasses de ville'}),
+    el('p',{class:'note fg2',text:'Coche les villes où tu vas, pour y habiter ou en vacances : leur chasse s’ouvrira pour toi dès qu’elle sera prête. Seuls les intéressés la voient.'}),
+    el('ul',{class:'besace'},...Object.entries(VILLES).map(([k,V])=>{const on=mine.includes(k)||V.nom.toLowerCase()===c;
+      return el('li',{class:on?'fait':null},el('div',{},el('b',{text:V.nom}),el('p',{class:'note fg2',text:`${V.etapes.length} étapes, ${kmFr(V)} km · ${V.pret?'ouverte':'bientôt'}`})),
+        el('button',{class:'btn mini'+(on?' gold':''),'aria-pressed':String(on),text:on?'✓ M’intéresse':'M’intéresse',onclick:()=>{
+          const L=villesInt().filter(x=>x!==k); if(!mine.includes(k))L.push(k); state.settings.villesInt=L; save(); renderChasseVilles(); renderChasseEv(); renderChasse();}}));})));
+}
 function chasseOf(wk){
   const wn=Math.floor(new Date(wk+'T12:00:00').getTime()/(7*864e5)), N=CHASSE.length;
   // pas = 5 : sept semaines sans revoir un indice ; l'ordre de la banque mêle déjà les types
@@ -5136,7 +5174,7 @@ function renderChasse(){
     el('button',{class:'btn mini gold',text:'Partir en chasse',onclick:()=>{showTab('exercices');openEx('chasse');}}),
     VILLES[cv].pret?null:el('button',{class:'btn ghost mini',text:'Quitter le test',onclick:()=>{try{localStorage.removeItem('brainfit.chasse');}catch(e){}renderChasse();renderChasseEv();}}));
   $('#chasse-intro').textContent=X.ville
-    ?`Onze étapes dans ${X.ville.nom}, environ 3 km. Chaque étape finit par un indice qui mène à la suivante. Note ce que tu lis sur place, prends une photo si tu veux. Reste sur la voie publique, ne grimpe nulle part.`
+    ?`${X.items.length} étapes dans ${X.ville.nom}, environ ${kmFr(X.ville)} km. Chaque étape finit par un indice qui mène à la suivante. Note ce que tu lis sur place, prends une photo si tu veux. Reste sur la voie publique, ne grimpe nulle part.`
     :`Cinq choses à trouver ${ici()}, à pied, le téléphone dans la poche. Note ce que tu as relevé : rien ne vérifie, c’est sur l’honneur. Reste sur la voie publique.`;
   const put=()=>{state.chasse[key]=Object.assign({f:{}},state.chasse[key]);state.chasse[key].f=f;
     // garder les huit dernières semaines seulement (les parcours de ville restent)
@@ -5169,7 +5207,7 @@ function renderChasse(){
     kids.push(el('div',{class:'ph'},fileIn,phBtn,thumb,rm));
     if(X.ville&&x.go)kids.push(el('p',{class:'note'},el('span',{class:'label',text:'Pour la suite '}),document.createTextNode(x.go)));
     return el('li',{class:ok?'fait':null},el('div',{},...kids),btn);}));
-  renderChasseFin(X);
+  renderChasseFin(X); renderChasseVilles();
 }
 // le bandeau de l'événement, en haut d'Aujourd'hui
 function renderChasseEv(){
@@ -5177,7 +5215,7 @@ function renderChasseEv(){
   const V=VILLES[v], C=(state.chasse||{})['v-'+v]||{}, n=V.etapes.length, at=Math.min(C.at||0,n);
   $('#cev-label').textContent=V.pret?`Événement · ${V.nom}`:`Événement en test · ${V.nom}`;
   $('#cev-title').textContent=V.titre;
-  $('#cev-sub').textContent=C.fin?`Chasse terminée. Ta carte souvenir t’attend.`:at?`Tu en es à l’étape ${at+1} sur ${n}.`:`${n} énigmes dans la ville, environ ${V.km} km et ${V.duree} à pied. Des photos, et une carte souvenir à partager.`;
+  $('#cev-sub').textContent=C.fin?`Chasse terminée. Ta carte souvenir t’attend.`:at?`Tu en es à l’étape ${at+1} sur ${n}.`:`${n} énigmes dans la ville, environ ${kmFr(V)} km et ${V.duree} à pied. Des photos, et une carte souvenir à partager.`;
   $('#cev-go').textContent=C.fin?'Revoir ma chasse':at?'Reprendre la chasse':'Partir en chasse';
 }
 $('#cev-go').addEventListener('click',()=>{showTab('exercices');openEx('chasse');});
@@ -6498,10 +6536,10 @@ chasse(arena){
   state.chasse=state.chasse||{}; const C=state.chasse[key]=Object.assign({f:{},p:{}},state.chasse[key]); C.p=C.p||{};
   $('#st-name').textContent=V.titre; $('#st-skill').textContent='Événement · '+V.nom; $('#stage').classList.add('saison');
   const regles=el('ul',{class:'cv-regles fg2'},
-    el('li',{text:`${n} étapes, environ ${V.km} km et ${V.duree} à pied. Départ : ${V.du}.`}),
+    el('li',{text:`${n} étapes, environ ${kmFr(V)} km et ${V.duree} à pied. Départ : ${V.du}.`}),
     el('li',{text:'Chaque énigme mène à un lieu ; la réponse se lit sur place. À la fin de l’étape, un indice te mène à la suivante.'}),
     el('li',{text:'Une photo par étape si tu veux : elle reste sur ton téléphone. Photographie les lieux, pas les passants.'}),
-    el('li',{text:'Reste sur la voie publique, ne grimpe nulle part, et ne descends pas vers l’eau quand la Loire est haute.'}));
+    el('li',{text:`Reste sur la voie publique, ne grimpe nulle part, et ${V.prudence||'reste prudent près de l’eau'}.`}));
   const start=C.fin?0:Math.min(C.at||0,n-1);
   if(!V.pret)regles.append(el('li',{text:'Parcours en test : si une étape est fausse ou introuvable, dis-le avec « Signaler un problème ».'}));
   intro(arena,`${V.titre}. Le téléphone dans la poche entre deux étapes : la ville est le plateau du jeu.`,regles,()=>step(start));

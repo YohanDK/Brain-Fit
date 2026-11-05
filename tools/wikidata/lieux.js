@@ -7,7 +7,7 @@ const titres=[...new Set((globalThis.NEO_BANQUES.lieux||[]).map(l=>l.wp))];
 (async()=>{
   const lignes=[], manquants=[];
   for(let i=0;i<titres.length;i+=50){
-    const lot=titres.slice(i,i+50), u='https://www.wikidata.org/w/api.php?'+new URLSearchParams({action:'wbgetentities',sites:'frwiki',titles:lot.join('|'),props:'claims|sitelinks',sitefilter:'frwiki',normalize:'1',format:'json'});
+    const lot=titres.slice(i,i+50), u='https://www.wikidata.org/w/api.php?'+new URLSearchParams({action:'wbgetentities',sites:'frwiki',titles:lot.join('|'),props:'claims|sitelinks',sitefilter:'frwiki',format:'json'});
     const j=await (await fetch(u,{headers:UA})).json(); if(j.error)console.log('erreur API',JSON.stringify(j.error).slice(0,300));
     // titre demandé ← titre normalisé ← titre de redirection
     const vers=new Map(); for(const n of [...(j.normalized||[]),...(j.redirects||[])])vers.set(n.to,vers.get(n.from)||n.from);

@@ -1363,6 +1363,12 @@ B.parcours=[
    intro:"Sept jours en Bretagne, du dimanche au samedi : ses ducs, ses marins, ses légendes et ses écrivains. Les dictées, les frises et les citations viennent de là-bas. Cinq jours sur sept, et ton cerf gagne le collier de l'ordre de l'Hermine.",
    origine:"L'hermine, petite belette d'hiver au pelage blanc et au bout de queue noir, est l'emblème des ducs de Bretagne depuis le XIIIe siècle. En 1381, le duc Jean IV crée l'ordre de l'Hermine, l'un des premiers ordres de chevalerie d'Europe, qui admettait aussi des dames. Son collier portait la devise « À ma vie ».",
    badge:['L’Hermine','5 jours sur 7 pendant la semaine de Bretagne'],seuil:5,
+   // la besace : trois sorties hors écran au choix pendant la semaine
+   besace:[
+    ['Faire un far breton',"250 g de farine, 150 g de sucre, 4 œufs, 75 cl de lait, une pincée de sel, et des pruneaux si tu aimes. Four à 200 °C, environ 45 minutes. Le far était d'abord une bouillie salée, cuite dans un sac de toile."],
+    ['Apprendre un couplet du Bro gozh',"Le Bro gozh ma zadoù, « Vieux pays de mes pères », est l'hymne de la Bretagne : des paroles de Taldir Jaffrennou (1897) sur l'air de l'hymne gallois. Apprends le premier couplet, qui commence par « Ni Breizhiz a galon… », et chante-le sans texte."],
+    ['Lire un chapitre de Pêcheur d’Islande',"Le roman de Pierre Loti (1886), sur les pêcheurs de Paimpol et ceux qui les attendent. Un chapitre, sur papier si possible, puis raconte-le à quelqu'un."]
+   ],
    // un mot breton par jour, du dimanche au samedi
    motsLabel:'Le mot breton du jour',
    mots:[
@@ -1382,7 +1388,7 @@ B.parcours=[
     ["Dictée bretonne : cette semaine, les dictées viennent de Bretagne.",'dictee'],
     ["Chronologie : de Nominoë à Anne de Bretagne, remets l'histoire du duché dans l'ordre.",'chrono'],
     ["Citations : la devise des ducs et deux Bretons célèbres entrent dans ton florilège.",'citations'],
-    ["Sans écran : sur une carte, papier si possible, retrouve Saint-Malo, Brest, Quimper, Vannes, Nantes et Carnac. Puis redessine de mémoire la côte, du Mont-Saint-Michel à l'estuaire de la Loire.",null],
+    ["Sans écran : ouvre la besace et choisis une sortie, ou prends une carte papier, retrouve Saint-Malo, Brest, Quimper, Vannes, Nantes et Carnac, et redessine la côte de mémoire.",null],
     ["Écris en dix lignes la légende de la ville d'Ys telle que tu t'en souviens, ou invente la tienne : une ville engloutie, une clé, une faute.",'write'],
     ["Dernière frise de la semaine : Cartier, Surcouf, Chateaubriand, Renan, Jules Verne. Qui vient avant qui ?",'chrono']
    ]},

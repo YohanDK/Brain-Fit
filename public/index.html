@@ -675,6 +675,19 @@ a{color:var(--accent);text-underline-offset:3px}
 .couronne .flamme{fill:#e9a23b;transform-origin:center bottom;transform-box:fill-box;animation:flamme 2.4s ease-in-out infinite}
 @media (prefers-reduced-motion:reduce){.couronne .flamme{animation:none}}
 .pa-cal>summary{cursor:pointer;color:var(--muted);font-size:.9rem;margin-top:4px}
+/* la besace : des sorties hors écran au choix pendant une semaine à thème */
+.besace{list-style:none;margin:8px 0 4px;padding:0;display:flex;flex-direction:column;gap:8px}
+.besace li{display:flex;gap:10px;align-items:flex-start;justify-content:space-between;border:1px solid var(--line);border-radius:10px;padding:8px 10px;background:var(--surface)}
+.besace li.fait{border-color:var(--gold-deep)}
+.besace li div{min-width:0}.besace li .btn{flex:none}
+/* le passeport d'Europe : une page tamponnée par semaine à thème */
+.pp-pages{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:12px;margin-top:10px}
+.pp-page{border:1px solid var(--line);border-radius:12px;padding:14px;background:linear-gradient(180deg,var(--surface),var(--sunk));display:flex;gap:12px;align-items:flex-start}
+.pp-page .tampon{flex:none;width:84px;height:84px}
+.pp-page.avenir .tampon{filter:brightness(0);opacity:.8}
+.pp-page h3{margin:0 0 2px;font-size:1.05rem}
+.pp-page p{margin:4px 0;font-size:.92rem}
+.pp-page .btn{margin-top:6px}
 .pa-cases{list-style:none;margin:10px 0 6px;padding:0;display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:6px}
 .pa-cases button{width:100%;aspect-ratio:1;border-radius:8px;border:1px solid var(--line);background:var(--surface);color:var(--fg);font:inherit;font-size:.85rem;cursor:pointer;padding:0;display:flex;align-items:center;justify-content:center}
 .pa-cases button.fait{background:var(--gold);border-color:var(--gold-deep);color:#2a2112;font-weight:700}
@@ -1367,6 +1380,7 @@ var fin=function(){if(e.parentNode)e.remove();};e.addEventListener('click',fin);
       <p class="fg2 note" id="pa-fil"></p>
       <p class="pa-mot" id="pa-mot" hidden></p>
       <div class="row" id="pa-actions"></div>
+      <details class="pa-cal" id="pa-besace" hidden><summary></summary><ul class="besace" id="pa-bes"></ul></details>
       <details class="pa-cal" id="pa-cal"><summary>Le calendrier</summary><ol class="pa-cases" id="pa-cases"></ol><p class="note" id="pa-origine"></p></details>
     </div>
     <details class="panel routine" id="routine">
@@ -1622,6 +1636,10 @@ var fin=function(){if(e.parentNode)e.remove();};e.addEventListener('click',fin);
         <p class="fg2" id="pc-desc"></p>
         <div class="crit" id="pc-next"></div>
         <div class="tablewrap" id="pc-skills"></div>
+      </div>
+      <div class="sous" id="passeport" hidden>
+        <div><h2>Mon passeport d'Europe</h2><p class="muted note" id="pp-sub"></p></div>
+        <div class="pp-pages" id="pp-pages"></div>
       </div>
       <div class="sous goal">
         <span class="label">Mon objectif du moment</span>
@@ -3962,7 +3980,7 @@ function renderCalib(){
 }
 function renderProgress(){
   if($('#v-progres').hidden)return; // recalculé à l'ouverture de l'onglet
-  renderEtapes(); renderCalib();
+  renderEtapes(); renderPasseport(); renderCalib();
   const st=streaks(), t=todayKey();
   $('#k-streak').textContent=st.cur; $('#k-best').textContent=st.best;
   let a=0; for(let i=0;i<30;i++)if(isActive(addDays(t,-i)))a++; $('#k-active').textContent=a;
@@ -6140,7 +6158,7 @@ function renderParcours(){
     const j=Math.round((new Date(soon.du+'T12:00:00')-new Date(k+'T12:00:00'))/864e5);
     $('#pa-label').textContent=soon.court+' · '+(j>1?'dans '+j+' jours':'demain');
     $('#pa-title').textContent=soon.titre+' s’ouvre '+fd(new Date(soon.du+'T12:00:00'),{weekday:'long',day:'numeric',month:'long'})+'.';
-    $('#pa-fil').textContent=soon.intro; $('#pa-cal').hidden=true; $('#pa-mot').hidden=true; bougies(0); return;
+    $('#pa-fil').textContent=soon.intro; $('#pa-cal').hidden=true; $('#pa-mot').hidden=true; $('#pa-besace').hidden=true; bougies(0); return;
   }
   const days=parcDays(p), done=new Set(parcDone(p)), m=paMarks(p);
   const sem=p.semaines.filter(w=>w.du<=k).pop(), wi=p.semaines.indexOf(sem);
@@ -6167,6 +6185,14 @@ function renderParcours(){
       if(APERCU)toast('<span>Aperçu : rien n’est enregistré.</span>');else save();
       renderParcours();}}));
   }
+  // la besace : trois sorties hors écran au choix ; en faire une coche aussi la case du jour si elle n'a pas d'exercice
+  const bes=$('#pa-besace'); bes.hidden=!p.besace;
+  if(p.besace){const B=m.b=m.b||{}, nf=p.besace.filter((_,j)=>B[j]).length;
+    bes.querySelector('summary').textContent=`La besace · ${nf} sortie${nf>1?'s':''} sur ${p.besace.length}, loin de l’écran`;
+    $('#pa-bes').replaceChildren(...p.besace.map(([t,d],j)=>el('li',{class:B[j]?'fait':null},el('div',{},el('b',{text:t}),el('p',{class:'note fg2',text:d})),
+      el('button',{class:'btn mini'+(B[j]?' gold':''),'aria-pressed':String(!!B[j]),text:B[j]?'✓ Fait':'Fait',onclick:()=>{
+        if(B[j])delete B[j];else{B[j]=k;son('juste');const jj=days.indexOf(k);if(jj>=0&&!(p.pas[jj]&&p.pas[jj][1]))m[k]=1;}
+        if(APERCU)toast('<span>Aperçu : rien n’est enregistré.</span>');else save(); renderParcours();}}))));}
   const nb=parcDone(p).length;
   $('#pa-cal').hidden=false; $('#pa-cal').querySelector('summary').textContent=`Le calendrier · ${nb} case${nb>1?'s':''} sur ${days.length}`+(nb>=p.seuil?' · badge gagné':` · ${p.seuil} pour le badge « ${p.badge[0]} »`);
   $('#pa-origine').textContent=p.origine;
@@ -6174,6 +6200,40 @@ function renderParcours(){
     class:[done.has(d)?'fait':'',d===k?'auj':'',d===sel&&paSel?'sel':'',isSun(d)?'dim':''].filter(Boolean).join(' ')||null,
     disabled:d>k?'':null,'aria-label':fd(new Date(d+'T12:00:00'),{weekday:'long',day:'numeric',month:'long'})+(done.has(d)?', fait':''),
     text:String(+d.slice(8)),onclick:()=>{paSel=d===k?null:d;renderParcours();}}))));
+}
+/* ---------- passeport d'Europe : une page tamponnée par semaine à thème ---------- */
+const ROMAIN_AN=y=>roman(y);
+function tamponSVG(p,ok){
+  const c=ok?'#8E2F2B':'#9A9388', id='tp'+(medalN++), an=ROMAIN_AN(+p.du.slice(0,4)), mois=['I','II','III','IV','V','VI','VII','VIII','IX','X','XI','XII'][+p.du.slice(5,7)-1];
+  return `<svg class="tampon" viewBox="0 0 100 100" aria-hidden="true"><g transform="rotate(-9 50 50)" fill="none" stroke="${c}" opacity=".9"><circle cx="50" cy="50" r="45" stroke-width="2.6"/><circle cx="50" cy="50" r="39" stroke-width="1"/><circle cx="50" cy="50" r="21" stroke-width="1"/>`
+    +`<path id="${id}" d="M50 21a29 29 0 1 1-.01 0"/><text fill="${c}" stroke="none" font-family="Cinzel, Georgia, serif" font-size="8.6" font-weight="700"><textPath href="#${id}" textLength="178" lengthAdjust="spacing">${('Semaine de '+p.court).toUpperCase()} · ${mois} · ${an} ·</textPath></text>`
+    +`<g transform="translate(38.6 38.6) scale(.95)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="${EMB[p.emb]||EMB.etoile}"/></g></g></svg>`;
+}
+function passeportPage(p){
+  const k=todayKey(), avant=k<p.du, n=parcDone(p,true).length, ok=n>=p.seuil, m=(state.parcours||{})[p.id]||{};
+  const dates=`du ${fd(new Date(p.du+'T12:00:00'),{day:'numeric'})} au ${fd(new Date(p.au+'T12:00:00'),{day:'numeric',month:'long',year:'numeric'})}`;
+  if(avant)return{el:el('div',{class:'pp-page avenir'},el('span',{html:tamponSVG(p,false)}),el('div',{},el('h3',{text:p.titre}),el('p',{class:'note',text:'À venir, '+dates+'. La page se remplira au fil de la semaine.'})))};
+  const jours=Math.min(parcDays(p).length,Math.round((new Date((k>p.au?p.au:k)+'T12:00:00')-new Date(p.du+'T12:00:00'))/864e5)+1);
+  const mots=(p.mots||[]).slice(0,jours).map(x=>x[0]), cit=QUOTES.filter(q=>q.sem===p.theme&&(state.flori||{})[q.id]), bes=(p.besace||[]).filter((_,j)=>(m.b||{})[j]).map(x=>x[0]);
+  const par=ATTRS.find(a=>a[7]===p.id), g=par?attrGrade(par):0;
+  const lignes=[`${n} jour${n>1?'s':''} sur ${parcDays(p).length}`+(ok?' : semaine accomplie':''),
+    mots.length?`Mots appris : ${mots.join(', ')}`:'',
+    cit.length?`Au florilège : « ${cit[0].q.length>110?cit[0].q.slice(0,110).replace(/\s+\S*$/,'')+'…':cit[0].q} » (${cit[0].a})`:'',
+    bes.length?`Besace : ${bes.join(' ; ')}`:'',
+    par?(g?`${par[1]} : ${['','premier palier','argent','or'][g]}`:''):''].filter(Boolean);
+  const partager=async()=>{
+    const txt=`Ma semaine de ${p.court} sur Néophyte : ${n} jour${n>1?'s':''} sur ${parcDays(p).length}${mots.length?', '+mots.length+' mots appris ('+mots.join(', ')+')':''}${g?', et '+par[1].charAt(0).toLowerCase()+par[1].slice(1)+' pour mon cerf':''}. Kenavo !`;
+    try{if(navigator.share){await navigator.share({title:'Néophyte',text:txt,url:SITE_URL});return;}}catch(e){if(e&&e.name==='AbortError')return;}
+    try{await navigator.clipboard.writeText(txt+' '+SITE_URL);toast('<span>Copié : colle-le dans un message.</span>');}catch(e){toast('<span>'+txt+'</span>');}};
+  return{el:el('div',{class:'pp-page'},el('span',{html:tamponSVG(p,ok)}),el('div',{},el('h3',{text:p.titre}),el('p',{class:'note',text:dates}),
+    ...lignes.map(t=>el('p',{class:'fg2',text:t})),el('button',{class:'btn mini',text:'Partager ma semaine',onclick:partager})))};
+}
+function renderPasseport(){
+  const box=$('#passeport'); if(!box)return; const S=(NB.parcours||[]).filter(p=>p.theme);
+  box.hidden=!S.length; if(!S.length)return;
+  const faites=S.filter(p=>parcDone(p,true).length>=p.seuil).length;
+  $('#pp-sub').textContent=`${faites} tampon${faites>1?'s':''} sur ${S.length} semaine${S.length>1?'s':''} · une province française, puis un pays d’Europe`;
+  $('#pp-pages').replaceChildren(...S.map(p=>passeportPage(p).el));
 }
 // la couronne de l'Avent : une bougie de plus allumée chaque dimanche
 function bougies(n){

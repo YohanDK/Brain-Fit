@@ -1,10 +1,9 @@
-# Écrivains, savants, artistes, saints et figures politiques très connus (au moins 90 Wikipédias), naissance et mort au jour près.
-SELECT DISTINCT ?e ?libelle ?description ?naissance ?mort ?liens WHERE {
-  VALUES ?metier { wd:Q36180 wd:Q901 wd:Q1622272 wd:Q4964182 wd:Q1028181 wd:Q36834 wd:Q82955 wd:Q170790 wd:Q169470 wd:Q593644 wd:Q11063 wd:Q250867 wd:Q49757 wd:Q214917 wd:Q6625963 }
-  ?e wdt:P31 wd:Q5; wdt:P106 ?metier.
-  ?e wikibase:sitelinks ?liens. FILTER(?liens >= 90)
+# Personnes de nationalité française très connues (au moins 60 Wikipédias), naissance et mort au jour près.
+SELECT ?e ?libelle ?description ?naissance ?mort ?liens WHERE {
+  ?e wdt:P27 wd:Q142; wikibase:sitelinks ?liens. FILTER(?liens >= 60)
+  ?e wdt:P31 wd:Q5.
   ?e p:P569/psv:P569 [wikibase:timeValue ?naissance; wikibase:timePrecision 11].
   OPTIONAL { ?e p:P570/psv:P570 [wikibase:timeValue ?mort; wikibase:timePrecision 11]. }
   ?e rdfs:label ?libelle. FILTER(LANG(?libelle)="fr")
   OPTIONAL { ?e schema:description ?description. FILTER(LANG(?description)="fr") }
-} ORDER BY DESC(?liens) LIMIT 1500
+}

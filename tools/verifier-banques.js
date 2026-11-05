@@ -9,7 +9,7 @@ const err=(id,m)=>errs.push(`${id} : ${m}`), warn=(id,m)=>warns.push(`${id} : ${
 const str=v=>typeof v==='string'&&v.trim().length>0;
 const date=v=>/^\d{4}-\d{2}-\d{2}$/.test(v||'');
 // les questions d'avant la mise en place des sources (octobre 2026) en sont dispensées ; toutes les suivantes doivent en avoir
-const ANCIENNES={problemes:42,sophismes:40,erreursIA:26,fermi:30,ortho:61,textes:6,graphiques:0};
+const ANCIENNES={lieux:0,problemes:42,sophismes:40,erreursIA:26,fermi:30,ortho:61,textes:6,graphiques:0};
 
 const ids=new Set();
 function common(bank,it,i,fields){
@@ -198,8 +198,24 @@ for(const m of B.modeles){
   if(qs.size<3)warn(m.id,`seulement ${qs.size} énoncés différents`);
 }
 
+// Sur la carte : coordonnées dans le cadre de la carte, et contrôlées par Wikidata (tools/wikidata/lieux.js) quand le relevé existe
+const km=(a,b,c,d)=>{const R=6371,r=Math.PI/180,x=Math.sin((c-a)*r/2)**2+Math.cos(a*r)*Math.cos(c*r)*Math.sin((d-b)*r/2)**2;return 2*R*Math.asin(Math.sqrt(x));};
+let releve={}; try{for(const l of require('./wikidata/resultats/lieux.json').lignes)releve[l.titre_demande]=l;}catch(e){}
+const CADRE={fr:[41.2,51.3,-5.6,10],monde:[-58,84,-180,180]};
+(B.lieux||[]).forEach((l,i)=>{
+  const id=common('lieux',l,i,['nom','wp','dit','genre']);
+  if(!CADRE[l.carte])return err(id,'carte doit valoir fr ou monde');
+  const [a,b,c,d]=CADRE[l.carte];
+  if(!(l.lat>a&&l.lat<b&&l.lon>c&&l.lon<d))err(id,'hors de la carte');
+  if(!(l.r>=0))err(id,'rayon r manquant');
+  const w=releve[l.wp]; if(!w||w.lat==null)return;
+  const e=km(l.lat,l.lon,w.lat,w.lon), tol=Math.max(l.r,l.carte==='fr'?12:40);
+  if(e>tol)err(id,`${l.nom} : ${Math.round(e)} km d'écart avec Wikidata (${w.lat}, ${w.lon})`);
+});
+noDup('lieux','nom');
+
 const n=k=>B[k].filter(x=>!x.retire).length;
-console.log(`Banques : ${n('problemes')} problèmes, ${n('sophismes')} arguments, ${n('erreursIA')} erreurs d'IA, ${n('fermi')} estimations, ${n('ortho')} phrases, ${n('textes')} textes, ${n('graphiques')} graphiques, ${B.modeles.length} modèles de variantes, ${B.bilan.series.length} séries de bilan, ${(B.enquetes||[]).length} énigmes du dimanche, ${(B.parcours||[]).length} parcours de saison.`);
+console.log(`Banques : ${n('problemes')} problèmes, ${n('sophismes')} arguments, ${n('erreursIA')} erreurs d'IA, ${n('fermi')} estimations, ${n('ortho')} phrases, ${n('textes')} textes, ${n('graphiques')} graphiques, ${B.modeles.length} modèles de variantes, ${B.bilan.series.length} séries de bilan, ${(B.enquetes||[]).length} énigmes du dimanche, ${(B.parcours||[]).length} parcours de saison, ${(B.lieux||[]).length} lieux sur la carte.`);
 warns.forEach(w=>console.log('Attention · '+w));
 if(errs.length){errs.forEach(e=>console.error('Erreur · '+e));console.error(`${errs.length} erreur(s) : à corriger avant de publier.`);process.exit(1);}
 console.log('Tout est en ordre.');

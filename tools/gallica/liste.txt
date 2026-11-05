@@ -1,0 +1,8 @@
+# Gallica refuse les requêtes venant de GitHub (403, 5 nov. 2026) : déposer plutôt les textes téléchargés à la main.
+# Une ligne par document : « auteur | titre » (premier résultat), « ark:/12148/… » (document précis), « ? auteur | titre » (liste pour choisir).
+? Fabre | Souvenirs entomologiques
+? Bruno | Le Tour de la France par deux enfants
+? Michelet | L'Oiseau
+? Flammarion | Astronomie populaire
+? Lavisse | Histoire de France cours moyen
+? Pasteur | Études sur la bière

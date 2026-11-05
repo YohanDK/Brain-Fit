@@ -1,0 +1,6 @@
+# Communes françaises de plus de 40 000 habitants, population la plus récente avec sa date.
+SELECT ?e ?libelle ?population ?date WHERE {
+  ?e wdt:P31 wd:Q484170; p:P1082 ?st. ?st ps:P1082 ?population; pq:P585 ?date. FILTER(?population > 40000)
+  FILTER NOT EXISTS { ?e p:P1082/pq:P585 ?d2. FILTER(?d2 > ?date) }
+  ?e rdfs:label ?libelle. FILTER(LANG(?libelle)="fr")
+} ORDER BY DESC(?population)

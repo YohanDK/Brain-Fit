@@ -1,0 +1,5 @@
+ok edifices.rq : 388 lignes
+ok evenements.rq : 929 lignes
+ok fleuves.rq : 400 lignes
+ok sommets.rq : 400 lignes
+ok villes-france.rq : 203 lignes

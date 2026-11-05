@@ -1,4 +1,3 @@
-ERREUR edifices.rq : 504 upstream request timeout
 ok evenements.rq : 929 lignes
 ok fleuves.rq : 400 lignes
 ERREUR personnes.rq : 504 upstream request timeout

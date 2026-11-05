@@ -2033,7 +2033,7 @@ const EX={
   probleme:{name:'Problème du jour',skill:'Raisonnement',desc:"Un problème piège. Écris ton raisonnement, puis compare avec la solution et l'avis du coach.",unit:'% de réussite'},
   graphe:{name:'Graphique trompeur',skill:'Lecture des chiffres',desc:"Trois graphiques : trouve ce qui cloche, ou reconnais celui qui est honnête. Puis vois la version juste.",unit:'% de bonnes réponses'},
   erreuria:{name:"Trouve l'erreur de l'IA",skill:'Vigilance critique',desc:"Des réponses d'IA convaincantes, avec une erreur cachée. Trouve la phrase fautive et dis si tu en es sûr.",unit:'% de bonnes réponses'},
-  hypotheses:{name:'Hypothèses concurrentes',skill:'Raisonnement',desc:"Un fait surprenant : trouve 5 explications possibles, puis comment les départager.",unit:'% de complétion'},
+  hypotheses:{name:'Hypothèses concurrentes',skill:'Raisonnement',desc:"Un fait surprenant : trouve 5 explications possibles, puis comment les départager.",unit:'% de réussite'},
   sophismes:{name:'Détecteur de sophismes',skill:'Esprit critique',desc:"Cinq arguments à balayer : à gauche s'il y a une faille, à droite s'il tient debout. Puis nomme le sophisme.",unit:'% de bonnes réponses'},
   fermi:{name:'Estimation',skill:'Raisonnement',desc:"Trois questions de Fermi : trouve l'ordre de grandeur par le raisonnement.",unit:'% de justesse'},
   ortho:{name:'Orthographe & accords',skill:'Langue écrite',desc:"Huit phrases pièges : choisis la bonne forme, ou trouve la faute et répare-la, sans correcteur.",unit:'% de bonnes réponses'},
@@ -2785,6 +2785,82 @@ const SCENARIOS=[
   "Un enfant parle beaucoup plus à l'école qu'à la maison.",
   "Les accidents de la route baissent pendant une grève des transports en commun.",
   "Une boutique en ligne reçoit beaucoup plus de retours de vêtements achetés le dimanche soir."
+];
+// Pistes d'un enquêteur, dans l'ordre exact de SCENARIOS (même position) : cinq explications vraiment
+// différentes, puis l'observation qui les départage. Ajouter une entrée à la fin quand on ajoute un fait.
+const ENQUETE=[
+  ["Un été plus frais ou plus pluvieux que l'an dernier.","Un concurrent s'est installé à côté, ou le glacier a changé de recette ou de prix.","Moins de touristes : travaux sur la plage, route coupée, crise économique.","Juillet de l'an dernier était exceptionnel : on compare à un pic.","Le glacier vend désormais en ligne ou en livraison, ventes non comptées en boutique.","Comparer avec les glaciers voisins et la météo des deux mois : si tous baissent, la cause est générale."],
+  ["Il est fatigué, malade ou préoccupé par un souci personnel.","Il est en désaccord ou vexé et préfère se taire.","Le sujet ne le concerne pas ou il ne le connaît pas.","Une personne présente l'intimide : un nouveau chef, un client.","Il a reçu une mauvaise nouvelle sur son poste, peut-être liée à la réunion.","Lui demander simplement, ou voir s'il est aussi silencieux dans les autres réunions et à la pause."],
+  ["Les plantes améliorent l'air ou le calme, donc la concentration.","Les classes avec plantes ont aussi été repeintes ou mieux équipées.","Les professeurs volontaires pour les plantes sont aussi les plus motivés.","Les notes montent partout cette année : nouveaux barèmes, sujets plus faciles.","Effet de nouveauté : on se sent observé et considéré (effet Hawthorne).","Comparer avec des classes sans plantes de la même école, tirées au sort, pendant plusieurs mois."],
+  ["Une panne ou une erreur technique rend le site inaccessible ou lent.","Google a changé son algorithme ou le site a perdu son référencement.","Un gros site qui renvoyait des visiteurs a retiré son lien.","Le compteur d'audience est cassé ou le marqueur de mesure a été retiré.","Une partie des visites était des robots, désormais filtrés.","Regarder d'où venaient les visiteurs perdus (moteur, lien, direct) et si les ventes ont baissé aussi."],
+  ["Le sport renforce le cœur et le corps : il prolonge la vie.","Les gens déjà en bonne santé peuvent faire du sport ; les malades non (cause inverse).","Les sportifs fument moins, mangent mieux et sont plus aisés.","Les études reposent sur ce que les gens déclarent faire, souvent embelli.","Effet de sélection : on ne compte que ceux qui ont tenu dans la durée.","Suivre dans le temps des personnes comparables au départ, en tenant compte de leur santé initiale."],
+  ["Les pistes attirent beaucoup plus de cyclistes : plus de vélos, plus d'accidents en tout.","Les pistes sont mal conçues : carrefours dangereux, portières.","Les débutants se mettent au vélo et sont plus exposés.","Les accidents sont mieux déclarés depuis que la ville s'y intéresse.","Fausse sécurité : cyclistes et automobilistes font moins attention.","Calculer le nombre d'accidents par kilomètre parcouru à vélo, avant et après."],
+  ["Ces hôpitaux reçoivent les cas les plus graves, que les autres leur envoient.","Les meilleurs chirurgiens acceptent d'opérer des patients que d'autres refuseraient.","Les patients y viennent de plus loin, donc plus tard, plus malades.","Les bons hôpitaux comptent tous leurs décès ; d'autres en déclarent moins.","Avec peu d'opérations, le taux varie beaucoup par hasard.","Comparer la mortalité à gravité égale (même âge, même pathologie, même stade)."],
+  ["Une mise à jour a introduit des bugs ou supprimé une fonction appréciée.","L'application est devenue payante ou a ajouté de la publicité.","Un concurrent ou un groupe organise une campagne de mauvaises notes.","Elle attire de nouveaux utilisateurs moins satisfaits que les fidèles.","Seuls les mécontents prennent le temps de noter.","Lire les commentaires récents et dater les mauvaises notes par rapport à la dernière mise à jour."],
+  ["La richesse : pays riches, plus de chocolat et plus de recherche.","Hasard d'une corrélation trouvée parmi des milliers possibles.","Quelques petits pays (Suisse, Suède) tirent la courbe à eux seuls.","Le chocolat stimule un peu le cerveau (douteux).","Les lauréats fêtent leur prix avec du chocolat (cause inverse, pour sourire).","Comparer des pays de même richesse : la corrélation disparaît-elle ?"],
+  ["On travaille mieux sans trajet ni interruptions.","On mesure ce qui se compte (courriels, tickets), pas la qualité du travail.","Les salariés font des heures en plus à la maison.","Les moins productifs sont partis au même moment.","Effet de nouveauté et de confiance, qui peut s'estomper.","Comparer sur un an avec une équipe restée au bureau, en mesurant aussi la qualité et les heures."],
+  ["La qualité a baissé : nouveau chef, produits moins bons.","Un concurrent a ouvert à côté.","Le quartier a changé : bureaux fermés, travaux devant la porte.","Mauvaises critiques en ligne ou une affaire d'hygiène.","Saison creuse : on compare avec la haute saison.","Demander aux anciens habitués pourquoi ils ne viennent plus, et regarder les restaurants voisins."],
+  ["Le petit-déjeuner donne de l'énergie pour se concentrer le matin.","Les familles qui préparent un petit-déjeuner sont aussi plus organisées et attentives aux devoirs.","Les enfants qui dorment assez ont faim le matin et réussissent mieux.","Revenus : les familles aisées font les deux.","Les enfants anxieux ou en difficulté mangent moins le matin (cause inverse).","Offrir un petit-déjeuner à l'école, au hasard dans certaines classes, et comparer."],
+  ["Une promotion ou une nouvelle vitrine.","Le magasin voisin qui vendait des parapluies a fermé.","Les averses sont tombées aux heures de sortie, même si le total était faible.","Mode : un modèle ou une couleur en vogue.","Un événement : un concours, un mariage, un salon a acheté en gros.","Regarder qui a acheté, quels jours, et si les magasins voisins ont aussi doublé."],
+  ["Un souci personnel : famille, santé, harcèlement.","Il est épuisé ou dort mal (écrans, travail).","Il a perdu sa motivation, par exemple après une orientation imposée.","Un changement de notation ou de professeurs.","Un trouble apparu (vue, audition, dépression).","Lui parler en tête-à-tête et demander aux autres professeurs depuis quand ça a commencé."],
+  ["Les habitants ne portent plus plainte, découragés : les cambriolages n'ont pas baissé.","D'autres incivilités, plus visibles, ont augmenté.","Les médias et les réseaux parlent davantage de faits divers.","Le quartier a changé : commerces fermés, rues plus sombres.","Les plaintes en ligne ne sont plus comptées au même endroit.","Comparer avec les déclarations aux assureurs et une enquête de victimation."],
+  ["Les patients sont différents : plus jeunes, moins malades.","Le médicament est mieux administré : dose, horaires, suivi.","Les soins autour (kiné, alimentation) sont meilleurs.","Les médecins ne mesurent pas l'amélioration de la même façon.","Petits effectifs : hasard.","Comparer des patients de même gravité, avec les mêmes critères de mesure."],
+  ["Une mode lancée sur les réseaux (BookTok).","Les mangas et romans de fantasy, très lus par cette tranche d'âge.","Le pass Culture finance des achats de livres.","Les livres sont offerts en cadeau, pas forcément lus.","Lassitude des écrans.","Regarder quels livres se vendent et si l'emprunt en bibliothèque monte aussi."],
+  ["Prolongation du week-end : faux arrêts.","Le lundi est le jour où l'on va chez le médecin après être tombé malade le week-end.","Le travail du lundi est le plus pénible (réunions, retards à rattraper).","Des accidents ou excès du week-end.","Les arrêts sont datés du lundi même s'ils commencent avant.","Regarder la durée des arrêts du lundi et le jour où la maladie a commencé."],
+  ["Les recruteurs sont plus frais le matin et plus sévères en fin de journée.","Les meilleurs candidats demandent les créneaux du matin.","Le recruteur a déjà pris quelqu'un dans la journée et devient plus exigeant.","Le premier candidat sert de référence (effet d'ancrage).","Hasard sur peu de recrutements.","Attribuer les créneaux au hasard et voir si l'écart persiste."],
+  ["Le prix n'était pas le frein : la ligne est lente, rare ou ne va pas où l'on veut.","Les habitants avaient déjà une voiture ou un abonnement.","La ligne gratuite attire des usagers sans billet, mal comptés.","Les prévisions étaient trop optimistes.","La gratuité a donné une image de bus mal fréquenté.","Interroger les non-usagers sur ce qui les empêche de prendre le bus."],
+  ["Les vols ont surtout été mieux déclarés car les gens espèrent des images.","Les voleurs vont là où les vélos sont nombreux et chers.","Les caméras ont été posées là où les vols montaient déjà.","Plus de cyclistes se garent là, se croyant protégés.","Les caméras sont mal placées ou ne sont pas regardées.","Comparer avec les quartiers voisins sans caméras et le nombre de vélos garés."],
+  ["Les élèves motivés choisissent le premier rang.","Le professeur s'adresse davantage au premier rang.","On entend et voit mieux le tableau devant.","Le professeur place devant les élèves qu'il juge sérieux.","Moins de distractions par les voisins.","Tirer les places au sort pendant un trimestre et comparer les notes."],
+  ["La maladie est davantage dépistée : nouveaux tests, campagnes.","La définition s'est élargie : plus de cas entrent dans le critère.","La population vieillit.","La maladie progresse vraiment (environnement, mode de vie).","Meilleur accès aux soins : on diagnostique ce qu'on ignorait.","Regarder si la mortalité et les formes graves augmentent aussi, ou seulement les diagnostics."],
+  ["On allait au café en sortant de la boulangerie : l'occasion de passer a disparu.","Les deux souffrent de la même cause : départ des habitants.","Les gens achètent leur pain au bourg voisin et y prennent leur café.","Le boulanger était lui-même un client fidèle.","Hasard saisonnier.","Demander aux anciens clients du café où ils vont, et vérifier si la population a baissé."],
+  ["Le marché a lieu le mardi tout près.","Une école ou un bureau commande pour une réunion chaque mardi.","Le boulanger voisin est fermé le mardi.","Une promotion du mardi.","Erreur de saisie : la caisse compte deux jours en un.","Regarder les autres boulangeries du quartier et les jours de fermeture voisins."],
+  ["Les élèves passent du temps à la salle au lieu de travailler.","Hasard : nouveau programme, nouveaux professeurs, sujet plus dur.","La promotion de cette année est plus faible.","Changement de barème.","Coïncidence de calendrier : la salle a ouvert au moment où le lycée changeait.","Comparer les notes des élèves inscrits et non inscrits à la salle."],
+  ["La musique évoque la France et oriente vers le vin français.","Les jours de musique française sont aussi des jours de fête ou de week-end.","Le rayon vin est mis en avant ces jours-là.","Hasard sur peu de jours.","Les clients restent plus longtemps quand la musique leur plaît.","Alterner les musiques au hasard sur plusieurs semaines et regarder quels vins se vendent (North, Hargreaves et McKendrick l'ont montré en 1997)."],
+  ["Hasard : sur une petite commune, 3 au lieu de 1, c'est un triplement.","De nouveaux lotissements ont attiré de jeunes couples.","Une maternité ou une structure a ouvert.","Erreur d'enregistrement : naissances comptées au lieu de domicile ou d'accouchement.","Une communauté ou une famille nombreuse s'est installée.","Regarder les chiffres sur dix ans : est-ce durable ou un pic isolé ?"],
+  ["Le dimanche, les gens ont d'autres activités : famille, messe, sorties.","Le musée attire des touristes de passage le samedi.","Ce qui est gratuit paraît moins précieux.","Le dimanche gratuit est bondé, ce qui décourage.","Comptage différent : billets émis contre entrées réelles.","Comparer avec des musées payants le dimanche, et interroger les visiteurs du samedi."],
+  ["La lumière naturelle améliore le moral et la santé.","Les bureaux près des fenêtres sont attribués aux plus anciens, plus en forme ou mieux installés.","Ces salariés sont cadres, avec moins de pénibilité.","L'air est mieux renouvelé.","Peu de salariés : hasard.","Comparer à poste et ancienneté égaux, ou changer les places et suivre."],
+  ["Sans amende, on ose revenir rendre un livre en retard.","Les lecteurs se sentent en confiance et respectent davantage.","Une campagne de rappel a eu lieu en même temps.","On compte mieux les retours.","Les amendes faisaient fuir des lecteurs qui reviennent.","Regarder si les retards durent moins ou si seuls les très vieux livres reviennent."],
+  ["Une vague de chaleur inhabituelle en mars.","Un grossiste ou une entreprise a acheté en gros.","Promotion de fin de stock.","Le magasin voisin a fermé.","Erreur de stock ou de caisse.","Regarder la météo et les factures : quelques gros achats ou beaucoup de petits ?"],
+  ["Les maladies d'hiver (rhumes) guérissent vite seules ; celles d'été non.","Les patients d'hiver sont différents : plus jeunes, maladies bénignes.","On consulte en hiver dès les premiers symptômes.","Le médecin note différemment la guérison selon sa charge.","Hasard sur un petit nombre.","Comparer la durée par maladie précise, en hiver et en été."],
+  ["Le stade est en travaux ou le terrain abîmé.","Le public local met la pression aux joueurs.","Le calendrier a placé les adversaires faibles à l'extérieur.","Hasard sur une saison courte.","Tactique : l'équipe joue mieux en contre, ce qui marche à l'extérieur.","Comparer la force des adversaires reçus et rencontrés, et regarder les saisons précédentes."],
+  ["Effet de l'ordre alphabétique sur le bulletin : premiers de liste plus vus.","Les candidats sortants sont souvent en tête de liste.","Hasard dans une seule région.","Certaines familles nombreuses du coin ont un nom en A.","Les têtes de liste sont classées alphabétiquement, et donc élues.","Tirer l'ordre des noms au hasard et comparer (effet de position sur le bulletin, bien étudié)."],
+  ["La rentrée : nouvelles chaussures pour l'école et le travail.","Reprise du sport après l'été.","Randonnées de fin d'été.","Promotion en rayon.","Une épreuve sportive locale (course, marche).","Demander aux clients ce qui leur a fait des ampoules."],
+  ["Le vendredi, les cours de la semaine sont frais ; le lundi, il y a eu un week-end d'oubli.","Les contrôles du vendredi sont plus faciles.","Les élèves sont plus fatigués le lundi.","Le professeur corrige différemment selon le jour.","Hasard sur peu de contrôles.","Donner le même type de contrôle les deux jours, au hasard."],
+  ["Les automobilistes contournent par les rues voisines (report de trafic).","Ils accélèrent après les ralentisseurs pour rattraper le temps.","Les rues voisines n'ont pas de trottoirs ou sont étroites.","Hasard : peu d'accidents.","Les accidents sont mieux comptés.","Mesurer le trafic dans les rues voisines avant et après."],
+  ["Un passage télé, un influenceur ou un article.","Le livre est entré dans une sélection de prix.","Une polémique.","Une promotion massive en librairie ou en ligne.","Un achat groupé (école, entreprise).","Regarder le jour exact où les ventes ont décollé et ce qui s'est passé ce jour-là."],
+  ["Hausse du prix de l'électricité.","Un nouvel appareil (pompe à chaleur, voiture électrique, sèche-linge).","Un hiver plus froid avec chauffage électrique.","Erreur de facture : estimation au lieu du relevé réel.","Un appareil défectueux qui consomme en permanence.","Relever le compteur soi-même plusieurs jours de suite et comparer au tarif."],
+  ["Télétravail : des citadins s'installent.","Des retraités viennent vivre là.","Les habitants achètent en ligne ou au supermarché de la vallée.","Résidences secondaires comptées comme principales.","Les nouveaux habitants n'ont pas les mêmes habitudes que les anciens.","Demander où les habitants font leurs courses et qui sont les nouveaux arrivants."],
+  ["Régression vers la moyenne : on entre dans un essai au pire de sa maladie.","Effet placebo : croire au soin aide vraiment certains symptômes.","Le suivi médical attentif aide en lui-même.","La maladie guérit seule avec le temps.","Les patients veulent faire plaisir et se disent mieux.","Comparer avec un groupe sans aucun traitement ni placebo."],
+  ["Les enfants nés en janvier sont plus âgés, donc plus grands et forts que ceux de décembre.","Cet avantage les fait choisir, s'entraîner plus, et l'écart grandit.","Hasard dans une seule école.","Les entraîneurs croient au talent plutôt qu'à l'âge.","Certaines familles programment les naissances.","Comparer les mêmes enfants quelques années plus tard, et regarder ce qu'on sait de l'« effet de l'âge relatif »."],
+  ["Les deux baissent avec l'urbanisation : moins de campagne, moins de cigognes, moins d'enfants.","Hasard : deux tendances qui baissent toutes deux se corrèlent toujours.","Pollution qui touche oiseaux et fertilité.","Mesure : on compte mal les cigognes.","Les cigognes apportent les bébés (à éliminer en souriant).","Chercher une région où l'un baisse sans l'autre."],
+  ["Prix plus élevé = signe de qualité pour les clients.","Le restaurant a changé de clientèle (affaires, touristes).","Le restaurant a amélioré sa carte en même temps.","Une bonne critique ou un guide est paru.","Moins de place : il paraît plein, ce qui attire.","Demander aux nouveaux clients pourquoi ils viennent et si les anciens restent."],
+  ["Bonnes résolutions de nouvel an.","Solitude après les fêtes en famille.","Publicités concentrées en janvier.","Les ruptures sont plus nombreuses après les fêtes.","Les inscriptions gratuites sont promues en janvier.","Regarder si les inscrits de janvier restent actifs, et les campagnes de publicité."],
+  ["Les deux augmentent quand il fait chaud : la chaleur est la cause commune.","Plus de gens se baignent en été.","Les vacances : plus de monde au bord de l'eau.","Hasard sur une petite région.","Manger une glace donnerait des crampes (douteux).","Comparer les jours aussi chauds avec et sans vente de glaces : la chaleur explique-t-elle tout ?"],
+  ["Il révise mal : relire au lieu de s'interroger.","Il révise beaucoup parce qu'il a du mal (cause inverse).","Le camarade a de meilleures bases.","Le stress de trop réviser.","Il dort moins pour réviser.","Lui faire essayer une méthode active (se tester) quelques semaines et comparer."],
+  ["Le nouveau service attire plus de patients qui allaient ailleurs.","Le personnel n'a pas été augmenté.","Le temps d'attente est mieux mesuré.","Période de rodage.","Épidémie au même moment.","Comparer le nombre de patients avant et après, et l'attente par patient."],
+  ["Les clients en voiture ne peuvent plus se garer devant.","Les livraisons sont devenues difficiles.","Travaux pendant la transformation.","D'autres magasins gagnent : la clientèle change.","Coïncidence avec une crise économique.","Comparer magasin par magasin et sur plusieurs années, après la fin des travaux."],
+  ["Le soleil et l'exposition diffèrent.","Le vent assèche un côté.","Arrosage inégal.","Plantes différentes ou terre différente.","Un voisin ou un animal (chat, pigeon) passe d'un côté.","Échanger deux pots de côté et regarder si la différence suit le pot ou la place."],
+  ["L'échantillon n'était pas représentatif.","Les électeurs ont changé d'avis à la fin.","Mobilisation inégale : les partisans de l'autre ont voté.","Les sondés n'osent pas dire leur vrai choix.","Marge d'erreur ignorée.","Comparer avec d'autres sondages et la participation réelle par groupe."],
+  ["Les salariés sont plus contents et restent.","L'entreprise attire et garde les plus motivés.","Le marché du travail s'est ralenti : moins d'offres ailleurs.","Hasard sur peu de salariés.","Une prime ou un changement de direction en même temps.","Comparer avec des entreprises similaires sans semaine de quatre jours."],
+  ["Stratification : l'eau chaude reste en surface, l'eau froide au fond.","Un été chaud réchauffe la surface et isole le fond.","Plus de neige fondue arrive au fond.","Mesures faites à des dates ou profondeurs différentes.","Moins de vent pour mélanger les eaux.","Mesurer la température à plusieurs profondeurs tout au long de l'année."],
+  ["Le soir, les lecteurs ont plus de temps.","Les articles du soir sont plus longs ou différents.","On lit sur ordinateur le soir, sur téléphone le jour.","Mesure : l'onglet reste ouvert le soir.","Les lecteurs du soir sont plus fidèles.","Publier les mêmes articles à des heures différentes, au hasard."],
+  ["Les élèves parlent et réfléchissent davantage par eux-mêmes.","Ses phrases plus courtes sont plus claires.","Il prépare mieux.","Les élèves de cette année sont meilleurs.","Il les interroge plus, donc il voit mieux ce qu'ils savent.","Comparer deux classes avec les mêmes leçons, plus ou moins parlées."],
+  ["Il diagnostique mieux : des cas existaient sans être repérés.","Hasard sur une maladie rare.","Des patients viennent d'ailleurs pour le consulter.","Il classe différemment certains symptômes.","Une cause environnementale nouvelle au même moment.","Regarder si les cas ont augmenté aussi dans les régions sans nouveau médecin."],
+  ["La concurrence des supermarchés, qui vendent du bio moins cher.","Le magasin était mal placé ou mal géré.","Le loyer a augmenté.","La hausse nationale masque des baisses locales.","Les clients achètent en ligne ou en direct au producteur.","Regarder où les anciens clients achètent leur bio maintenant."],
+  ["Le rouge impressionne l'adversaire.","Les meilleurs joueurs choisissent le rouge.","Le personnage rouge est plus fort dans le jeu.","Hasard sur peu de parties.","Porter du rouge donne plus d'assurance à celui qui joue.","Attribuer la couleur au hasard et comparer (Hill et Barton, 2005, l'ont étudié aux Jeux olympiques)."],
+  ["Régression vers la moyenne : après une série de défaites, l'équipe revient à son niveau.","Le nouvel entraîneur motive vraiment.","Calendrier plus facile ensuite.","Retour de joueurs blessés.","Choc psychologique du changement.","Comparer avec les équipes qui n'ont pas changé d'entraîneur après une série comparable."],
+  ["Les inscrits empruntent moins chacun : livres numériques, lecture en ligne.","Les nouveaux inscrits viennent pour autre chose (internet, travail, ateliers).","L'inscription est devenue gratuite.","Les prêts numériques ne sont pas comptés.","Les gros lecteurs sont partis.","Regarder les emprunts par inscrit, et ce que font les nouveaux inscrits."],
+  ["Les écrans retardent l'endormissement.","Les trajets s'allongent, on se lève plus tôt.","Plus de bruit ou de lumière la nuit.","La mesure a changé (montres connectées, questionnaire).","La population a changé (plus jeune, plus de parents).","Comparer des groupes de même âge et de même métier, avec la même méthode de mesure."],
+  ["Moins d'écrans, plus d'échanges en face.","Les surveillants ont été renforcés en même temps.","Moins de vidéos filmées pour humilier.","Les bagarres sont moins signalées.","Les élèves s'occupent autrement (jeux).","Comparer avec des collèges voisins sans interdiction, et sur plusieurs années."],
+  ["Le produit vise les enfants, qui regardent en bas.","Il est lourd ou volumineux, plus pratique en bas.","Promotion indiquée en bas.","On compare avec un autre moment de l'année.","Les clients qui le cherchent le trouvent où qu'il soit.","Changer le produit de place sur plusieurs semaines et comparer."],
+  ["Les habitants ont cessé de les nourrir.","Un prédateur s'est installé (faucon).","Les toits ont été équipés contre les pigeons.","Une maladie.","Ils sont partis vers un quartier avec plus de nourriture.","Comparer avec les quartiers voisins et demander à la mairie si des mesures ont été prises."],
+  ["Le café réveille et la voix se chauffe.","La pause repose la voix.","Les choristes bavardent : l'humeur est meilleure.","On chante après la pause les morceaux mieux connus.","Le chef les juge plus indulgemment après.","Inverser l'ordre des morceaux et faire une pause sans café."],
+  ["Les bénévoles venus nettoyer sont comptés comme touristes.","Les journalistes et curieux viennent voir.","Des prix bas pour attirer après la catastrophe.","L'année de référence était mauvaise (météo, crise) : la comparaison flatte.","Les touristes veulent soutenir le village.","Regarder la nature des séjours : bénévoles, curieux ou vacanciers habituels ?"],
+  ["Il a plus d'expérience et d'écoute.","Ses patients le suivent depuis longtemps : les mécontents sont partis (sélection).","Il a plus de temps par patient.","Les patients âgés, plus satisfaits en général, le choisissent.","Le jeune reçoit les cas plus difficiles.","Comparer des patients comparables, vus pour la première fois par chacun."],
+  ["À la mi-temps, beaucoup vont aux toilettes en même temps.","On remplit la bouilloire ou on fait la vaisselle.","Les pompes de la ville réagissent avec un retard.","Coïncidence d'horaire avec un autre usage.","Erreur de mesure du compteur.","Comparer avec les soirs sans match à la même heure."],
+  ["À l'école, il est stimulé par ses camarades.","À la maison, il est fatigué ou occupé par les écrans.","Il est intimidé par un parent ou un frère.","L'enseignant le décrit différemment des parents.","Il parle une autre langue à la maison.","Observer l'enfant dans les deux lieux sur plusieurs jours."],
+  ["Les gens restent chez eux ou télétravaillent : moins de trafic.","Les accidents mineurs sont moins déclarés.","Ils prennent leur vélo et roulent plus prudemment.","Hasard sur quelques jours.","Les grèves ont lieu à des périodes calmes.","Comparer avec des jours sans grève mais avec un trafic équivalent."],
+  ["Achat impulsif le dimanche soir, regretté le lendemain.","Ennui ou fatigue du dimanche soir.","Promotions du week-end.","Les commandes du dimanche arrivent plus tard, quand on n'en a plus besoin.","Les acheteurs du dimanche soir commandent plusieurs tailles exprès.","Regarder les motifs de retour et si les mêmes clients font tous ces retours."]
 ];
 const LEVELS={rct:'Expérience randomisée',obs:'Observation',svy:'Enquête',mod:'Modèle théorique',rev:'Synthèse'};
 const LESSONS=[
@@ -6563,9 +6639,32 @@ function qChrono(r,a,b){const p=r()<.5?[a,b]:[b,a];
 // qui l'a dit : deux autres auteurs du florilège en leurres
 function qCit(r,q){const opts=rshuf(r,[q.a,...rshuf(r,QAUTHORS.filter(a=>a!==q.a)).slice(0,2)]);
   return{kind:'Citation',quote:'« '+q.q+' »',prompt:'Qui l’a dit ?',opts,right:opts.indexOf(q.a),why:q.a+', '+q.s,src:['cit',q.id]};}
-// ordre de grandeur : la bonne valeur et ses voisines à un facteur 10, sans ambiguïté
+// ordre de grandeur : une plage plausible selon le genre de question (une altitude ne dépasse pas 10 000 m,
+// une commune française 10 millions d'habitants) ; les questions de Fermi classiques gardent une plage large,
+// six puissances de dix placées autour de la réponse sans la mettre toujours au milieu
+function fermiRange(q,val,unite){
+  const u=String(unite||''), t=String(q||'');
+  let lo=null, hi=null, fait=true;
+  if(u==='m'&&/altitude/i.test(t)){lo=100;hi=1e4;}
+  else if(u==='m'&&/hauteur/i.test(t)){lo=10;hi=1e3;}
+  else if(u==='habitants'&&/commune/i.test(t)){lo=1e3;hi=1e7;}
+  else if(u==='km'&&/mesure (le|la|l['’])/i.test(t)){lo=100;hi=1e4;}
+  else if(u.startsWith('%')){lo=.01;hi=100;}
+  else{fait=false;let h=0;for(const c of t)h=(h*31+c.charCodeAt(0))>>>0;
+    const d=Math.floor(Math.log10(Math.max(1,val))), a=Math.max(0,d-2-h%3); lo=10**a; hi=10**(a+6);}
+  // filet de sécurité : la réponse reste toujours dans la plage
+  while(val<lo)lo/=10; while(val>hi)hi*=10;
+  return{lo,hi,fait};
+}
+// les quatre choix : écart de ×1,5 à ×2 pour les données (altitudes, populations, fleuves), ×3 pour Fermi,
+// arrondis à deux chiffres, et sans sortir franchement de la plage plausible quand c'est possible
 const nbFr=v=>v.toLocaleString('fr-FR',{maximumSignificantDigits:2});
-function qFermi(r,f){const k=rpick(r,[0,1,2]), vals=[0,1,2,3].map(i=>f.val*10**(i-k)), opts=vals.map(v=>nbFr(v)+' '+f.unite);
+function qFermi(r,f){
+  const R=fermiRange(f.q,f.val,f.unite), F=R.fait?({1:2,2:1.7,3:1.5}[f.niv]||1.7):3;
+  const cands=[0,1,2,3].filter(k=>[0,1,2,3].every(i=>{const v=f.val*F**(i-k);return v>=R.lo/2&&v<=R.hi*1.5;}));
+  const k=rpick(r,cands.length?cands:[0,1,2,3]), vals=[0,1,2,3].map(i=>i===k?f.val:f.val*F**(i-k));
+  let opts=vals.map(v=>nbFr(v)+' '+f.unite);
+  if(new Set(opts).size<4)opts=[0,1,2,3].map(i=>nbFr(f.val*3**(i-k))+' '+f.unite);
   return{kind:'Ordre de grandeur',prompt:f.q,opts,right:k,why:f.calc,src:['fermi',f.id]};}
 // l'erreur de l'IA : laquelle de ces phrases est fausse
 const qIA=(r,a)=>({kind:'Erreur de l’IA',quote:a.question,prompt:'Une phrase de la réponse est fausse : laquelle ?',opts:a.phrases,right:a.faute,why:a.expl,src:['ia',a.id]});
@@ -7898,11 +7997,37 @@ hypotheses(arena){
       const hs=ins.map(x=>x.value.trim()).filter(v=>v.length>=6);
       if(hs.length<2){fb.textContent='Propose au moins 2 explications.';return;}
       stopT(); arena.style.alignItems='';
-      const t=test.value.trim(), score=Math.min(100,hs.length*16+(t.length>=15?20:0));
-      const m=recordMsg('hypotheses',score); logResult('hypotheses',score,{sc});
-      showResult(arena,score,`% de complétion (${hs.length} explications${t.length>=15?' + un test':''})`,m+' Ce qui compte : des explications vraiment différentes, et un moyen concret de les départager.',()=>RUN.hypotheses(arena));
-      arena.append(coachBlock('Avis du coach sur mes hypothèses',()=>coachRules()+`\n\nExercice « hypothèses concurrentes ». Fait : « ${sc} »\n\nSes explications :\n${hs.map((h,i)=>`${i+1}. ${h}`).join('\n')}\n\nCe qui les départagerait selon lui : ${t||'(rien proposé)'}\n\nÉvalue en 150 mots maximum : la diversité réelle des explications (causes différentes ou variantes de la même ?), la plus solide et la plus fragile, UNE piste importante qu'il n'a pas envisagée (formulée comme une question, sans donner la réponse toute faite), et la qualité de son test.`));
+      const t=test.value.trim(), P=ENQUETE[SCENARIOS.indexOf(sc)];
+      if(P)corriger(sc,hs,t,P); else finir(sc,hs,t,Math.min(100,hs.length*16+(t.length>=15?20:0)),null);
     });
+  }
+  // la correction : les cinq pistes de l'enquêteur et le test qui les départage ; on coche ce qu'on avait trouvé
+  function corriger(sc,hs,t,P){
+    const box=el('div',{class:'answer precis'},el('span',{class:'label',text:'Les pistes de l’enquêteur'}),
+      el('p',{class:'fg2',text:'Coche celles que tu avais trouvées, même dites autrement.'}));
+    const checks=P.slice(0,5).map((d,i)=>{const c=el('input',{type:'checkbox',id:'hp-'+i});box.append(el('label',{class:'check',for:'hp-'+i},c,document.createTextNode(' '+d)));return c;});
+    box.append(el('span',{class:'label',text:'Pour les départager'}),el('p',{text:P[5]}));
+    const ct=el('input',{type:'checkbox',id:'hp-test'});
+    if(t.length>=15)box.append(el('label',{class:'check',for:'hp-test'},ct,document.createTextNode(' Mon test permettrait lui aussi de trancher entre plusieurs explications')));
+    const mine=el('div',{class:'answer'},el('span',{class:'label',text:'Tes explications'}),...hs.map(h=>el('span',{class:'fg2',text:'· '+h})),
+      t?el('span',{class:'fg2',text:'Ton test : '+t}):null);
+    const ok=el('button',{class:'btn primary',text:'Voir mon score'});
+    arena.replaceChildren(el('p',{class:'quote',text:sc}),mine,box,el('div',{class:'row'},ok));
+    ok.addEventListener('click',()=>{
+      // chaque piste retrouvée compte ; une idée juste qui n'est pas dans la liste compte à moitié
+      const k=Math.min(hs.length,checks.filter(c=>c.checked).length), autres=Math.min(2,hs.length-k), testOk=t.length>=15&&ct.checked;
+      const score=Math.min(100,Math.round((k+autres*.5)*16+(testOk?20:0)));
+      const recap=el('div',{class:'answer'},el('span',{class:'label',text:'Les pistes de l’enquêteur'}),
+        ...P.slice(0,5).map((d,i)=>el('span',{class:checks[i].checked?'':'fg2',text:(checks[i].checked?'✓ ':'· ')+d})),
+        el('span',{class:'label',text:'Pour les départager'}),el('span',{class:'fg2',text:P[5]}));
+      finir(sc,hs,t,score,recap,k);
+    });
+  }
+  function finir(sc,hs,t,score,recap,k){
+    const m=recordMsg('hypotheses',score); logResult('hypotheses',score,{sc});
+    const unit=recap?`% (${k} piste${k>1?'s':''} sur 5 retrouvée${k>1?'s':''}${hs.length>k?', '+(hs.length-k)+' autre'+(hs.length-k>1?'s':''):''})`:`% de complétion (${hs.length} explications${t.length>=15?' + un test':''})`;
+    showResult(arena,score,unit,m+' Ce qui compte : des explications vraiment différentes, et un moyen concret de les départager.',()=>RUN.hypotheses(arena),recap);
+    arena.append(coachBlock('Avis du coach sur mes hypothèses',()=>coachRules()+`\n\nExercice « hypothèses concurrentes ». Fait : « ${sc} »\n\nSes explications :\n${hs.map((h,i)=>`${i+1}. ${h}`).join('\n')}\n\nCe qui les départagerait selon lui : ${t||'(rien proposé)'}\n\nÉvalue en 150 mots maximum : la diversité réelle des explications (causes différentes ou variantes de la même ?), la plus solide et la plus fragile, UNE piste importante qu'il n'a pas envisagée (formulée comme une question, sans donner la réponse toute faite), et la qualité de son test.`));
   }
 },
 sophismes(arena){
@@ -8023,20 +8148,23 @@ fermi(arena){
   }
   function go(){
     const qs=freshPick('fermi',FERMI,3,'fermi'); let qi=0, scores=[];
-    // échelle logarithmique de 1 à mille milliards : chaque cran multiplie par 10
-    const pos=v=>Math.min(97,Math.max(3,Math.log10(v)/12*100));
+    // échelle logarithmique, bornée selon la question (fermiRange) : chaque cran multiplie par 10
+    let L0=0, L1=12;
+    const pos=v=>Math.min(97,Math.max(3,(Math.log10(v)-L0)/(L1-L0)*100));
     const nice=v=>{v=Number(v.toPrecision(2));return v>=1e9?fmt(v/1e9)+' milliard'+(v>=2e9?'s':''):v>=1e6?fmt(v/1e6)+' million'+(v>=2e6?'s':''):fmt(v);};
-    const ruler=()=>el('div',{class:'lscale-l','aria-hidden':'true'},...['1','1 000','1 million','1 milliard','1 000 milliards'].map(t=>el('span',{text:t})));
+    const ruler=()=>{const n=L1-L0, st=n<=4?1:n<=8?2:3, ts=[];for(let d=L0;d<=L1;d+=st)ts.push(nice(10**d));
+      return el('div',{class:'lscale-l','aria-hidden':'true'},...ts.map(t=>el('span',{text:t})));};
     const ask=()=>{
       const [q,ans,unit,why]=qs[qi];
-      const sl=el('input',{type:'range',class:'logslider',min:'0',max:'12',step:'0.02',value:'6','aria-label':'Ordre de grandeur de ton estimation'});
+      const R=fermiRange(q,ans,unit); L0=Math.log10(R.lo); L1=Math.log10(R.hi);
+      const sl=el('input',{type:'range',class:'logslider',min:String(L0),max:String(L1),step:'0.01',value:String((L0+L1)/2),'aria-label':'Ordre de grandeur de ton estimation'});
       const inp=el('input',{class:'bigin',type:'text',autocomplete:'off',inputmode:'decimal','aria-label':'Ton estimation, en chiffres',id:'fermi-in',placeholder:'ou tape un nombre',style:'width:min(260px,100%)'});
       const hint=el('p',{class:'fermi-val',text:'Fais glisser vers ton ordre de grandeur'}); const fb=el('p',{class:'feedback'});
       const sub=el('button',{class:'btn primary',text:'Valider',disabled:''});
       let v=NaN;
       const show=()=>{hint.textContent='≈ '+nice(v)+' '+unit;sub.disabled=false;fb.textContent='';};
       sl.addEventListener('input',()=>{v=Math.pow(10,+sl.value);inp.value='';show();});
-      inp.addEventListener('input',()=>{const x=parse(inp.value);if(x>0){v=x;sl.value=String(Math.min(12,Math.max(0,Math.log10(x))));show();}});
+      inp.addEventListener('input',()=>{const x=parse(inp.value);if(x>0){v=x;sl.value=String(Math.min(L1,Math.max(L0,Math.log10(x))));show();}});
       arena.replaceChildren(qprog(qi,3),el('p',{class:'prompt',style:'text-align:center',text:q}),hint,sl,ruler(),inp,sub,fb);
       const check=()=>{
         if(!(v>0)){fb.className='feedback ko';fb.textContent='Fais glisser le curseur ou tape un nombre.';return;}
@@ -8044,7 +8172,7 @@ fermi(arena){
         const verdict=err<=.3?'Excellent, à moins d’un facteur 2':err<=.5?'Bon ordre de grandeur':err<=1?'Moins d’un facteur 10 d’écart':'Plus d’un facteur 10 d’écart';
         // les deux repères sur l'échelle : le tien, puis la réponse qui glisse jusqu'à sa place
         const you=el('span',{class:'mk you',style:`left:${pos(v)}%`},el('b',{text:'Toi'}),el('i')), real=el('span',{class:'mk ans',style:`left:${pos(v)}%`},el('b',{text:'Réponse'}),el('i'));
-        const band=el('span',{class:'band',style:`left:${Math.log10(ans/2)/12*100}%;width:${Math.log10(4)/12*100}%`});
+        const band=el('span',{class:'band',style:`left:${(Math.log10(ans/2)-L0)/(L1-L0)*100}%;width:${Math.log10(4)/(L1-L0)*100}%`});
         arena.replaceChildren(qprog(qi,3),el('p',{class:'prompt',style:'text-align:center',text:q}),
           el('div',{class:'lscale'},band,you,real),ruler(),
           el('div',{class:'answer'},el('span',{class:'label',text:verdict}),el('strong',{text:'≈ '+nice(ans)+' '+unit}),el('span',{class:'fg2',text:why}),el('span',{text:`Ton estimation : ${nice(v)}.`}),contestBtn('fermi',NB.fermi[FERMI.indexOf(qs[qi])].id,q)),

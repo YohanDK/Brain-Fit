@@ -1,9 +1,0 @@
-# Personnes de nationalité française très connues (au moins 60 Wikipédias), naissance et mort au jour près.
-SELECT ?e ?libelle ?description ?naissance ?mort ?liens WHERE {
-  ?e wdt:P27 wd:Q142; wikibase:sitelinks ?liens. FILTER(?liens >= 60)
-  ?e wdt:P31 wd:Q5.
-  ?e p:P569/psv:P569 [wikibase:timeValue ?naissance; wikibase:timePrecision 11].
-  OPTIONAL { ?e p:P570/psv:P570 [wikibase:timeValue ?mort; wikibase:timePrecision 11]. }
-  ?e rdfs:label ?libelle. FILTER(LANG(?libelle)="fr")
-  OPTIONAL { ?e schema:description ?description. FILTER(LANG(?description)="fr") }
-}

@@ -5,7 +5,7 @@ on:
   workflow_dispatch:
   push:
     branches: ["claude/**"]
-    paths: ["tools/wikidata/requetes/**", "tools/wikidata/importer.js", "tools/gallica/liste.txt", "tools/gallica/importer.js", "tools/wikiquote/liste.txt", "tools/wikiquote/importer.js"]
+    paths: ["tools/wikidata/requetes/**", "tools/wikidata/importer.js", "tools/wikidata/entites.txt", "tools/wikidata/entites.js", "tools/gallica/liste.txt", "tools/gallica/importer.js", "tools/wikiquote/liste.txt", "tools/wikiquote/importer.js"]
 
 permissions:
   contents: write
@@ -19,6 +19,7 @@ jobs:
         with:
           node-version: 20
       - run: node tools/wikidata/importer.js
+      - run: node tools/wikidata/entites.js
       - run: node tools/wikiquote/importer.js
       - run: node tools/gallica/importer.js
       - name: Enregistrer

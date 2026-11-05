@@ -1,0 +1,71 @@
+# Titres exacts de Wikipédia en français : naissance et mort récupérées par entites.js.
+Molière
+Jean Racine
+Pierre Corneille
+Jean de La Fontaine
+Blaise Pascal
+René Descartes
+Jacques-Bénigne Bossuet
+Fénelon
+Voltaire
+Jean-Jacques Rousseau
+Montesquieu
+Denis Diderot
+François-René de Chateaubriand
+Honoré de Balzac
+Stendhal
+Gustave Flaubert
+Charles Baudelaire
+Émile Zola
+Guy de Maupassant
+Alphonse Daudet
+Jules Verne
+Arthur Rimbaud
+Paul Verlaine
+Marcel Proust
+Charles Péguy
+Georges Bernanos
+Paul Claudel
+Antoine de Saint-Exupéry
+Albert Camus
+Simone Weil
+Joris-Karl Huysmans
+Léon Bloy
+George Sand
+Alexandre Dumas
+Alfred de Musset
+Alphonse de Lamartine
+Alfred de Vigny
+Alexis de Tocqueville
+Louis Pasteur
+Marie Curie
+Pierre Curie
+Antoine Lavoisier
+André-Marie Ampère
+Jean-Baptiste de Lamarck
+Georges-Louis Leclerc de Buffon
+Jean-François Champollion
+Louis Braille
+Henri Poincaré
+Évariste Galois
+Thérèse de Lisieux
+Bernadette Soubirous
+Jean-Marie Vianney
+Vincent de Paul
+Claude Monet
+Pierre-Auguste Renoir
+Paul Cézanne
+Auguste Rodin
+Claude Debussy
+Hector Berlioz
+Maurice Ravel
+Gustave Eiffel
+Louis XIV
+Jules Ferry
+Jean de La Bruyère
+Jean-François Millet
+Eugène Delacroix
+Frédéric Chopin
+Victor Hugo
+Charles de Gaulle
+Napoléon Ier

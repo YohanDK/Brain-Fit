@@ -7,8 +7,8 @@ const date=c=>{const v=c?.[0]?.mainsnak?.datavalue?.value;return v?{t:v.time,pre
 (async()=>{
   const lignes=[], manquants=[];
   for(let i=0;i<titres.length;i+=50){
-    const lot=titres.slice(i,i+50), u='https://www.wikidata.org/w/api.php?'+new URLSearchParams({action:'wbgetentities',sites:'frwiki',titles:lot.join('|'),props:'claims|labels|descriptions|sitelinks',languages:'fr',sitefilter:'frwiki',format:'json',normalize:'1'});
-    const j=await (await fetch(u,{headers:UA})).json();
+    const lot=titres.slice(i,i+50), u='https://www.wikidata.org/w/api.php?'+new URLSearchParams({action:'wbgetentities',sites:'frwiki',titles:lot.join('|'),props:'claims|labels|descriptions|sitelinks',languages:'fr',sitefilter:'frwiki',format:'json'});
+    const j=await (await fetch(u,{headers:UA})).json(); if(j.error)console.log('erreur API',JSON.stringify(j.error).slice(0,300));
     for(const [q,e] of Object.entries(j.entities||{})){
       if(e.missing!==undefined){manquants.push(e.title);continue;}
       lignes.push({e:q,titre:e.sitelinks?.frwiki?.title,libelle:e.labels?.fr?.value,description:e.descriptions?.fr?.value,naissance:date(e.claims?.P569),mort:date(e.claims?.P570)});

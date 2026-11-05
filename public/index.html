@@ -2535,6 +2535,55 @@ const EVENTS=[
 ['1227',1822,"Naissance de Louis Pasteur à Dole."],
 ['1228',1895,"Première projection publique payante du cinématographe des frères Lumière, à Paris."],
 ['1229',1170,"Thomas Becket est assassiné dans la cathédrale de Cantorbéry."],
+// art de vivre et patrimoine (novembre 2026) : agriculture, cuisine, vin, architecture, jardins, artisanat, régions
+['0812',1737,"Naissance d'Antoine Parmentier à Montdidier : il fera adopter la pomme de terre en France."],
+['1217',1813,"Mort d'Antoine Parmentier à Paris."],
+['0401',1755,"Naissance de Jean Anthelme Brillat-Savarin à Belley, futur auteur de la Physiologie du goût."],
+['0202',1826,"Mort de Brillat-Savarin, deux mois après la parution de sa Physiologie du goût."],
+['0112',1833,"Mort d'Antonin Carême, « roi des cuisiniers et cuisinier des rois »."],
+['1028',1846,"Naissance d'Auguste Escoffier à Villeneuve-Loubet, près de Nice."],
+['0212',1935,"Mort d'Auguste Escoffier à Monte-Carlo."],
+['0211',1926,"Naissance de Paul Bocuse à Collonges-au-Mont-d'Or, près de Lyon."],
+['0120',2018,"Mort de Paul Bocuse à Collonges-au-Mont-d'Or."],
+['1116',2010,"Le repas gastronomique des Français est inscrit au patrimoine culturel immatériel de l'Unesco."],
+['1116',2010,"Le compagnonnage, transmission des savoirs par le métier, est inscrit au patrimoine immatériel de l'Unesco."],
+['1130',2022,"Les savoir-faire artisanaux et la culture de la baguette de pain entrent au patrimoine immatériel de l'Unesco."],
+['1128',2018,"Les savoir-faire liés au parfum en pays de Grasse entrent au patrimoine immatériel de l'Unesco."],
+['1205',2012,"Le fest-noz breton entre au patrimoine immatériel de l'Unesco.",'bretagne'],
+['0726',1925,"Une loi protège l'appellation Roquefort : la première appellation d'origine pour un fromage."],
+['0730',1935,"Un décret-loi crée le Comité national des appellations d'origine, futur INAO : naissance des AOC viticoles."],
+['0418',1855,"Le classement officiel des vins de Bordeaux est arrêté pour l'Exposition universelle de Paris."],
+['0704',2015,"Les climats de Bourgogne et les coteaux, maisons et caves de Champagne entrent au patrimoine mondial de l'Unesco."],
+['0924',1715,"Mort de dom Pérignon, cellérier de l'abbaye d'Hautvillers, en Champagne."],
+['0411',1865,"Pasteur fait breveter la conservation des vins par chauffage : la future pasteurisation."],
+['1117',1749,"Naissance de Nicolas Appert à Châlons, inventeur de la conserve en bocal stérilisé."],
+['1114',1881,"Création du ministère de l'Agriculture, séparé de celui du Commerce."],
+['0707',1883,"Création de l'ordre du Mérite agricole."],
+['0111',1892,"Le tarif Méline relève les droits de douane pour protéger l'agriculture française."],
+['0730',1962,"Entrée en vigueur de la politique agricole commune européenne."],
+['0303',1969,"Le marché de gros des Halles de Paris quitte le centre de la capitale pour Rungis."],
+['0302',1791,"Le décret d'Allarde supprime les corporations de métiers et proclame la liberté du travail."],
+['0611',1144,"Consécration du nouveau chœur de la basilique de Saint-Denis, voulu par l'abbé Suger : l'art gothique est né."],
+['0426',1248,"Consécration de la Sainte-Chapelle, bâtie par Saint Louis pour abriter la couronne d'épines."],
+['0906',1519,"Début des travaux du château de Chambord, voulu par François Ier."],
+['0312',1613,"Naissance d'André Le Nôtre, futur jardinier de Louis XIV."],
+['0915',1700,"Mort d'André Le Nôtre, créateur des jardins de Vaux-le-Vicomte et de Versailles."],
+['0506',1682,"Louis XIV installe la cour et le gouvernement à Versailles."],
+['0515',1681,"Inauguration du canal du Midi, qui relie la Garonne à la Méditerranée."],
+['0330',1707,"Mort de Vauban, l'ingénieur des fortifications de Louis XIV."],
+['0707',2008,"Douze sites fortifiés par Vauban entrent au patrimoine mondial de l'Unesco."],
+['0610',1837,"Louis-Philippe inaugure le musée de l'Histoire de France dans le château de Versailles."],
+['0729',1836,"Inauguration de l'Arc de triomphe de l'Étoile, à Paris."],
+['0327',1809,"Naissance du baron Haussmann, qui transformera Paris sous le Second Empire."],
+['0127',1814,"Naissance d'Eugène Viollet-le-Duc, restaurateur de Notre-Dame, de Vézelay et de Carcassonne."],
+['0917',1879,"Mort de Viollet-le-Duc à Lausanne."],
+['0105',1875,"Inauguration de l'Opéra de Charles Garnier, à Paris."],
+['1016',1919,"Consécration de la basilique du Sacré-Cœur de Montmartre."],
+['1006',1887,"Naissance de Le Corbusier à La Chaux-de-Fonds, en Suisse."],
+['0827',1965,"Mort de Le Corbusier, en se baignant à Roquebrune-Cap-Martin."],
+['1014',1952,"Inauguration de la Cité radieuse de Le Corbusier, à Marseille."],
+['0131',1977,"Inauguration du Centre Georges-Pompidou, à Paris."],
+['1207',2024,"La cathédrale Notre-Dame de Paris rouvre, cinq ans après l'incendie."],
 // semaine de Bretagne : le 4e champ rattache l'événement à une semaine à thème (les frises puisent d'abord dedans)
 ['1122',845,"Bataille de Ballon : le Breton Nominoë bat Charles le Chauve.",'bretagne'],
 ['0929',1364,"Bataille d'Auray : Jean de Montfort l'emporte et devient duc de Bretagne.",'bretagne'],
@@ -2984,9 +3033,9 @@ const coachRules=()=>[COACH_BASE,TUTORS[tutorKey()].coach,...['ton','long','prio
    c : philo, politique, histoire, nation, classique, ecriture, fausse. a : auteur réel. f : fausse attribution courante.
    k : mot à retrouver dans l'exercice « mot manquant ». n : le contexte « À retenir ». */
 /* ---------- thèmes : 2 ou 3 sujets choisis orientent citations, « Ce jour-là », dictées, sujets d'écriture et coach ---------- */
-const THEMES=[['histoire','Histoire'],['sciences','Sciences'],['philo','Philosophie'],['eco','Économie'],['politique','Politique et société'],['lettres','Arts et lettres'],['sport','Sport'],['nature','Nature et géographie']];
+const THEMES=[['histoire','Histoire'],['sciences','Sciences'],['philo','Philosophie'],['eco','Économie'],['politique','Politique et société'],['lettres','Arts et lettres'],['sport','Sport'],['nature','Nature et géographie'],['vivre','Art de vivre et patrimoine']];
 const THEME_NAME=Object.fromEntries(THEMES);
-const QCAT_TH={philo:'philo',foi:'philo',politique:'politique',histoire:'histoire',nation:'histoire politique',classique:'lettres',ecriture:'lettres'};
+const QCAT_TH={philo:'philo',foi:'philo',politique:'politique',histoire:'histoire',nation:'histoire politique',classique:'lettres',ecriture:'lettres',vivre:'vivre'};
 // « Ce jour-là » : thèmes reconnus aux mots de l'événement ; tous sont de l'histoire
 const EV_RX={
   sport:/olympi|Tour de France|Coupe du monde|Roland-Garros|record du monde|football|aviron|mile\b/i,
@@ -2995,6 +3044,8 @@ const EV_RX={
   eco:/\beuros?\b|monnaie|banque|krach|Bourse|économi|grève|salaire|impôt|commerce|industri|chemin de fer|usine|pétrole|congés payés|Sécurité sociale|ruée vers l'or|vend la Louisiane/i,
   nature:/séisme|tremblement|éruption|volcan|ouragan|tempête|inondation|pôle|Everest|tsunami|Mont-Blanc|glacier|climat|Lascaux/i,
   politique:/élu|élection|président|Constitution|\bloi\b|vote|suffrage|Assemblée|républi|gouvernement|ministre|référendum|droit|abolit|parlement|Sénat|traité|Nations unies|Union européenne/i,
+  // art de vivre et patrimoine : agriculture, cuisine, vin, architecture, jardins, artisanat, régions
+  vivre:/agricul|agricol|paysan|vigne|vignoble|\bvins?\b|champagne|fromage|appellation|pomme de terre|cuisin|gastronom|\brepas\b|baguette|conserve|jardin|architect|cathédrale(?! de Cantorbéry)|basilique|abbaye|Sainte-Chapelle|château de Chambord|château de Versailles|gouvernement à Versailles|Opéra de Charles Garnier|Pompidou|Escoffier|Bocuse|Carême|Brillat-Savarin|Parmentier|Le Nôtre|Pérignon|Appert|Arc de triomphe|fortifi|Vauban|Haussmann|Corbusier|Viollet-le-Duc|canal du Midi|corporations|compagnonnage|savoir-faire|Unesco|fest-noz|Halles/i,
 };
 const myThemes=()=>(state.settings.themes||[]).filter(t=>THEME_NAME[t]);
 const hasTheme=th=>{const m=myThemes();return !!th&&m.some(t=>th.split(' ').includes(t));};
@@ -3006,7 +3057,7 @@ function pickT(arr,ths){
 }
 // pour le coach : ses thèmes, s'il en a choisi
 const themeHint=()=>{const m=myThemes();return m.length?` Choisis de préférence un sujet lié à ses centres d'intérêt : ${m.map(t=>THEME_NAME[t].toLowerCase()).join(', ')}.`:'';};
-const QCAT={philo:'Philosophie',foi:'Tradition chrétienne',politique:'Politique',histoire:'Histoire',nation:'Nation & tradition',classique:'Classiques français',ecriture:'Écriture',fausse:'Fausse citation'};
+const QCAT={philo:'Philosophie',foi:'Tradition chrétienne',politique:'Politique',histoire:'Histoire',nation:'Nation & tradition',classique:'Classiques français',ecriture:'Écriture',vivre:'Art de vivre',fausse:'Fausse citation'};
 const QUOTES=[
 {id:'delphes',c:'philo',q:"Connais-toi toi-même.",a:"Inscription de Delphes",s:"Temple d'Apollon à Delphes (VIe s. av. J.-C.), devise reprise par Socrate chez Platon",n:"Pour Socrate, se connaître, c'est d'abord connaître les limites de son savoir. Le piège moderne : croire savoir parce qu'on a lu une réponse bien tournée.",k:"Connais"},
 {id:'examen',c:'philo',q:"Une vie sans examen ne vaut pas la peine d'être vécue.",a:"Socrate",s:"Platon, Apologie de Socrate, 38a (399 av. J.-C.)",n:"Socrate le dit à son procès, alors qu'il risque la mort : il préfère mourir plutôt que cesser de questionner. Examiner, c'est ne rien tenir pour acquis, pas même ses certitudes.",k:"examen"},
@@ -3214,7 +3265,24 @@ const QUOTES=[
 {id:'modes',c:'histoire',q:"Les modes changent, étant nées elles-mêmes du besoin de changement.",a:"Marcel Proust",s:"À l'ombre des jeunes filles en fleurs (1919)",n:"Une mode ne meurt pas parce qu'elle est mauvaise, mais parce qu'elle a duré. Utile à se rappeler face aux tendances.",k:"modes"},
 {id:'desirchange',c:'philo',q:"Nous n'arrivons pas à changer les choses suivant notre désir, mais peu à peu notre désir change.",a:"Marcel Proust",s:"Albertine disparue (1925)",n:"Le temps nous transforme plus sûrement que nous ne transformons le monde. Une consolation, ou une mélancolie.",k:"désir"},
 {id:'cielvie',c:'philo',q:"Tâchez de garder toujours un morceau de ciel au-dessus de votre vie.",a:"Marcel Proust",s:"Du côté de chez Swann, « Combray » (1913)",n:"Conseil de Legrandin au narrateur enfant : garder une part de rêve et d'élévation dans une vie ordinaire.",k:"ciel"},
-{id:'argentmoeurs',c:'politique',q:"On a tout avec de l'argent, hormis des mœurs et des citoyens.",a:"Jean-Jacques Rousseau",s:"Discours sur les sciences et les arts (1750)",n:"L'argent achète des biens, pas des vertus. Rousseau oppose la richesse des États modernes à la vertu des cités antiques.",k:"citoyens"}
+{id:'argentmoeurs',c:'politique',q:"On a tout avec de l'argent, hormis des mœurs et des citoyens.",a:"Jean-Jacques Rousseau",s:"Discours sur les sciences et les arts (1750)",n:"L'argent achète des biens, pas des vertus. Rousseau oppose la richesse des États modernes à la vertu des cités antiques.",k:"citoyens"},
+// art de vivre et patrimoine (novembre 2026)
+{id:'mamelles',c:'vivre',q:"Labourage et pâturage sont les deux mamelles dont la France est alimentée, et les vraies mines et trésors du Pérou.",a:"Sully",s:"Mémoires des sages et royales économies d'État (1638)",n:"Le ministre d'Henri IV voit la richesse du royaume dans ses champs et ses troupeaux, non dans l'or des Amériques qui enrichit l'Espagne.",k:"mamelles"},
+{id:'dismoi',c:'vivre',q:"Dis-moi ce que tu manges, je te dirai ce que tu es.",a:"Jean Anthelme Brillat-Savarin",s:"Physiologie du goût, aphorisme IV (1825)",n:"Le magistrat de Belley fait de la table un miroir : ce que l'on choisit de manger dit une éducation, une région, un caractère.",k:"manges"},
+{id:'metsetoile',c:'vivre',q:"La découverte d'un mets nouveau fait plus pour le bonheur du genre humain que la découverte d'une étoile.",a:"Jean Anthelme Brillat-Savarin",s:"Physiologie du goût, aphorisme IX (1825)",n:"Un trait d'humour, mais aussi une idée sérieuse : le bonheur ordinaire tient souvent à des choses simples et partagées.",k:"étoile"},
+{id:'dessertfromage',c:'vivre',q:"Un dessert sans fromage est une belle à qui il manque un œil.",a:"Jean Anthelme Brillat-Savarin",s:"Physiologie du goût, aphorisme XIV (1825)",n:"À l'époque, le fromage se servait au dessert. L'aphorisme est resté pour défendre sa place dans le repas à la française.",k:"fromage"},
+{id:'savoirmanger',c:'vivre',q:"Les animaux se repaissent ; l'homme mange ; l'homme d'esprit seul sait manger.",a:"Jean Anthelme Brillat-Savarin",s:"Physiologie du goût, aphorisme II (1825)",n:"Trois degrés : se nourrir, manger, savoir manger. Le dernier demande attention, goût et conversation.",k:"repaissent"},
+{id:'convier',c:'vivre',q:"Convier quelqu'un, c'est se charger de son bonheur pendant tout le temps qu'il est sous notre toit.",a:"Jean Anthelme Brillat-Savarin",s:"Physiologie du goût, aphorisme XX (1825)",n:"Toute l'hospitalité en une phrase : recevoir n'est pas montrer sa table, c'est veiller sur son invité.",k:"bonheur"},
+{id:'premiereheure',c:'vivre',q:"La table est le seul endroit où l'on ne s'ennuie jamais pendant la première heure.",a:"Jean Anthelme Brillat-Savarin",s:"Physiologie du goût, aphorisme VII (1825)",n:"La précision « la première heure » fait sourire : même un bon repas a sa durée raisonnable.",k:"ennuie"},
+{id:'rotisseur',c:'vivre',q:"On devient cuisinier, mais on naît rôtisseur.",a:"Jean Anthelme Brillat-Savarin",s:"Physiologie du goût, aphorisme XV (1825)",n:"La cuisine s'apprend ; le coup d'œil pour une cuisson juste tiendrait du don. Une idée discutable, mais bien tournée.",k:"rôtisseur"},
+{id:'volumeslumiere',c:'vivre',q:"L'architecture est le jeu savant, correct et magnifique des volumes assemblés sous la lumière.",a:"Le Corbusier",s:"Vers une architecture (1923)",n:"Pour Le Corbusier, l'architecture tient d'abord aux formes simples, cubes, cylindres, sphères, que la lumière révèle.",k:"lumière"},
+{id:'machinehabiter',c:'vivre',q:"Une maison est une machine à habiter.",a:"Le Corbusier",s:"Vers une architecture (1923)",n:"La formule a choqué : la maison doit être pensée comme un outil efficace. Ses critiques y voient l'oubli de ce qui fait un foyer.",k:"machine"},
+{id:'usagebeaute',c:'vivre',q:"Il y a deux choses dans un édifice, son usage et sa beauté. Son usage appartient au propriétaire, sa beauté à tout le monde.",a:"Victor Hugo",s:"« Guerre aux démolisseurs », Revue des Deux Mondes (1832)",n:"Hugo s'indigne qu'on rase des églises et des châteaux anciens. Ce texte a nourri la naissance des monuments historiques.",k:"beauté"},
+{id:'cecituera',c:'vivre',q:"Ceci tuera cela. Le livre tuera l'édifice.",a:"Victor Hugo",s:"Notre-Dame de Paris, livre V, chapitre 2 (1832)",n:"L'archidiacre montre un livre puis la cathédrale : avant l'imprimerie, l'architecture était le grand livre de l'humanité.",k:"édifice"},
+{id:'ventreaffame',c:'vivre',q:"Ventre affamé n'a point d'oreilles.",a:"Jean de La Fontaine",s:"Fables, livre IX, 18, « Le Milan et le Rossignol » (1678)",n:"Le rossignol chante pour qu'on l'épargne ; le milan, qui a faim, le mange. On n'écoute pas les beaux discours quand le besoin presse.",k:"oreilles"},
+{id:'espritpolitesse',c:'vivre',q:"L'esprit de politesse est une certaine attention à faire que, par nos paroles et par nos manières, les autres soient contents de nous et d'eux-mêmes.",a:"Jean de La Bruyère",s:"Les Caractères, « De la société et de la conversation », 32 (1688)",n:"La politesse ne consiste pas à briller : elle met l'autre à l'aise. Le savoir-vivre à la française tient dans cette attention.",k:"politesse"},
+{id:'batonchaise',c:'vivre',q:"Il fallait qu'un bâton de chaise fût bien fait.",a:"Charles Péguy",s:"L'Argent (1913)",n:"Péguy se souvient des artisans de son enfance : le travail bien fait, même invisible, était une affaire d'honneur et non de salaire.",k:"chaise"},
+{id:'agricolas',c:'vivre',q:"Trop heureux les hommes des champs, s'ils connaissaient leur bonheur !",a:"Virgile",s:"Géorgiques, livre II, vers 458 (vers 29 av. J.-C.)",n:"O fortunatos nimium, sua si bona norint, agricolas ! Virgile chante la vie paysanne, loin des guerres civiles qui déchirent Rome.",k:"champs"}
 ];
 const QBY=Object.fromEntries(QUOTES.map(q=>[q.id,q]));
 const QAUTHORS=[...new Set(QUOTES.filter(q=>q.c!=='fausse').map(q=>q.a))];
@@ -8065,9 +8133,12 @@ chrono(arena){
     let qi=0, sum=0, perfect=0; const seen=[];
     // pendant une semaine à thème, les frises puisent d'abord dans ses événements
     const th=semTh(), POOL=th?EVENTS.filter(e=>e[3]===th):[];
+    // hors semaine à thème, une frise sur deux puise d'abord dans ses centres d'intérêt (l'histoire, commune à tous, ne compte pas)
+    const MINE=th?[]:EVENTS.filter(e=>hasTheme(evThemes(e[2]).replace(/^histoire ?/,'')));
     const draw=([n,lo,span])=>{
+      const pref=POOL.length>=n?POOL:MINE.length>=15&&Math.random()<.5?MINE:[];
       for(let t=0;t<400;t++){
-        const src=t<200&&POOL.length>=n?POOL:EVENTS;
+        const src=t<200&&pref.length>=n?pref:EVENTS;
         const set=[pick(src)]; if(used.has(set[0]))continue;
         for(let u=0;u<200&&set.length<n;u++){
           const c=pick(src);

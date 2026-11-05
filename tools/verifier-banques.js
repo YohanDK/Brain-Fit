@@ -59,7 +59,7 @@ B.ortho.forEach((o,i)=>{const id=common('ortho',o,i,['phrase','regle']);
   else if(!Number.isInteger(o.bonne)||o.bonne<0||o.bonne>=o.choix.length)err(id,'bonne hors des choix');});
 noDup('ortho','phrase');
 
-const THEMES=['histoire','sciences','philo','eco','politique','lettres','sport','nature'];
+const THEMES=['histoire','sciences','philo','eco','politique','lettres','sport','nature','vivre'];
 B.textes.forEach((t,i)=>{
   const id=t.id||`textes[${i}]`;
   if(!str(t.id))err(id,'id manquant');else if(ids.has(t.id))err(id,'id déjà utilisé');else ids.add(t.id);

@@ -594,6 +594,10 @@ a{color:var(--accent);text-underline-offset:3px}
 .play-meta{color:var(--fg2);margin:0;max-width:52ch}
 .btn.big{font-size:1.15rem;padding:13px 18px;width:100%;margin-top:6px;letter-spacing:.02em}
 .play-streak{margin:0;font-size:.92rem;color:var(--gold-deep);text-align:center}
+.linkish{background:none;border:0;padding:0;font:inherit;cursor:pointer;text-align:left}
+.play-swap{margin:-2px 0 0;text-align:center}
+.swap-link{display:block;margin-top:4px;font-size:.85rem;color:var(--muted);text-decoration:underline;text-underline-offset:3px}
+.play-swap .swap-link{display:inline}
 .pips{list-style:none;display:flex;gap:5px;margin:2px 0 4px;padding:0}
 .pips li{flex:1;height:5px;border-radius:3px;background:var(--line)}
 .pips li.ok{background:var(--gold)} .pips li.cur{background:var(--accent)}
@@ -1398,6 +1402,7 @@ var fin=function(){if(e.parentNode)e.remove();};e.addEventListener('click',fin);
       <h2 class="play-title" id="play-title"></h2>
       <p class="play-meta" id="play-meta"></p>
       <button class="btn primary big" id="play-go"></button>
+      <p class="play-swap" id="play-swap" hidden></p>
       <p class="play-streak" id="play-streak"></p>
     </div>
     <div class="panel quests" id="quests" aria-labelledby="quests-h">
@@ -2997,7 +3002,7 @@ function mergeStates(a,b){ // fusionne données distantes (a) et locales (b)
   out.settings=Object.assign({},b.settings,a.settings);
   for(const[k,v] of Object.entries(b.days||{})){const t=out.days[k]||(out.days[k]={done:{},habits:{}});Object.assign(t.done,v.done);Object.assign(t.habits,v.habits);if(v.talks&&!(t.talks>v.talks))t.talks=v.talks;}
   out.prog=Object.assign({},b.prog,out.prog); if(!out.goal&&b.goal)out.goal=b.goal;
-  for(const[k,v] of Object.entries(b.days||{})){const t=out.days[k];if(v.screen)t.screen=Object.assign({},v.screen,t.screen);if(v.goalHit)t.goalHit=true;if(v.cjl&&!t.cjl)t.cjl=v.cjl;}
+  for(const[k,v] of Object.entries(b.days||{})){const t=out.days[k];if(v.screen)t.screen=Object.assign({},v.screen,t.screen);if(v.goalHit)t.goalHit=true;if(v.cjl&&!t.cjl)t.cjl=v.cjl;if(v.swap)t.swap=Object.assign({},t.swap,v.swap);}
   out.badges=Object.assign({},b.badges,out.badges);
   if(b.freeze){const fa=out.freeze||{n:1,used:[],earned:[]};out.freeze={n:Math.min(fa.n,b.freeze.n),used:[...new Set([...(fa.used||[]),...(b.freeze.used||[])])],earned:[...new Set([...(fa.earned||[]),...(b.freeze.earned||[])])]};}
   out.lastLevel=Math.max(out.lastLevel||1,b.lastLevel||1);
@@ -3020,10 +3025,12 @@ function mergeStates(a,b){ // fusionne données distantes (a) et locales (b)
 function logResult(ex,s,extra){
   const b=bestOf(ex), r=Object.assign({t:Date.now(),d:todayKey(),ex,s:Math.round(s)},extra||{});
   if(b!==null&&r.s>b&&ex!=='focus')r.rec=1;
+  // exercice à l'écran qui remplace une étape hors écran : il compte pour la séance et la série, à XP réduits
+  const sw=day().swap||{}; if(!day().done[ex]&&Object.values(sw).includes(ex))r.sub=Object.keys(sw).find(o=>sw[o]===ex);
   state.results.push(r);
   if(state.results.length>2000)state.results=state.results.slice(-2000);
   day().done[ex]=true;
-  toast(`<span class="xp">+${xpOfResult(r)} XP</span><span>${EX[ex].name}${r.rec?' · record battu, bonus !':''}</span>`); stagJump();
+  toast(`<span class="xp">+${xpOfResult(r)} XP</span><span>${EX[ex].name}${r.sub?' · à la place de « '+EX[r.sub].name+' », ta série est gardée':r.rec?' · record battu, bonus !':''}</span>`); stagJump();
   // une égide (gel de série) gagnée tous les 7 jours de série (2 au maximum)
   const f=freezeState(), cur=streaks().cur, t=todayKey();
   if(cur>0&&cur%7===0&&!f.earned.includes(t)){f.earned.push(t);if(f.n<2){f.n++;toast(`<span>Série de ${cur} jours : tu gagnes une égide.<small>Comme le bouclier d'Athéna, elle protégera ta série si tu manques un jour.</small></span>`);}}
@@ -4240,7 +4247,11 @@ function renderPlay(steps,d,nextEx){
     $('#play-meta').textContent=`${e.skill} · ${steps[i].m} min · ${e.desc}`;
     $('#play-go').textContent=done?'Continuer':'Jouer';
     $('#play-go').onclick=()=>{showTab('exercices');openEx(nextEx);};
+    const sf=steps[i].from;
+    if(sf)$('#play-meta').textContent=`${e.skill} · ${steps[i].m} min · à la place de « ${EX[sf].name} », pour aujourd’hui : ${SUB_XP} XP, et ta série est gardée.`;
   }
+  const ps=$('#play-swap'); ps.replaceChildren(); ps.hidden=fini||!horsEcran(nextEx)||!subFor(nextEx);
+  if(!ps.hidden)ps.append(swapLink(nextEx,true));
   $('#play-streak').textContent=today?(cur>1?`Série de ${cur} jours : elle est à l’abri pour aujourd’hui.`:'Ta série a commencé : reviens demain pour la prolonger.')
     :cur?`Une étape suffit pour garder ta série de ${cur} jour${cur>1?'s':''}.`:'Une étape suffit pour commencer une série.';
 }
@@ -4250,7 +4261,8 @@ function joursAvant(k){return Object.keys(state.days).filter(x=>x<k&&isActive(x)
 const debutant=(k=todayKey())=>joursAvant(k)<NOUVEAU_JOURS;
 // dix minutes d'office pour commencer, tant qu'on n'a pas choisi soi-même une durée
 const seanceMin=(k=todayKey())=>debutant(k)&&!state.settings.minChoisi?Math.min(10,state.settings.minutes):state.settings.minutes;
-function routineFor(k,min){
+function routineFor(k,min){return withSwaps(k,routineBase(k,min));}
+function routineBase(k,min){
   // écriture et raisonnement chaque jour ; le reste tourne selon le jour, et le papier gagne du terrain avec les étapes du parcours
   const st=gamiCtx.stage||1, dow=new Date(k+'T12:00:00').getDay(), mem=['span','words','nback'][dow%3], reason=['probleme','erreuria','sophismes','hypotheses','fermi','erreuria','probleme'][dow], warm=['dictee','calc','lecture',st>=2?'dictee':'ortho','fluency','lecture','chrono'][dow], wm=warm==='dictee'?6:2;
   if(st>=3&&dow===6&&min>10)return[{ex:'fiche',m:30}];
@@ -4259,6 +4271,34 @@ function routineFor(k,min){
   if(min<=10)return[{ex:dow%2?'ortho':'lecture',m:2},{ex:reason,m:3},{ex:'write',m:5}];
   if(min<=20)return[{ex:warm,m:wm},{ex:mem,m:3},{ex:reason,m:6},{ex:'write',m:9}];
   return[{ex:warm,m:wm},{ex:mem,m:3},{ex:reason,m:7},{ex:'write',m:10},{ex:'focus',m:10}];
+}
+/* ---------- remplacer une étape hors écran : quand on ne peut pas s'éloigner de l'écran aujourd'hui ----------
+   l'étape est remplacée pour la journée par un exercice à l'écran de la même veine : il compte pour la séance,
+   les quêtes et la série, mais rapporte moins d'XP (SUB_XP). Rien ne change pour les autres jours. */
+const SUB_XP=5;
+const SUBS={focus:['lecture','nback','span','words'],dictee:['ortho','lecture','fluency'],fiche:['probleme','sophismes','erreuria','fermi']};
+const horsEcran=ex=>!!SUBS[ex];
+function withSwaps(k,steps){
+  const sw=(state.days[k]||{}).swap; if(!sw)return steps;
+  return steps.map(s=>sw[s.ex]&&EX[sw[s.ex]]?{ex:sw[s.ex],m:Math.min(s.m,10),from:s.ex}:s);
+}
+// le premier exercice de remplacement qui n'est pas déjà dans la séance, de préférence pas encore fait aujourd'hui
+function subFor(ex,k=todayKey()){
+  const d=state.days[k]||{done:{}}, inSteps=new Set([...routineFor(k,seanceMin(k)).map(s=>s.ex),...Object.values(d.swap||{})]);
+  const c=(SUBS[ex]||[]).filter(x=>EX[x]&&RUN[x]&&!inSteps.has(x));
+  return c.find(x=>!d.done[x])||null;
+}
+function swapStep(ex,{open}={}){
+  const k=todayKey(), d=day(k), to=subFor(ex,k); if(!to){toast('<span>Pas d’exercice de remplacement disponible aujourd’hui.</span>');return;}
+  d.swap=Object.assign({},d.swap,{[ex]:to}); save();
+  toast(`<span>« ${EX[ex].name} » remplacé par « ${EX[to].name} » pour aujourd’hui.<small>${SUB_XP} XP au lieu des XP habituels, et ta série est gardée.</small></span>`);
+  renderToday(); renderParcours();
+  if(open){showTab('exercices');openEx(to);}
+}
+function unswapStep(ex){const d=day();if(!d.swap)return;delete d.swap[ex];if(!Object.keys(d.swap).length)delete d.swap;save();renderToday();renderParcours();}
+// un petit lien discret sous une étape hors écran de la séance du jour
+function swapLink(ex,open){
+  return el('button',{class:'linkish swap-link',text:'Pas possible loin de l’écran ? Remplacer',title:`Un exercice à l’écran à la place, pour aujourd’hui : ${SUB_XP} XP, et ta série est gardée.`,onclick:e=>{e.stopPropagation();swapStep(ex,{open});}});
 }
 const CHECK='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>';
 function renderToday(){
@@ -4282,7 +4322,9 @@ function renderToday(){
     const e=EX[s.ex], isDone=!!d.done[s.ex];
     const tick=el('button',{class:'tick','aria-label':(isDone?'Marquer non fait : ':'Marquer fait : ')+e.name,html:CHECK,onclick:()=>{d.done[s.ex]=!d.done[s.ex];save();renderToday();renderProgress();}});
     const act=e.manual?el('span',{class:'minutes',text:s.m+' min'}):el('div',{class:'row actions'},el('span',{class:'minutes',text:s.m+' min'}),el('button',{class:'btn',text:isDone?'Refaire':'Commencer',onclick:()=>{showTab('exercices');openEx(s.ex);}}));
-    ol.append(el('li',{class:'step'+(isDone?' done':'')},tick,el('div',{class:'step-body'},el('span',{class:'step-title',text:e.name}),el('span',{class:'step-meta',text:e.skill+' · '+e.desc})),act));
+    const meta=s.from?el('span',{class:'step-meta',text:`À la place de « ${EX[s.from].name} » · ${SUB_XP} XP · ta série est gardée`}):el('span',{class:'step-meta',text:e.skill+' · '+e.desc});
+    const swp=isDone?null:s.from?el('button',{class:'linkish swap-link',text:'Remettre l’étape hors écran',onclick:()=>unswapStep(s.from)}):horsEcran(s.ex)?swapLink(s.ex):null;
+    ol.append(el('li',{class:'step'+(isDone?' done':'')},tick,el('div',{class:'step-body'},el('span',{class:'step-title',text:e.name}),meta,swp),act));
   }
   renderPlay(steps,d,nextEx); renderQuests();
   renderEvent(); renderParcours(); renderChasseEv();
@@ -4513,7 +4555,7 @@ function renderTips(){
 /* ---------- coach ---------- */
 function setStreak(n){$('#streak').textContent=n;$('#streak-unit').textContent=n>1?'jours d’affilée':'jour d’affilée';$('#freeze-n').textContent=freezeState().n;}
 /* ---------- récompenses : XP, niveaux, objectif du jour, badges ---------- */
-function xpOfResult(r){if(r.ex==='focus')return Math.round(Math.min(45,r.s)*(r.int?0.5:1));return(r.ex==='write'?20:r.ex==='fiche'?30:r.ex==='chasse'?25:r.ex==='dictee'?15:10)+(r.rec?5:0);}
+function xpOfResult(r){if(r.sub)return SUB_XP;if(r.ex==='focus')return Math.round(Math.min(45,r.s)*(r.int?0.5:1));return(r.ex==='write'?20:r.ex==='fiche'?30:r.ex==='chasse'?25:r.ex==='dictee'?15:10)+(r.rec?5:0);}
 function xpByDay(){
   const m={}, add=(k,v)=>{m[k]=(m[k]||0)+v;}, tgt=state.settings.screenTarget||120;
   for(const r of state.results)add(r.d,xpOfResult(r));
@@ -5226,7 +5268,7 @@ function renderXpPanel(){
   $('#badge-count').textContent=`${got} sur ${tot}`;
   const more=$('#badges-more'); const nv=rows.filter(r=>!horsSaison(r)).length; more.hidden=vis.length>=nv&&!badgesAll; more.textContent=badgesAll?'Montrer moins':`Voir les ${nv} badges`;
 }
-const XP_GAINS=[['Un exercice','10 XP'],['Un texte écrit sans IA','20 XP'],['Une dictée sur papier','15 XP'],['Une fiche papier','30 XP'],['Un record battu','+5 XP'],['Un passage par le sas','15 XP'],['Une habitude cochée','5 XP'],['Une discussion intéressante','5 XP'],['Une citation au florilège','5 XP'],['Un point d’étape','20 XP'],['L’année de « Ce jour-là »','5 à 10 XP'],['Les trois quêtes du jour','+'+QBONUS+' XP'],['Le défi de la semaine ou du réel','50 XP'],['Une séance sans écran','1 XP par minute']];
+const XP_GAINS=[['Un exercice','10 XP'],['Un texte écrit sans IA','20 XP'],['Une dictée sur papier','15 XP'],['Une fiche papier','30 XP'],['Un record battu','+5 XP'],['Un passage par le sas','15 XP'],['Une habitude cochée','5 XP'],['Une discussion intéressante','5 XP'],['Une citation au florilège','5 XP'],['Un point d’étape','20 XP'],['L’année de « Ce jour-là »','5 à 10 XP'],['Les trois quêtes du jour','+'+QBONUS+' XP'],['Le défi de la semaine ou du réel','50 XP'],['Une séance sans écran','1 XP par minute'],['Un exercice à l’écran à la place d’une étape hors écran',SUB_XP+' XP']];
 let badgesAll=false;
 $$('#xp-goal-seg button').forEach(b=>b.addEventListener('click',()=>{state.settings.xpGoal=+b.dataset.g;save();renderXpPanel();}));
 $('#badges-more').addEventListener('click',()=>{badgesAll=!badgesAll;renderXpPanel();});
@@ -6564,6 +6606,9 @@ function openEx(key){
   const e=EX[key]; $('#exgrid').hidden=true; $('#stage').hidden=false; $('#st-skill').textContent=e.skill; $('#st-name').textContent=e.name;
   const o=$('#st-orig'); o.open=false; o.hidden=!ORIG[key]; o.querySelector('p').textContent=ORIG[key]||'';
   RUN[key]($('#arena'));
+  // étape hors écran de la séance du jour : on peut la remplacer dès l'écran d'accueil de l'exercice
+  if(horsEcran(key)&&!day().done[key]&&routineFor(todayKey(),seanceMin()).some(s=>s.ex===key)&&subFor(key))
+    $('#arena').append(el('p',{class:'note',style:'text-align:center;margin-top:10px'},swapLink(key,true)));
   $('#stage').scrollIntoView({behavior:'smooth',block:'start'});
 }
 $('#st-close').addEventListener('click',()=>{stopRun();defiCible=null;$('#stage').hidden=true;$('#exgrid').hidden=false;});
@@ -6780,7 +6825,7 @@ const paMarks=p=>APERCU?(paApercu[p.id]=paApercu[p.id]||{}):((state.parcours=sta
 // une case est faite si on l'a cochée, ou si l'exercice qu'elle propose a été fait ce jour-là
 function parcDone(p,real){
   const m=real?((state.parcours||{})[p.id]||{}):paMarks(p), days=parcDays(p);
-  return days.filter((k,i)=>m[k]||(()=>{const ex=p.pas[i]&&p.pas[i][1],d=state.days[k];return ex&&d&&d.done&&d.done[ex];})());
+  return days.filter((k,i)=>m[k]||(()=>{const ex=p.pas[i]&&p.pas[i][1],d=state.days[k];return ex&&d&&d.done&&(d.done[ex]||(d.swap&&d.done[d.swap[ex]]));})());
 }
 let paSel=null;
 if(window.bfSupabase)window.bfSupabase.auth.onAuthStateChange(()=>setTimeout(checkApercu,0));
@@ -6815,13 +6860,17 @@ function renderParcours(){
   }else{
     const [txt,ex]=p.pas[i], fait=done.has(sel), date=sel===k?'':fd(new Date(sel+'T12:00:00'),{weekday:'long',day:'numeric',month:'long'})+' · ';
     $('#pa-title').textContent=date+txt;
-    if(ex&&EX[ex])actions.append(el('button',{class:'btn gold',text:ex==='dimanche'?'Ouvrir l’énigme':'Faire : '+EX[ex].name,onclick:()=>{showTab('exercices');openEx(ex);}}));
+    // case hors écran du jour : on peut la remplacer par un exercice à l'écran (XP réduits)
+    const swTo=sel===k&&!APERCU&&ex&&(day(k).swap||{})[ex];
+    if(swTo&&EX[swTo])actions.append(el('button',{class:'btn gold',text:'Faire : '+EX[swTo].name,title:`À la place de « ${EX[ex].name} » : ${SUB_XP} XP`,onclick:()=>{showTab('exercices');openEx(swTo);}}));
+    else if(ex&&EX[ex])actions.append(el('button',{class:'btn gold',text:ex==='dimanche'?'Ouvrir l’énigme':'Faire : '+EX[ex].name,onclick:()=>{showTab('exercices');openEx(ex);}}));
     actions.append(el('button',{class:'btn'+(fait?' ghost':ex?'':' gold'),text:fait?'✓ Fait · annuler':'C’est fait',onclick:()=>{
       if(m[sel])delete m[sel];
       else if(fait){toast('<span>Cette case est faite par l’exercice de ce jour-là.</span>');return;}
       else{m[sel]=1;son('juste');}
       if(APERCU)toast('<span>Aperçu : rien n’est enregistré.</span>');else save();
       renderParcours();}}));
+    if(sel===k&&!fait&&!APERCU&&!swTo&&horsEcran(ex)&&subFor(ex))actions.append(swapLink(ex,true));
   }
   // la besace : trois sorties hors écran au choix ; en faire une coche aussi la case du jour si elle n'a pas d'exercice
   const bes=$('#pa-besace'); bes.hidden=!p.besace;

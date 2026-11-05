@@ -944,6 +944,30 @@ a{color:var(--accent);text-underline-offset:3px}
 /* frise à remettre dans l'ordre */
 .sortwrap{display:flex;flex-direction:column;align-items:stretch;gap:6px;width:min(520px,100%)}
 .sortwrap .send{font-size:.78rem;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);text-align:center}
+/* Sur la carte */
+.carte{position:relative;width:min(560px,100%);border:1px solid var(--line);border-radius:10px;overflow:hidden;background:var(--c-mer);--c-mer:#D5E3EA;--c-terre:#E9E3D2;--c-france:#FBF7EC;--c-trait:#8C8170;--c-fleuve:#7FA9C4}
+:root[data-theme="dark"] .carte{--c-mer:#1A2433;--c-terre:#2A2C33;--c-france:#3A3A3E;--c-trait:#8E8676;--c-fleuve:#4F7896}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]) .carte{--c-mer:#1A2433;--c-terre:#2A2C33;--c-france:#3A3A3E;--c-trait:#8E8676;--c-fleuve:#4F7896}}
+.carte-svg{display:block;width:100%;height:auto;aspect-ratio:var(--ar,1);max-height:62vh;touch-action:none;cursor:crosshair;user-select:none;-webkit-user-select:none}
+.carte-fr .carte-svg{--ar:798/747} .carte-monde .carte-svg{--ar:2/1} @media (max-width:600px){.carte-monde .carte-svg{--ar:4/3}}
+.carte.fige .carte-svg{cursor:default}
+.c-mer{fill:var(--c-mer)} .c-terre{fill:var(--c-terre);stroke:var(--c-trait);stroke-width:.5;vector-effect:non-scaling-stroke}
+.c-france{fill:var(--c-france);stroke:var(--c-trait);stroke-width:1;vector-effect:non-scaling-stroke}
+.c-lac{fill:var(--c-mer)} .c-front{fill:none;stroke:var(--c-trait);stroke-width:.7;stroke-dasharray:3 2;vector-effect:non-scaling-stroke;opacity:.7}
+.c-fleuve{fill:none;stroke:var(--c-fleuve);stroke-width:1.1;vector-effect:non-scaling-stroke}
+.c-pin path{fill:var(--accent);stroke:var(--surface);stroke-width:1.5;vector-effect:non-scaling-stroke} .c-pin-oeil{fill:var(--surface)}
+.c-cand{fill:var(--surface);stroke:var(--accent);stroke-width:2.5;vector-effect:non-scaling-stroke;cursor:pointer}
+.c-cand.on{fill:var(--accent)} .c-cand.bon,.c-vrai{fill:var(--gold);stroke:var(--surface);stroke-width:2;vector-effect:non-scaling-stroke} .c-cand.faux{fill:var(--bad);stroke:var(--surface)}
+.c-vrai{animation:cvrai 1.2s ease-out 2} @keyframes cvrai{0%{stroke-width:2}50%{stroke-width:8}100%{stroke-width:2}}
+.c-zone{fill:var(--gold);fill-opacity:.18;stroke:var(--gold);stroke-width:1.5;stroke-dasharray:4 3;vector-effect:non-scaling-stroke}
+.c-trait{stroke:var(--fg2);stroke-width:1.5;vector-effect:non-scaling-stroke}
+.c-barre{display:flex;gap:6px;align-items:center;justify-content:center;padding:6px;border-top:1px solid var(--line);background:var(--surface)}
+.c-btn{min-width:44px;height:38px;border-radius:8px;border:1px solid var(--line);background:var(--surface);color:var(--fg);font-size:1.15rem;line-height:1;box-shadow:0 1px 3px rgba(0,0,0,.12)}
+.c-eur{font-size:.85rem;padding:0 10px}
+.carte-q{text-align:center;margin:4px 0 8px;display:flex;flex-direction:column;gap:2px}
+.carte-nom{font-family:var(--f-display);font-size:1.35rem}
+.carte-aide{text-align:center;margin:6px 0}
+.carte-zone{display:flex;flex-direction:column;gap:6px;align-items:flex-start}
 .sorter{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:8px}
 .sitem{display:grid;grid-template-columns:auto 1fr auto;align-items:center;gap:8px;padding:8px 8px 8px 4px;text-align:left;font-size:.96rem;border:1px solid var(--line);border-left:3px solid var(--gold);border-radius:9px;background:var(--surface);line-height:1.35;transition:transform .22s ease,background .2s,border-color .2s,box-shadow .2s}
 .sitem .grip{display:grid;place-items:center;width:30px;height:40px;color:var(--muted);cursor:grab;touch-action:none;border-radius:6px}
@@ -2040,6 +2064,7 @@ const EX={
   dictee:{name:'Dictée sur papier',skill:'Écoute & orthographe',desc:"L'appli dicte à voix haute, tu écris à la main. Correction par photo de ta copie ou par toi-même.",unit:'% de mots justes'},
   lecture:{name:'Lecture chronométrée',skill:'Lecture & compréhension',desc:"Lis un texte à ton rythme, puis réponds à deux questions. Vitesse et compréhension mesurées.",unit:'mots/min compris'},
   citations:{name:'Florilège',skill:'Mémoire & culture',desc:"Retiens les citations qui comptent : qui l'a dit, le mot manquant, vraie ou fausse attribution. Répétition espacée.",unit:'% de bonnes réponses'},
+  carte:{name:'Sur la carte',skill:'Géographie & repères',desc:"Place une ville, un monument, un pays d'autrefois, une vallée ou un massif, en France ou dans le monde. Plus tu es près, plus tu marques.",unit:'points sur 100'},
   chrono:{name:'Chronologie',skill:'Culture & repères',desc:"Remets les événements dans l'ordre sur une frise, en les faisant glisser. Trois frises, des écarts de plus en plus serrés.",unit:'% de bonnes réponses'},
   fiche:{name:'Fiche papier',skill:'Hors écran',desc:"Des PDF à imprimer : la fiche du jour qui mélange tout, ou un cahier entier de problèmes, sophismes, orthographe, estimations, erreurs d'IA ou chronologie. Corrigé à la fin.",unit:'% de bonnes réponses'},
   focus:{name:'Séance sans écran',skill:'Attention soutenue',desc:"Lecture, écriture à la main ou réflexion, minuteur lancé. Si tu quittes la page, c'est une interruption.",unit:'minutes'},
@@ -2079,6 +2104,7 @@ const ORIG={
   ortho:"Les phrases ciblent les fautes les plus fréquentes en français écrit : accord du participe passé, homophones (c'est ou s'est, leur ou leurs, sois ou soit), futur ou conditionnel. Celles que tu rates reviennent en priorité aux séances suivantes, sur le principe de la répétition espacée.",
   lecture:"Mesurer à la fois la vitesse et la compréhension, comme les tests de lecture des écoles et des orthophonistes : lire vite sans comprendre ne compte pas. Repère : un adulte lit en silence environ 240 mots par minute un texte documentaire (Brysbaert, 2019).",
   citations:"Le florilège, c'est le recueil de citations des lettrés, du Moyen Âge aux humanistes : Montaigne avait fait peindre ses sentences préférées sur les poutres de sa librairie. Les révisions suivent les boîtes de Sebastian Leitner (1972) et deux résultats solides : l'oubli se combat en espaçant les rappels (Ebbinghaus, 1885), et se tester retient mieux que relire (Roediger et Karpicke, 2006).",
+  carte:"Placer avant de lire : c'est l'exercice des cartes muettes, où les écoliers de la IIIe République apprenaient la France sur les cartes murales de Vidal de La Blache. Chercher d'abord, puis voir la réponse, fixe mieux le lieu que de le lire, même quand on s'est trompé (Richland, Kornell et Kao, 2009). Les cartes sont dessinées pour Néophyte d'après Natural Earth, domaine public : rien n'est chargé depuis un service de cartes en ligne, et les coordonnées des lieux sont contrôlées sur Wikidata.",
   chrono:"Les historiens parlent de repères : quelques dates sûres qui servent d'appui pour situer toutes les autres. L'exercice mélange les époques puis resserre les écarts, et montre les dates après chaque réponse, au moment où elles se fixent le mieux. Les événements viennent d'une liste de plus de 260 dates établie pour Néophyte, la même que « Ce jour-là ».",
   focus:"Inspiré du travail en profondeur (Cal Newport, Deep Work, 2016) et des mesures de Gloria Mark : notre attention sur un écran ne tient plus qu'environ 47 secondes avant de bifurquer. Quitter la page compte comme une interruption.",
   calc:"Le calcul mental chronométré mesure la vitesse de traitement, comme certaines épreuves des tests d'intelligence. Il entretient l'aisance avec les nombres, mais la recherche est nette : ce type d'exercice améliore surtout ce qu'il entraîne, pas l'intelligence en général (Simons et al., 2016).",
@@ -6510,7 +6536,7 @@ const EXFAM=[
   ['Écrire',"Le cœur de l'entraînement : penser en écrivant, sans aide.",['write','ortho','dictee']],
   ['Défis',"Une énigme commune à tous chaque jour, une enquête chaque dimanche, et un sprint contre ton propre record.",['enigme','dimanche','eclair','rattrapage']],
   ['Raisonner',"Débusquer l'erreur, le sophisme et la réponse trop rapide.",['probleme','erreuria','sophismes','graphe','hypotheses','fermi']],
-  ['Lire et retenir',"Lire vraiment, puis garder en mémoire ce qui compte.",['lecture','citations','chrono']],
+  ['Lire et retenir',"Lire vraiment, puis garder en mémoire ce qui compte.",['lecture','citations','chrono','carte']],
   ['Hors écran',"Le papier et le silence : là où l'attention se reforme.",['fiche','focus']],
   ['Échauffements',"Des tests classiques de psychologie cognitive, courts et chronométrés. Utiles pour s'échauffer ; l'écriture et le raisonnement comptent davantage.",['calc','span','words','nback','stroop','fluency']]
 ];
@@ -6532,6 +6558,7 @@ const EXICON={
   lecture:'<path d="M4 9q6-3 12 1q6-4 12-1v16q-6-3-12 1q-6-4-12-1z"/><path d="M16 10v16"/><circle class="g" cx="24" cy="7" r="4"/><path class="g" d="M24 5v2l1.4 1"/>',
   citations:'<text x="16" y="22" text-anchor="middle" font-size="26" font-family="var(--f-body)" stroke="none" fill="currentColor">«»</text><path class="g" d="M6 28q10 3 20 0"/>',
   chrono:'<path d="M3 18h26"/><circle cx="8" cy="18" r="2.2"/><circle class="gf" cx="16" cy="18" r="2.2"/><circle cx="24" cy="18" r="2.2"/><path d="M8 13V9M16 13V6M24 13v-3"/>',
+  carte:'<path d="M4 8l7-3 10 3 7-3v19l-7 3-10-3-7 3z"/><path d="M11 5v19M21 8v19"/><path class="gf" d="M16 20c-1.5-3-4-4.5-4-7a4 4 0 0 1 8 0c0 2.5-2.5 4-4 7z"/>',
   fiche:'<path d="M7 4h13l5 5v19H7z"/><path d="M20 4v5h5"/><path d="M11 14h10M11 18h10M11 22h6"/><path class="g" d="M26 14l-7 9-2 .7.6-2z"/>',
   focus:'<path d="M9 4h14M9 28h14M10 4c0 7 6 8 6 12s-6 5-6 12M22 4c0 7-6 8-6 12s6 5 6 12"/><path class="gf" d="M12.5 25.5q3.5-3 7 0z"/>',
   calc:'<rect x="5" y="5" width="22" height="22" rx="3"/><path d="M10 11h4M12 9v4M18 11h4M10 21h4M18 19.5h4M18 22.5h4"/><path class="g" d="M10.5 18.5l3 3M13.5 18.5l-3 3"/>',
@@ -6811,9 +6838,9 @@ async function shareText(txt){
   catch(e){toast('<span>Copie impossible ici<small>'+txt.split('\n').slice(0,2).join(' · ')+'</small></span>');}
 }
 /* ---------- niveaux, confiance et contestation ---------- */
-const META=new Map([[NB.graphiques,NB.graphiques],[PROBLEMS,NB.problemes],[FALLACIES,NB.sophismes],[AIERR,NB.erreursIA],[FERMI,NB.fermi],[ORTHO,NB.ortho]]);
+const META=new Map([[NB.graphiques,NB.graphiques],[PROBLEMS,NB.problemes],[FALLACIES,NB.sophismes],[AIERR,NB.erreursIA],[FERMI,NB.fermi],[ORTHO,NB.ortho],[NB.lieux,NB.lieux]]);
 // trois niveaux par exercice ; on vise environ 80 % de réussite (Wilson et al., 2019) : le niveau monte au-delà de 85 %, descend sous 60 %
-const LVBANK={probleme:NB.problemes,sophismes:NB.sophismes,erreuria:NB.erreursIA,fermi:NB.fermi,ortho:NB.ortho,graphe:NB.graphiques};
+const LVBANK={carte:NB.lieux,probleme:NB.problemes,sophismes:NB.sophismes,erreuria:NB.erreursIA,fermi:NB.fermi,ortho:NB.ortho,graphe:NB.graphiques};
 const lvl=ex=>(state.lvl||{})[ex]||1;
 function adaptLevel(ex,score){
   const L=lvl(ex), n=score>=85?Math.min(3,L+1):score<60?Math.max(1,L-1):L;
@@ -7380,6 +7407,118 @@ function bougies(n){
   [10,23,36,49].forEach((x,i)=>{
     g.insertAdjacentHTML('beforeend',`<rect class="bougie" x="${x}" y="${i%2?18:14}" width="6" height="${i%2?24:28}" rx="1"/>`+(i<n?`<path class="flamme" d="M${x+3} ${i%2?8:4}c2 3 3 4.5 3 6a3 3 0 0 1-6 0c0-1.5 1-3 3-6z"/>`:''));
   });
+}
+/* ---------- Sur la carte : placer un lieu sur un fond Natural Earth (public/cartes.js, chargé à la demande) ---------- */
+const CARTE_ZONES={mix:['France et monde'],fr:['France'],monde:['Monde']};
+const GENRE_LIEU={ville:'Ville',site:'Lieu',bataille:'Bataille',ile:'Île',pays:'Pays d’autrefois',vallee:'Vallée',massif:'Massif'};
+let cartesP=null;
+const chargerCartes=()=>cartesP||(cartesP=window.NEO_CARTES?Promise.resolve():new Promise((ok,ko)=>{const sc=document.createElement('script');sc.src='cartes.js';sc.onload=ok;sc.onerror=()=>{cartesP=null;ko(new Error('cartes'));};document.head.append(sc);}));
+// distance à vol d'oiseau (haversine), en km
+function kmEntre(a,b){const r=Math.PI/180,x=Math.sin((b.lat-a.lat)*r/2)**2+Math.cos(a.lat*r)*Math.cos(b.lat*r)*Math.sin((b.lon-a.lon)*r/2)**2;return 2*6371*Math.asin(Math.sqrt(x));}
+// tirage sans remise comme les autres banques ; à fraîcheur égale, un genre de lieu différent à chaque fois, puis les lieux de ton niveau
+function lieuxFrais(carte,n){
+  const sn=seenOf('lieux'), now=Date.now(), L=lvl('carte'), A=NB.lieux;
+  const idx=[...A.keys()].filter(i=>A[i].carte===carte&&!A[i].retire).sort(()=>Math.random()-.5)
+    .sort((a,b)=>(sn[a]?1:0)-(sn[b]?1:0)||Math.abs(A[a].niv-L)-Math.abs(A[b].niv-L)||(sn[a]||0)-(sn[b]||0));
+  const grp=g=>g==='bataille'||g==='ile'?'site':g, pris=[], genres=new Set();
+  for(const i of idx){if(pris.length>=n)break;if(!genres.has(grp(A[i].genre))){pris.push(i);genres.add(grp(A[i].genre));}}
+  for(const i of idx){if(pris.length>=n)break;if(!pris.includes(i))pris.push(i);}
+  pris.forEach(i=>{sn[i]=now;}); persist();
+  return pris.sort(()=>Math.random()-.5).map(i=>A[i]);
+}
+const svgEl=(tag,attrs={})=>{const e=document.createElementNS('http://www.w3.org/2000/svg',tag);for(const[k,v] of Object.entries(attrs))if(v!=null)e.setAttribute(k,v);return e;};
+// la carte : zoom aux deux doigts, à la molette ou aux boutons ; un doigt fait glisser la carte zoomée ; un toucher pose l'épingle
+function carteSVG(carte){
+  const C=NEO_CARTES[carte], P=C.proj, W=P.w, H=P.h;
+  const xy=(lat,lon)=>[(lon-P.lon0)*P.c*P.k,(P.lat1-lat)*P.k];
+  const ll=(x,y)=>({lat:P.lat1-y/P.k,lon:P.lon0+x/(P.c*P.k)});
+  const svg=svgEl('svg',{class:'carte-svg',role:'img','aria-label':carte==='fr'?'Carte de France':'Carte du monde',preserveAspectRatio:'xMidYMid meet'});
+  const fond=svgEl('g'), marques=svgEl('g');
+  fond.append(svgEl('rect',{x:-W,y:-H,width:3*W,height:3*H,class:'c-mer'}),svgEl('path',{d:C.terre,class:'c-terre'}));
+  if(C.france)fond.append(svgEl('path',{d:C.france,class:'c-france'}));
+  fond.append(svgEl('path',{d:C.lacs,class:'c-lac'}),svgEl('path',{d:C.frontieres,class:'c-front'}));
+  if(C.fleuves)fond.append(svgEl('path',{d:C.fleuves,class:'c-fleuve'}));
+  svg.append(fond,marques);
+  const MAXZ=carte==='fr'?6:14;
+  let vb={x:0,y:0,w:W,h:H}, locked=false, tapCb=null, pinEl=null, pinPos=null;
+  const ronds=[]; // marques dont la taille reste la même à l'écran
+  const unit=()=>vb.w/Math.max(1,svg.clientWidth||W);
+  // la vue garde la forme du cadre ; « toute la carte » la fait tenir entière, et l'on ne sort jamais de la carte
+  const asp=()=>svg.clientWidth&&svg.clientHeight?svg.clientWidth/svg.clientHeight:W/H, toutW=()=>Math.max(W,H*asp());
+  const borne=()=>{
+    const A=asp(); vb.w=Math.min(toutW(),Math.max(W/MAXZ,vb.w)); vb.h=vb.w/A;
+    vb.x=vb.w>=W?(W-vb.w)/2:Math.min(W-vb.w,Math.max(0,vb.x)); vb.y=vb.h>=H?(H-vb.h)/2:Math.min(H-vb.h,Math.max(0,vb.y));
+  };
+  const peindre=()=>{borne();svg.setAttribute('viewBox',`${vb.x} ${vb.y} ${vb.w} ${vb.h}`);const u=unit();ronds.forEach(([e,f])=>f(e,u));};
+  const tenir=(e,f)=>{ronds.push([e,f]);f(e,unit());return e;};
+  const zoomA=(f,cx,cy)=>{const nw=Math.min(toutW(),Math.max(W/MAXZ,vb.w/f)), k=nw/vb.w;vb.x=cx-(cx-vb.x)*k;vb.y=cy-(cy-vb.y)*k;vb.w=nw;vb.h=nw/asp();peindre();};
+  const versCarte=(cx,cy)=>{const r=svg.getBoundingClientRect(), s=Math.max(vb.w/r.width,vb.h/r.height), ox=(r.width*s-vb.w)/2, oy=(r.height*s-vb.h)/2;return[vb.x+(cx-r.left)*s-ox,vb.y+(cy-r.top)*s-oy];};
+  const voir=(x0,y0,x1,y1)=>{const A=asp(), m=Math.max(x1-x0,(y1-y0)*A)*1.5||W/MAXZ;vb.w=Math.max(m,W/MAXZ);vb.h=vb.w/A;vb.x=(x0+x1)/2-vb.w/2;vb.y=(y0+y1)/2-vb.h/2;peindre();};
+  // l'épingle
+  const poser=(x,y)=>{
+    pinPos=[x,y];
+    if(!pinEl){pinEl=tenir(svgEl('g',{class:'c-pin'}),(e,u)=>e.setAttribute('transform',`translate(${pinPos[0]} ${pinPos[1]}) scale(${u})`));pinEl.append(svgEl('path',{d:'M0 0C-3-6-9-10-9-16a9 9 0 0 1 18 0c0 6-6 10-9 16z'}),svgEl('circle',{cx:0,cy:-16,r:3.2,class:'c-pin-oeil'}));marques.append(pinEl);}
+    pinEl.setAttribute('transform',`translate(${x} ${y}) scale(${unit()})`);
+    tapCb&&tapCb(...Object.values(ll(x,y)));
+  };
+  // gestes
+  const pts=new Map(); let geste=null;
+  svg.addEventListener('pointerdown',e=>{
+    if(locked)return; e.preventDefault(); svg.setPointerCapture(e.pointerId);
+    pts.set(e.pointerId,[e.clientX,e.clientY]);
+    if(pts.size===2){const [a,b]=[...pts.values()];geste={type:'pince',d:Math.hypot(a[0]-b[0],a[1]-b[1]),vb:{...vb},m:versCarte((a[0]+b[0])/2,(a[1]+b[1])/2)};return;}
+    const [x,y]=versCarte(e.clientX,e.clientY), u=unit();
+    const surPin=pinPos&&Math.hypot(x-pinPos[0],y-(pinPos[1]-14*u))<20*u;
+    geste={type:surPin?'pin':'tap',x0:e.clientX,y0:e.clientY,vb:{...vb}};
+  });
+  svg.addEventListener('pointermove',e=>{
+    if(!geste||!pts.has(e.pointerId))return; pts.set(e.pointerId,[e.clientX,e.clientY]);
+    if(geste.type==='pince'&&pts.size===2){
+      const [a,b]=[...pts.values()], d=Math.hypot(a[0]-b[0],a[1]-b[1]);
+      vb={...geste.vb}; const f=d/geste.d; zoomA(f,geste.m[0],geste.m[1]); return;
+    }
+    if(geste.type==='pin'){const [x,y]=versCarte(e.clientX,e.clientY);poser(x,y);return;}
+    const dx=e.clientX-geste.x0, dy=e.clientY-geste.y0;
+    if(geste.type==='tap'&&Math.hypot(dx,dy)>8)geste.type='glisse';
+    if(geste.type==='glisse'){const r=svg.getBoundingClientRect(), s=Math.max(vb.w/r.width,vb.h/r.height);vb.x=geste.vb.x-dx*s;vb.y=geste.vb.y-dy*s;peindre();}
+  });
+  const fin=e=>{
+    if(!pts.has(e.pointerId))return; pts.delete(e.pointerId);
+    if(geste&&geste.type==='tap'&&e.type==='pointerup'&&!locked){const [x,y]=versCarte(e.clientX,e.clientY);if(x>=0&&x<=W&&y>=0&&y<=H){if(cands.length){const u=unit(), c=cands.map(k=>[k,Math.hypot(k.x-x,k.y-y)]).sort((a,b)=>a[1]-b[1])[0];if(c&&c[1]<28*u)choisir(c[0]);}else if(tapCb){poser(x,y);son('clic');}}}
+    if(!pts.size)geste=null; else if(geste&&geste.type==='pince')geste=null;
+  };
+  svg.addEventListener('pointerup',fin); svg.addEventListener('pointercancel',fin);
+  svg.addEventListener('wheel',e=>{e.preventDefault();const [x,y]=versCarte(e.clientX,e.clientY);zoomA(e.deltaY<0?1.25:.8,x,y);},{passive:false});
+  // boutons
+  const bz=(t,lab,f)=>el('button',{type:'button',class:'c-btn',text:t,'aria-label':lab,onclick:f});
+  const ctr=()=>[vb.x+vb.w/2,vb.y+vb.h/2];
+  const barre=el('div',{class:'c-barre'},bz('+','Zoomer',()=>zoomA(1.6,...ctr())),bz('−','Dézoomer',()=>zoomA(1/1.6,...ctr())),
+    bz('⤢','Toute la carte',()=>{vb.w=toutW();peindre();}),
+    carte==='monde'?el('button',{type:'button',class:'c-btn c-eur',text:'Europe',onclick:()=>{const [a,b]=xy(71,-11),[c,d]=xy(34,42);voir(a,b,c,d);}}):null);
+  const node=el('div',{class:'carte carte-'+carte},svg,barre);
+  // niveau I : quatre points au choix
+  const cands=[];
+  const choisir=k=>{cands.forEach(c=>c.e.classList.toggle('on',c===k));son('clic');k.cb();};
+  const rond=(x,y,cls,R)=>tenir(svgEl('circle',{cx:x,cy:y,class:cls}),(e,u)=>e.setAttribute('r',R*u));
+  // au départ, la carte remplit le cadre ; sur un écran étroit, le monde est centré sur l'Europe et l'Afrique, le reste à portée du doigt
+  requestAnimationFrame(()=>{vb.h=H;vb.w=H*asp();vb.x=xy(0,15)[0]-vb.w/2;vb.y=0;peindre();});
+  return{node,
+    onTap:cb=>{tapCb=cb;},
+    candidat:(p,i,cb)=>{const [x,y]=xy(p.lat,p.lon), e=rond(x,y,'c-cand',9);e.setAttribute('tabindex','0');e.setAttribute('role','button');e.setAttribute('aria-label','Point '+(i+1));
+      const k={p,x,y,e,cb};e.addEventListener('keydown',ev=>{if(ev.key==='Enter'||ev.key===' '){ev.preventDefault();choisir(k);}});cands.push(k);marques.append(e);},
+    lock:()=>{locked=true;node.classList.add('fige');},
+    marque:(p,bon)=>{const k=cands.find(c=>c.p===p);if(k)k.e.classList.add(bon?'bon':'faux');},
+    trait:(a,b)=>{const [x0,y0]=xy(a.lat,a.lon),[x1,y1]=xy(b.lat,b.lon);marques.prepend(tenir(svgEl('line',{x1:x0,y1:y0,x2:x1,y2:y1,class:'c-trait'}),(e,u)=>e.setAttribute('stroke-dasharray',`${5*u} ${4*u}`)));},
+    vrai:p=>{
+      const [x,y]=xy(p.lat,p.lon);
+      if(p.r){marques.prepend(svgEl('circle',{cx:x,cy:y,r:p.r/111.2*P.k,class:'c-zone'}));}
+      marques.append(rond(x,y,'c-vrai',7));
+      // on recadre pour voir à la fois la réponse et l'épingle
+      const ps=[[x,y]]; if(pinPos)ps.push(pinPos); cands.forEach(c=>ps.push([c.x,c.y]));
+      const rr=p.r?p.r/111.2*P.k:0, xs=ps.map(q=>q[0]), ys=ps.map(q=>q[1]);
+      const x0=Math.min(...xs,x-rr), x1=Math.max(...xs,x+rr), y0=Math.min(...ys,y-rr), y1=Math.max(...ys,y+rr);
+      if(x0<vb.x||x1>vb.x+vb.w||y0<vb.y||y1>vb.y+vb.h)voir(x0,y0,x1,y1);
+    }};
 }
 const RUN={
 chasse(arena){
@@ -8251,6 +8390,69 @@ fermi(arena){
       sub.addEventListener('click',check); inp.addEventListener('keydown',e=>{if(e.key==='Enter')check();});
     };
     ask();
+  }
+},
+carte(arena){
+  const Z=CARTE_ZONES, z0=Z[state.carteZone]?state.carteZone:'mix';
+  const seg=el('div',{class:'seg',role:'group','aria-label':'Quelle carte'},...Object.entries(Z).map(([k,[t]])=>el('button',{type:'button','aria-pressed':String(k===z0),text:t,onclick:e=>{state.carteZone=k;persist();[...seg.children].forEach(b=>b.setAttribute('aria-pressed',String(b===e.currentTarget)));}})));
+  const L=lvl('carte');
+  intro(arena,L===1
+    ?"Cinq lieux à retrouver : villes, monuments, pays d'autrefois, vallées et massifs. Quatre points s'allument sur la carte : touche celui qui convient, puis valide."
+    :"Cinq lieux à placer : villes, monuments, pays d'autrefois, vallées et massifs. Touche la carte pour poser ton épingle, déplace-la du doigt, puis valide. Plus tu es près, plus tu marques, jusqu'à 100 points par lieu.",
+    el('div',{class:'carte-zone'},el('span',{class:'label',text:'Quelle carte ?'}),seg),go);
+  function go(){
+    const zone=Z[state.carteZone]?state.carteZone:'mix';
+    const cartes=zone==='mix'?['fr','fr','fr','monde','monde']:Array(5).fill(zone);
+    arena.replaceChildren(el('p',{class:'muted',style:'text-align:center',text:'Dépliage de la carte…'}));
+    chargerCartes().then(()=>{
+      const items=['fr','monde'].flatMap(c=>{const n=cartes.filter(x=>x===c).length;return n?lieuxFrais(c,n):[];});
+      let qi=0; const scores=[], seen=[];
+      const ask=()=>{
+        const it=items[qi], C=NEO_CARTES[it.carte], niv1=lvl('carte')===1;
+        const map=carteSVG(it.carte), fb=el('div',{class:'answer',hidden:''});
+        const next=el('button',{class:'btn primary',text:qi<items.length-1?'Lieu suivant':'Voir le résultat',hidden:''});
+        const ok=el('button',{class:'btn primary',text:'Valider',disabled:''});
+        const hint=el('p',{class:'note carte-aide',text:niv1?'Touche l’un des quatre points.':'Touche la carte pour poser l’épingle. Deux doigts ou les boutons pour zoomer.'});
+        let choix=null, pin=null;
+        if(niv1){
+          // quatre points : le bon, et trois lieux de la même carte, ni trop près ni trop loin
+          const [lo,hi]=it.carte==='fr'?[70,450]:[700,5000];
+          const autres=NB.lieux.filter(l=>l.carte===it.carte&&!l.retire&&l!==it).sort(()=>Math.random()-.5), pts=[it];
+          for(const l of autres){if(pts.length>=4)break;const d=kmEntre(it,l);if(d>=lo&&d<=hi&&pts.every(p=>kmEntre(p,l)>=lo*.8))pts.push(l);}
+          for(const l of autres){if(pts.length>=4)break;if(!pts.includes(l)&&pts.every(p=>kmEntre(p,l)>=lo*.5))pts.push(l);}
+          pts.sort(()=>Math.random()-.5).forEach((p,i)=>map.candidat(p,i,()=>{choix=p;ok.disabled=false;}));
+        }else map.onTap((lat,lon)=>{pin={lat,lon};ok.disabled=false;});
+        ok.addEventListener('click',()=>{
+          ok.remove(); hint.remove(); map.lock();
+          const vrai=it, r=it.r||0;
+          let sc, txt;
+          if(niv1){const bon=choix===vrai;sc=bon?100:0;txt=bon?'C’est bien là.':`Tu as choisi ${choix.nom}.`;map.marque(choix,bon);if(!bon)map.marque(vrai,true);}
+          else{
+            const d=kmEntre(pin,vrai), plein=Math.max(r,it.carte==='fr'?20:250), nul=plein+(it.carte==='fr'?250:2750);
+            sc=d<=plein?100:d>=nul?0:Math.round(100*(1-(d-plein)/(nul-plein)));
+            const reste=Math.max(0,Math.round(d-r));
+            txt=d<=r?'En plein dedans.':reste<1?'Pile au bon endroit.':`À ${fmt(reste)} km${r?' de la zone':''}.`;
+            map.trait(pin,vrai);
+          }
+          map.vrai(vrai);
+          scores.push(sc); seen.push([it,sc]); hit(sc>=60);
+          fb.replaceChildren(el('span',{class:'label',text:`${txt} ${sc} point${sc>1?'s':''} sur 100`}),
+            el('span',{},el('b',{text:it.nom}),document.createTextNode(' · '+it.dit)),
+            contestBtn('carte',it.id,`Où se trouve ${it.nom} ?`));
+          fb.hidden=false; next.hidden=false; next.focus({preventScroll:true});
+        });
+        next.addEventListener('click',()=>{qi++;if(qi<items.length)ask();else fin();});
+        arena.replaceChildren(qprog(qi,items.length),
+          el('p',{class:'carte-q'},el('span',{class:'label',text:GENRE_LIEU[it.genre]+(it.carte==='fr'?' · France':' · Monde')}),el('b',{class:'carte-nom',text:it.nom})),
+          map.node,hint,ok,fb,next);
+      };
+      const fin=()=>{
+        const avg=scores.reduce((a,b)=>a+b,0)/scores.length, m=recordMsg('carte',avg); logResult('carte',avg); const up=adaptLevel('carte',avg);
+        const recap=el('div',{class:'recap wide'},el('span',{class:'label',text:'Tes lieux du jour'}),el('ol',{class:'frise'},...seen.map(([l,s])=>el('li',{class:s>=60?null:'miss'},el('b',{text:s+' pts'}),document.createTextNode(l.nom)))));
+        showResult(arena,Math.round(avg),'points sur 100, en moyenne',m+' Pour fixer un lieu, accroche-le à un repère sûr : un fleuve, une côte, une grande ville.'+up,()=>RUN.carte(arena),recap);
+      };
+      ask();
+    }).catch(()=>arena.replaceChildren(el('p',{class:'fg2',text:'La carte n’a pas pu se charger. Vérifie ta connexion, puis réessaie.'}),el('button',{class:'btn',text:'Réessayer',onclick:()=>RUN.carte(arena)})));
   }
 },
 chrono(arena){

@@ -1,0 +1,28 @@
+# Relève sur Wikidata les coordonnées des lieux de l'exercice « Sur la carte » (tools/wikidata/lieux.js), puis enregistre sur la même branche.
+name: Contrôler les lieux sur Wikidata
+
+on:
+  workflow_dispatch:
+  push:
+    branches: ["claude/**"]
+    paths: ["tools/wikidata/lieux.js", "public/banques.js"]
+
+permissions:
+  contents: write
+
+jobs:
+  lieux:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - run: node tools/wikidata/lieux.js
+      - name: Enregistrer
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add tools/wikidata/resultats/lieux.json
+          git diff --cached --quiet || git commit -m "Coordonnées des lieux relevées sur Wikidata"
+          git pull --rebase && git push

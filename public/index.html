@@ -1176,6 +1176,16 @@ details.fold[open]{display:flex;flex-direction:column;gap:10px}
 /* cérémonie de niveau */
 .ceremony{position:fixed;inset:0;z-index:60;display:grid;place-items:center;padding:16px;background:rgba(20,18,14,.45);animation:fadein .3s ease-out}
 .ceremony.out{opacity:0;transition:opacity .3s}
+/* la petite fenêtre d'événement, à l'ouverture */
+.ceremony.evpop{background:rgba(20,18,14,.3)}
+.evpop .cer-card{gap:6px;padding:20px 20px 16px;width:min(380px,100%)}
+.evpop .stagtalk{margin-bottom:2px}
+.evpop .stagtalk .stag{width:64px;height:64px;flex:none}
+.evpop .stagtalk .say{font-size:.95rem;margin-bottom:6px}
+.evpop h2{font-size:1.15rem}
+.evpop .cer-card:focus{outline:none}
+.evpop p.fg2{margin:0 0 6px;font-size:.95rem}
+.evpop .row{justify-content:center;gap:10px;flex-wrap:wrap}
 /* signaler un problème */
 .rt-list{display:flex;flex-direction:column;gap:12px}
 .rt-item{border:1px solid var(--line);border-radius:10px;padding:12px;display:flex;flex-direction:column;gap:6px}
@@ -5408,6 +5418,7 @@ function stagAccueil(){
   const anim=(c,ms)=>{if(reduceMotion())return;b.classList.remove('penche','baille','brame');void b.offsetWidth;b.classList.add(c);setTimeout(()=>b.classList.remove(c),ms);};
   const M=mue(), y=t.slice(0,4), L=gamiCtx.level||1, m=stagMood();
   if(!state.results.length)return;
+  if(evPopNext())return; // une fenêtre d'événement va s'ouvrir : le cerf parle là-bas
   // la mue : une fois par an et par étape
   if(M.ph==='chute'&&sv.mue!==y+'chute'){put('mue',y+'chute');
     b.innerHTML=stagSVG(L,m,undefined,{sansMue:true});
@@ -8581,6 +8592,68 @@ $('#foot-biblio').addEventListener('click',()=>{showTab('conseils');window.scrol
 $('#astuce-go').addEventListener('click',e=>{const c='ast-'+e.currentTarget.dataset.id;goPanel('conseils',c);const t=document.getElementById(c);if(t){t.classList.add('flash');setTimeout(()=>t.classList.remove('flash'),1600);}});
 $$('#biblio-toc button').forEach(b=>b.addEventListener('click',()=>goPanel('conseils',b.dataset.to)));
 
+
+/* ---------- la petite fenêtre d'événement, à l'ouverture de l'appli ----------
+   Une seule à la fois, par ordre de priorité ; chacune une fois par événement (et une fois de plus pour son annonce).
+   Le cerf la présente. On la garde en mémoire sur ce téléphone et dans le compte, pour ne pas la revoir ailleurs. */
+const LS_EVPOP='brainfit.evpop';
+const evPopSeen=()=>{let L={};try{L=JSON.parse(localStorage.getItem(LS_EVPOP)||'{}')||{};}catch(e){}return Object.assign(L,state.settings.evPop||{});};
+function evPopMark(key){
+  const S=evPopSeen(), t=todayKey(); S[key]=t;
+  for(const k in S)if(S[k]<addD(t,-200))delete S[k]; // les vieux événements s'oublient
+  state.settings.evPop=S; try{localStorage.setItem(LS_EVPOP,JSON.stringify(S));}catch(e){} save();
+}
+const minus=t=>t.charAt(0).toLowerCase()+t.slice(1);
+function evPopCandidats(){
+  const k=todayKey(), out=[], p=parcOf(k), soon=p?null:parcSoon(k), ev=evNow(), cv=chasseVille();
+  const fin=x=>fd(new Date(x.au+'T12:00:00'),{day:'numeric',month:'long'}), jour=x=>fd(new Date(x.du+'T12:00:00'),{weekday:'long',day:'numeric',month:'long'});
+  const parure=x=>{const a=ATTRS.find(a=>a[7]===x.id);return a?a[1]:null;};
+  const versParcours=()=>goPanel('aujourdhui','parcours');
+  // 1. un parcours en cours : l'Avent, le Carême, une semaine à thème
+  if(p){const avent=/^avent/.test(p.id), par=parure(p);
+    out.push({key:p.id,label:`${p.court} · jusqu’au ${fin(p)}`,titre:p.titre,texte:p.intro,go:avent?'Ouvrir la case du jour':'Voir la semaine',act:versParcours,
+      cerf:avent?(k===p.du?'Le calendrier de l’Avent s’ouvre aujourd’hui. Une case par jour, jusqu’à Noël.':'Le calendrier de l’Avent est ouvert. Il n’est jamais trop tard pour la case du jour.')
+        :p.theme?(k===p.du?'On part en voyage cette semaine.':'Cette semaine, on voyage.')+(par?` Il y a ${minus(par)} à gagner pour moi.`:'')
+        :`${p.titre} : un petit geste par jour, jusqu’au ${fin(p)}.`});}
+  // 2. un événement de saison (vrai ou faux, badge)
+  if(ev){const b=evBest(ev.id);
+    if(b===null)out.push({key:ev.id,label:`${ev.court} · jusqu’au ${fin(ev)}`,titre:ev.titre,texte:ev.intro,go:'Relever le défi',act:()=>{showTab('exercices');openEx('evenement');},
+      cerf:`${ev.questions.length} questions, et un badge à gagner : ${ev.badge[0]}.`});}
+  // 3. une chasse de ville ouverte pour toi, pas encore terminée
+  if(cv){const V=VILLES[cv], C=(state.chasse||{})['v-'+cv]||{};
+    if(!C.fin)out.push({key:'chasse-'+cv+(V.pret?'':'-test'),label:V.pret?`Événement · ${V.nom}`:`Événement en test · ${V.nom}`,titre:V.titre,
+      texte:`${V.etapes.length} énigmes dans la ville, environ ${kmFr(V)} km et ${V.duree} à pied. Des photos, et une carte souvenir à partager.`,
+      go:C.at?'Reprendre la chasse':'Partir en chasse',act:()=>{showTab('exercices');openEx('chasse');},
+      cerf:`Une chasse au trésor nous attend à ${V.nom}. Des yeux, des jambes, et pas d’écran pour trouver.`});}
+  // 4. l'annonce, une semaine avant : l'Avent dès le 22 novembre, la prochaine semaine à thème
+  if(soon){const j=Math.round((new Date(soon.du+'T12:00:00')-new Date(k+'T12:00:00'))/864e5), quand=j>1?`dans ${j} jours`:'demain', par=parure(soon);
+    out.push({key:soon.id+':annonce',label:`${soon.court} · ${quand}`,titre:`${soon.titre} s’ouvre ${jour(soon)}.`,texte:soon.intro,go:'Voir l’annonce',act:versParcours,
+      cerf:/^avent/.test(soon.id)?`Dans ${j>1?j+' jours':'un jour'}, on ouvre le calendrier de l’Avent. Je t’attendrai à la première case.`
+        :`Bientôt, un voyage : ${minus(soon.titre)}.`+(par?` ${par} se gagnera là-bas.`:'')});}
+  return out;
+}
+// la prochaine fenêtre à montrer, ou rien
+function evPopNext(){
+  if(APERCU_DEM||DEFI||/[?&](chasse|accueil|defi)=?/.test(location.search))return null;
+  const S=evPopSeen(); return evPopCandidats().find(c=>!S[c.key])||null;
+}
+let evPopFait=false;
+function evPopup(){
+  if(evPopFait)return; evPopFait=true;
+  const w=$('#welcome'); if((w&&!w.hidden)||document.querySelector('.ceremony')||document.visibilityState==='hidden')return;
+  if(!$('#v-aujourdhui')||$('#v-aujourdhui').hidden)return; // déjà parti ailleurs : on ne l'interrompt pas
+  const c=evPopNext(); if(!c)return;
+  evPopMark(c.key);
+  const close=()=>{document.removeEventListener('keydown',esc);box.classList.add('out');setTimeout(()=>box.remove(),300);};
+  const esc=e=>{if(e.key==='Escape')close();};
+  const box=el('div',{class:'ceremony evpop',role:'dialog','aria-modal':'true','aria-labelledby':'evpop-t',onclick:e=>{if(e.target===box)close();}},
+    el('div',{class:'cer-card'},stagTalk('proud',c.cerf),
+      el('span',{class:'label',text:c.label}),el('h2',{id:'evpop-t',text:c.titre}),
+      el('p',{class:'fg2',text:c.texte}),
+      el('div',{class:'row'},el('button',{class:'btn ghost',text:'Plus tard',onclick:close}),el('button',{class:'btn gold',text:c.go,onclick:()=>{close();c.act();}}))));
+  document.addEventListener('keydown',esc);
+  document.body.append(box); setTimeout(()=>{const cd=box.querySelector('.cer-card');cd.tabIndex=-1;cd.focus({preventScroll:true});},50);
+}
 initCarnetCoach();
 applyFreezes(); gami(true);
 // lien de test d'un parcours de ville : ouvrir directement la chasse
@@ -8588,7 +8661,9 @@ if(/[?&]chasse=/.test(location.search)&&chasseVille())setTimeout(()=>{showTab('e
 renderTips(); renderOrigins(); renderAll(); showTab(location.hash.slice(1)); setSync('local'); weekBilanNotice(); coachCheck();
 if(DEFI&&$('#welcome').hidden)setTimeout(launchDefi,300);
 // on dévoile la page une fois le compte vérifié, ou au plus tard après 0,8 s
-Promise.race([initStore(),new Promise(r=>setTimeout(r,800))]).finally(()=>document.documentElement.classList.remove('boot'));
+Promise.race([initStore(),new Promise(r=>setTimeout(r,800))]).finally(()=>{document.documentElement.classList.remove('boot');
+  // la fenêtre d'événement, une fois l'écran d'ouverture passé
+  setTimeout(evPopup,2200);});
 if('serviceWorker' in navigator)navigator.serviceWorker.register('sw.js').catch(()=>{});
 })();
 </script>

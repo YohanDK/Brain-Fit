@@ -1380,6 +1380,28 @@ main#contenu{display:flex;flex-direction:column;gap:20px}
 .defis{display:grid!important;grid-template-columns:1fr 1fr;gap:18px}
 .defi{display:flex;flex-direction:column;gap:8px;min-width:0}
 @media (max-width:620px){.defis{grid-template-columns:1fr}.groupe{padding:16px 16px 4px}}
+/* ---------- vie de l'interface (cascade, chiffres, onglet, séance faite) ---------- */
+.monte{display:inline-block;animation:bump .5s ease-out}
+@media (min-width:641px){.tabs.a-ind{position:relative}}
+.tab-ind{position:absolute;left:0;top:0;height:2px;width:0;background:var(--gold);border-radius:2px;pointer-events:none;opacity:0;transition:transform .38s cubic-bezier(.3,.8,.3,1),width .38s cubic-bezier(.3,.8,.3,1),opacity .2s}
+.tabs.a-ind button[aria-selected="true"]{border-bottom-color:transparent;border-top-color:transparent}
+.tabs button[aria-selected="true"] svg{animation:onglet .4s ease-out}
+@keyframes onglet{40%{transform:translateY(-3px) scale(1.08)}}
+section.view.entre>*,.groupe.entre>*{animation:rise .42s cubic-bezier(.2,.7,.3,1) both;animation-delay:calc(var(--i,0)*60ms)}
+.pips li{transition:background .4s}
+.pips li.just{animation:pip .7s ease-out}
+@keyframes pip{0%{transform:scaleY(1)}35%{transform:scaleY(2.2);box-shadow:0 0 10px var(--gold)}100%{transform:none}}
+.dots i.on{animation:pip-rond .35s ease-out}
+@keyframes pip-rond{0%{transform:scale(.4)}60%{transform:scale(1.25)}100%{transform:none}}
+.play-fin{display:flex;flex-direction:column;align-items:center;gap:6px;text-align:center;margin:4px 0 2px}
+.fin-frise{width:100%;animation:devoile 1.4s cubic-bezier(.4,.1,.3,1) .2s both}
+@keyframes devoile{from{clip-path:inset(0 100% 0 0)}to{clip-path:inset(0 0 0 0)}}
+.fin-mot{margin:6px 0 0;font-style:italic;font-size:1.08rem;color:var(--fg);max-width:42ch;animation:rise .5s ease-out .9s both}
+.fin-demain{margin:0;font-size:.92rem;color:var(--muted);animation:rise .5s ease-out 1.2s both}
+.play.vient-de-finir{animation:fete 1.6s ease-out}
+.play.vient-de-finir .play-title{animation:glow .9s ease-out both}
+@keyframes fete{0%{box-shadow:0 0 0 0 color-mix(in srgb,var(--gold) 55%,transparent)}100%{box-shadow:0 0 0 18px transparent}}
+@media (prefers-reduced-motion:reduce){.tab-ind{transition:none}}
 </style>
 </head>
 <body>
@@ -1439,6 +1461,11 @@ var fin=function(){if(e.parentNode)e.remove();};e.addEventListener('click',fin);
       <ol class="pips" id="play-pips" aria-hidden="true"></ol>
       <h2 class="play-title" id="play-title"></h2>
       <p class="play-meta" id="play-meta"></p>
+      <div class="play-fin" id="play-fin" hidden>
+        <div class="meander fin-frise" aria-hidden="true"></div>
+        <p class="fin-mot" id="fin-mot"></p>
+        <p class="fin-demain" id="fin-demain"></p>
+      </div>
       <button class="btn primary big" id="play-go"></button>
       <p class="play-swap" id="play-swap" hidden></p>
       <p class="play-streak" id="play-streak"></p>
@@ -4267,7 +4294,7 @@ function amisSeg(){
   $('#amis-n-jouer').textContent=nj?String(nj):'';
 }
 function amisGo(sec,sel){state.settings.amisSec=sec;save();amisSeg();if(sel){const e=$(sel);if(e)e.scrollIntoView({block:'start',behavior:'smooth'});}}
-$('#amis-seg').addEventListener('click',e=>{const b=e.target.closest('button');if(b)amisGo(b.dataset.s);});
+$('#amis-seg').addEventListener('click',e=>{const b=e.target.closest('button');if(!b)return;const avant=b.getAttribute('aria-pressed')==='true';amisGo(b.dataset.s);if(!avant)animerVue($('#v-amis'));});
 // effacer son compte : tout part, côté serveur comme sur cet appareil
 $('#erase').addEventListener('click',()=>{$('#erase-confirm').hidden=false;});
 $('#erase-no').addEventListener('click',()=>{$('#erase-confirm').hidden=true;});
@@ -4690,10 +4717,17 @@ function renderQuests(){
 
 /* ---------- routine ---------- */
 // la séance du jour en tête d'écran : une seule chose à faire, un seul gros bouton
+// le mot du cerf quand la séance est faite : un par jour, toujours le même dans la journée
+const MOTS_FIN=['Le travail est fait. Va voir le ciel, il a changé depuis ce matin.','Ce qui est appris aujourd’hui travaillera cette nuit, pendant que tu dors.','Un pas chaque jour, et l’on finit par traverser la forêt.','Repose ton esprit : il en a besoin pour retenir.','Les belles choses sont difficiles : tu viens de le prouver.','Lève les yeux de l’écran : le réel t’attend.','Bien joué. Ce soir, un livre plutôt qu’un fil sans fin ?','La régularité est une forme discrète du courage.','Tu as nourri ta tête ; nourris aussi tes yeux : regarde au loin.','Belle séance. Raconte à quelqu’un une chose apprise aujourd’hui.','On ne devient pas sage d’un coup : on le devient un jour après l’autre.','C’est fait. Le cerf rumine, toi tu peux flâner.'];
+let playVu=null; // ce que le panneau montrait au rendu précédent, pour n'animer que ce qui change
 function renderPlay(steps,d,nextEx){
   const done=steps.filter(s=>d.done[s.ex]).length, i=steps.findIndex(s=>s.ex===nextEx), e=EX[nextEx], fini=!e, cur=streaks().cur, today=isActive(todayKey());
+  const avant=playVu; playVu={jour:todayKey(),fini,ok:steps.map(s=>!!d.done[s.ex])};
+  const neuf=avant&&avant.jour===playVu.jour; // même journée : on peut fêter ce qui vient de changer
   $('#play').classList.toggle('done',fini);
-  $('#play-pips').replaceChildren(...steps.map((s,j)=>el('li',{class:d.done[s.ex]?'ok':j===i?'cur':''})));
+  $('#play').classList.toggle('vient-de-finir',!!(neuf&&fini&&!avant.fini));
+  $('#play-pips').replaceChildren(...steps.map((s,j)=>el('li',{class:(d.done[s.ex]?'ok':j===i?'cur':'')+(neuf&&d.done[s.ex]&&!avant.ok[j]?' just':'')})));
+  renderPlayFin(fini);
   $('#play-count').textContent=fini?'':`${done} / ${steps.length}`;
   if(fini){
     $('#play-label').textContent='Séance terminée';
@@ -4713,6 +4747,17 @@ function renderPlay(steps,d,nextEx){
   if(!ps.hidden)ps.append(swapLink(nextEx,true));
   $('#play-streak').textContent=today?(cur>1?`Série de ${cur} jours : elle est à l’abri pour aujourd’hui.`:'Ta série a commencé : reviens demain pour la prolonger.')
     :cur?`Une étape suffit pour garder ta série de ${cur} jour${cur>1?'s':''}.`:'Une étape suffit pour commencer une série.';
+}
+// la séance faite : une frise qui se dessine, un mot du cerf, et ce qui attend demain
+function renderPlayFin(fini){
+  const b=$('#play-fin'); b.hidden=!fini; if(!fini)return;
+  const t=todayKey(), n=[...t].reduce((a,c)=>a*31+c.charCodeAt(0)>>>0,7);
+  $('#fin-mot').textContent='« '+MOTS_FIN[n%MOTS_FIN.length]+' »';
+  let dem='';
+  try{const k=addDays(t,1), st=routineFor(k,seanceMin(k)), e1=st.length&&EX[st[0].ex];
+    if(e1)dem=`Demain : ${e1.name}`+(st.length>1?` et ${st.length-1} autre${st.length>2?'s':''}`:'')+'.';}catch(err){}
+  const h=24-new Date().getHours();
+  $('#fin-demain').textContent=(dem?dem+' ':'')+(h<=1?'C’est bientôt minuit : tout repart dans un instant.':`Tout repart dans ${h} h.`);
 }
 // les premiers jours : séance courte, accueil allégé, point de départ au 3e jour
 const NOUVEAU_JOURS=5;
@@ -5012,7 +5057,7 @@ function renderTips(){
 
 /* ---------- onglets ---------- */
 /* ---------- coach ---------- */
-function setStreak(n){$('#streak').textContent=n;$('#streak-unit').textContent=n>1?'jours d’affilée':'jour d’affilée';$('#freeze-n').textContent=freezeState().n;}
+function setStreak(n){compterHud('#streak',n);$('#streak-unit').textContent=n>1?'jours d’affilée':'jour d’affilée';$('#freeze-n').textContent=freezeState().n;}
 /* ---------- récompenses : XP, niveaux, objectif du jour, badges ---------- */
 function xpOfResult(r){if(r.sub)return SUB_XP;if(r.ex==='focus')return Math.round(Math.min(45,r.s)*(r.int?0.5:1));return(r.ex==='write'?20:r.ex==='fiche'?30:r.ex==='chasse'?25:r.ex==='dictee'?15:10)+(r.rec?5:0);}
 function xpByDay(){
@@ -5681,7 +5726,7 @@ $('#stag-bubble').addEventListener('click',e=>{e.currentTarget.hidden=true;});
 function renderHud(){
   checkParrain(); checkAttrs(); if(!iconTried){iconTried=true;cerfIcon();} renderStag();
   const t=todayKey(), goal=state.settings.xpGoal||60, today=gamiCtx.xp[t]||0, L=gamiCtx.level;
-  $('#xp-today').textContent=today; $('#xp-goal').textContent='/ '+goal+' XP';
+  compterHud('#xp-today',today); $('#xp-goal').textContent='/ '+goal+' XP';
   $('#ring-fg').setAttribute('stroke-dasharray',Math.min(100,today/goal*100)+' 100');
   $('#goalring').classList.toggle('hit',today>=goal);
   $('#lvl-n').textContent=roman(L); $('#lvl-n').style.fontSize=roman(L).length>3?'.5rem':roman(L).length>2?'.62rem':''; $('#lvl-name').textContent=levelName(L);
@@ -5739,7 +5784,7 @@ function bilanTab(k){
   $$('.bilan-nav button').forEach(b=>{b.setAttribute('aria-selected',String(b.dataset.g===k));});
   for(const g of ['semaine','niveau','chemin','detail'])$('#g-'+g).hidden=g!==k;
 }
-$$('.bilan-nav button').forEach(b=>b.addEventListener('click',()=>bilanTab(b.dataset.g)));
+$$('.bilan-nav button').forEach(b=>b.addEventListener('click',()=>{const avant=b.getAttribute('aria-selected')==='true';bilanTab(b.dataset.g);if(!avant)animerVue($('#g-'+b.dataset.g));}));
 bilanTab((()=>{try{return localStorage.getItem('neo.bilan');}catch(e){return null;}})());
 $('#goalring').addEventListener('click',()=>{bilanTab('niveau');showTab('progres');setTimeout(()=>$('#xp-panel').scrollIntoView({behavior:'smooth',block:'start'}),50);});
 function toast(html,kind){
@@ -6509,8 +6554,43 @@ function renderSas(){
 try{const d=JSON.parse(localStorage.getItem(SAS_LS)||'null');if(d){$('#sas-q').value=d.q||'';$('#sas-mine').value=d.mine||'';$('#sas-learn').value=d.learn||'';sasRate=d.rate||0;sasStart=d.start||null;}}catch(e){}
 sasUpdate();
 
+/* ---------- vie de l'interface : chiffres qui comptent, cartes en cascade ---------- */
+// tout est coupé si l'on a demandé moins d'animations (système ou réglage « doux »)
+function calme(){return document.documentElement.dataset.anim==='doux'||!!(window.matchMedia&&matchMedia('(prefers-reduced-motion: reduce)').matches);}
+// fait défiler un nombre jusqu'à sa valeur ; le texte final reste exactement celui voulu
+function compter(e,txt,de){
+  const m=/^(\d+)([\s\S]*)$/.exec(String(txt)), to=m?+m[1]:NaN;
+  clearInterval(e._cpt); e.textContent=txt;
+  if(calme()||!m||!(to>0)||de===to||to>99999)return;
+  const a=Math.max(0,de||0), t0=performance.now(), dur=Math.min(900,350+Math.abs(to-a)*12);
+  e.textContent=a+m[2];
+  e._cpt=setInterval(()=>{const k=Math.min(1,(performance.now()-t0)/dur), v=Math.round(a+(to-a)*(1-Math.pow(1-k,3)));
+    e.textContent=v+m[2]; if(k>=1){clearInterval(e._cpt);e.textContent=txt;}},30);
+}
+// pour un chiffre de l'en-tête : compte à partir de la valeur précédente, et sautille s'il monte
+function compterHud(sel,v){const e=$(sel); if(!e)return; const p=e.dataset.v===undefined?v:+e.dataset.v; e.dataset.v=v;
+  compter(e,String(v),p); if(v>p&&p>0&&!calme()){e.classList.remove('monte');void e.offsetWidth;e.classList.add('monte');}}
+// à l'arrivée sur une page : les cartes entrent l'une après l'autre, chiffres et jauges se remplissent
+function animerVue(v){
+  if(!v||calme())return;
+  let i=0; [...v.children].forEach(c=>{if(c.hidden||!c.offsetParent)return; c.style.setProperty('--i',Math.min(i++,7));});
+  v.classList.remove('entre'); void v.offsetWidth; v.classList.add('entre');
+  clearTimeout(v._entre); v._entre=setTimeout(()=>v.classList.remove('entre'),1100);
+  if(!v.animate)return;
+  const vis=e=>{if(!e.offsetParent)return false;const r=e.getBoundingClientRect();return r.bottom>0&&r.top<innerHeight;};
+  const ease='cubic-bezier(.25,.8,.3,1)';
+  v.querySelectorAll('.num').forEach(e=>{if(e.children.length||!vis(e))return; compter(e,e.textContent,0);});
+  v.querySelectorAll('i[style*="width"]').forEach((e,j)=>{if(!vis(e)||e.style.width==='0%')return;
+    e.animate([{transform:'scaleX(0)',transformOrigin:'left'},{transform:'scaleX(1)',transformOrigin:'left'}],{duration:800,delay:200+j*60,easing:ease,fill:'backwards'});});
+  v.querySelectorAll('.bars .b i').forEach((e,j)=>{if(!vis(e))return;
+    e.animate([{transform:'scaleY(0)',transformOrigin:'bottom'},{transform:'scaleY(1)',transformOrigin:'bottom'}],{duration:700,delay:150+j*50,easing:ease,fill:'backwards'});});
+  v.querySelectorAll('circle[pathLength="100"][stroke-dasharray]').forEach(e=>{if(!vis(e))return; const d=e.getAttribute('stroke-dasharray');
+    if(/^0\b/.test(d))return; e.animate([{strokeDasharray:'0 100'},{strokeDasharray:d}],{duration:900,delay:200,easing:ease,fill:'backwards'});});
+}
+
 const TABS=['aujourdhui','amis','exercices','coach','progres','conseils','reglages'];
 function showTab(t){
+  const avant=(TABS.find(x=>$('#v-'+x)&&!$('#v-'+x).hidden));
   if(t==='retours'){t='reglages';renderRetours(true);}
   if(t==='classement')t='amis'; // anciens liens
   if(t==='exercices'&&$('#stage').hidden)$('#exgrid').hidden=false;
@@ -6524,7 +6604,18 @@ function showTab(t){
   if(t==='reglages'){$('#city-in').value=city();renderRetours();renderCerf();}
   if(t==='coach'){renderSas();renderCoach();renderTutor();}
   if(location.hash!=='#'+t)try{history.replaceState(null,'','#'+t);}catch(e){}
+  placerOnglet();
+  if(t!==avant&&!document.documentElement.classList.contains('boot'))animerVue($('#v-'+t));
 }
+// le trait doré sous l'onglet actif glisse d'un onglet à l'autre
+function placerOnglet(){
+  const nav=$('.tabs'), b=nav&&nav.querySelector('button[aria-selected="true"]'); if(!nav)return;
+  let ind=nav.querySelector('.tab-ind'); if(!ind){ind=el('span',{class:'tab-ind','aria-hidden':'true'});nav.append(ind);nav.classList.add('a-ind');}
+  if(!b||!b.offsetWidth){ind.style.opacity='0';return;}
+  const bas=getComputedStyle(nav).position==='fixed'; if(!bas&&getComputedStyle(nav).position==='static')return;
+  ind.style.opacity='1'; ind.style.width=b.offsetWidth+'px'; ind.style.top=(b.offsetTop+(bas?0:b.offsetHeight-2))+'px'; ind.style.transform=`translateX(${b.offsetLeft}px)`;
+}
+addEventListener('resize',()=>placerOnglet(),{passive:true});
 $('#city-form').addEventListener('submit',e=>{e.preventDefault();state.settings.city=$('#city-in').value.trim().slice(0,60);save();renderReel();toast('<span>Ville enregistrée.</span>');});
 $('#go-biblio').addEventListener('click',()=>{showTab('conseils');window.scrollTo(0,0);});
 $('#go-settings').addEventListener('click',()=>{showTab('reglages');window.scrollTo(0,0);});
@@ -9107,6 +9198,9 @@ renderTips(); renderOrigins(); renderAll(); showTab(location.hash.slice(1)); set
 if(DEFI&&$('#welcome').hidden)setTimeout(launchDefi,300);
 // on dévoile la page une fois le compte vérifié, ou au plus tard après 0,8 s
 Promise.race([initStore(),new Promise(r=>setTimeout(r,800))]).finally(()=>{document.documentElement.classList.remove('boot');
+  // la page du moment entre en scène, après l'écran d'ouverture s'il y en a un
+  const sp=$('#splash'), spv=sp&&sp.isConnected&&getComputedStyle(sp).display!=='none'&&getComputedStyle(sp).opacity!=='0';
+  setTimeout(()=>{placerOnglet();if(!calme())['#streak','#xp-today'].forEach(q=>{const e=$(q);if(e)compter(e,e.textContent,0);});animerVue(TABS.map(x=>$('#v-'+x)).find(v=>v&&!v.hidden));},spv?1700:0);
   // la fenêtre d'événement, une fois l'écran d'ouverture passé
   setTimeout(evPopup,2200);});
 if('serviceWorker' in navigator)navigator.serviceWorker.register('sw.js').catch(()=>{});

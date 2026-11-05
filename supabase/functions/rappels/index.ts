@@ -9,6 +9,8 @@ import { type Abonnement, type ClesVapid, envoyer, nouvellesCles } from "./webpu
 const SITE = "https://yohandk.github.io/Brain-Fit/";
 const CONTACT = SITE; // les services de notification veulent une adresse de contact : https:// ou mailto:
 const RELANCE = "21:00"; // heure de la relance « série en danger »
+const PUSH_OK =
+  /^https:\/\/(fcm\.googleapis\.com|updates\.push\.services\.mozilla\.com|push\.services\.mozilla\.com|web\.push\.apple\.com|[a-z0-9-]+\.push\.apple\.com|[a-z0-9.-]+\.notify\.windows\.com)\//;
 
 const cors = {
   "Access-Control-Allow-Origin": "*",
@@ -95,6 +97,11 @@ Deno.serve(async (req) => {
   if (req.method !== "POST") return reply({ error: "method_not_allowed" }, 405);
 
   const envoi = async (l: Ligne, texte: string) => {
+    // seulement vers les services de notifications connus (voir durcissement.sql)
+    if (!PUSH_OK.test(l.endpoint)) {
+      await admin.from("rappels").delete().eq("endpoint", l.endpoint);
+      return false;
+    }
     try {
       const s = await envoyer(l, texte, cfg.vapid!, CONTACT);
       if (s === 404 || s === 410) await admin.from("rappels").delete().eq("endpoint", l.endpoint); // appli désinstallée, notifications refusées…

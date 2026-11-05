@@ -1,0 +1,6 @@
+# Montagnes et leur altitude (m), au moins 30 Wikipédias.
+SELECT ?e ?libelle ?altitude ?liens WHERE {
+  ?e wdt:P31/wdt:P279* wd:Q8502; p:P2044/psv:P2044 [wikibase:quantityAmount ?altitude; wikibase:quantityUnit wd:Q11573].
+  ?e wikibase:sitelinks ?liens. FILTER(?liens >= 30)
+  ?e rdfs:label ?libelle. FILTER(LANG(?libelle)="fr")
+} ORDER BY DESC(?liens) LIMIT 400

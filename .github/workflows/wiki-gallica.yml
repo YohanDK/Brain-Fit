@@ -1,0 +1,29 @@
+# Interroge Wikidata (tools/wikidata/requetes) et importe les textes de Gallica (tools/gallica/liste.txt), puis enregistre sur la même branche.
+name: Importer Wikidata et Gallica
+
+on:
+  workflow_dispatch:
+  push:
+    branches: ["claude/**"]
+    paths: ["tools/wikidata/requetes/**", "tools/wikidata/importer.js", "tools/gallica/liste.txt", "tools/gallica/importer.js"]
+
+permissions:
+  contents: write
+
+jobs:
+  importer:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - run: node tools/wikidata/importer.js
+      - run: node tools/gallica/importer.js
+      - name: Enregistrer
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add tools/wikidata/resultats tools/gallica/textes
+          git diff --cached --quiet || git commit -m "Données importées de Wikidata et Gallica"
+          git push

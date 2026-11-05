@@ -1,0 +1,10 @@
+# Événements datés au jour près (date ponctuelle ou date de début), connus (au moins 25 Wikipédias), libellé et description en français.
+# Classes : bataille, traité, révolution, siège, séisme, couronnement, assassinat, coup d'État, catastrophe, naufrage, découverte, élection, insurrection, attentat, éruption.
+SELECT DISTINCT ?e ?libelle ?description ?date ?liens WHERE {
+  VALUES ?classe { wd:Q178561 wd:Q131569 wd:Q10931 wd:Q188055 wd:Q7944 wd:Q209715 wd:Q3882219 wd:Q45382 wd:Q3839081 wd:Q906512 wd:Q12772819 wd:Q40231 wd:Q124734 wd:Q2223653 wd:Q7692360 }
+  ?e wdt:P31 ?classe.
+  ?e wikibase:sitelinks ?liens. FILTER(?liens >= 25)
+  { ?e p:P585/psv:P585 [wikibase:timeValue ?date; wikibase:timePrecision 11] } UNION { ?e p:P580/psv:P580 [wikibase:timeValue ?date; wikibase:timePrecision 11] }
+  ?e rdfs:label ?libelle. FILTER(LANG(?libelle)="fr")
+  OPTIONAL { ?e schema:description ?description. FILTER(LANG(?description)="fr") }
+} ORDER BY DESC(?liens) LIMIT 2000

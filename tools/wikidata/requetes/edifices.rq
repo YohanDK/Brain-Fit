@@ -1,8 +1,0 @@
-# Édifices célèbres : hauteur (m) et date de construction, au moins 40 Wikipédias.
-SELECT ?e ?libelle ?hauteur ?debut ?liens WHERE {
-  ?e wdt:P31/wdt:P279* wd:Q41176; p:P2048/psv:P2048 [wikibase:quantityAmount ?hauteur; wikibase:quantityUnit wd:Q11573].
-  OPTIONAL { ?e wdt:P571 ?debut }
-  ?e wikibase:sitelinks ?liens. FILTER(?liens >= 40)
-  ?e rdfs:label ?libelle. FILTER(LANG(?libelle)="fr")
-} ORDER BY DESC(?liens) LIMIT 400
-# relance

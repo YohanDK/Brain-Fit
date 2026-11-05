@@ -892,15 +892,14 @@ a{color:var(--accent);text-underline-offset:3px}
 .qar-who .stag.rk-stag{width:32px;height:32px}
 .qar-n{font-family:var(--f-display);color:var(--gold-deep);white-space:nowrap}
 .qar-sol{display:flex;flex-direction:column;gap:4px}
+#v-amis[data-sec="jouer"] [data-sec]:not([data-sec="jouer"]),#v-amis[data-sec="fil"] [data-sec]:not([data-sec="fil"]),#v-amis[data-sec="inviter"] [data-sec]:not([data-sec="inviter"]){display:none}
+.amis-seg{align-self:stretch;display:flex}
+.amis-seg button{flex:1;white-space:nowrap;display:inline-flex;align-items:center;justify-content:center}
+.amis-n:not(:empty){display:inline-block;margin-left:6px;min-width:1.4em;padding:0 5px;border-radius:999px;background:var(--gold);color:var(--surface);font-size:.75rem;line-height:1.4em}
+.obj-in{padding:10px 12px;border-radius:var(--r);background:var(--sunk);margin-bottom:4px}
 .obj-bar{height:10px;border-radius:5px;background:var(--sunk);overflow:hidden}
 .obj-bar i{display:block;height:100%;background:linear-gradient(90deg,var(--accent),var(--gold));transition:width .6s ease-out}
 .obj-bar.full i{background:var(--gold)}
-.obj-who{list-style:none;margin:0;padding:0;display:flex;flex-wrap:wrap;gap:6px 14px}
-.obj-who li{display:flex;align-items:center;gap:6px;font-size:.9rem}
-.obj-who .stag.rk-stag{width:28px;height:28px}
-.obj-days{display:inline-flex;gap:2px}
-.obj-days i{width:7px;height:7px;border-radius:50%;background:var(--line)}
-.obj-days i.on{background:var(--gold)}
 .fil{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:6px}
 .fil-li{display:grid;grid-template-columns:36px 1fr;gap:2px 10px;align-items:center;padding:8px 10px;border-radius:var(--r);background:var(--sunk)}
 .fil-li .stag.rk-stag{width:36px;height:36px}
@@ -1516,43 +1515,47 @@ var fin=function(){if(e.parentNode)e.remove();};e.addEventListener('click',fin);
   </section>
 
   <!-- AMIS -->
-  <section class="view" id="v-amis" hidden>
+  <section class="view" id="v-amis" data-sec="jouer" hidden>
+    <div class="panel" id="circle-panel">
+      <div><h2>Mon cercle</h2><p class="muted note">Entre proches, sous un pseudo : seuls ton cerf, tes XP, ta série et tes scores sont partagés, et seulement dans ton cercle.</p></div>
+      <div class="obj-in" id="amis-obj" hidden>
+        <div id="amis-obj-body" style="display:flex;flex-direction:column;gap:6px"></div>
+      </div>
+      <div id="circle-body" style="display:flex;flex-direction:column;gap:10px"></div>
+    </div>
     <div class="panel amis-inbox" id="amis-inbox" hidden>
       <div class="row spread" style="flex-wrap:nowrap;align-items:baseline"><h2 class="label">Pour toi</h2><span class="note" id="amis-inbox-n"></span></div>
       <ul class="nudges" id="amis-inbox-list"></ul>
     </div>
-    <div class="panel" id="amis-duels" hidden>
+    <div class="seg amis-seg" id="amis-seg" role="tablist" aria-label="Rubriques du cercle" hidden>
+      <button role="tab" data-s="jouer" aria-pressed="true">Jouer ensemble<span class="amis-n" id="amis-n-jouer"></span></button>
+      <button role="tab" data-s="fil" aria-pressed="false">Le fil<span class="amis-n" id="amis-n-fil"></span></button>
+      <button role="tab" data-s="inviter" aria-pressed="false">Inviter</button>
+    </div>
+    <div data-sec="jouer" class="panel" id="amis-duels" hidden>
       <div><h2>Duels</h2><p class="muted note">Trois manches de cinq questions contre un ami. Chacun choisit le terrain à son tour ; plus de bonnes réponses gagne, et à égalité, le plus rapide.</p></div>
       <ul class="duels" id="amis-duels-list"></ul>
     </div>
-    <div class="panel" id="amis-obj" hidden>
-      <div><h2>Ensemble cette semaine</h2><p class="muted note">Un objectif commun : les jours d'entraînement de chacun s'additionnent. Atteint avant dimanche soir, il vaut à chaque cerf du cercle un ruban.</p></div>
-      <div id="amis-obj-body" style="display:flex;flex-direction:column;gap:10px"></div>
+    <div data-sec="jouer" class="panel" id="amis-qar" hidden>
+      <div><h2>Qui a raison ?</h2><p class="muted note">Un problème par jour pour le cercle. Rends ta copie, lis celles des autres sans les noms, vote pour la plus convaincante. Puis tout se dévoile.</p></div>
+      <div id="amis-qar-body" class="qar"></div>
     </div>
-    <div class="panel" id="amis-fil" hidden>
+    <div data-sec="jouer" class="panel" id="amis-qm" hidden>
+      <div><h2>Questions piège</h2><p class="muted note">Écris une question de ta main pour piéger un ami, ou tout le cercle. Une seule réponse possible ; tu verras qui s'est fait prendre.</p></div>
+      <div id="amis-qm-body" class="qm"></div>
+    </div>
+    <div data-sec="jouer" class="panel" id="amis-defis" hidden>
+      <div><h2>Défis du cercle</h2><p class="muted note">Les mêmes questions pour tous. Joue d'abord, compare ensuite.</p></div>
+      <div id="amis-defis-body" class="amis-defis"></div>
+    </div>
+    <div data-sec="fil" class="panel" id="amis-fil" hidden>
       <div class="row spread" style="align-items:baseline"><h2>Le fil du cercle</h2><label class="note" style="display:flex;gap:6px;align-items:center;cursor:pointer"><input type="checkbox" id="fil-part"> Partager mes exploits</label></div>
       <p class="muted note">Les exploits de la semaine : niveaux, badges, records, séries, duels gagnés. Un geste suffit pour saluer.</p>
       <ul class="fil" id="amis-fil-list"></ul>
     </div>
-    <div class="panel" id="amis-qar" hidden>
-      <div><h2>Qui a raison ?</h2><p class="muted note">Un problème par jour pour le cercle. Rends ta copie, lis celles des autres sans les noms, vote pour la plus convaincante. Puis tout se dévoile.</p></div>
-      <div id="amis-qar-body" class="qar"></div>
-    </div>
-    <div class="panel" id="amis-qm" hidden>
-      <div><h2>Questions piège</h2><p class="muted note">Écris une question de ta main pour piéger un ami, ou tout le cercle. Une seule réponse possible ; tu verras qui s'est fait prendre.</p></div>
-      <div id="amis-qm-body" class="qm"></div>
-    </div>
-    <div class="panel" id="circle-panel">
-      <div><h2>Mon cercle</h2><p class="muted note">Entre proches, sous un pseudo. Seuls ton pseudo, ton cerf, tes XP, ta série et tes scores aux défis sont partagés, et seulement avec les membres de ton cercle.</p></div>
-      <div id="circle-body" style="display:flex;flex-direction:column;gap:10px"></div>
-    </div>
-    <div class="panel parrain" id="parrain-panel" hidden>
+    <div data-sec="inviter" class="panel parrain" id="parrain-panel" hidden>
       <div><h2>Parrainer un ami</h2><p class="muted note">Envoie ton lien à quelqu'un que tu aimes. Chaque ami fait voyager ton cerf en Europe, d'Athènes au palais des Doges. Le premier cadeau vient dès que ton ami s'inscrit ; les suivants viennent quand tes amis sont vraiment venus s'entraîner (3 jours d'exercices). Tu ne vois que des nombres, jamais leurs progrès.</p></div>
       <div id="parrain-body" class="parrain-body"></div>
-    </div>
-    <div class="panel" id="amis-defis" hidden>
-      <div><h2>Défis du cercle</h2><p class="muted note">Les mêmes questions pour tous. Joue d'abord, compare ensuite.</p></div>
-      <div id="amis-defis-body" class="amis-defis"></div>
     </div>
   </section>
 
@@ -3211,7 +3214,7 @@ function amiCard(r){
     sentToday(r.user_id,'defi')?el('button',{class:'btn ghost',disabled:'',text:'Défi lancé aujourd’hui'}):el('button',{class:'btn'+(duelsOk?'':' primary'),text:'Défier à l’Éclair',onclick:()=>defierEclair(r.user_id,r.pseudo)}),
     nudgeBtn(r,'bravo','Bravo'),nudgeBtn(r,'courage','Courage'),
     circleData.piques?el('button',{class:'btn',text:'Une pique',onclick:e=>piqueBox(r,e.currentTarget)}):null,
-    qmOk?el('button',{class:'btn',text:'Question piège',onclick:()=>{qmOpen=r.user_id;renderQm();$('#amis-qm').scrollIntoView({block:'start',behavior:'smooth'});}}):null].filter(Boolean));}
+    qmOk?el('button',{class:'btn',text:'Question piège',onclick:()=>{qmOpen=r.user_id;renderQm();amisGo('jouer','#amis-qm');}}):null].filter(Boolean));}
   else acts.append(el('span',{class:'note',text:'Les encouragements et défis entre amis arrivent bientôt.'}));
   card.append(acts); return card;
 }
@@ -3568,15 +3571,12 @@ function renderObj(){
   if(o.ok&&!cercleObj().includes(o.wk)){cercleObj().push(o.wk);save();
     toast(`<span>Objectif commun atteint ! <small>Le cercle a cumulé ${o.tot} jours d’entraînement : un ruban pour chaque cerf.</small></span>`,'big');confetti();filPost('objectif',o.tot,o.wk);}
   const pct=Math.min(100,Math.round(o.tot/o.cible*100)), reste=Math.max(0,o.cible-o.tot);
-  const dots=j=>el('span',{class:'obj-days','aria-label':`${j} jour${j>1?'s':''}`},...[0,1,2,3,4,5,6].map(i=>el('i',{class:i<j?'on':null})));
-  const fin=addDays(o.wk,6)===todayKey();
+  const fin=addDays(o.wk,6)===todayKey(), moi=joursSemaine();
   body.replaceChildren(
-    el('div',{class:'row spread',style:'align-items:baseline'},el('b',{text:`${o.tot} jours sur ${o.cible}`}),el('span',{class:'note',text:o.ok?'Objectif atteint ✓':fin?'Dernier jour !':`encore ${reste} jour${reste>1?'s':''}`})),
-    el('div',{class:'obj-bar'+(o.ok?' full':''),role:'progressbar','aria-valuemin':'0','aria-valuemax':String(o.cible),'aria-valuenow':String(o.tot)},el('i',{style:`width:${pct}%`})),
-    el('ul',{class:'obj-who'},...[...o.rows].sort((a,b)=>b.j-a.j).map(x=>el('li',{},el('span',{class:'stag rk-stag','aria-hidden':'true',html:rowStag(x.r,x.j?'proud':'idle')}),el('span',{text:x.r.me?'Toi':x.r.pseudo}),dots(x.j)))),
-    o.ok?stagTalk('proud','Bravo au cercle : le ruban est gagné pour cette semaine. Chaque semaine réussie le rend plus beau.')
-      :joursSemaine()===0?stagTalk('idle','Ton cercle compte sur toi : une séance aujourd’hui, et c’est un jour de plus pour tous.')
-      :el('p',{class:'note',text:`${cercleObj().length?`Ton cerf a déjà ${cercleObj().length} semaine${cercleObj().length>1?'s':''} de ruban. `:''}Un jour compte dès qu’on fait un exercice.`}));
+    el('div',{class:'row spread',style:'align-items:baseline'},el('span',{class:'label',text:'Objectif commun de la semaine'}),el('b',{text:`${o.tot} / ${o.cible} jours`})),
+    el('div',{class:'obj-bar'+(o.ok?' full':''),role:'progressbar','aria-label':'Objectif commun','aria-valuemin':'0','aria-valuemax':String(o.cible),'aria-valuenow':String(o.tot)},el('i',{style:`width:${pct}%`})),
+    el('span',{class:'note',text:o.ok?'Atteint : un ruban pour chaque cerf du cercle ✓'
+      :`Encore ${reste} jour${reste>1?'s':''} d’entraînement, à vous tous${fin?', avant ce soir':' d’ici dimanche'}. `+(moi?`Tu en as fait ${moi}.`:'Une séance aujourd’hui, et c’est un jour de plus pour tous.')}));
 }
 // ── le fil ──
 async function vivLoad(){
@@ -3729,7 +3729,7 @@ function renderQm(){
 const newCode=(n=8)=>{const A='ABCDEFGHJKLMNPQRSTUVWXYZ23456789';return Array.from(crypto.getRandomValues(new Uint8Array(n)),b=>A[b%A.length]).join('');};
 async function renderCircle(quick){
   const body=$('#circle-body'), c=state.settings.circle;
-  if(!ref||!c){$('#amis-inbox').hidden=true;$('#amis-defis').hidden=true;$('#amis-duels').hidden=true;$('#amis-qar').hidden=true;$('#amis-obj').hidden=true;$('#amis-fil').hidden=true;$('#amis-qm').hidden=true;}
+  if(!ref||!c){$('#v-amis').dataset.sec='';$('#amis-seg').hidden=true;$('#amis-inbox').hidden=true;$('#amis-defis').hidden=true;$('#amis-duels').hidden=true;$('#amis-qar').hidden=true;$('#amis-obj').hidden=true;$('#amis-fil').hidden=true;$('#amis-qm').hidden=true;}
   if(!ref){body.replaceChildren(stagTalk('idle','Connecte-toi pour créer un cercle ou en rejoindre un. À plusieurs, on tient mieux.'));return;}
   if(!c){
     const msg=el('p',{class:'note',role:'status'});
@@ -3787,8 +3787,21 @@ async function renderCircle(quick){
       :!top.xp?stagTalk('idle','La semaine commence : le premier qui s’entraîne prend la tête.')
       :top.me?stagTalk('proud','Tu mènes le cercle cette semaine. Tiens bon jusqu’à dimanche !'):stagTalk('idle',`${top.pseudo} mène cette semaine. Touche son nom pour lui lancer un défi.`),
     el('div',{class:'row',style:'justify-content:flex-end'},leave));
-  renderInbox(); renderDuels(); renderObj(); renderFil(); renderQar(); renderQm(); renderDefis();
+  renderInbox(); renderDuels(); renderObj(); renderFil(); renderQar(); renderQm(); renderDefis(); amisSeg();
 }
+// les rubriques sous le classement : jouer ensemble, le fil, inviter ; sans cercle, tout reste visible
+function amisSeg(){
+  const v=$('#v-amis'), on=!!(ref&&state.settings.circle&&circleData);
+  // une rubrique vide (base pas prête, parrainage indisponible) n'a pas d'onglet
+  for(const[k,id] of [['fil','#amis-fil'],['inviter','#parrain-panel']])$(`#amis-seg [data-s="${k}"]`).hidden=$(id).hidden;
+  let cur=state.settings.amisSec||'jouer'; if($(`#amis-seg [data-s="${cur}"]`).hidden)cur='jouer';
+  $('#amis-seg').hidden=!on; v.dataset.sec=on?cur:'';
+  document.querySelectorAll('#amis-seg button').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.s===cur)));
+  const nj=duelsMine().length+qmPending().length;
+  $('#amis-n-jouer').textContent=nj?String(nj):'';
+}
+function amisGo(sec,sel){state.settings.amisSec=sec;save();amisSeg();if(sel){const e=$(sel);if(e)e.scrollIntoView({block:'start',behavior:'smooth'});}}
+$('#amis-seg').addEventListener('click',e=>{const b=e.target.closest('button');if(b)amisGo(b.dataset.s);});
 // effacer son compte : tout part, côté serveur comme sur cet appareil
 $('#erase').addEventListener('click',()=>{$('#erase-confirm').hidden=false;});
 $('#erase-no').addEventListener('click',()=>{$('#erase-confirm').hidden=true;});

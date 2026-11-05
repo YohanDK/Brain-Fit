@@ -1,0 +1,41 @@
+# Une page d'auteur Wikiquote par ligne (titre exact).
+Blaise Pascal
+Michel de Montaigne
+François de La Rochefoucauld
+Jean de La Bruyère
+Voltaire
+Montesquieu
+Victor Hugo
+François-René de Chateaubriand
+Alexis de Tocqueville
+Charles Péguy
+Georges Bernanos
+Paul Claudel
+Léon Bloy
+Charles Baudelaire
+Gustave Flaubert
+Honoré de Balzac
+Albert Camus
+Simone Weil
+Antoine de Saint-Exupéry
+Joseph Joubert
+Vauvenargues
+Nicolas de Chamfort
+Alain (philosophe)
+Paul Valéry
+Henri Bergson
+Louis Pasteur
+Marie Curie
+Fénelon
+Jacques-Bénigne Bossuet
+Jean Racine
+Thérèse de Lisieux
+François de Sales
+Jules Renard
+Gustave Thibon
+Marcel Proust
+Joris-Karl Huysmans
+Jean de La Fontaine
+Molière
+Pierre Corneille
+Jean-Jacques Rousseau

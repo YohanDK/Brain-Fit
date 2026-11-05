@@ -683,6 +683,14 @@ a{color:var(--accent);text-underline-offset:3px}
 /* la petite chasse : cinq choses à trouver dehors, notées sur l'honneur */
 .chasse li div{flex:1}
 .chasse input{font:inherit;font-size:1rem;width:100%;margin-top:6px;padding:5px 9px;border:1px solid var(--line);border-radius:var(--r);background:var(--surface);color:var(--fg)}
+.chasse .ph{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-top:6px}
+.chasse .ph img{width:72px;height:72px;object-fit:cover;border-radius:8px;border:1px solid var(--line)}
+.chasse .ph label{cursor:pointer}
+.chasse .ph input[type=file]{position:absolute;width:1px;height:1px;opacity:0;pointer-events:none}
+.chasse li .lieu{margin-top:4px}
+.chasse li .q{font-weight:600;margin:4px 0 0}
+.chasse li .en{font-style:italic;margin:0}
+.chasse-ville{display:flex;flex-wrap:wrap;gap:6px 12px;align-items:baseline;justify-content:space-between}
 .chasse li.fait input{border-color:transparent;padding-left:0;color:var(--gold-deep);font-style:italic}
 /* le passeport d'Europe : une page tamponnée par semaine à thème */
 .pp-pages{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:12px;margin-top:10px}
@@ -1598,7 +1606,7 @@ var fin=function(){if(e.parentNode)e.remove();};e.addEventListener('click',fin);
           <div class="challenge" id="reel-box"></div>
           <div class="row reel-city"><span class="note" id="reel-city-txt"></span><button class="btn ghost mini" id="reel-city-edit"></button></div>
           <form class="row reel-city" id="reel-city-form" hidden><input type="text" id="reel-city-in" placeholder="Ta ville" aria-label="Ta ville" autocomplete="address-level2"><button class="btn mini">Valider</button></form>
-          <details class="pa-cal" id="chasse"><summary></summary><p class="note fg2" id="chasse-intro"></p><ul class="besace chasse" id="chasse-l"></ul></details>
+          <details class="pa-cal" id="chasse"><summary></summary><div class="chasse-ville note" id="chasse-ville" hidden></div><p class="note fg2" id="chasse-intro"></p><ul class="besace chasse" id="chasse-l"></ul><div class="row" id="chasse-fin"></div></details>
         </div>
       </div>
     </div>
@@ -5065,32 +5073,120 @@ const CHASSE=[
   ['Une devise de ville ou de famille, sur un blason ou un fronton','La devise et sa traduction'],
   ['Le plus vieux numéro de rue que tu vois (plaque émaillée, peinte, gravée)','Le numéro et la rue, et ce qui le rend ancien']
 ];
+// les parcours de ville : une énigme qui mène au lieu, une question qui se lit sur place, un indice pour la suite.
+// Ouverts par un lien de test (?chasse=saumur) tant qu'ils n'ont pas été vérifiés sur le terrain.
+// [énigme, question, réponse attendue ('' si à relever), lieu, pour la suite]
+const VILLES={saumur:{nom:'Saumur',titre:'La chasse de Saumur',du:'l’hôtel de ville',etapes:[
+  ["Au bord de la Loire, la maison commune garde du XVe siècle deux tourelles en encorbellement et un chemin de ronde.","Combien de tourelles comptes-tu côté Loire ? Quelle lettre d’or figure dans les armes de la ville ?","2 tourelles ; un S d’or, sous trois fleurs de lis.","Hôtel de ville, quai Lucien-Gautier","Remonte la Loire à contre-courant, en t’éloignant du pont, par le quai Mayaud. Arrête-toi quand une tour ronde s’avance vers le fleuve, au pied du château."],
+  ["Un oiseau de bois fixé en haut de cette tour du XVe siècle servait de cible aux tireurs de la milice bourgeoise.","Quel oiseau ?","Un perroquet : le papegai.","Tour Papegault, place Saint-Michel","Monte vers le château, puis redescends vers le clocher de Saint-Pierre par la rue qui y mène en pente douce. En chemin, des anges prient au-dessus de ta tête."],
+  ["Au XVIIe siècle, des angelots sculptés ont été placés sur cette façade pour prier au-dessus des passants.","Qu’est-ce que les angelots portent ?","Des chapelets.","Maison des Anges, 13-15 rue Fourrier","Continue dans la même direction : la place de l’église est au bout de la rue."],
+  ["Le gardien des clés du paradis donne son nom à l’église et à la place. La façade de son église s’est effondrée en 1673.","La façade de l’église est-elle gothique ou classique ?","Classique, reconstruite après 1673.","Place Saint-Pierre","Pierre avait les clés ; cherche maintenant l’apôtre que Jésus aimait. Quitte la place vers la Loire par la rue du Marché : au bout, sa rue part sur la gauche, vers la mairie."],
+  ["Au n° 3 bis, une maison à pans de bois du milieu du XVIe siècle cache de petits personnages coiffés de plumes.","Combien de personnages à plumes comptes-tu ?","","Rue Saint-Jean, n° 3 bis","Redescends la rue du Marché jusqu’à la place Saint-Pierre. La rue qui en part vers le sud-ouest dit, par son nom, qu’elle est la principale de la ville close."],
+  ["Une petite fille née à Saumur en 1883 deviendra la couturière la plus célèbre du monde. Ses parents vivaient dans cette rue.","Qui est-ce ?","Gabrielle Chanel, dite Coco.","Grande-Rue","Saumur fut une grande ville protestante. Le lieu où prêchait le pasteur a donné son nom à la rue voisine, parallèle à la Grande-Rue, juste à l’ouest."],
+  ["Dans la rue du lieu de culte protestant, une maison montre sur ardoise un texte que Moïse reçut sur pierre.","Au n° 13, que montrent les deux plaques d’ardoise ?","Les Tables de la Loi.","Rue du Temple, n° 13","Remonte vers la rue Dacier, puis rejoins la Loire près de la mairie : le grand pont droit part de là. Compte ses arches en arrivant."],
+  ["Douze arches et un tablier tout droit, une première sur la Loire au XVIIIe siècle. À mon pied, une échelle garde la mémoire des eaux.","Sur l’échelle des crues, quelle année est marquée le plus haut ?","1856.","Pont Cessart, au pied du pont côté ville, en amont","Le pont débouche sur une place. Tout près, des colonnes portent des noms gravés."],
+  ["Colonnes corinthiennes, achevé en 1866, des noms gravés au-dessus des colonnes. Aujourd’hui on m’appelle le Dôme.","Relève un nom gravé sur la façade.","","Théâtre le Dôme, place de la Bilange","Suis la Loire dans le sens du courant. La maison des vignerons est à côté de l’office de tourisme, face au fleuve."],
+  ["Le tuffeau a été creusé en caves pendant des siècles, et ses galeries gardent le vin. Les vignerons de la région ont leur vitrine au bord de l’eau.","Combien d’appellations d’Anjou et de Saumur la maison présente-t-elle ?","26 appellations d’origine contrôlée.","Maison des vins d’Anjou et de Saumur, 7 quai Carnot","Continue vers l’ouest, en t’éloignant du pont. Des écuries bâties à partir de 1827 gardent la mémoire des cavaliers."],
+  ["Arrivée. En 1828, l’école d’équitation de Versailles s’installe à Saumur. Ses écuyers portent encore l’uniforme qui leur a donné leur nom.","De quelle couleur est l’uniforme, et quel nom a-t-il donné aux écuyers ?","Noir : le Cadre Noir.","Musée de la Cavalerie, anciennes écuries du Manège",""]
+]}};
+(()=>{try{const v=new URLSearchParams(location.search).get('chasse');if(v&&VILLES[v.toLowerCase()])localStorage.setItem('brainfit.chasse',v.toLowerCase());}catch(e){}})();
+const chasseVille=()=>{try{const v=localStorage.getItem('brainfit.chasse');return VILLES[v]?v:null;}catch(e){return null;}};
 function chasseOf(wk){
   const wn=Math.floor(new Date(wk+'T12:00:00').getTime()/(7*864e5)), N=CHASSE.length;
   // pas = 5 : sept semaines sans revoir un indice ; l'ordre de la banque mêle déjà les types
   return [0,1,2,3,4].map(i=>(wn*5+i)%N);
 }
+/* photos de la chasse : sur ce téléphone seulement (IndexedDB), jamais envoyées ; redessinées, donc sans la position GPS du fichier */
+const PHDB=(()=>{let p=null;const db=()=>p||(p=new Promise((ok,ko)=>{try{const r=indexedDB.open('neophyte-photos',1);r.onupgradeneeded=()=>r.result.createObjectStore('p');r.onsuccess=()=>ok(r.result);r.onerror=()=>ko(r.error);}catch(e){ko(e);}}));
+  const tx=(m,f)=>db().then(d=>new Promise((ok,ko)=>{const t=d.transaction('p',m),q=f(t.objectStore('p'));t.oncomplete=()=>ok(q&&q.result);t.onerror=()=>ko(t.error);}));
+  return {get:k=>tx('readonly',st=>st.get(k)).catch(()=>null),put:(k,v)=>tx('readwrite',st=>st.put(v,k)),del:k=>tx('readwrite',st=>st.delete(k)).catch(()=>{})};})();
+function chasseItems(){
+  const v=chasseVille();
+  if(v){const V=VILLES[v];return {key:'v-'+v,ville:V,titre:V.titre,items:V.etapes.map((e,i)=>({i,t:e[0],d:e[1],r:e[2],lieu:e[3],go:e[4]}))};}
+  const wk=weekStart(todayKey());
+  return {key:weekStart(todayKey()),titre:'La petite chasse',items:chasseOf(wk).map(i=>({i,t:CHASSE[i][0],d:CHASSE[i][1]}))};
+}
 function renderChasse(){
   const box=$('#chasse'); if(!box)return;
-  const k=todayKey(), wk=weekStart(k), L=chasseOf(wk);
-  state.chasse=state.chasse||{}; const C=state.chasse[wk]||{f:{}}, f=C.f||{}, nf=L.filter(i=>f[i]).length;
-  box.querySelector('summary').textContent=`La petite chasse · ${nf} sur ${L.length} trouvé${nf>1?'s':''}`+(C.fin?' · complète':'');
-  $('#chasse-intro').textContent=`Cinq choses à trouver ${ici()}, à pied, le téléphone dans la poche. Note ce que tu as relevé : rien ne vérifie, c’est sur l’honneur. Reste sur la voie publique.`;
-  const put=()=>{state.chasse[wk]=Object.assign({f:{}},state.chasse[wk]);state.chasse[wk].f=f;
-    // garder les huit dernières semaines seulement
-    const ks=Object.keys(state.chasse).sort(); while(ks.length>8)delete state.chasse[ks.shift()];};
-  $('#chasse-l').replaceChildren(...L.map(i=>{const [t,d]=CHASSE[i], ok=!!f[i];
-    const inp=el('input',{type:'text',maxlength:'120','aria-label':d,placeholder:d,disabled:ok?'':null});
+  const X=chasseItems(), key=X.key, L=X.items;
+  state.chasse=state.chasse||{}; const C=state.chasse[key]||{f:{}}, f=C.f||{}, nf=L.filter(x=>f[x.i]).length;
+  box.querySelector('summary').textContent=`${X.titre} · ${nf} sur ${L.length} trouvé${nf>1?'s':''}`+(C.fin?' · complète':'');
+  const vb=$('#chasse-ville'); vb.hidden=!X.ville;
+  if(X.ville)vb.replaceChildren(el('span',{text:`Parcours de test, à vérifier sur place · départ ${X.ville.du}`}),
+    el('button',{class:'btn ghost mini',text:'Revenir à la petite chasse',onclick:()=>{try{localStorage.removeItem('brainfit.chasse');}catch(e){}renderChasse();}}));
+  $('#chasse-intro').textContent=X.ville
+    ?`Onze étapes dans ${X.ville.nom}, environ 3 km. Chaque étape finit par un indice qui mène à la suivante. Note ce que tu lis sur place, prends une photo si tu veux. Reste sur la voie publique, ne grimpe nulle part.`
+    :`Cinq choses à trouver ${ici()}, à pied, le téléphone dans la poche. Note ce que tu as relevé : rien ne vérifie, c’est sur l’honneur. Reste sur la voie publique.`;
+  const put=()=>{state.chasse[key]=Object.assign({f:{}},state.chasse[key]);state.chasse[key].f=f;
+    // garder les huit dernières semaines seulement (les parcours de ville restent)
+    const ks=Object.keys(state.chasse).filter(k=>!k.startsWith('v-')).sort(); while(ks.length>8)delete state.chasse[ks.shift()];};
+  $('#chasse-l').replaceChildren(...L.map((x,n)=>{const i=x.i, ok=!!f[i];
+    const inp=el('input',{type:'text',maxlength:'120','aria-label':x.d,placeholder:x.d,disabled:ok?'':null});
     if(ok)inp.value=f[i];
     const btn=el('button',{class:'btn mini'+(ok?' gold':''),'aria-pressed':String(ok),text:ok?'✓ Trouvé':'Trouvé',onclick:()=>{
       if(ok){delete f[i];}
       else{const v=inp.value.trim(); if(!v){inp.focus();inp.placeholder='Note d’abord ce que tu as relevé';return;} f[i]=v.slice(0,120); son('juste');}
       put();
-      if(!C.fin&&L.every(j=>f[j])){state.chasse[wk].fin=Date.now(); logResult('chasse',100); toast('<span>Petite chasse complète. Le cerf est fier de toi.</span>');}
+      if(!C.fin&&L.every(y=>f[y.i])){state.chasse[key].fin=Date.now(); logResult('chasse',100); toast(`<span>${X.ville?'Chasse de '+X.ville.nom:'Petite chasse'} complète. Le cerf est fier de toi.</span>`);}
       else save();
       renderChasse();}});
     inp.addEventListener('keydown',e=>{if(e.key==='Enter'){e.preventDefault();btn.click();}});
-    return el('li',{class:ok?'fait':null},el('div',{},el('b',{text:t}),inp),btn);}));
+    // la photo de l'étape
+    const pk=key+':'+i, thumb=el('img',{alt:'Ta photo de cette étape',hidden:''}), fileIn=el('input',{type:'file',accept:'image/*',capture:'environment',id:'chasse-ph-'+n});
+    const phBtn=el('label',{class:'btn ghost mini',for:'chasse-ph-'+n,text:'Photo'});
+    const rm=el('button',{class:'btn ghost mini',text:'Retirer',hidden:'',onclick:async()=>{await PHDB.del(pk);thumb.hidden=true;rm.hidden=true;phBtn.textContent='Photo';renderChasseFin(X);}});
+    const show=b=>{if(!b)return;thumb.src=URL.createObjectURL(b);thumb.hidden=false;rm.hidden=false;phBtn.textContent='Changer';};
+    PHDB.get(pk).then(show);
+    fileIn.addEventListener('change',async()=>{const fl=fileIn.files&&fileIn.files[0]; if(!fl)return;
+      const b=await shrinkPhoto(fl); try{await PHDB.put(pk,b);show(b);renderChasseFin(X);}catch(e){toast('<span>Photo non enregistrée : la mémoire du navigateur est pleine ou bloquée.</span>');}
+      fileIn.value='';});
+    const kids=[X.ville?el('p',{class:'en',text:x.t}):el('b',{text:x.t})];
+    if(X.ville){kids.push(el('p',{class:'q',text:x.d}));
+      kids.push(el('details',{class:'lieu note'},el('summary',{text:'Le lieu, si tu sèches'}),el('span',{text:x.lieu})));}
+    kids.push(inp);
+    if(ok&&x.r)kids.push(el('p',{class:'note fg2',text:'Réponse attendue : '+x.r}));
+    kids.push(el('div',{class:'ph'},fileIn,phBtn,thumb,rm));
+    if(X.ville&&x.go)kids.push(el('p',{class:'note'},el('span',{class:'label',text:'Pour la suite '}),document.createTextNode(x.go)));
+    return el('li',{class:ok?'fait':null},el('div',{},...kids),btn);}));
+  renderChasseFin(X);
+}
+// la carte souvenir : les photos, le parcours et le cerf, à partager par le menu du téléphone
+async function chassePhotos(X){const out=[];for(const x of X.items){const b=await PHDB.get(X.key+':'+x.i);if(b)out.push({b,x});}return out;}
+async function renderChasseFin(X){
+  const fin=$('#chasse-fin'); if(!fin)return;
+  const ph=await chassePhotos(X);
+  fin.replaceChildren(...(ph.length?[el('button',{class:'btn',text:'Ma carte souvenir',onclick:()=>chasseCarte(X)}),
+    el('span',{class:'note',text:`${ph.length} photo${ph.length>1?'s':''}, gardée${ph.length>1?'s':''} sur ce téléphone. Photographie les lieux, pas les passants.`})]
+    :[el('span',{class:'note',text:'Tes photos restent sur ce téléphone : elles ne sont jamais envoyées. Photographie les lieux, pas les passants.'})]));
+}
+async function chasseCarte(X){
+  const ph=(await chassePhotos(X)).slice(0,6); if(!ph.length)return;
+  const W=1080,H=1350,c=document.createElement('canvas'); c.width=W;c.height=H; const g=c.getContext('2d');
+  const fs=getComputedStyle(document.documentElement), disp=fs.getPropertyValue('--f-display').trim()||'serif', body=fs.getPropertyValue('--f-body').trim()||'serif';
+  try{await document.fonts.load(`700 60px ${disp}`);await document.fonts.load(`400 30px ${body}`);}catch(e){}
+  g.fillStyle='#FBF7EE';g.fillRect(0,0,W,H);
+  g.fillStyle='#B08A2E';g.fillRect(60,60,W-120,3);
+  g.fillStyle='#24376E';g.textAlign='center';g.font=`700 58px ${disp}`;g.fillText(X.titre.toUpperCase(),W/2,150);
+  const st=state.chasse[X.key]||{}, nf=X.items.filter(x=>(st.f||{})[x.i]).length;
+  g.fillStyle='#5E5848';g.font=`italic 34px ${body}`;g.fillText(`${nf} étape${nf>1?'s':''} sur ${X.items.length} · ${fd(new Date(),{day:'numeric',month:'long',year:'numeric'})}`,W/2,205);
+  // la grille : 1 à 6 photos, recadrées au centre
+  const cols=ph.length<=1?1:2, rows=Math.ceil(ph.length/cols), gx=60, gy=250, gw=W-120, gh=820, gap=16, cw=(gw-gap*(cols-1))/cols, ch=(gh-gap*(rows-1))/rows;
+  for(let k=0;k<ph.length;k++){
+    // la dernière photo d'un nombre impair prend toute la largeur
+    const wide=cols===2&&k===ph.length-1&&ph.length%2===1, w=wide?gw:cw;
+    const im=await createImageBitmap(ph[k].b), x=gx+(wide?0:(k%cols)*(cw+gap)), y=gy+Math.floor(k/cols)*(ch+gap), r=Math.max(w/im.width,ch/im.height), sw=w/r, sh=ch/r;
+    g.save();g.beginPath();g.roundRect?g.roundRect(x,y,w,ch,18):g.rect(x,y,w,ch);g.clip();
+    g.drawImage(im,(im.width-sw)/2,(im.height-sh)/2,sw,sh,x,y,w,ch);g.restore();}
+  // le cerf et la promesse
+  try{const im=new Image();im.src='data:image/svg+xml;charset=utf-8,'+encodeURIComponent(stagImage(cerfShape(),200));await im.decode();g.drawImage(im,60,H-230,170,170);}catch(e){}
+  g.textAlign='left';g.fillStyle='#24376E';g.font=`700 44px ${disp}`;g.fillText('NÉOPHYTE',260,H-150);
+  g.fillStyle='#5E5848';g.font=`italic 34px ${body}`;g.fillText('Aiguise ton esprit, reste libre',260,H-100);
+  g.fillStyle='#B08A2E';g.fillRect(60,H-40,W-120,3);
+  const blob=await new Promise(r=>c.toBlob(r,'image/jpeg',.9)), name=(X.ville?'chasse-'+X.ville.nom.toLowerCase():'petite-chasse')+'.jpg';
+  const file=new File([blob],name,{type:'image/jpeg'}), text=`${X.titre} avec Néophyte : ${nf} étape${nf>1?'s':''} sur ${X.items.length}. ${SITE_URL}`;
+  try{if(navigator.canShare&&navigator.canShare({files:[file]})){await navigator.share({files:[file],title:X.titre,text});return;}}catch(e){if(e&&e.name==='AbortError')return;}
+  const a=el('a',{href:URL.createObjectURL(blob),download:name}); document.body.append(a); a.click(); a.remove();
+  toast('<span>Carte souvenir enregistrée dans tes téléchargements.</span>');
 }
 /* ---------- bilan de la semaine : calculé par l'appli, sans coach ----------
    Visible dès le dimanche 18 h pour la semaine qui s'achève, puis toute la semaine suivante. */
@@ -7678,6 +7774,8 @@ $$('#biblio-toc button').forEach(b=>b.addEventListener('click',()=>goPanel('cons
 
 initCarnetCoach();
 applyFreezes(); gami(true);
+// lien de test d'un parcours de ville : ouvrir directement la chasse
+if(/[?&]chasse=/.test(location.search)&&chasseVille())setTimeout(()=>{showTab('progres');const d=$('#chasse');d.open=true;renderChasse();d.scrollIntoView({block:'start'});},400);
 renderTips(); renderOrigins(); renderAll(); showTab(location.hash.slice(1)); setSync('local'); weekBilanNotice(); coachCheck();
 if(DEFI&&$('#welcome').hidden)setTimeout(launchDefi,300);
 // on dévoile la page une fois le compte vérifié, ou au plus tard après 0,8 s

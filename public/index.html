@@ -2064,7 +2064,7 @@ const EX={
   dictee:{name:'Dictée sur papier',skill:'Écoute & orthographe',desc:"L'appli dicte à voix haute, tu écris à la main. Correction par photo de ta copie ou par toi-même.",unit:'% de mots justes'},
   lecture:{name:'Lecture chronométrée',skill:'Lecture & compréhension',desc:"Lis un texte à ton rythme, puis réponds à deux questions. Vitesse et compréhension mesurées.",unit:'mots/min compris'},
   citations:{name:'Florilège',skill:'Mémoire & culture',desc:"Retiens les citations qui comptent : qui l'a dit, le mot manquant, vraie ou fausse attribution. Répétition espacée.",unit:'% de bonnes réponses'},
-  carte:{name:'Sur la carte',skill:'Géographie & repères',desc:"Place une ville, un monument, un pays d'autrefois, une vallée ou un massif, en France ou dans le monde. Plus tu es près, plus tu marques.",unit:'points sur 100'},
+  carte:{name:'Sur la carte',skill:'Géographie & repères',desc:"Place une ville, un monument, un pays de France, une vallée ou un massif, en France ou dans le monde. Plus tu es près, plus tu marques.",unit:'points sur 100'},
   chrono:{name:'Chronologie',skill:'Culture & repères',desc:"Remets les événements dans l'ordre sur une frise, en les faisant glisser. Trois frises, des écarts de plus en plus serrés.",unit:'% de bonnes réponses'},
   fiche:{name:'Fiche papier',skill:'Hors écran',desc:"Des PDF à imprimer : la fiche du jour qui mélange tout, ou un cahier entier de problèmes, sophismes, orthographe, estimations, erreurs d'IA ou chronologie. Corrigé à la fin.",unit:'% de bonnes réponses'},
   focus:{name:'Séance sans écran',skill:'Attention soutenue',desc:"Lecture, écriture à la main ou réflexion, minuteur lancé. Si tu quittes la page, c'est une interruption.",unit:'minutes'},
@@ -7410,7 +7410,7 @@ function bougies(n){
 }
 /* ---------- Sur la carte : placer un lieu sur un fond Natural Earth (public/cartes.js, chargé à la demande) ---------- */
 const CARTE_ZONES={mix:['France et monde'],fr:['France'],monde:['Monde']};
-const GENRE_LIEU={ville:'Ville',site:'Lieu',bataille:'Bataille',ile:'Île',pays:'Pays d’autrefois',vallee:'Vallée',massif:'Massif'};
+const GENRE_LIEU={ville:'Ville',site:'Lieu',bataille:'Bataille',ile:'Île',pays:'Pays de France',vallee:'Vallée',massif:'Massif'};
 let cartesP=null;
 const chargerCartes=()=>cartesP||(cartesP=window.NEO_CARTES?Promise.resolve():new Promise((ok,ko)=>{const sc=document.createElement('script');sc.src='cartes.js';sc.onload=ok;sc.onerror=()=>{cartesP=null;ko(new Error('cartes'));};document.head.append(sc);}));
 // distance à vol d'oiseau (haversine), en km
@@ -8397,8 +8397,8 @@ carte(arena){
   const seg=el('div',{class:'seg',role:'group','aria-label':'Quelle carte'},...Object.entries(Z).map(([k,[t]])=>el('button',{type:'button','aria-pressed':String(k===z0),text:t,onclick:e=>{state.carteZone=k;persist();[...seg.children].forEach(b=>b.setAttribute('aria-pressed',String(b===e.currentTarget)));}})));
   const L=lvl('carte');
   intro(arena,L===1
-    ?"Cinq lieux à retrouver : villes, monuments, pays d'autrefois, vallées et massifs. Quatre points s'allument sur la carte : touche celui qui convient, puis valide."
-    :"Cinq lieux à placer : villes, monuments, pays d'autrefois, vallées et massifs. Touche la carte pour poser ton épingle, déplace-la du doigt, puis valide. Plus tu es près, plus tu marques, jusqu'à 100 points par lieu.",
+    ?"Cinq lieux à retrouver : villes, monuments, pays de France, vallées et massifs. Quatre points s'allument sur la carte : touche celui qui convient, puis valide."
+    :"Cinq lieux à placer : villes, monuments, pays de France, vallées et massifs. Touche la carte pour poser ton épingle, déplace-la du doigt, puis valide. Plus tu es près, plus tu marques, jusqu'à 100 points par lieu.",
     el('div',{class:'carte-zone'},el('span',{class:'label',text:'Quelle carte ?'}),seg),go);
   function go(){
     const zone=Z[state.carteZone]?state.carteZone:'mix';

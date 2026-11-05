@@ -5133,7 +5133,8 @@ function renderChasse(){
   box.querySelector('summary').textContent=`${X.titre} · ${nf} sur ${L.length} trouvé${nf>1?'s':''}`+(C.fin?' · complète':'');
   const vb=$('#chasse-ville'); vb.hidden=!cv;
   if(cv)vb.replaceChildren(el('span',{text:`${VILLES[cv].titre} est ouverte pour toi.`}),
-    el('button',{class:'btn mini gold',text:'Partir en chasse',onclick:()=>{showTab('exercices');openEx('chasse');}}));
+    el('button',{class:'btn mini gold',text:'Partir en chasse',onclick:()=>{showTab('exercices');openEx('chasse');}}),
+    VILLES[cv].pret?null:el('button',{class:'btn ghost mini',text:'Quitter le test',onclick:()=>{try{localStorage.removeItem('brainfit.chasse');}catch(e){}renderChasse();renderChasseEv();}}));
   $('#chasse-intro').textContent=X.ville
     ?`Onze étapes dans ${X.ville.nom}, environ 3 km. Chaque étape finit par un indice qui mène à la suivante. Note ce que tu lis sur place, prends une photo si tu veux. Reste sur la voie publique, ne grimpe nulle part.`
     :`Cinq choses à trouver ${ici()}, à pied, le téléphone dans la poche. Note ce que tu as relevé : rien ne vérifie, c’est sur l’honneur. Reste sur la voie publique.`;

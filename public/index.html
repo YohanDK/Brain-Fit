@@ -3500,7 +3500,7 @@ function loadJsPDF(){
 function missCounts(){const m=new Map();state.results.filter(r=>r.ex==='ortho'&&r.miss).forEach(r=>r.miss.forEach(i=>m.set(i,(m.get(i)||0)+1)));return m;}
 function ficheData(){
   const probs=freshPick('fprob',PROBLEMS,3), fermi=freshPick('ffermi',FERMI,2), soph=freshPick('fsoph',FALLACIES,3);
-  const mc=missCounts(), ortho=[...ORTHO.keys()].sort(()=>Math.random()-.5).sort((a,b)=>(mc.get(b)||0)-(mc.get(a)||0)).slice(0,6).map(i=>ORTHO[i]);
+  const ortho=freshPick('ortho',ORTHO,6);
   // cinq événements d'époques bien distinctes
   const ev=[]; for(const e of [...EVENTS].sort(()=>Math.random()-.5)){if(ev.every(x=>Math.abs(x[1]-e[1])>=15))ev.push(e);if(ev.length===5)break;}
   const names=[...new Set([...soph.map(f=>f[1]),...[...FALLACIES].sort(()=>Math.random()-.5).map(f=>f[1])])].filter(n=>n!==VALABLE).slice(0,8).sort((a,b)=>a.localeCompare(b,'fr')).concat(VALABLE);
@@ -5409,13 +5409,37 @@ function renderExGrid(){
     det.addEventListener('toggle',()=>{const o=$$('#exgrid details.exgroup').filter(x=>x.open).map(x=>x.querySelector('h2').textContent);try{localStorage.setItem('neo.exopen',JSON.stringify(o));}catch(e){}});
     return det;}));
 }
-// tirage sans lassitude : les questions les moins récemment vues passent en premier
+// tirage sans remise : une question ne revient qu'une fois toute la banque vue, les plus anciennement vues d'abord.
+// Un seul historique par banque, partagé par l'exercice, la fiche du jour, l'Éclair et l'énigme.
+// Les erreurs ne repassent pas devant : elles vont au carnet, et reviennent dans « Revoir mes erreurs ».
 // ex : l'exercice dont le niveau oriente le tirage ; à fraîcheur égale, les questions de ton niveau passent devant
+const SEENALIAS={fprob:'prob',cprob:'prob',fsoph:'soph',csoph:'soph',ffermi:'fermi',cfermi:'fermi',caierr:'aierr'};
+function seenOf(bank){
+  const S=(state.seen=state.seen||{}), b=SEENALIAS[bank]||bank, sn=S[b]||(S[b]={});
+  // les anciens historiques séparés (fiche, cahiers) rejoignent celui de la banque
+  for(const[old,to] of Object.entries(SEENALIAS))if(to===b&&S[old]){for(const[i,t] of Object.entries(S[old]))if(!(sn[i]>=t))sn[i]=t;delete S[old];}
+  return sn;
+}
 function freshPick(bank,arr,n,ex){
-  const sn=(state.seen=state.seen||{})[bank]||(state.seen[bank]={}), now=Date.now(), meta=META.get(arr), L=ex?lvl(ex):0;
-  const age=i=>sn[i]===-1?0:sn[i]?2:1, dist=i=>meta&&L?Math.abs(meta[i].niv-L):0;
+  const sn=seenOf(bank), now=Date.now(), meta=META.get(arr), L=ex?lvl(ex):0;
+  // une ancienne marque « ratée » (-1) compte comme vue il y a longtemps
+  const age=i=>sn[i]?2:1, dist=i=>meta&&L?Math.abs(meta[i].niv-L):0;
   const idx=[...arr.keys()].filter(i=>!(meta&&meta[i].retire)).sort(()=>Math.random()-.5).sort((a,b)=>age(a)-age(b)||dist(a)-dist(b)||(sn[a]||0)-(sn[b]||0)).slice(0,n);
   idx.forEach(i=>{sn[i]=now;}); persist(); return idx.map(i=>arr[i]);
+}
+// les questions courtes (Éclair, énigme, duel) portent leur source : on les inscrit dans le même historique
+const SRCBANK={ortho:['ortho',()=>NB.ortho],soph:['soph',()=>NB.sophismes],fermi:['fermi',()=>NB.fermi],ia:['aierr',()=>NB.erreursIA]};
+function srcSeenAt(src){
+  if(!src)return 0;
+  if(src[0]==='cit')return ((state.seen||{}).cit||{})[src[1]]||0;
+  const b=SRCBANK[src[0]]; if(!b)return 0;
+  const i=b[1]().findIndex(x=>x.id===src[1]); return i<0?0:(((state.seen||{})[b[0]]||{})[i]||0);
+}
+function markSrcSeen(src){
+  if(!src)return;
+  if(src[0]==='cit'){seenOf('cit')[src[1]]=Date.now();return;}
+  const b=SRCBANK[src[0]]; if(!b)return;
+  const i=b[1]().findIndex(x=>x.id===src[1]); if(i>=0)seenOf(b[0])[i]=Date.now();
 }
 // l'homme d'acier se relit avec les règles de Rapoport, rapportées par Daniel Dennett
 function acierCheck(){
@@ -5506,7 +5530,8 @@ const seeded=str=>{let h=1779033703^str.length;for(let i=0;i<str.length;i++){h=M
   return()=>{h=Math.imul(h^h>>>16,2246822507);h=Math.imul(h^h>>>13,3266489909);h^=h>>>16;return(h>>>0)/4294967296;};};
 const rpick=(r,a)=>a[Math.floor(r()*a.length)], rshuf=(r,a)=>{a=[...a];for(let i=a.length-1;i>0;i--){const j=Math.floor(r()*(i+1));[a[i],a[j]]=[a[j],a[i]];}return a;};
 // un tirage dans une banque, en visant un niveau (1 à 3) quand la banque en a
-const rniv=(r,bank,niv)=>{const ok=bank.filter(x=>!x.retire), lv=niv?ok.filter(x=>x.niv===niv):[];return rpick(r,lv.length?lv:ok);};
+// avoid : les ids déjà posés dans la partie, écartés tant qu'il en reste
+const rniv=(r,bank,niv,avoid)=>{let ok=bank.filter(x=>!x.retire);if(avoid){const f=ok.filter(x=>!avoid.has(x.id));if(f.length)ok=f;}const lv=niv?ok.filter(x=>x.niv===niv):[];return rpick(r,lv.length?lv:ok);};
 const qOrtho=(r,o)=>({kind:'Orthographe',quote:o.phrase,prompt:'Quelle forme ?',opts:o.choix,right:o.bonne,why:o.regle,src:['ortho',o.id]});
 function qSoph(r,s){
   const near=x=>FAM.has(s.nom)&&FAM.get(x)===FAM.get(s.nom);
@@ -5536,13 +5561,13 @@ function qCalc(r,niv){
   return{kind:'Calcul mental',prompt:q+' = ?',opts,right:opts.indexOf(v.toLocaleString('fr-FR')),why:`${q} = ${v.toLocaleString('fr-FR')}`+(niv===1?' : la multiplication passe avant l’addition.':'')};
 }
 const QTYPES=['chrono','ortho','soph','cit','fermi','ia','calc'];
-function quickQ(r,type,niv){
-  if(type==='cit')return qCit(r,rpick(r,QUOTES.filter(q=>q.c!=='fausse')));
-  if(type==='fermi')return qFermi(r,rniv(r,NB.fermi,niv));
-  if(type==='ia')return qIA(r,rniv(r,NB.erreursIA,niv));
+function quickQ(r,type,niv,avoid){
+  if(type==='cit'){const all=QUOTES.filter(q=>q.c!=='fausse'), f=avoid?all.filter(q=>!avoid.has(q.id)):all;return qCit(r,rpick(r,f.length?f:all));}
+  if(type==='fermi')return qFermi(r,rniv(r,NB.fermi,niv,avoid));
+  if(type==='ia')return qIA(r,rniv(r,NB.erreursIA,niv,avoid));
   if(type==='calc')return qCalc(r,niv);
-  if(type==='ortho')return qOrtho(r,rniv(r,NB.ortho,niv));
-  if(type==='soph')return qSoph(r,rniv(r,NB.sophismes,niv));
+  if(type==='ortho')return qOrtho(r,rniv(r,NB.ortho,niv,avoid));
+  if(type==='soph')return qSoph(r,rniv(r,NB.sophismes,niv,avoid));
   // chronologie : deux événements, l'écart se resserre avec le niveau
   const [lo,hi]=niv===3?[3,30]:niv===2?[30,150]:[150,3000];
   for(let t=0;t<300;t++){const a=rpick(r,EVENTS), bs=EVENTS.filter(b=>Math.abs(b[1]-a[1])>=lo&&Math.abs(b[1]-a[1])<=hi);
@@ -5568,6 +5593,16 @@ function errQ(e){
 }
 const errsLeft=()=>(state.errs||[]).filter(e=>errQ(e));
 // affiche une question et rend la main avec la réponse ; renvoie les éléments à placer dans l'arène
+// la suite des questions de l'Éclair : la même graine donne la même suite (défis), sans jamais reposer une question
+function eclairSeq(seed){
+  const R=seeded('neophyte-eclair-'+seed), used=new Set(); let lastT=null;
+  return()=>{
+    // jamais deux fois de suite la même famille ; l'erreur de l'IA, plus longue à lire, revient moins souvent
+    let t; do t=rpick(R,['ortho','ortho','chrono','chrono','soph','soph','cit','cit','calc','calc','fermi','ia']); while(t===lastT); lastT=t;
+    const q=quickQ(R,t,1+Math.floor(R()*3),used); if(q&&q.src)used.add(Array.isArray(q.src[1])?q.src[1].join('|'):q.src[1]);
+    return q;
+  };
+}
 function quickAsk(q,onAnswer){
   const box=el('div',{class:'options'+(q.kind==='Chronologie'?' chrono':'')});
   q.opts.forEach((o,i)=>box.append(el('button',{text:o,onclick:e=>{
@@ -5823,8 +5858,9 @@ async function renderRetours(focus){
 }
 $$('#rt-filtre button').forEach(b=>b.addEventListener('click',()=>{rtFiltre=b.dataset.f;$$('#rt-filtre button').forEach(x=>x.setAttribute('aria-pressed',String(x===b)));renderRetours();}));
 $('#rt-maj').addEventListener('click',()=>renderRetours());
-// une question ratée repasse devant toutes les autres à la prochaine séance
-function missAgain(bank,arr,item){const i=arr.indexOf(item);if(i>=0)((state.seen=state.seen||{})[bank]||(state.seen[bank]={}))[i]=-1;}
+// une question ratée ne revient plus au hasard des séances : elle va au carnet d'erreurs, et revient dans « Revoir mes erreurs »
+const ERRTYPE={aierr:'ia',fermi:'fermi',soph:'soph',ortho:'ortho'};
+function missAgain(bank,arr,item){const i=arr.indexOf(item), m=META.get(arr);if(i>=0&&ERRTYPE[bank]&&m&&m[i].id)logErr(ERRTYPE[bank],m[i].id);}
 let cleanup=null;
 // un défi reçu par lien : ?defi=graine.score.pseudo
 let DEFI=(()=>{try{const v=new URLSearchParams(location.search).get('defi');if(!v)return null;const m=v.match(/^([a-z0-9]{4,12})\.(\d{1,3})\.(.{1,24})$/i);return m?{seed:m[1],score:+m[2],from:m[3].trim()||'Un ami'}:null;}catch(e){return null;}})();
@@ -6317,11 +6353,11 @@ write(arena){
       orig=c.length?(orig?pick(c):c[0]):(keep?orig:null);
       prompt=orig?'Réviser : '+orig.prompt+' (écrit le '+fd(new Date(orig.t),{day:'numeric',month:'long'})+')':"Aucun texte à réviser pour l'instant. Écris un texte dans un autre format : tu pourras le réviser dès demain.";
     }
-    else if(mode==='citation'){const real=QUOTES.filter(q=>q.c!=='fausse'), mine=real.filter(q=>(state.flori||{})[q.id]);prompt=quotePrompt(pick(mine.length&&Math.random()<.6?mine:real));}
+    else if(mode==='citation'){const used=new Set(texts.filter(x=>x.mode==='citation').map(x=>x.prompt).concat(prompt)), real=QUOTES.filter(q=>q.c!=='fausse'&&!used.has(quotePrompt(q))), all=real.length?real:QUOTES.filter(q=>q.c!=='fausse'), mine=all.filter(q=>(state.flori||{})[q.id]);prompt=quotePrompt(pick(mine.length&&Math.random()<.6?mine:all));}
     else if(mode==='disput'){const used=new Set(texts.filter(x=>x.mode==='disput').map(x=>x.prompt).concat(prompt));const fresh=DISPUT.filter(d=>!used.has(DQ(d)));prompt=DQ(pick(fresh.length?fresh:DISPUT.filter(d=>DQ(d)!==prompt)));}
     else if(mode==='resume'){const used=new Set(texts.filter(x=>x.mode==='resume').map(x=>x.prompt));const fresh=SOURCES.filter(s=>!used.has('Résumer : '+s[0]));src=pick(fresh.length?fresh:SOURCES);prompt='Résumer : '+src[0];}
     else if(mode==='acier'){const used=new Set(texts.filter(x=>x.mode==='acier').map(x=>x.prompt));const all=ARGU.map(q=>'Défends la position que tu ne partages pas : '+q),fresh=all.filter(q=>!used.has(q)&&q!==prompt);prompt=pick(fresh.length?fresh:all);}
-    else prompt=pick(PROMPTS);
+    else{const used=new Set(texts.map(x=>x.prompt).concat(prompt)), fresh=PROMPTS.filter(p=>!used.has(p));prompt=pick(fresh.length?fresh:PROMPTS.filter(p=>p!==prompt));}
   };
   if(!prompt)pickPrompt();
   const pEl=el('p',{class:'prompt'}), hEl=el('p',{class:'fg2',style:'max-width:56ch'});
@@ -6465,14 +6501,9 @@ citations(arena){
 ortho(arena){
   intro(arena,"Huit phrases. Pour certaines, un mot manque : choisis la bonne forme. Pour d'autres, relis comme un correcteur : touche le mot fautif s'il y en a un, puis répare-le. Ce sont les pièges que les correcteurs automatiques nous font oublier.",null,go);
   function go(){
-    // les phrases ratées ces deux dernières semaines, pas celles d'il y a longtemps
-    const seen=new Map(), t14=Date.now()-14*864e5; state.results.filter(r=>r.ex==='ortho'&&r.miss&&r.t>t14).forEach(r=>r.miss.forEach(i=>seen.set(i,(seen.get(i)||0)+1)));
-    // les erreurs passées reviennent en priorité (répétition espacée simple)
-    // deux phrases ratées au plus ; le reste parmi les moins récemment vues (à fraîcheur égale, celles de ton niveau),
-    // pour ne pas retomber sans cesse sur les mêmes
-    const ratees=[...ORTHO.keys()].filter(i=>!NB.ortho[i].retire&&seen.get(i)).sort((a,b)=>seen.get(b)-seen.get(a)||Math.random()-.5).slice(0,2);
-    const fraiches=freshPick('ortho',ORTHO,8,'ortho').map(t=>ORTHO.indexOf(t)).filter(i=>!ratees.includes(i));
-    const qs=[...ratees,...fraiches].slice(0,8).sort(()=>Math.random()-.5);
+    // huit phrases jamais vues tant qu'il en reste (à fraîcheur égale, celles de ton niveau) ;
+    // les phrases ratées sont au carnet d'erreurs et reviennent dans « Revoir mes erreurs », pas ici
+    const qs=freshPick('ortho',ORTHO,8,'ortho').map(t=>ORTHO.indexOf(t));
     let qi=0, ok=0, miss=[];
     // la moitié des phrases se lit comme une copie à corriger : trouver la faute, puis la réparer
     const hunt=new Set([...Array(8).keys()].sort(()=>Math.random()-.5).slice(0,4));
@@ -6568,8 +6599,9 @@ probleme(arena){
   // aux nombres nouveaux, sinon un problème pas encore réussi, en commençant par les plus anciens
   const best={}, last={}; for(const r of state.results)if(r.ex==='probleme'&&r.p!=null){best[r.p]=Math.max(best[r.p]??0,r.s);last[r.p]=r.t;}
   const L=lvl('probleme'), live=i=>!NB.problemes[i].retire, dist=i=>Math.abs(NB.problemes[i].niv-L);
-  const unseen=[...PROBLEMS.keys()].filter(i=>live(i)&&!(i in best)).sort((a,b)=>dist(a)-dist(b)||a-b);
-  let idx=unseen.length?unseen[0]:-1;
+  const sp=seenOf('prob'), never=[...PROBLEMS.keys()].filter(i=>live(i)&&!(i in best));
+  const unseen=(never.some(i=>!sp[i])?never.filter(i=>!sp[i]):never).sort((a,b)=>dist(a)-dist(b)||a-b);
+  let idx=unseen.length?unseen[0]:-1; if(idx>=0)sp[idx]=Date.now();
   if(idx<0&&Math.random()>=2/3){const redo=Object.keys(best).filter(i=>best[i]<100&&PROBLEMS[i]&&live(i)).sort((a,b)=>last[a]-last[b]);if(redo.length)idx=+redo[0];}
   const gen=el('button',{class:'btn',text:'Un problème inédit du coach'});
   const varBtn=el('button',{class:'btn',text:'Une variante aux nombres nouveaux',onclick:()=>goVariant()});
@@ -6993,6 +7025,7 @@ enigme(arena){
   function go(){
     const r=seeded('neophyte-enigme-'+k), qs=enigPlan(r).map(([t,n])=>quickQ(r,t,n)), marks=[]; let qi=0;
     const ask=()=>{
+      markSrcSeen(qs[qi].src); // l'énigme compte dans ton historique : ses questions ne te reviendront pas aussitôt ailleurs
       const fb=el('div',{class:'answer',hidden:''}), next=el('button',{class:'btn primary',text:qi<4?'Suivante':'Voir ma grille',hidden:''});
       next.addEventListener('click',()=>{qi++;if(qi<5)ask();else finish();});
       arena.replaceChildren(qprog(qi,5),...quickAsk(qs[qi],good=>{marks[qi]=good;
@@ -7032,22 +7065,25 @@ rattrapage(arena){
 },
 eclair(arena){
   const D=DEFI; DEFI=null;
-  const seed=D?D.seed:Math.random().toString(36).slice(2,8);
+  // un défi reçu rejoue la graine de l'ami ; sinon, parmi douze graines, celle dont les questions sont les moins déjà vues
+  const seed=D?D.seed:(()=>{let best=null,bs=Infinity;const now=Date.now();
+    for(let k=0;k<12;k++){const s=Math.random().toString(36).slice(2,8), nx=eclairSeq(s);let sc=0;
+      for(let j=0;j<30;j++){const t=srcSeenAt(nx().src);if(t)sc+=1+(t>0?Math.max(0,1-(now-t)/(30*864e5)):0);}
+      if(sc<bs){bs=sc;best=s;}}
+    return best;})();
   const aim=defiCible?(defiCible.to?`Ton défi pour ${defiCible.pseudo} : joue ta manche, puis ${defiCible.pseudo} recevra les mêmes questions et ton score. `:'Ton défi pour le cercle : joue ta manche, tes amis recevront les mêmes questions et ton score. '):'';
   intro(arena,aim&&!D?aim+'90 secondes, chaque bonne réponse compte un point.':D?`${D.from} te défie : ${D.score} point${D.score>1?'s':''} en 90 secondes. Tu auras exactement les mêmes questions. À toi de faire mieux.`
     :"90 secondes de questions mêlées : orthographe, chronologie, sophismes, citations, calcul mental, ordres de grandeur, erreurs de l'IA. Réponds vite, mais juste : chaque bonne réponse compte un point. À la fin, revois celles que tu as manquées, ou défie un ami sur les mêmes questions.",null,go);
   function go(){
-    const R=seeded('neophyte-eclair-'+seed);
-    let ok=0, n=0, over=false, lastT=null; const missed=[]; combo=0; qmarks=[];
+    const nextQ=eclairSeq(seed);
+    let ok=0, n=0, over=false; const missed=[]; combo=0; qmarks=[];
     const count=el('span',{class:'eclair-n',text:'0'}), c=el('span',{class:'combo',hidden:''});
     const zone=el('div',{class:'eclair-q'});
     const ask=()=>{
       if(over)return;
       delete arena.dataset.v;
       zone.style.animation='none'; void zone.offsetWidth; zone.style.animation='';
-      // jamais deux fois de suite la même famille ; l'erreur de l'IA, plus longue à lire, revient moins souvent
-      let t; do t=rpick(R,['ortho','ortho','chrono','chrono','soph','soph','cit','cit','calc','calc','fermi','ia']); while(t===lastT); lastT=t;
-      const q=quickQ(R,t,1+Math.floor(R()*3)); n++; qcur=n;
+      const q=nextQ(); n++; qcur=n; markSrcSeen(q.src);
       zone.replaceChildren(...quickAsk(q,good=>{
         if(good){ok++;count.textContent=fmt(ok);count.classList.remove('bump');void count.offsetWidth;count.classList.add('bump');}else missed.push(q);
         setTimeout(ask,good?380:1100);

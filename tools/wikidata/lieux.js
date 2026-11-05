@@ -7,10 +7,12 @@ const titres=[...new Set((globalThis.NEO_BANQUES.lieux||[]).map(l=>l.wp))];
 (async()=>{
   const lignes=[], manquants=[];
   for(let i=0;i<titres.length;i+=50){
-    const lot=titres.slice(i,i+50), u='https://www.wikidata.org/w/api.php?'+new URLSearchParams({action:'wbgetentities',sites:'frwiki',titles:lot.join('|'),props:'claims|sitelinks',sitefilter:'frwiki',format:'json'});
+    // d'abord les redirections et les graphies de Wikipédia : « Mont-Saint-Michel » → « Le Mont-Saint-Michel »
+    const brut=titres.slice(i,i+50), q=await (await fetch('https://fr.wikipedia.org/w/api.php?'+new URLSearchParams({action:'query',titles:brut.join('|'),redirects:'1',format:'json'}),{headers:UA})).json();
+    const suit=t=>{for(const n of [...(q.query?.normalized||[]),...(q.query?.redirects||[])])if(n.from===t)t=n.to;return t;};
+    const lot=brut.map(suit), vers=new Map(brut.map((t,k)=>[lot[k],t]));
+    const u='https://www.wikidata.org/w/api.php?'+new URLSearchParams({action:'wbgetentities',sites:'frwiki',titles:lot.join('|'),props:'claims|sitelinks',sitefilter:'frwiki',format:'json'});
     const j=await (await fetch(u,{headers:UA})).json(); if(j.error)console.log('erreur API',JSON.stringify(j.error).slice(0,300));
-    // titre demandé ← titre normalisé ← titre de redirection
-    const vers=new Map(); for(const n of [...(j.normalized||[]),...(j.redirects||[])])vers.set(n.to,vers.get(n.from)||n.from);
     for(const [q,e] of Object.entries(j.entities||{})){
       if(e.missing!==undefined){manquants.push(e.title);continue;}
       const t=e.sitelinks?.frwiki?.title, c=e.claims?.P625?.[0]?.mainsnak?.datavalue?.value;

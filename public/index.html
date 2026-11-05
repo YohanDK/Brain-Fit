@@ -8358,7 +8358,7 @@ carte(arena){
           ok.remove(); hint.remove(); map.lock();
           const vrai=it, r=it.r||0;
           let sc, txt;
-          if(niv1){const bon=choix===vrai;sc=bon?100:0;txt=bon?'C’est bien là.':`Tu as choisi ${choix.nom}.`;map.marque(choix,bon);}
+          if(niv1){const bon=choix===vrai;sc=bon?100:0;txt=bon?'C’est bien là.':`Tu as choisi ${choix.nom}.`;map.marque(choix,bon);if(!bon)map.marque(vrai,true);}
           else{
             const d=kmEntre(pin,vrai), plein=Math.max(r,it.carte==='fr'?20:250), nul=plein+(it.carte==='fr'?250:2750);
             sc=d<=plein?100:d>=nul?0:Math.round(100*(1-(d-plein)/(nul-plein)));

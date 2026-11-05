@@ -854,7 +854,7 @@ B.textes=[
    texte:"Pendant un demi-siècle, les bourgeoises de Pont-l'Évêque envièrent à Mme Aubain sa servante Félicité. Pour cent francs par an, elle faisait la cuisine et le ménage, cousait, lavait, repassait, savait brider un cheval, engraisser les volailles, battre le beurre, et resta fidèle à sa maîtresse, — qui cependant n'était pas une personne agréable. […] Elle se levait dès l'aube, pour ne pas manquer la messe, et travaillait jusqu'au soir sans interruption ; puis le dîner étant fini, la vaisselle en ordre et la porte bien close, elle enfouissait la bûche sous les cendres et s'endormait devant l'âtre, son rosaire à la main. Personne, dans les marchandages, ne montrait plus d'entêtement. Quant à la propreté, le poli de ses casseroles faisait le désespoir des autres servantes. Économe, elle mangeait avec lenteur, et recueillait du doigt sur la table les miettes de son pain, — un pain de douze livres, cuit exprès pour elle, et qui durait vingt jours.",
    quiz:[["Combien Félicité gagnait-elle ?",["Cent francs par an","Cent francs par mois","Rien : elle était seulement logée et nourrie"]],["Combien de temps durait son pain ?",["Vingt jours","Une semaine","Deux jours"]]],
    idees:["Pendant cinquante ans, Félicité sert Mme Aubain pour cent francs par an","Elle fait tout et reste fidèle à une maîtresse peu agréable","Une vie pieuse, laborieuse et économe, réglée de l'aube au soir"]},
-  {id:'ws2',th:"lettres nature",vu:'2026-11-02',src:"Chateaubriand, Mémoires d'outre-tombe, première partie, livre III (texte de fr.wikisource.org)",titre:"La grive de Montboissier",
+  {id:'ws2',th:"lettres nature",sem:'bretagne',vu:'2026-11-02',src:"Chateaubriand, Mémoires d'outre-tombe, première partie, livre III (texte de fr.wikisource.org)",titre:"La grive de Montboissier",
    texte:"Je fus tiré de mes réflexions par le gazouillement d'une grive perchée sur la plus haute branche d'un bouleau. À l'instant, ce son magique fit reparaître à mes yeux le domaine paternel ; j'oubliai les catastrophes dont je venais d'être le témoin, et, transporté subitement dans le passé, je revis ces campagnes où j'entendis si souvent siffler la grive. Quand je l'écoutais alors, j'étais triste de même qu'aujourd'hui ; mais cette première tristesse était celle qui naît d'un désir vague de bonheur, lorsqu'on est sans expérience ; la tristesse que j'éprouve actuellement vient de la connaissance des choses appréciées et jugées. Le chant de l'oiseau dans les bois de Combourg m'entretenait d'une félicité que je croyais atteindre ; le même chant dans le parc de Montboissier me rappelait des jours perdus à la poursuite de cette félicité insaisissable.",
    quiz:[["Quel oiseau tire l'auteur de ses réflexions ?",["Une grive","Un rossignol","Une alouette"]],["Où entendait-il ce chant dans sa jeunesse ?",["Dans les bois de Combourg","Dans le parc de Montboissier","Dans les jardins de Paris"]]],
    idees:["Le chant d'une grive fait revivre à l'auteur le domaine de son enfance","La tristesse de la jeunesse naissait d'un désir vague de bonheur","Celle d'aujourd'hui vient de l'expérience : le bonheur poursuivi s'est révélé insaisissable"]},
@@ -1283,7 +1283,7 @@ B.enquetes=[
    lecon:"De « si A, alors B » et « pas B », on tire « pas A » : c'est la contraposée, le raisonnement le plus sûr de la logique.",
    src:"Énigme écrite pour Néophyte, vérifiée par énumération des 24 cas possibles",vu:'2026-11-02'},
   {id:'eq02',dim:'2026-11-15',titre:'Les gardiens du phare',
-   recit:"Une nuit de tempête, le phare de l'île s'est éteint. Trois gardiens étaient de garde : Albéric, Bertille et Corentin. Chacun est soit sincère (il dit toujours vrai), soit menteur (il ment toujours). Le coupable est forcément un menteur. Interrogés au matin, les gardiens parlent tour à tour.",
+   recit:"Une nuit de tempête, au large du Finistère, le phare d'une île bretonne s'est éteint. Trois gardiens étaient de garde : Albéric, Bertille et Corentin. Chacun est soit sincère (il dit toujours vrai), soit menteur (il ment toujours). Le coupable est forcément un menteur. Interrogés au matin, les gardiens parlent tour à tour.",
    question:"Qui a éteint le phare ?",options:['Albéric','Bertille','Corentin','On ne peut pas savoir'],bonne:0,
    indices:["Albéric : « Ce n'est pas moi. »",
     "Bertille : « Albéric ment. »",
@@ -1354,7 +1354,44 @@ B.enquetes=[
 // pas : une case par jour, dans l'ordre, de du à au (dimanches compris si dimanches:true ; sinon ils ne comptent pas,
 // comme au Carême, et l'énigme du dimanche y tient lieu de case). Une case : [texte, exercice lié ou null].
 // L'exercice « dimanche » renvoie à l'énigme du dimanche.
+// Semaine à thème : un parcours de 7 jours avec theme (les dictées, frises et citations marquées sem:theme passent en premier),
+// emb (emblème de la médaille et du panneau), enigme (l'énigme du dimanche qui dore la parure du cerf, voir ATTRS dans index.html).
+// Avant son début, sa médaille et sa parure s'affichent en silhouette noire, pour l'annoncer.
+// Rythme voulu : une par mois s'il y a déjà un temps fort (Avent, Carême), deux sinon ; une province française, puis un pays d'Europe.
 B.parcours=[
+  {id:'bretagne-2026',du:'2026-11-15',au:'2026-11-21',dimanches:true,theme:'bretagne',emb:'hermine',enigme:'eq02',titre:'La semaine de Bretagne',court:'Bretagne',
+   intro:"Sept jours en Bretagne, du dimanche au samedi : ses ducs, ses marins, ses légendes et ses écrivains. Les dictées, les frises et les citations viennent de là-bas. Cinq jours sur sept, et ton cerf gagne le collier de l'ordre de l'Hermine.",
+   origine:"L'hermine, petite belette d'hiver au pelage blanc et au bout de queue noir, est l'emblème des ducs de Bretagne depuis le XIIIe siècle. En 1381, le duc Jean IV crée l'ordre de l'Hermine, l'un des premiers ordres de chevalerie d'Europe, qui admettait aussi des dames. Son collier portait la devise « À ma vie ».",
+   badge:['L’Hermine','5 jours sur 7 pendant la semaine de Bretagne'],seuil:5,
+   // la besace : trois sorties hors écran au choix pendant la semaine
+   besace:[
+    ['Faire un far breton',"250 g de farine, 150 g de sucre, 4 œufs, 75 cl de lait, une pincée de sel, et des pruneaux si tu aimes. Four à 200 °C, environ 45 minutes. Le far était d'abord une bouillie salée, cuite dans un sac de toile."],
+    ['Apprendre un couplet du Bro gozh',"Le Bro gozh ma zadoù, « Vieux pays de mes pères », est l'hymne de la Bretagne : des paroles de Taldir Jaffrennou (1897) sur l'air de l'hymne gallois. Apprends le premier couplet, qui commence par « Ni Breizhiz a galon… », et chante-le sans texte."],
+    ['Lire un chapitre de Pêcheur d’Islande',"Le roman de Pierre Loti (1886), sur les pêcheurs de Paimpol et ceux qui les attendent. Un chapitre, sur papier si possible, puis raconte-le à quelqu'un."]
+   ],
+   // un mot breton par jour, du dimanche au samedi
+   motsLabel:'Le mot breton du jour',
+   mots:[
+    ['Demat',"bonjour","On le dit à toute heure de la journée ; le soir, on préfère Noz vat, « bonne nuit »."],
+    ['Mor',"mer","Armor, le pays de la mer, désigne la côte ; Argoat, le pays des bois, l'intérieur des terres."],
+    ['Men',"pierre","Avec hir, « long », il donne menhir : la pierre longue. Dolmen, la table de pierre, vient aussi du breton."],
+    ['Ker',"village, lieu habité","Il ouvre des milliers de noms de lieux et de familles : Kermario, Kerlescan, Kerguelen."],
+    ['Plou',"paroisse","Du latin plebs, « le peuple ». On le retrouve dans Plougastel, Ploërmel ou Ploumanac'h."],
+    ['Penn',"tête, extrémité","Le Finistère se dit Penn-ar-Bed, « le bout du monde » ; Penmarc'h est la tête du cheval."],
+    ['Kenavo',"au revoir","Littéralement « jusqu'à ce que ce soit », sous-entendu : jusqu'à la prochaine fois."]
+   ],
+   semaines:[
+    {du:'2026-11-15',titre:'Ar mor, la mer',fil:"La Bretagne, duché indépendant jusqu'en 1532, a été faite par la mer : marins, corsaires, pêcheurs d'Islande, et une ville engloutie. Cette semaine, chaque exercice y fait escale."}
+   ],
+   pas:[
+    ["L'énigme du dimanche se passe sur une île bretonne : un phare éteint, trois gardiens. Résous-la cette semaine et ton collier sera doré.",'dimanche'],
+    ["Dictée bretonne : cette semaine, les dictées viennent de Bretagne.",'dictee'],
+    ["Chronologie : de Nominoë à Anne de Bretagne, remets l'histoire du duché dans l'ordre.",'chrono'],
+    ["Citations : la devise des ducs et deux Bretons célèbres entrent dans ton florilège.",'citations'],
+    ["Sans écran : ouvre la besace et choisis une sortie, ou prends une carte papier, retrouve Saint-Malo, Brest, Quimper, Vannes, Nantes et Carnac, et redessine la côte de mémoire.",null],
+    ["Écris en dix lignes la légende de la ville d'Ys telle que tu t'en souviens, ou invente la tienne : une ville engloutie, une clé, une faute.",'write'],
+    ["Dernière frise de la semaine : Cartier, Surcouf, Chateaubriand, Renan, Jules Verne. Qui vient avant qui ?",'chrono']
+   ]},
   {id:'avent-2026',du:'2026-11-29',au:'2026-12-24',dimanches:true,titre:"Le calendrier de l'Avent",court:'Avent',
    intro:"Vingt-six jours, du premier dimanche de l'Avent à la veille de Noël. Chaque matin, une case s'ouvre : un petit geste pour l'esprit, souvent loin de l'écran. Chaque semaine a son fil, et chaque dimanche son énigme.",
    origine:"L'Avent (du latin adventus, « venue ») couvre les quatre dimanches avant Noël ; le calendrier à cases est une coutume allemande du XIXe siècle, imprimé pour la première fois au début du XXe siècle par Gerhard Lang.",

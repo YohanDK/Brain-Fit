@@ -665,11 +665,29 @@ a{color:var(--accent);text-underline-offset:3px}
 /* parcours de saison : la couronne de l'Avent (une bougie allumée par semaine) et le calendrier à cases */
 .parcours.sans-ico{padding-right:20px}
 .couronne{position:absolute;right:14px;top:14px;width:64px;height:56px}
+/* semaine à thème : l'emblème de la semaine à la place de la couronne */
+.pa-sem{position:absolute;right:14px;top:14px;width:52px;height:52px}
+.pa-mot{margin:.2em 0 .6em;font-size:.95rem}.pa-mot b{font-family:var(--serif,inherit)}
+/* l'annonce d'une semaine à thème : sa médaille et sa parure en silhouette noire */
+.attrs li.locked.annonce .stag.mini{filter:brightness(0);opacity:.85}
 .couronne .branches{fill:none;stroke:var(--gold-deep);stroke-width:3;stroke-dasharray:2 3}
 .couronne .bougie{fill:var(--surface);stroke:var(--gold);stroke-width:1.2}
 .couronne .flamme{fill:#e9a23b;transform-origin:center bottom;transform-box:fill-box;animation:flamme 2.4s ease-in-out infinite}
 @media (prefers-reduced-motion:reduce){.couronne .flamme{animation:none}}
 .pa-cal>summary{cursor:pointer;color:var(--muted);font-size:.9rem;margin-top:4px}
+/* la besace : des sorties hors écran au choix pendant une semaine à thème */
+.besace{list-style:none;margin:8px 0 4px;padding:0;display:flex;flex-direction:column;gap:8px}
+.besace li{display:flex;gap:10px;align-items:flex-start;justify-content:space-between;border:1px solid var(--line);border-radius:10px;padding:8px 10px;background:var(--surface)}
+.besace li.fait{border-color:var(--gold-deep)}
+.besace li div{min-width:0}.besace li .btn{flex:none}
+/* le passeport d'Europe : une page tamponnée par semaine à thème */
+.pp-pages{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:12px;margin-top:10px}
+.pp-page{border:1px solid var(--line);border-radius:12px;padding:14px;background:linear-gradient(180deg,var(--surface),var(--sunk));display:flex;gap:12px;align-items:flex-start}
+.pp-page .tampon{flex:none;width:84px;height:84px}
+.pp-page.avenir .tampon{filter:brightness(0);opacity:.8}
+.pp-page h3{margin:0 0 2px;font-size:1.05rem}
+.pp-page p{margin:4px 0;font-size:.92rem}
+.pp-page .btn{margin-top:6px}
 .pa-cases{list-style:none;margin:10px 0 6px;padding:0;display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:6px}
 .pa-cases button{width:100%;aspect-ratio:1;border-radius:8px;border:1px solid var(--line);background:var(--surface);color:var(--fg);font:inherit;font-size:.85rem;cursor:pointer;padding:0;display:flex;align-items:center;justify-content:center}
 .pa-cases button.fait{background:var(--gold);border-color:var(--gold-deep);color:#2a2112;font-weight:700}
@@ -1356,10 +1374,13 @@ var fin=function(){if(e.parentNode)e.remove();};e.addEventListener('click',fin);
     </div>
     <div class="panel event parcours" id="parcours" hidden>
       <svg class="couronne" id="pa-ico" viewBox="0 0 64 56" aria-hidden="true"><ellipse class="branches" cx="32" cy="44" rx="29" ry="9"/><g id="pa-bougies"></g></svg>
+      <svg class="pa-sem" id="pa-sem" viewBox="0 0 24 24" aria-hidden="true" hidden></svg>
       <span class="label" id="pa-label"></span>
       <h3 id="pa-title"></h3>
       <p class="fg2 note" id="pa-fil"></p>
+      <p class="pa-mot" id="pa-mot" hidden></p>
       <div class="row" id="pa-actions"></div>
+      <details class="pa-cal" id="pa-besace" hidden><summary></summary><ul class="besace" id="pa-bes"></ul></details>
       <details class="pa-cal" id="pa-cal"><summary>Le calendrier</summary><ol class="pa-cases" id="pa-cases"></ol><p class="note" id="pa-origine"></p></details>
     </div>
     <details class="panel routine" id="routine">
@@ -1615,6 +1636,10 @@ var fin=function(){if(e.parentNode)e.remove();};e.addEventListener('click',fin);
         <p class="fg2" id="pc-desc"></p>
         <div class="crit" id="pc-next"></div>
         <div class="tablewrap" id="pc-skills"></div>
+      </div>
+      <div class="sous" id="passeport" hidden>
+        <div><h2>Mon passeport d'Europe</h2><p class="muted note" id="pp-sub"></p></div>
+        <div class="pp-pages" id="pp-pages"></div>
       </div>
       <div class="sous goal">
         <span class="label">Mon objectif du moment</span>
@@ -2229,11 +2254,40 @@ const EVENTS=[
 ['1225',1991,"Gorbatchev démissionne : l'URSS disparaît le lendemain."],
 ['1227',1822,"Naissance de Louis Pasteur à Dole."],
 ['1228',1895,"Première projection publique payante du cinématographe des frères Lumière, à Paris."],
-['1229',1170,"Thomas Becket est assassiné dans la cathédrale de Cantorbéry."]
+['1229',1170,"Thomas Becket est assassiné dans la cathédrale de Cantorbéry."],
+// semaine de Bretagne : le 4e champ rattache l'événement à une semaine à thème (les frises puisent d'abord dedans)
+['1122',845,"Bataille de Ballon : le Breton Nominoë bat Charles le Chauve.",'bretagne'],
+['0929',1364,"Bataille d'Auray : Jean de Montfort l'emporte et devient duc de Bretagne.",'bretagne'],
+['0713',1380,"Bertrand du Guesclin, connétable de France né près de Dinan, meurt devant Châteauneuf-de-Randon.",'bretagne'],
+['0125',1477,"Naissance d'Anne de Bretagne au château de Nantes.",'bretagne'],
+['0728',1488,"Bataille de Saint-Aubin-du-Cormier : l'armée du roi de France défait celle du duc de Bretagne.",'bretagne'],
+['1206',1491,"Anne de Bretagne épouse le roi Charles VIII à Langeais.",'bretagne'],
+['0108',1499,"Veuve de Charles VIII, Anne de Bretagne épouse Louis XII à Nantes.",'bretagne'],
+['0109',1514,"Anne de Bretagne meurt au château de Blois.",'bretagne'],
+['0420',1534,"Jacques Cartier quitte Saint-Malo pour son premier voyage vers le Nouveau Monde.",'bretagne'],
+['0904',1768,"Naissance de Chateaubriand à Saint-Malo.",'bretagne'],
+['1212',1773,"Naissance du corsaire Robert Surcouf à Saint-Malo.",'bretagne'],
+['0228',1823,"Naissance d'Ernest Renan à Tréguier.",'bretagne'],
+['0208',1828,"Naissance de Jules Verne à Nantes.",'bretagne'],
+['0326',1351,"Combat des Trente, près de Josselin : trente chevaliers bretons affrontent trente Anglais en champ clos.",'bretagne'],
+['0130',1793,"Mort du marquis de la Rouërie, héros de l'indépendance américaine et chef de l'Association bretonne, caché au château de la Guyomarais.",'bretagne'],
+['0625',1804,"Georges Cadoudal, chef chouan né près d'Auray, est guillotiné à Paris.",'bretagne'],
+['0316',1978,"Le pétrolier Amoco Cadiz s'échoue au large de Portsall, dans le Finistère : une des pires marées noires de l'histoire.",'bretagne']
 ];
 const fmtY=y=>y<0?(-y)+' av. J.-C.':String(y);
 // dictées : l niveau 1 à 4, a auteur (null : texte écrit pour Néophyte), p pièges [mot tel qu'il apparaît, règle]
 const DICTEES=[
+  // semaine de Bretagne (sem:'bretagne') : choisies en premier pendant la semaine ; « Dans la cabine des pêcheurs » (Loti, Paimpol) en fait partie
+  {id:'bzh-maree',th:'nature',sem:'bretagne',l:1,ti:'La marée basse à Saint-Malo',a:null,tx:"À marée basse, la plage de Saint-Malo devient immense. Les enfants courent vers les rochers avec leurs seaux et leurs épuisettes. Ils cherchent des crabes, des crevettes et des coquillages. Ici, les marées sont parmi les plus fortes d'Europe. Quand la mer remonte, les parents rappellent tout le monde, et chacun rentre en courant vers les remparts.",
+   p:[["immense","Adjectif en -ense : deux m, puis -ense."],["seaux","Les noms en -eau font leur pluriel en -x."],["épuisettes","Les noms en -ette doublent le t."],["coquillages","-ill- entre deux voyelles ; pluriel en -s."],["parmi","Préposition invariable, sans s."],["rappellent","Rappeler double le l devant un e muet : ils rappellent, nous rappelons."]]},
+  {id:'bzh-carnac',th:'histoire',sem:'bretagne',l:2,ti:'Les pierres de Carnac',a:null,tx:"À Carnac, des milliers de pierres levées s'alignent sur plusieurs kilomètres. On les appelle des menhirs, d'un mot breton qui signifie « pierre longue ». Elles ont été dressées il y a environ six mille ans par des hommes qui ne connaissaient ni l'écriture ni le métal. Comment les ont-ils transportées ? Pourquoi les ont-ils rangées ainsi ? Les savants ont avancé bien des hypothèses, mais aucune ne fait l'unanimité.",
+   p:[["milliers","Millier est un nom : il prend un s au pluriel."],["s'alignent","Verbe pronominal au présent, accordé avec « des milliers de pierres »."],["signifie","Signifier au présent : il signifie, avec le e muet."],["ont été dressées","Passif : le participe s'accorde avec le sujet « elles »."],["transportées","Le COD « les » (les pierres) est placé avant avoir : accord au féminin pluriel."],["rangées","Même règle : « les » est placé avant « ont rangé »."],["hypothèses","Un h, un y, un accent grave."],["aucune","Aucun s'accorde en genre avec ce qu'il remplace (une hypothèse), et reste au singulier."]]},
+  {id:'bzh-rouerie',th:'histoire',sem:'bretagne',l:3,ti:'Le colonel Armand',a:null,tx:"Né à Fougères en 1751, Armand Tuffin, marquis de la Rouërie, s'embarqua en 1777 pour l'Amérique, où les insurgés s'étaient soulevés contre l'Angleterre. Il y combattit sous le nom de colonel Armand, et Washington lui-même le tenait en haute estime. Revenu en Bretagne, il fonda l'Association bretonne pour défendre les libertés de la province. Traqué par la Révolution, il mourut caché en 1793. Chateaubriand, qui l'avait connu, lui a consacré quelques pages admiratives.",
+   p:[["s'embarqua","Passé simple du premier groupe : il s'embarqua, sans s."],["s'étaient soulevés","Verbe pronominal au plus-que-parfait : accord avec le sujet « les insurgés »."],["combattit","Passé simple de combattre : il combattit."],["lui-même","Pronom renforcé par « même », avec un trait d'union."],["Revenu","Participe employé seul, accordé avec le sujet de la phrase (il, le marquis)."],["Traqué","Même règle : accord avec « il »."],["consacré","Le COD « quelques pages » est placé après avoir : pas d'accord."],["admiratives","Adjectif accordé avec « pages », féminin pluriel."]]},
+  {id:'bzh-chateaubriand',th:'lettres',sem:'bretagne',l:4,ti:'Né au bruit des vagues',a:"Chateaubriand, Mémoires d'outre-tombe, première partie, livre premier (1848)",tx:"J'étais presque mort quand je vins au jour. Le mugissement des vagues, soulevées par une bourrasque annonçant l'équinoxe d'automne, empêchait d'entendre mes cris : on m'a souvent conté ces détails ; leur tristesse ne s'est jamais effacée de ma mémoire. Il n'y a pas de jour où, rêvant à ce que j'ai été, je ne revoie en pensée le rocher sur lequel je suis né, la chambre où ma mère m'infligea la vie, la tempête dont le bruit berça mon premier sommeil, le frère infortuné qui me donna un nom que j'ai presque toujours traîné dans le malheur.",
+   p:[["vins","Passé simple de venir : je vins."],["soulevées","Participe accordé avec « les vagues », féminin pluriel."],["annonçant","Participe présent, invariable ; cédille devant a."],["équinoxe","Nom masculin : l'équinoxe d'automne."],["effacée","Verbe pronominal : accord avec le sujet « leur tristesse »."],["revoie","Subjonctif présent après « il n'y a pas de jour où… ne » : que je revoie."],["infligea","Passé simple ; le e après le g garde le son « j » devant a."],["berça","Passé simple ; cédille devant a."],["traîné","Le COD « que » (un nom) est placé avant avoir : accord au masculin singulier."]]},
+  {id:'bzh-ys',th:'lettres',sem:'bretagne',l:4,ti:'La ville d’Ys',a:null,tx:"La légende de la ville d'Ys, que les conteurs bretons se sont transmise de génération en génération, rapporte qu'une cité florissante s'élevait jadis dans la baie de Douarnenez. Protégée de la mer par une digue, elle ne s'ouvrait qu'avec une clé que le roi Gradlon gardait sur lui. Sa fille Dahut, qu'on a souvent dite ensorcelée, la lui aurait dérobée pendant son sommeil. Les flots se sont engouffrés dans la ville ; certains pêcheurs l'ont entendue sonner, les jours de calme, du fond de la mer.",
+   p:[["transmise","Verbe pronominal à sens réfléchi indirect (se transmettre quelque chose) : accord avec le COD « que » (la légende), placé avant."],["florissante","Adjectif verbal de fleurir, au sens de prospérer : florissant, avec un o."],["jadis","Adverbe invariable, avec un s final."],["Protégée","Participe employé comme adjectif, accordé avec « elle » (la cité)."],["dite","Accord avec le COD « qu' » (Dahut), placé avant avoir."],["dérobée","Accord avec le COD « la » (la clé), placé avant avoir."],["se sont engouffrés","Verbe essentiellement pronominal : accord avec le sujet « les flots »."],["entendue","« L' » (la ville) fait l'action de sonner : le participe suivi d'un infinitif s'accorde."]]},
   {id:'marche',th:'',l:1,ti:'Le marché du samedi',a:null,tx:"Chaque samedi, ma grand-mère part au marché avec son panier. Elle achète des pommes, des poireaux et un gros pain de campagne. Les marchands l'appellent par son prénom et lui gardent les plus beaux fruits. Sur le chemin du retour, elle s'arrête toujours pour bavarder avec ses voisines.",
    p:[["grand-mère","Nom composé avec trait d'union ; « grand » reste invariable devant un nom féminin."],["achète","Acheter prend un accent grave devant une syllabe muette : elle achète, nous achetons."],["poireaux","Les noms en -eau font leur pluriel en -x."],["appellent","Appeler double le l devant un e muet : ils appellent, nous appelons."],["beaux","Beau devient beaux au pluriel."],["s'arrête","Verbe pronominal : elle s'arrête, avec l'apostrophe."]]},
   {id:'chat',th:'',l:1,ti:'Le chat de la voisine',a:null,tx:"Le chat de la voisine est entré par la fenêtre ouverte. Il a sauté sur la table, renversé un verre et mangé les restes du dîner. Quand nous sommes arrivés, il dormait tranquillement sur le canapé. Nous avons ri, puis nous l'avons ramené chez lui.",
@@ -2281,7 +2335,7 @@ const DICTEES=[
   {id:"fadette1",th:"lettres",l:3,ti:"Landry frappe à la porte",a:"George Sand, La Petite Fadette (1849)",tx:"La pluie tombait et grésillait sur le vitrage, et Fanchon pensait à son amoureux, lorsqu'on frappa à la porte, et une voix lui dit : — Fanchon Fadet, êtes-vous là, et me reconnaissez-vous ? Elle ne fut point engourdie pour aller ouvrir, et grande fut sa joie en se laissant serrer sur le cœur de son ami Landry.",p:[["grésillait","Imparfait : -ait ; deux l."],["vitrage","Un seul t."],["lorsqu'on","Élision : lorsque devant on."],["frappa","Deux p ; passé simple en -a."],["êtes-vous","Accent circonflexe ; trait d'union."],["engourdie","Accordé avec « elle »."],["grande fut sa joie","Inversion : l'adjectif s'accorde avec « joie »."],["serrer","Deux r."]]},
   {id:"loup1",th:"lettres nature",l:4,ti:"La Mort du loup",a:"Alfred de Vigny, Les Destinées (1864)",tx:"Les nuages couraient sur la lune enflammée\nComme sur l'incendie on voit fuir la fumée,\nEt les bois étaient noirs jusques à l'horizon.\nNous marchions, sans parler, dans l'humide gazon,\nDans la bruyère épaisse et dans les hautes brandes,\nLorsque, sous des sapins pareils à ceux des landes,\nNous avons aperçu les grands ongles marqués\nPar les loups voyageurs que nous avions traqués.",p:[["couraient","Courir n'a qu'un r à l'imparfait."],["enflammée","Deux m ; accordé avec « lune »."],["l'incendie","Nom masculin malgré le e final."],["jusques","Forme ancienne de « jusque », gardée par le poète pour le vers."],["l'humide","H muet : élision."],["bruyère","Y après le r."],["pareils","Accordé avec « sapins »."],["traqués","Le COD « que » (les loups) est placé avant : accord au masculin pluriel."]]},
   {id:"parure1",th:"lettres",l:3,ti:"La pauvreté du logement",a:"Guy de Maupassant, « La Parure » (1884)",tx:"Elle souffrait de la pauvreté de son logement, de la misère des murs, de l'usure des sièges, de la laideur des étoffes. Toutes ces choses, dont une autre femme de sa caste ne se serait même pas aperçue, la torturaient et l'indignaient. La vue de la petite Bretonne qui faisait son humble ménage éveillait en elle des regrets désolés et des rêves éperdus.",p:[["pauvreté","Nom en -té : pas de e final."],["sièges","Accent grave."],["étoffes","Deux f."],["aperçue","Accord avec « une autre femme » (s'apercevoir de) ; cédille devant u."],["torturaient","Imparfait pluriel : -aient."],["l'indignaient","Imparfait pluriel ; le sujet est « toutes ces choses »."],["humble","H muet."],["éperdus","Accordé avec « rêves »."]]},
-  {id:"islande1",th:"lettres",l:3,ti:"Dans la cabine des pêcheurs",a:"Pierre Loti, Pêcheur d'Islande (1886)",tx:"Il y avait du feu dans un fourneau ; leurs vêtements mouillés séchaient, en répandant de la vapeur qui se mêlait aux fumées de leurs pipes de terre. Leur table massive occupait toute leur demeure ; elle en prenait très exactement la forme, et il restait juste de quoi se couler autour pour s'asseoir sur des caissons étroits scellés aux murailles de chêne.",p:[["séchaient","Imparfait pluriel, accordé avec « vêtements »."],["mêlait","Accent circonflexe sur mêler."],["massive","Deux s."],["exactement","Adverbe formé sur « exacte »."],["s'asseoir","Infinitif : -eoir."],["étroits","Accordé avec « caissons »."],["scellés","Deux l ; accordé avec « caissons »."],["chêne","L'arbre : accent circonflexe (la chaîne s'écrit autrement)."]]},
+  {id:"islande1",th:"lettres",sem:"bretagne",l:3,ti:"Dans la cabine des pêcheurs",a:"Pierre Loti, Pêcheur d'Islande (1886)",tx:"Il y avait du feu dans un fourneau ; leurs vêtements mouillés séchaient, en répandant de la vapeur qui se mêlait aux fumées de leurs pipes de terre. Leur table massive occupait toute leur demeure ; elle en prenait très exactement la forme, et il restait juste de quoi se couler autour pour s'asseoir sur des caissons étroits scellés aux murailles de chêne.",p:[["séchaient","Imparfait pluriel, accordé avec « vêtements »."],["mêlait","Accent circonflexe sur mêler."],["massive","Deux s."],["exactement","Adverbe formé sur « exacte »."],["s'asseoir","Infinitif : -eoir."],["étroits","Accordé avec « caissons »."],["scellés","Deux l ; accordé avec « caissons »."],["chêne","L'arbre : accent circonflexe (la chaîne s'écrit autrement)."]]},
   {id:"conscrit1",th:"lettres histoire",l:3,ti:"La vieille grand-mère",a:"Erckmann-Chatrian, Histoire d'un conscrit de 1813 (1864)",tx:"La grand-mère, tellement vieille qu'on ne voyait plus ses yeux, dormait dans un antique fauteuil, au haut duquel perchait une pie. Le père Brainstein, quand il n'avait pas à sonner les cloches pour un baptême, un enterrement ou un mariage, lisait dans son almanach, derrière les petites vitres rondes de la croisée.",p:[["grand-mère","Trait d'union ; « grand » invariable."],["tellement","Deux l."],["antique","Pas de h."],["perchait","Imparfait : -ait."],["baptême","Le p ne se prononce pas ; accent circonflexe."],["enterrement","Deux r."],["almanach","Le ch final ne se prononce pas."],["croisée","Nom féminin en -ée."]]},
   {id:"magloire1",th:"lettres",l:3,ti:"Les pommes de terre",a:"Guy de Maupassant, « Le Petit Fût » (1884)",tx:"Ses doigts crochus, noués, durs comme des pattes de crabe, saisissaient à la façon de pinces les tubercules grisâtres dans une manne, et vivement elle les faisait tourner, enlevant de longues bandes de peau sous la lame d'un vieux couteau qu'elle tenait de l'autre main. Et, quand la pomme de terre était devenue toute jaune, elle la jetait dans un seau d'eau.",p:[["crochus","Accordé avec « doigts »."],["noués","Accordé avec « doigts »."],["saisissaient","Imparfait pluriel : -aient."],["grisâtres","Suffixe -âtre avec accent circonflexe."],["vivement","Adverbe."],["enlevant","Participe présent : invariable."],["devenue","Accordé avec « la pomme de terre »."],["seau","Le récipient : s-e-a-u."]]},
   {id:"gene1",th:"lettres eco",l:2,ti:"On économisait sur tout",a:"Guy de Maupassant, « Mon oncle Jules » (1883)",tx:"On économisait sur tout ; on n'acceptait jamais un dîner, pour n'avoir pas à le rendre ; on achetait les provisions au rabais, les fonds de boutique. Mes sœurs faisaient leurs robes elles-mêmes et avaient de longues discussions sur le prix du galon qui valait quinze centimes le mètre. Notre nourriture ordinaire consistait en soupe grasse et bœuf accommodé à toutes les sauces.",p:[["économisait","Imparfait : -ait."],["n'acceptait","Deux c."],["dîner","Accent circonflexe (« diner » admis depuis 1990)."],["rabais","Avec un s final."],["sœurs","Le o et le e sont liés."],["elles-mêmes","Trait d'union ; « même » s'accorde."],["discussions","Deux s."],["accommodé","Deux c, deux m."]]},
@@ -2738,6 +2792,10 @@ const QUOTES=[
 {id:'burke-contrat',c:'nation',q:"La société est un contrat (…) entre ceux qui vivent, ceux qui sont morts et ceux qui sont à naître.",a:"Edmund Burke",s:"Réflexions sur la Révolution de France (1790)",n:"Le texte fondateur du conservatisme moderne. On hérite d'un patrimoine qu'on doit transmettre : on n'en est pas le propriétaire, seulement le dépositaire.",k:"naître"},
 {id:'chesterton',c:'nation',q:"La tradition, c'est donner le droit de vote à la plus obscure des classes, nos ancêtres. C'est la démocratie des morts.",a:"G. K. Chesterton",s:"Orthodoxie, chapitre IV (1908)",n:"Pour Chesterton, mépriser la tradition, c'est laisser décider la petite minorité de ceux qui se trouvent vivants aujourd'hui.",k:"ancêtres"},
 {id:'tocq-passe',c:'nation',q:"Quand le passé n'éclaire plus l'avenir, l'esprit marche dans les ténèbres.",a:"Alexis de Tocqueville",s:"De la démocratie en Amérique, tome II, dernier chapitre (1840)",n:"Tocqueville constate que la démocratie rompt la chaîne des générations. Sans héritage, chacun doit tout réinventer seul.",k:"ténèbres"},
+{id:'bzh-devise',c:'histoire',sem:'bretagne',q:"Plutôt la mort que la souillure.",a:"Devise des ducs de Bretagne",s:"En latin Potius mori quam foedari, en breton Kentoc'h mervel eget bezañ saotret ; devise associée à l'hermine, emblème du duché",n:"La légende raconte qu'une hermine poursuivie préféra se laisser prendre plutôt que de salir sa fourrure blanche dans la boue. Il y a des choses qu'on ne cède pas, même pour sauver sa peau.",k:"souillure"},
+{id:'guesclin',c:'histoire',sem:'bretagne',q:"Il n'est fileuse en France qui ne file pour payer ma rançon.",a:"Bertrand du Guesclin",s:"Mot rapporté après sa capture à Nájera (1367) ; Cuvelier, Chanson de Bertrand du Guesclin, fin du XIVe siècle",n:"Prisonnier du Prince Noir, le Breton fixe lui-même sa rançon à une somme énorme. Le mot a sans doute été embelli par la légende, mais il dit la popularité du futur connétable.",k:"fileuse"},
+{id:'chateaubriand-vie',c:'classique',sem:'bretagne',q:"Il n'y a pas de jour où (…) je ne revoie en pensée le rocher sur lequel je suis né, la chambre où ma mère m'infligea la vie, la tempête dont le bruit berça mon premier sommeil.",a:"Chateaubriand",s:"Mémoires d'outre-tombe, première partie, livre premier (1848)",n:"Né à Saint-Malo en septembre 1768, un soir de tempête. Chateaubriand fait de sa naissance un présage : la mer, l'orage et la mélancolie l'accompagneront toute sa vie.",k:"infligea"},
+{id:'renan-ys',c:'classique',sem:'bretagne',q:"Il me semble souvent que j'ai au fond du cœur une ville d'Is qui sonne encore des cloches obstinées à convoquer aux offices sacrés des fidèles qui n'entendent plus.",a:"Ernest Renan",s:"Souvenirs d'enfance et de jeunesse, préface (1883)",n:"Le Breton de Tréguier a quitté la foi de son enfance, mais pas sa nostalgie. Il reprend la légende de la ville engloutie, dont on entendrait encore les cloches sous la mer.",k:"cloches"},
 {id:'renan-ame',c:'nation',q:"Une nation est une âme, un principe spirituel.",a:"Ernest Renan",s:"« Qu'est-ce qu'une nation ? », conférence à la Sorbonne, 11 mars 1882",n:"Pour Renan, deux choses font cette âme : un riche legs de souvenirs, et le désir présent de continuer à vivre ensemble.",k:"âme"},
 {id:'renan-pleb',c:'nation',q:"L'existence d'une nation est (…) un plébiscite de tous les jours.",a:"Ernest Renan",s:"« Qu'est-ce qu'une nation ? », conférence à la Sorbonne, 11 mars 1882",n:"Ni la race, ni la langue, ni la religion ne suffisent à faire une nation : il faut un héritage accepté et une volonté renouvelée. Renan répond à l'annexion de l'Alsace-Moselle par l'Allemagne.",k:"plébiscite"},
 {id:'renan-gloires',c:'nation',q:"Avoir des gloires communes dans le passé, une volonté commune dans le présent ; avoir fait de grandes choses ensemble, vouloir en faire encore, voilà les conditions essentielles pour être un peuple.",a:"Ernest Renan",s:"« Qu'est-ce qu'une nation ? », conférence à la Sorbonne, 11 mars 1882",n:"Le passé et le projet vont ensemble : la mémoire seule ne suffit pas, la volonté seule non plus.",k:"gloires"},
@@ -3457,9 +3515,11 @@ function speak(text,rate){
   try{speechSynthesis.cancel();const u=new SpeechSynthesisUtterance(text);u.lang='fr-FR';const v=frVoice();if(v)u.voice=v;u.rate=rate;speechSynthesis.speak(u);return true;}catch(e){return false;}
 }
 const wordCount=tx=>(tx.match(/\p{L}+/gu)||[]).length;
+// la semaine à thème du jour (B.parcours avec theme), ou rien
+function semTh(){const p=parcOf(pToday());return p&&p.theme||'';}
 function pickDictee(l){
-  const last=new Map(state.results.filter(r=>r.ex==='dictee'&&r.id).map(r=>[r.id,r.t]));
-  const due=d=>(last.get(d.id)||0)-(hasTheme(d.th)?7*864e5:0);
+  const last=new Map(state.results.filter(r=>r.ex==='dictee'&&r.id).map(r=>[r.id,r.t])), th=semTh();
+  const due=d=>(last.get(d.id)||0)-(hasTheme(d.th)?7*864e5:0)-(th&&d.sem===th?3650*864e5:0);
   return DICTEES.filter(d=>d.l===l).sort(()=>Math.random()-.5).sort((a,b)=>due(a)-due(b))[0];
 }
 // règles ratées récemment : orthographe et dictées, pour cibler la suite
@@ -3920,7 +3980,7 @@ function renderCalib(){
 }
 function renderProgress(){
   if($('#v-progres').hidden)return; // recalculé à l'ouverture de l'onglet
-  renderEtapes(); renderCalib();
+  renderEtapes(); renderPasseport(); renderCalib();
   const st=streaks(), t=todayKey();
   $('#k-streak').textContent=st.cur; $('#k-best').textContent=st.best;
   let a=0; for(let i=0;i<30;i++)if(isActive(addDays(t,-i)))a++; $('#k-active').textContent=a;
@@ -4154,9 +4214,11 @@ const EMB={
   cle:'M8 4a4 4 0 1 0 0 8a4 4 0 1 0 0-8M11 11l9 9M17 17l2-2M14.5 14.5l2-2',
   bois:'M12 21v-7M12 14C8.5 12.5 6.5 9 6.5 3.5M6.5 8L3.5 5.5M6.5 11.5l-3.5.5M12 14c3.5-1.5 5.5-5 5.5-10.5M17.5 8l3-2.5M17.5 11.5l3.5.5',
   bougie:'M9 10h6v11H9zM12 10V8M12 3c1 2 2 3 0 5-2-2-1-3 0-5',
+  // la moucheture d'hermine des ducs de Bretagne : trois points, puis la queue qui s'évase
+  hermine:'M12 3.5a1.2 1.2 0 1 0 0 .01M8.3 5.3a1.2 1.2 0 1 0 0 .01M15.7 5.3a1.2 1.2 0 1 0 0 .01M12 8v12.5M12 8c0 5-2 8.5-5.5 12.5M12 8c0 5 2 8.5 5.5 12.5',
   etoile:'M12 3l2.6 5.6 6 .7-4.5 4.1 1.3 6L12 16.4 6.6 19.4l1.3-6L3.4 9.3l6-.7z'};
-// trois métaux : bronze, argent, or ; « gris » pour un badge pas encore gagné
-const METAL={bronze:['#F2C9A0','#C2864F','#7E4B22'],argent:['#FBFCFD','#C3C8CE','#7D838B'],or:['#F3DC9A','#C99E3E','#7E5F17'],gris:['#F3F1EC','#E2DED5','#B8B2A6']};
+// trois métaux : bronze, argent, or ; « gris » pour un badge pas encore gagné, « noir » pour celui d'une semaine à thème annoncée
+const METAL={bronze:['#F2C9A0','#C2864F','#7E4B22'],argent:['#FBFCFD','#C3C8CE','#7D838B'],or:['#F3DC9A','#C99E3E','#7E5F17'],gris:['#F3F1EC','#E2DED5','#B8B2A6'],noir:['#8A847C','#2E2A27','#141210']};
 const METAL_NOM={bronze:'bronze',argent:'argent',or:'or'};
 let medalN=0;
 // médaille frappée : pièce, grènetis, emblème en relief
@@ -4354,6 +4416,17 @@ const ATTRS=[
     const c=g>=3?'#C9A440':'#5B7A3A', n=g>=2?7:5; let o=`<g class="acc" fill="${c}">`;
     for(const sd of[-1,1])for(let i=0;i<n;i++){const x=(50+sd*(3.6+i*(14.5/n))).toFixed(1), y=(35+i*i*(10/(n*n))*1.7).toFixed(1);o+=`<ellipse cx="${x}" cy="${y}" rx="${n>5?2.9:3.3}" ry="1.4" transform="rotate(${sd*(8+i*(52/n))} ${x} ${y})"/>`;}
     return o+`<circle cx="50" cy="34.6" r="1.3" fill="${g>=3?'#8E2F2B':'#8C6A2C'}"/></g>`;}],
+  // semaine de Bretagne : le collier de l'ordre de l'Hermine (créé par le duc Jean IV en 1381).
+  // I trois jours sur sept, II cinq jours, III doré : cinq jours et l'énigme du dimanche de la semaine résolue
+  ['hermine','Le collier de l’Hermine','jours de la semaine de Bretagne',[1,2,3],()=>semGrade('bretagne-2026'),g=>{
+    const B=t=>[(1-t)*(1-t)*37+2*(1-t)*t*50+t*t*63,(1-t)*(1-t)*81+2*(1-t)*t*90+t*t*81], f=n=>n.toFixed(1);
+    const ch=g>=3?'#C9A440':g>=2?'#B9BEC4':'#F4EEDD', st=g>=3?'#8C6A2C':'#7D838B';
+    const mo=(x,y,s)=>`<g transform="translate(${f(x)} ${f(y)}) scale(${s})" fill="#1F1B18"><circle cy="-2.1" r=".62"/><circle cx="-1.25" cy="-1.5" r=".56"/><circle cx="1.25" cy="-1.5" r=".56"/><path d="M0-1C.5.6 1.4 1.7 1.9 2.7L.6 2.2 0 3 -.6 2.2-1.9 2.7C-1.4 1.7-.5.6 0-1z"/></g>`;
+    let o=`<g class="acc"><path d="M37 81Q50 90 63 81" fill="none" stroke="${st}" stroke-width="${g>=2?1.9:1.3}"/><path d="M37 81Q50 90 63 81" fill="none" stroke="${ch}" stroke-width="${g>=2?1.1:.7}" stroke-dasharray="${g>=2?'1.4 .8':'none'}"/>`;
+    if(g>=2)for(const t of[.2,.35,.65,.8]){const[x,y]=B(t);o+=`<ellipse cx="${f(x)}" cy="${f(y)}" rx="1.9" ry="1.5" fill="#FBF8F2" stroke="${st}" stroke-width=".35"/>`+mo(x,y+.2,.42);}
+    const[cx,cy]=B(.5);
+    o+=`<path d="M${f(cx)} ${f(cy)}v2" stroke="${st}" stroke-width=".7"/><ellipse cx="${f(cx)}" cy="${f(cy+5)}" rx="3.4" ry="3.9" fill="${g>=3?'#E9C766':'#FBF8F2'}" stroke="${st}" stroke-width=".6"/>`+mo(cx,cy+5,.78);
+    return o+'</g>';},g=>semNote('bretagne-2026',g),'bretagne-2026'],
   // la parure d'Europe, gagnée par le parrainage : I le lierre d'Athènes (premier ami inscrit), II le manteau normand (premier ami actif),
   // III la fraise et le manteau noir de l'Espagne du Siècle d'or (dix amis actifs)
   ['parure','La parure d’Europe','parrainage',[1,2,3],()=>parureGrade(),g=>{
@@ -4374,6 +4447,21 @@ const ATTRS=[
     `<g class="acc"><path d="M41.5 41C41 33 45 28.5 51 28c4.4-.3 7.4 2.6 8.3 6.6L58.8 41Z" fill="#B8862E" stroke="#7A5A18" stroke-width=".6"/><path d="M44 39.5c.5-4 2.6-7.4 6.4-8.6M48 39.5c.4-3.6 2-6.6 5.4-7.6" fill="none" stroke="#E9C766" stroke-width=".5"/><rect x="40.6" y="38.6" width="19" height="3.2" rx="1.2" fill="#F4EFE6" stroke="#A39B8E" stroke-width=".4"/><circle cx="50" cy="40.2" r=".8" fill="#8E2F2B"/></g>`,
     g=>g?'Le corno ducale de Venise, réservé aux Mécènes de Néophyte':'Réservé aux Mécènes : vingt-cinq amis actifs (Amis · Parrainer)']
 ];
+// semaines à thème (B.parcours avec un « theme ») : le palier de leur parure, et ce qu'il reste à faire
+const semOf=id=>(NB.parcours||[]).find(p=>p.id===id)||null;
+function semGrade(id){const p=semOf(id); if(!p)return 0; const n=parcDone(p,true).length, e=(state.enquetes||{})[p.enigme];
+  return n>=5?(e&&e.ok?3:2):n>=3?1:0;}
+function semNote(id,g){
+  const p=semOf(id); if(!p)return ''; const k=todayKey(), n=parcDone(p,true).length, dates=`du ${fd(new Date(p.du+'T12:00:00'),{weekday:'long',day:'numeric'})} au ${fd(new Date(p.au+'T12:00:00'),{weekday:'long',day:'numeric',month:'long'})}`;
+  if(g>=3)return `Palier d’or : la semaine de ${p.court} faite, et l’énigme de son dimanche résolue`;
+  if(k<p.du)return `À gagner pendant la semaine de ${p.court}, ${dates}`;
+  const fin=k>p.au;
+  if(g===2)return fin?`Collier d’argent : cinq jours de la semaine de ${p.court}`:`Palier d’or : résoudre l’énigme du dimanche de la semaine (Exercices)`;
+  if(g===1)return fin?`Premier palier : trois jours de la semaine de ${p.court}`:`Palier suivant : cinq jours sur sept · ${n} sur 5`;
+  return `Premier palier : trois jours de la semaine de ${p.court} · ${n} sur 3`;
+}
+const semAnnonce=a=>{const p=a[7]&&semOf(a[7]);return !!p&&todayKey()<p.du;};
+const semPassee=a=>{const p=a[7]&&semOf(a[7]);return !!p&&todayKey()>p.au;};
 // le palier atteint (0 à 3) et la suite
 const attrGrade=a=>{const n=a[4]();return a[3].filter(t=>n>=t).length;};
 const cerf=()=>{const c=state.cerf||(state.cerf={nom:'',pel:'fauve',port:[]});c.port=c.port||[];if(Array.isArray(c.won)||!c.won)c.won={};return c;};
@@ -4394,7 +4482,7 @@ function checkAttrs(){
   const c=cerf(); let nu=null;
   for(const a of ATTRS){const g=attrGrade(a);if(g>(c.won[a[0]]||0)){c.won[a[0]]=g;if(!c.port.includes(a[0]))c.port.push(a[0]);nu=[a,g];}}
   if(nu){persist();stagKey='';cerfIcon();}
-  if(nu&&!['parure','doge'].includes(nu[0][0])&&state.results.length>1)toast(`<span>${nu[1]>1?'Ton cerf passe au palier '+roman(nu[1])+' : ':'Ton cerf a gagné '}${nu[0][1].toLowerCase()}</span><span class="note">Réglages · Mon cerf</span>`);
+  if(nu&&!['parure','doge'].includes(nu[0][0])&&state.results.length>1)toast(`<span>${nu[1]>1?'Ton cerf passe au palier '+roman(nu[1])+' : ':'Ton cerf a gagné '}${nu[0][1].charAt(0).toLowerCase()+nu[0][1].slice(1)}</span><span class="note">Réglages · Mon cerf</span>`);
   return nu;
 }
 function renderCerf(){
@@ -4404,15 +4492,15 @@ function renderCerf(){
   $('#mc-icon').setAttribute('aria-pressed',String(!!c.icon)); $('#mc-icon').textContent=c.icon?'Icône : ton cerf':'Faire de mon cerf l’icône';
   $('#mc-pel').replaceChildren(...Object.entries(PELAGES).map(([k,p])=>{const ok=!p[3]||p[3](gamiCtx);
     return el('button',{'aria-pressed':String(c.pel===k),disabled:ok?null:'',title:ok?p[0]:p[2],style:'--sw:'+((p[1]||{})['--stag']||'#B07D4E'),onclick:()=>{c.pel=k;save();stagKey='';renderStag();renderCerf();cerfIcon();}},el('i',{class:'sw'}),document.createTextNode(p[0]+(ok?'':p[4]||' · niveau V')));}));
-  $('#mc-attrs').replaceChildren(...ATTRS.map(a=>{const n=a[4](), g=attrGrade(a), nx=a[3][g], prev=g?a[3][g-1]:0, on=g&&c.port.includes(a[0]);
+  $('#mc-attrs').replaceChildren(...ATTRS.filter(a=>attrGrade(a)||!semPassee(a)).map(a=>{const n=a[4](), g=attrGrade(a), nx=a[3][g], prev=g?a[3][g-1]:0, on=g&&c.port.includes(a[0]);
     const pips=el('span',{class:'pips3',role:'img','aria-label':`Palier ${g} sur 3`},...[1,2,3].map(i=>el('i',{class:i<=g?'on g'+i:''})));
-    return el('li',{class:g?'':'locked'},el('span',{class:'stag mini','aria-hidden':'true',html:attrIcon(a,Math.max(1,g))}),
+    return el('li',{class:g?'':semAnnonce(a)?'locked annonce':'locked'},el('span',{class:'stag mini','aria-hidden':'true',html:attrIcon(a,Math.max(a[7]?3:1,g))}),
       el('div',{},el('b',{},document.createTextNode(a[1]),pips),
         el('span',{class:'note',text:a[6]?a[6](g):nx?`${g?'Palier suivant':'Premier palier'} : ${fmt(nx)} ${a[2]} · ${fmt(n)} sur ${fmt(nx)}`:`Palier d’or : ${fmt(n)} ${a[2]}`}),
         nx&&!a[6]?el('span',{class:'mini-bar'},el('i',{style:`width:${Math.min(100,(n-prev)/(nx-prev)*100)}%`})):null),
       g?el('button',{class:'btn mini'+(on?' gold':''),'aria-pressed':String(on),text:on?'Porté':'Porter',onclick:()=>{c.port=on?c.port.filter(x=>x!==a[0]):[...c.port,a[0]];save();stagKey='';renderStag();renderCerf();cerfIcon();}}):el('span',{class:'note',text:'À gagner'}));}));
 }
-const attrIcon=(a,g)=>`<svg viewBox="${a[0]==='plume'?'60 20 34 34':a[0]==='lunettes'?'32 40 36 24':a[0]==='lanterne'?'72 66 26 30':a[0]==='livre'?'4 80 30 20':a[0]==='parure'?(g>1?'24 72 52 28':'34 74 32 20'):a[0]==='doge'?'38 26 24 18':'34 26 32 18'}">${a[5](g)}</svg>`;
+const attrIcon=(a,g)=>`<svg viewBox="${a[0]==='plume'?'60 20 34 34':a[0]==='lunettes'?'32 40 36 24':a[0]==='lanterne'?'72 66 26 30':a[0]==='livre'?'4 80 30 20':a[0]==='parure'?(g>1?'24 72 52 28':'34 74 32 20'):a[0]==='doge'?'38 26 24 18':a[0]==='hermine'?'35 78 30 22':'34 26 32 18'}">${a[5](g)}</svg>`;
 /* ---------- parrainage : un lien par compte, des cadeaux pour le cerf ---------- */
 // le code d'un lien ?parrain=XXXXXXXX est gardé jusqu'à l'inscription, puis remis au serveur
 const LS_PARR='brainfit.parrain', SITE_URL='https://yohandk.github.io/Brain-Fit/';
@@ -4737,18 +4825,19 @@ function renderXpPanel(){
   const bx=$('#badges'); bx.replaceChildren(); const fams=badgeFams(gamiCtx); let got=0, tot=0;
   const rows=fams.map(f=>{const st=famState(f);got+=f.steps.filter(s=>(state.badges||{})[s.id]).length;tot+=f.steps.length;return{f,st};});
   const pb=prochainBadge(), proches=rows.filter(r=>!r.st.best&&!r.f.saison&&r.f.v>0).sort((a,b)=>b.st.pct-a.st.pct).slice(0,3).map(r=>r.f.k);
-  const tk=todayKey(), horsSaison=r=>r.f.saison&&!r.st.best&&(tk>r.f.saison.au||tk<r.f.saison.du);
-  const vis=rows.filter(r=>!horsSaison(r)).filter(r=>badgesAll||r.st.best||proches.includes(r.f.k)||(pb&&pb.f===r.f));
+  const tk=todayKey(), annonce=r=>!!(r.f.saison&&r.f.saison.theme&&!r.st.best&&tk<r.f.saison.du);
+  const horsSaison=r=>r.f.saison&&!r.st.best&&!annonce(r)&&(tk>r.f.saison.au||tk<r.f.saison.du);
+  const vis=rows.filter(r=>!horsSaison(r)).filter(r=>badgesAll||r.st.best||annonce(r)||proches.includes(r.f.k)||(pb&&pb.f===r.f));
   if(!vis.length)vis.push(...rows.slice(0,3));
   // repliés, six pièces : le prochain badge, puis les plus beaux métaux gagnés, puis les plus proches
-  const rang=r=>(pb&&pb.f===r.f)?9:r.st.best?['bronze','argent','or'].indexOf(r.st.best.metal)+3:r.st.pct;
+  const rang=r=>(pb&&pb.f===r.f)?9:annonce(r)?8.5:r.st.best?['bronze','argent','or'].indexOf(r.st.best.metal)+3:r.st.pct;
   if(!badgesAll){vis.sort((a,b)=>rang(b)-rang(a));vis.splice(6);}
-  for(const{f,st} of vis){
+  for(const r of vis){const{f,st}=r, an=annonce(r);
     const shown=st.best||st.next, metal=st.best?st.best.metal:'gris', multi=f.steps.length>1;
-    const sub=st.next?(st.next.seuil===1?el('span',{text:st.next.desc}):el('span',{class:'jauge'},el('span',{class:'bar'},el('i',{style:`width:${Math.round(st.pct*100)}%`})),el('span',{text:`${fmt(Math.min(f.v,st.next.seuil))} / ${fmt(st.next.seuil)}`+(st.best&&st.next.metal!=='bronze'?` vers l’${METAL_NOM[st.next.metal]}`:'')})))
+    const sub=an?el('span',{text:`Semaine de ${f.saison.court} · du ${fd(new Date(f.saison.du+'T12:00:00'),{day:'numeric'})} au ${fd(new Date(f.saison.au+'T12:00:00'),{day:'numeric',month:'long'})}`}):st.next?(st.next.seuil===1?el('span',{text:st.next.desc}):el('span',{class:'jauge'},el('span',{class:'bar'},el('i',{style:`width:${Math.round(st.pct*100)}%`})),el('span',{text:`${fmt(Math.min(f.v,st.next.seuil))} / ${fmt(st.next.seuil)}`+(st.best&&st.next.metal!=='bronze'?` vers l’${METAL_NOM[st.next.metal]}`:'')})))
       :el('span',{text:'Obtenu le '+fd(new Date(state.badges[st.best.id]),{day:'numeric',month:'short'})});
-    bx.append(el('div',{class:'badge'+(st.best?'':' locked')+(pb&&pb.f===f?' proche':''),title:(st.next||st.best).desc},
-      el('span',{class:'medal',html:medalSVG(f.emb,metal)}),el('strong',{text:shown.name}),
+    bx.append(el('div',{class:'badge'+(st.best?'':' locked')+(an?' annonce':'')+(pb&&pb.f===f?' proche':''),title:(st.next||st.best).desc},
+      el('span',{class:'medal',html:medalSVG(f.emb,an?'noir':metal)}),el('strong',{text:shown.name}),
       multi?el('span',{class:'paliers','aria-label':`${f.steps.filter(s=>(state.badges||{})[s.id]).length} palier(s) sur ${f.steps.length}`},...f.steps.map(s=>el('i',{class:(state.badges||{})[s.id]?s.metal:''}))):null,sub));}
   $('#badge-count').textContent=`${got} sur ${tot}`;
   const more=$('#badges-more'); const nv=rows.filter(r=>!horsSaison(r)).length; more.hidden=vis.length>=nv&&!badgesAll; more.textContent=badgesAll?'Montrer moins':`Voir les ${nv} badges`;
@@ -6099,12 +6188,13 @@ function renderParcours(){
   // la semaine d'avant, une annonce seulement : ni les cases ni les fils ne se dévoilent avant le premier jour
   const k=pToday(), p=parcOf(k), soon=p?null:parcSoon(k); box.hidden=!p&&!soon; if(box.hidden)return;
   const actions=$('#pa-actions'); actions.replaceChildren();
-  const avent=/^avent/.test((p||soon).id); box.classList.toggle('sans-ico',!avent); $('#pa-ico').style.display=avent?'':'none';
+  const pp=p||soon, avent=/^avent/.test(pp.id), semIco=$('#pa-sem'); box.classList.toggle('sans-ico',!avent&&!pp.emb); $('#pa-ico').style.display=avent?'':'none';
+  semIco.toggleAttribute('hidden',avent||!pp.emb); if(pp.emb&&!avent)semIco.innerHTML=`<path d="${EMB[pp.emb]||EMB.etoile}" fill="none" stroke="var(--gold-deep)" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>`;
   if(soon){
     const j=Math.round((new Date(soon.du+'T12:00:00')-new Date(k+'T12:00:00'))/864e5);
     $('#pa-label').textContent=soon.court+' · '+(j>1?'dans '+j+' jours':'demain');
     $('#pa-title').textContent=soon.titre+' s’ouvre '+fd(new Date(soon.du+'T12:00:00'),{weekday:'long',day:'numeric',month:'long'})+'.';
-    $('#pa-fil').textContent=soon.intro; $('#pa-cal').hidden=true; bougies(0); return;
+    $('#pa-fil').textContent=soon.intro; $('#pa-cal').hidden=true; $('#pa-mot').hidden=true; $('#pa-besace').hidden=true; bougies(0); return;
   }
   const days=parcDays(p), done=new Set(parcDone(p)), m=paMarks(p);
   const sem=p.semaines.filter(w=>w.du<=k).pop(), wi=p.semaines.indexOf(sem);
@@ -6114,6 +6204,9 @@ function renderParcours(){
   const jour=days.indexOf(k);
   $('#pa-label').textContent=`${p.court} · ${jour<0?'dimanche, hors décompte':'jour '+(jour+1)+' sur '+days.length} · ${sem.titre}`;
   $('#pa-fil').textContent=sem.fil;
+  // semaine à thème : un mot de la langue du pays chaque jour (mots : [mot, sens, remarque])
+  const mot=p.mots&&p.mots[Math.max(0,i)], pm=$('#pa-mot'); pm.hidden=!mot;
+  if(mot)pm.replaceChildren(el('span',{class:'label',text:(p.motsLabel||'Le mot du jour')+' · '}),el('b',{text:mot[0]}),document.createTextNode(frTypo(`\u00a0: «\u00a0${mot[1]}\u00a0». ${mot[2]}`)));
   if(i<0){ // dimanche de Carême : pas de case, l'énigme tient lieu de rendez-vous
     $('#pa-title').textContent='Dimanche : l’énigme de la semaine t’attend.';
     actions.append(el('button',{class:'btn gold',text:'Ouvrir l’énigme',onclick:()=>{showTab('exercices');openEx('dimanche');}}));
@@ -6128,6 +6221,14 @@ function renderParcours(){
       if(APERCU)toast('<span>Aperçu : rien n’est enregistré.</span>');else save();
       renderParcours();}}));
   }
+  // la besace : trois sorties hors écran au choix ; en faire une coche aussi la case du jour si elle n'a pas d'exercice
+  const bes=$('#pa-besace'); bes.hidden=!p.besace;
+  if(p.besace){const B=m.b=m.b||{}, nf=p.besace.filter((_,j)=>B[j]).length;
+    bes.querySelector('summary').textContent=`La besace · ${nf} sortie${nf>1?'s':''} sur ${p.besace.length}, loin de l’écran`;
+    $('#pa-bes').replaceChildren(...p.besace.map(([t,d],j)=>el('li',{class:B[j]?'fait':null},el('div',{},el('b',{text:t}),el('p',{class:'note fg2',text:d})),
+      el('button',{class:'btn mini'+(B[j]?' gold':''),'aria-pressed':String(!!B[j]),text:B[j]?'✓ Fait':'Fait',onclick:()=>{
+        if(B[j])delete B[j];else{B[j]=k;son('juste');const jj=days.indexOf(k);if(jj>=0&&!(p.pas[jj]&&p.pas[jj][1]))m[k]=1;}
+        if(APERCU)toast('<span>Aperçu : rien n’est enregistré.</span>');else save(); renderParcours();}}))));}
   const nb=parcDone(p).length;
   $('#pa-cal').hidden=false; $('#pa-cal').querySelector('summary').textContent=`Le calendrier · ${nb} case${nb>1?'s':''} sur ${days.length}`+(nb>=p.seuil?' · badge gagné':` · ${p.seuil} pour le badge « ${p.badge[0]} »`);
   $('#pa-origine').textContent=p.origine;
@@ -6135,6 +6236,40 @@ function renderParcours(){
     class:[done.has(d)?'fait':'',d===k?'auj':'',d===sel&&paSel?'sel':'',isSun(d)?'dim':''].filter(Boolean).join(' ')||null,
     disabled:d>k?'':null,'aria-label':fd(new Date(d+'T12:00:00'),{weekday:'long',day:'numeric',month:'long'})+(done.has(d)?', fait':''),
     text:String(+d.slice(8)),onclick:()=>{paSel=d===k?null:d;renderParcours();}}))));
+}
+/* ---------- passeport d'Europe : une page tamponnée par semaine à thème ---------- */
+const ROMAIN_AN=y=>roman(y);
+function tamponSVG(p,ok){
+  const c=ok?'#8E2F2B':'#9A9388', id='tp'+(medalN++), an=ROMAIN_AN(+p.du.slice(0,4)), mois=['I','II','III','IV','V','VI','VII','VIII','IX','X','XI','XII'][+p.du.slice(5,7)-1];
+  return `<svg class="tampon" viewBox="0 0 100 100" aria-hidden="true"><g transform="rotate(-9 50 50)" fill="none" stroke="${c}" opacity=".9"><circle cx="50" cy="50" r="45" stroke-width="2.6"/><circle cx="50" cy="50" r="39" stroke-width="1"/><circle cx="50" cy="50" r="21" stroke-width="1"/>`
+    +`<path id="${id}" d="M50 21a29 29 0 1 1-.01 0"/><text fill="${c}" stroke="none" font-family="Cinzel, Georgia, serif" font-size="8.6" font-weight="700"><textPath href="#${id}" textLength="178" lengthAdjust="spacing">${('Semaine de '+p.court).toUpperCase()} · ${mois} · ${an} ·</textPath></text>`
+    +`<g transform="translate(38.6 38.6) scale(.95)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="${EMB[p.emb]||EMB.etoile}"/></g></g></svg>`;
+}
+function passeportPage(p){
+  const k=todayKey(), avant=k<p.du, n=parcDone(p,true).length, ok=n>=p.seuil, m=(state.parcours||{})[p.id]||{};
+  const dates=`du ${fd(new Date(p.du+'T12:00:00'),{day:'numeric'})} au ${fd(new Date(p.au+'T12:00:00'),{day:'numeric',month:'long',year:'numeric'})}`;
+  if(avant)return{el:el('div',{class:'pp-page avenir'},el('span',{html:tamponSVG(p,false)}),el('div',{},el('h3',{text:p.titre}),el('p',{class:'note',text:'À venir, '+dates+'. La page se remplira au fil de la semaine.'})))};
+  const jours=Math.min(parcDays(p).length,Math.round((new Date((k>p.au?p.au:k)+'T12:00:00')-new Date(p.du+'T12:00:00'))/864e5)+1);
+  const mots=(p.mots||[]).slice(0,jours).map(x=>x[0]), cit=QUOTES.filter(q=>q.sem===p.theme&&(state.flori||{})[q.id]), bes=(p.besace||[]).filter((_,j)=>(m.b||{})[j]).map(x=>x[0]);
+  const par=ATTRS.find(a=>a[7]===p.id), g=par?attrGrade(par):0;
+  const lignes=[`${n} jour${n>1?'s':''} sur ${parcDays(p).length}`+(ok?' : semaine accomplie':''),
+    mots.length?`Mots appris : ${mots.join(', ')}`:'',
+    cit.length?`Au florilège : « ${cit[0].q.length>110?cit[0].q.slice(0,110).replace(/\s+\S*$/,'')+'…':cit[0].q} » (${cit[0].a})`:'',
+    bes.length?`Besace : ${bes.join(' ; ')}`:'',
+    par?(g?`${par[1]} : ${['','premier palier','argent','or'][g]}`:''):''].filter(Boolean);
+  const partager=async()=>{
+    const txt=`Ma semaine de ${p.court} sur Néophyte : ${n} jour${n>1?'s':''} sur ${parcDays(p).length}${mots.length?', '+mots.length+' mots appris ('+mots.join(', ')+')':''}${g?', et '+par[1].charAt(0).toLowerCase()+par[1].slice(1)+' pour mon cerf':''}. Kenavo !`;
+    try{if(navigator.share){await navigator.share({title:'Néophyte',text:txt,url:SITE_URL});return;}}catch(e){if(e&&e.name==='AbortError')return;}
+    try{await navigator.clipboard.writeText(txt+' '+SITE_URL);toast('<span>Copié : colle-le dans un message.</span>');}catch(e){toast('<span>'+txt+'</span>');}};
+  return{el:el('div',{class:'pp-page'},el('span',{html:tamponSVG(p,ok)}),el('div',{},el('h3',{text:p.titre}),el('p',{class:'note',text:dates}),
+    ...lignes.map(t=>el('p',{class:'fg2',text:t})),el('button',{class:'btn mini',text:'Partager ma semaine',onclick:partager})))};
+}
+function renderPasseport(){
+  const box=$('#passeport'); if(!box)return; const S=(NB.parcours||[]).filter(p=>p.theme);
+  box.hidden=!S.length; if(!S.length)return;
+  const faites=S.filter(p=>parcDone(p,true).length>=p.seuil).length;
+  $('#pp-sub').textContent=`${faites} tampon${faites>1?'s':''} sur ${S.length} semaine${S.length>1?'s':''} · une province française, puis un pays d’Europe`;
+  $('#pp-pages').replaceChildren(...S.map(p=>passeportPage(p).el));
 }
 // la couronne de l'Avent : une bougie de plus allumée chaque dimanche
 function bougies(n){
@@ -6447,7 +6582,7 @@ citations(arena){
   function go(){
     const t=todayKey(), f=state.flori=state.flori||{};
     const due=floriDue().sort(()=>Math.random()-.5).slice(0,6);
-    const fresh=QUOTES.filter(q=>!f[q.id]).sort(()=>Math.random()-.5).slice(0,Math.min(3,6-due.length)).map(q=>q.id);
+    const th=semTh(), fresh=QUOTES.filter(q=>!f[q.id]).sort(()=>Math.random()-.5).sort((a,b)=>(th&&b.sem===th)-(th&&a.sem===th)).slice(0,Math.min(3,6-due.length)).map(q=>q.id);
     let ids=[...due,...fresh];
     if(ids.length<4)ids.push(...Object.keys(f).filter(id=>QBY[id]&&!ids.includes(id)).sort((a,b)=>f[a].b-f[b].b||Math.random()-.5).slice(0,5-ids.length));
     let qi=0, ok=0, added=0;
@@ -6566,7 +6701,8 @@ lecture(arena){
     const used=new Set(state.results.filter(r=>r.ex==='lecture').map(r=>r.src)); const fresh=SOURCES.filter(x=>!used.has(x[0]));
     // parmi les textes pas encore lus, ceux de tes thèmes passent devant
     const th=state.settings.themes||[], mine=fresh.filter(x=>{const t=NB.textes.find(y=>y.titre===x[0]);return t&&th.some(k=>t.th.split(' ').includes(k));});
-    const src=pick(mine.length?mine:fresh.length?fresh:SOURCES), words=(src[1].match(/\S+/g)||[]).length, start=performance.now();
+    const st=semTh(), semT=st?fresh.filter(x=>{const t=NB.textes.find(y=>y.titre===x[0]);return t&&t.sem===st;}):[];
+    const src=pick(semT.length?semT:mine.length?mine:fresh.length?fresh:SOURCES), words=(src[1].match(/\S+/g)||[]).length, start=performance.now();
     arena.style.alignItems='stretch';
     arena.replaceChildren(el('span',{class:'stag qstag lit','aria-hidden':'true',html:stagSVG(gamiCtx.level||1,'idle',undefined,{lit:true})}),el('h3',{text:src[0]}),el('p',{class:'fg2',text:src[1],style:'max-width:65ch;text-align:left;font-size:1.05rem;white-space:pre-line'}),el('div',{class:'row'},el('button',{class:'btn primary',text:'Terminé',onclick:quiz})));
     cleanup=()=>{arena.style.alignItems='';};
@@ -6937,11 +7073,14 @@ chrono(arena){
     // manches : nombre d'événements, écart minimal entre deux dates, étendue maximale de la frise
     const ROUNDS=[[4,60,2500],[4,15,400],[5,2,120]], used=new Set(), key=e=>e[1]*1e4+ +e[0];
     let qi=0, sum=0, perfect=0; const seen=[];
+    // pendant une semaine à thème, les frises puisent d'abord dans ses événements
+    const th=semTh(), POOL=th?EVENTS.filter(e=>e[3]===th):[];
     const draw=([n,lo,span])=>{
       for(let t=0;t<400;t++){
-        const set=[pick(EVENTS)]; if(used.has(set[0]))continue;
+        const src=t<200&&POOL.length>=n?POOL:EVENTS;
+        const set=[pick(src)]; if(used.has(set[0]))continue;
         for(let u=0;u<200&&set.length<n;u++){
-          const c=pick(EVENTS);
+          const c=pick(src);
           if(used.has(c)||set.includes(c)||set.some(e=>Math.abs(e[1]-c[1])<lo))continue;
           const ys=[...set,c].map(e=>e[1]); if(Math.max(...ys)-Math.min(...ys)<=span)set.push(c);
         }

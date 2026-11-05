@@ -112,3 +112,10 @@ Chateaubriand | Mémoires d'outre-tombe Livre premier Combourg
 = Les Malheurs de Sophie/1
 = Les Malheurs de Sophie/2
 = La Chartreuse de Parme (édition Martineau, 1927)/Chapitre III
+# semaine de Bretagne (nov. 2026) : Chateaubriand à Saint-Malo et Combourg, La Rouërie ; Renan pour vérifier la citation de la ville d'Is
+= Mémoires d’outre-tombe/Première partie/Livre premier
+= Mémoires d’outre-tombe/Première partie/Livre II
+= Mémoires d’outre-tombe/Première partie/Livre III
+= Mémoires d’outre-tombe/Première partie/Livre V
+Renan | Souvenirs d'enfance et de jeunesse préface
+= Souvenirs d’enfance et de jeunesse/Préface

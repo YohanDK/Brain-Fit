@@ -680,6 +680,10 @@ a{color:var(--accent);text-underline-offset:3px}
 .besace li{display:flex;gap:10px;align-items:flex-start;justify-content:space-between;border:1px solid var(--line);border-radius:10px;padding:8px 10px;background:var(--surface)}
 .besace li.fait{border-color:var(--gold-deep)}
 .besace li div{min-width:0}.besace li .btn{flex:none}
+/* la petite chasse : cinq choses à trouver dehors, notées sur l'honneur */
+.chasse li div{flex:1}
+.chasse input{font:inherit;font-size:1rem;width:100%;margin-top:6px;padding:5px 9px;border:1px solid var(--line);border-radius:var(--r);background:var(--surface);color:var(--fg)}
+.chasse li.fait input{border-color:transparent;padding-left:0;color:var(--gold-deep);font-style:italic}
 /* le passeport d'Europe : une page tamponnée par semaine à thème */
 .pp-pages{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:12px;margin-top:10px}
 .pp-page{border:1px solid var(--line);border-radius:12px;padding:14px;background:linear-gradient(180deg,var(--surface),var(--sunk));display:flex;gap:12px;align-items:flex-start}
@@ -1594,6 +1598,7 @@ var fin=function(){if(e.parentNode)e.remove();};e.addEventListener('click',fin);
           <div class="challenge" id="reel-box"></div>
           <div class="row reel-city"><span class="note" id="reel-city-txt"></span><button class="btn ghost mini" id="reel-city-edit"></button></div>
           <form class="row reel-city" id="reel-city-form" hidden><input type="text" id="reel-city-in" placeholder="Ta ville" aria-label="Ta ville" autocomplete="address-level2"><button class="btn mini">Valider</button></form>
+          <details class="pa-cal" id="chasse"><summary></summary><p class="note fg2" id="chasse-intro"></p><ul class="besace chasse" id="chasse-l"></ul></details>
         </div>
       </div>
     </div>
@@ -1950,6 +1955,7 @@ const EX={
   eclair:{name:'Éclair',skill:'Vivacité',desc:"90 secondes de questions mêlées : orthographe, dates, sophismes, citations, calcul, ordres de grandeur. Bats ton record.",unit:'bonnes réponses'},
   evenement:{name:'Événement de saison',skill:'Esprit critique & culture',desc:"Une semaine à thème : vrai, faux ou non prouvé.",unit:'% de bonnes réponses',hidden:true},
   bilan:{name:"Point d'étape",skill:'Bilan',desc:"Seize affirmations en quatre axes, puis six questions pour te mettre à l'épreuve. Le premier sert de point de départ, puis un chaque mois.",unit:'sur 100',hidden:true},
+  chasse:{name:'Petite chasse',skill:'Hors écran',desc:"Cinq choses à trouver dehors dans ta ville, notées sur l'honneur.",unit:'indices sur 5',hidden:true},
   read:{name:'Lecture profonde',skill:'Attention soutenue',desc:"Lecture sur papier ou liseuse, téléphone dans une autre pièce.",unit:'',manual:true}
 };
 // d'où vient chaque exercice : affiché sous le titre du plateau et dans la Bibliothèque
@@ -3730,7 +3736,7 @@ const STAGES=[
   ['Autonomie',"Moins d'écran, plus de papier : le samedi devient un jour papier, avec ta fiche à imprimer."],
   ['Maîtrise',"Tu tiens seul. L'IA redevient un outil que tu diriges, au service de projets réels."]
 ];
-const OFFLINE=['dictee','fiche','focus'];
+const OFFLINE=['dictee','fiche','focus','chasse'];
 function offlineCount(){return state.results.filter(r=>OFFLINE.includes(r.ex)).length+Object.values(state.days).filter(d=>d.done&&d.done.read).length;}
 // autonomie en actes sur 14 jours : penser d'abord, écrire soi-même, vérifier, hors écran, temps d'écran tenu
 function deeds(k){
@@ -4137,7 +4143,7 @@ function renderTips(){
 /* ---------- coach ---------- */
 function setStreak(n){$('#streak').textContent=n;$('#streak-unit').textContent=n>1?'jours d’affilée':'jour d’affilée';$('#freeze-n').textContent=freezeState().n;}
 /* ---------- récompenses : XP, niveaux, objectif du jour, badges ---------- */
-function xpOfResult(r){if(r.ex==='focus')return Math.round(Math.min(45,r.s)*(r.int?0.5:1));return(r.ex==='write'?20:r.ex==='fiche'?30:r.ex==='dictee'?15:10)+(r.rec?5:0);}
+function xpOfResult(r){if(r.ex==='focus')return Math.round(Math.min(45,r.s)*(r.int?0.5:1));return(r.ex==='write'?20:r.ex==='fiche'?30:r.ex==='chasse'?25:r.ex==='dictee'?15:10)+(r.rec?5:0);}
 function xpByDay(){
   const m={}, add=(k,v)=>{m[k]=(m[k]||0)+v;}, tgt=state.settings.screenTarget||120;
   for(const r of state.results)add(r.d,xpOfResult(r));
@@ -5014,10 +5020,78 @@ function renderReel(){
   $('#reel-next').hidden=done;
   $('#reel-city-txt').textContent=city()?'Ta ville : '+city():'Indique ta ville pour des défis près de chez toi.';
   $('#reel-city-edit').textContent=city()?'Changer':'Indiquer ma ville';
+  renderChasse();
 }
 $('#reel-next').addEventListener('click',()=>{const wk=weekStart(todayKey());state.reel=state.reel||{};const r=state.reel[wk]||{};state.reel[wk]={o:(r.o||0)+1};save();renderReel();});
 $('#reel-city-edit').addEventListener('click',()=>{const f=$('#reel-city-form');f.hidden=!f.hidden;$('#reel-city-in').value=city();if(!f.hidden)$('#reel-city-in').focus();});
 $('#reel-city-form').addEventListener('submit',e=>{e.preventDefault();state.settings.city=$('#reel-city-in').value.trim().slice(0,60);$('#reel-city-form').hidden=true;save();renderReel();});
+/* ---------- la petite chasse : chaque semaine, cinq choses à trouver dehors, valables dans toutes les villes ----------
+   Rien ne vérifie : on note ce qu'on a relevé, sur l'honneur. Pas de GPS, rien sur la position. */
+// [ce qu'il faut trouver, ce qu'on note]
+const CHASSE=[
+  ['Une rue au nom d’un saint','Le saint, et ce que tu sais de lui'],
+  ['Une date gravée sur une façade, un linteau ou une porte','La date la plus ancienne que tu trouves'],
+  ['Une inscription en latin (église, fronton, cadran, monument)','Les mots, puis ta traduction'],
+  ['Le monument aux morts','Le nom de famille qui revient le plus, et combien de fois'],
+  ['Un cadran solaire','Sa devise, ou l’heure qu’il indiquait'],
+  ['Une rue au nom d’un métier (Tanneurs, Orfèvres, Bouchers…)','Le métier, et ce qu’il fabriquait'],
+  ['Une plaque « Ici vécut » ou « Ici naquit »','Le nom et l’année'],
+  ['Une rue au nom d’une date (8-Mai-1945, 11-Novembre, 4-Septembre…)','La date et l’événement, de mémoire'],
+  ['Une statue','Qui elle représente, et le détail qui permet de le reconnaître'],
+  ['Un repère de crue ou d’altitude sur un mur','L’année de la crue ou l’altitude'],
+  ['Une publicité ancienne peinte sur un mur, ou une vieille enseigne','Ce qu’elle vendait'],
+  ['Une rue au nom d’un écrivain','Le nom et un de ses livres'],
+  ['Un blason (mairie, église, porte de ville)','Décris-le en quelques mots : couleurs et figures'],
+  ['Le saint à qui l’église est dédiée','Son nom, et sa fête si tu la connais'],
+  ['Un nombre en chiffres romains','Le nombre, puis sa valeur en chiffres arabes'],
+  ['Une fontaine, un puits ou un lavoir','Son nom ou sa date'],
+  ['Une rue au nom d’un savant','Le nom et ce qu’il a découvert'],
+  ['Une horloge publique','Est-elle à l’heure ? Ton estimation de l’écart'],
+  ['La devise « Liberté, Égalité, Fraternité » gravée sur un bâtiment','Le bâtiment, et ce qui est écrit à côté'],
+  ['Une rue qui a changé de nom (deux plaques, ou un ancien nom gravé)','Les deux noms'],
+  ['Une croix de chemin ou un calvaire','Sa date ou son inscription'],
+  ['Un arbre planté pour un événement, ou un arbre remarquable','Son espèce, et l’année si elle est indiquée'],
+  ['Un nom de commerce qui joue sur les mots','Le jeu de mots, et pourquoi il marche'],
+  ['Une figure sculptée sur une façade (tête, animal, gargouille)','Ce qu’elle représente selon toi'],
+  ['Un panneau ou une borne qui indique des distances','La ville la plus lointaine, et sa distance'],
+  ['Une rue au nom d’une femme','Qui elle était, et ce qu’elle a fait'],
+  ['Un mot que tu ne connais pas, sur une plaque ou un panneau','Le mot et ta définition, avant de vérifier dans un dictionnaire'],
+  ['Une table d’orientation, ou un plan de la ville affiché dehors','Le lieu le plus lointain qu’elle indique'],
+  ['La pierre des vieilles maisons (calcaire, granit, brique, tuffeau…)','La pierre, et pourquoi on l’a choisie ici, par hypothèse'],
+  ['Une rue au nom d’une bataille','La bataille et son année, de mémoire'],
+  ['Une rue au nom d’une ville ou d’un pays étranger','Le lien avec ta ville, d’abord par hypothèse'],
+  ['Un symbole sur une façade (coquille, fleur de lys, abeille, hermine…)','Le symbole et ce qu’il veut dire'],
+  ['La façade de la mairie','Le nombre de fenêtres, et celui des étages'],
+  ['Une devise de ville ou de famille, sur un blason ou un fronton','La devise et sa traduction'],
+  ['Le plus vieux numéro de rue que tu vois (plaque émaillée, peinte, gravée)','Le numéro et la rue, et ce qui le rend ancien']
+];
+function chasseOf(wk){
+  const wn=Math.floor(new Date(wk+'T12:00:00').getTime()/(7*864e5)), N=CHASSE.length;
+  // pas = 5 : sept semaines sans revoir un indice ; l'ordre de la banque mêle déjà les types
+  return [0,1,2,3,4].map(i=>(wn*5+i)%N);
+}
+function renderChasse(){
+  const box=$('#chasse'); if(!box)return;
+  const k=todayKey(), wk=weekStart(k), L=chasseOf(wk);
+  state.chasse=state.chasse||{}; const C=state.chasse[wk]||{f:{}}, f=C.f||{}, nf=L.filter(i=>f[i]).length;
+  box.querySelector('summary').textContent=`La petite chasse · ${nf} sur ${L.length} trouvé${nf>1?'s':''}`+(C.fin?' · complète':'');
+  $('#chasse-intro').textContent=`Cinq choses à trouver ${ici()}, à pied, le téléphone dans la poche. Note ce que tu as relevé : rien ne vérifie, c’est sur l’honneur. Reste sur la voie publique.`;
+  const put=()=>{state.chasse[wk]=Object.assign({f:{}},state.chasse[wk]);state.chasse[wk].f=f;
+    // garder les huit dernières semaines seulement
+    const ks=Object.keys(state.chasse).sort(); while(ks.length>8)delete state.chasse[ks.shift()];};
+  $('#chasse-l').replaceChildren(...L.map(i=>{const [t,d]=CHASSE[i], ok=!!f[i];
+    const inp=el('input',{type:'text',maxlength:'120','aria-label':d,placeholder:d,disabled:ok?'':null});
+    if(ok)inp.value=f[i];
+    const btn=el('button',{class:'btn mini'+(ok?' gold':''),'aria-pressed':String(ok),text:ok?'✓ Trouvé':'Trouvé',onclick:()=>{
+      if(ok){delete f[i];}
+      else{const v=inp.value.trim(); if(!v){inp.focus();inp.placeholder='Note d’abord ce que tu as relevé';return;} f[i]=v.slice(0,120); son('juste');}
+      put();
+      if(!C.fin&&L.every(j=>f[j])){state.chasse[wk].fin=Date.now(); logResult('chasse',100); toast('<span>Petite chasse complète. Le cerf est fier de toi.</span>');}
+      else save();
+      renderChasse();}});
+    inp.addEventListener('keydown',e=>{if(e.key==='Enter'){e.preventDefault();btn.click();}});
+    return el('li',{class:ok?'fait':null},el('div',{},el('b',{text:t}),inp),btn);}));
+}
 /* ---------- bilan de la semaine : calculé par l'appli, sans coach ----------
    Visible dès le dimanche 18 h pour la semaine qui s'achève, puis toute la semaine suivante. */
 const REASON=['probleme','hypotheses','sophismes','fermi'];

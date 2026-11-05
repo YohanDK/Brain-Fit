@@ -67,8 +67,12 @@ B.textes.forEach((t,i)=>{
   if(i>=ANCIENNES.textes){if(!str(t.src))err(id,'src obligatoire pour un nouveau texte');if(!date(t.vu))err(id,'vu obligatoire (AAAA-MM-JJ) pour un nouveau texte');}
   const n=(String(t.texte).match(/\S+/g)||[]).length; if(n<90||n>200)err(id,`${n} mots : un texte de lecture fait entre 90 et 200 mots`);
   String(t.th).split(' ').forEach(x=>{if(!THEMES.includes(x))err(id,`thème inconnu : ${x}`);});
-  if(!Array.isArray(t.quiz)||t.quiz.length!==2)err(id,'il faut exactement 2 questions');
-  else t.quiz.forEach(([qq,opts],k)=>{if(!str(qq)||!Array.isArray(opts)||opts.length<3||new Set(opts).size!==opts.length||!opts.every(str))err(id,`question ${k+1} : au moins 3 réponses, toutes différentes (la bonne en premier)`);});
+  if(!Array.isArray(t.quiz)||t.quiz.length!==3)err(id,'il faut exactement 3 questions (un fait, le sens, un mot)');
+  else t.quiz.forEach(([qq,opts,ex],k)=>{if(!str(qq)||!Array.isArray(opts)||opts.length<3||new Set(opts).size!==opts.length||!opts.every(str))err(id,`question ${k+1} : au moins 3 réponses, toutes différentes (la bonne en premier)`);
+    if(!str(ex))err(id,`question ${k+1} : une courte explication tirée du texte`);});
+  // un extrait de Wikisource renvoie à sa page, et seulement à Wikisource
+  if(/wikisource/.test(t.src||'')&&!/^https:\/\/fr\.wikisource\.org\/wiki\/\S+$/.test(t.lien||''))err(id,'lien vers la page fr.wikisource.org manquant ou invalide');
+  if(t.lien!=null&&!/^https:\/\/fr\.wikisource\.org\/wiki\/\S+$/.test(t.lien))err(id,'lien : seulement une page fr.wikisource.org');
   if(!Array.isArray(t.idees)||t.idees.length!==3||!t.idees.every(str))err(id,'il faut exactement 3 idées clés');
 });
 noDup('textes','titre');

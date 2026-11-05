@@ -428,6 +428,10 @@ table.week td.num{font-family:var(--f-mono)}
 .pari.up{background:var(--good-soft);color:var(--good)}
 .pari.down{background:var(--bad-soft);color:var(--bad)}
 .contest{display:flex;flex-direction:column;gap:8px;align-items:flex-start;width:100%}
+.lect-expl{max-width:50ch;margin:10px auto 0;text-align:left;font-size:.95rem}
+.lect-fin{display:flex;flex-direction:column;gap:14px;width:100%;max-width:50ch}
+.lect-src{display:flex;flex-direction:column;gap:4px;align-items:flex-start;padding:12px 14px;border-radius:var(--r);background:var(--sunk);text-align:left}
+.lect-src p{margin:0}.lect-src cite{font-style:normal}
 .contest-motifs{flex-wrap:wrap}
 .contest-go{color:var(--muted)}
 .btn.small{padding:4px 8px;font-size:.85rem;font-weight:600}
@@ -2062,7 +2066,7 @@ const EX={
   fermi:{name:'Estimation',skill:'Raisonnement',desc:"Trois questions de Fermi : trouve l'ordre de grandeur par le raisonnement.",unit:'% de justesse'},
   ortho:{name:'Orthographe & accords',skill:'Langue écrite',desc:"Huit phrases pièges : choisis la bonne forme, ou trouve la faute et répare-la, sans correcteur.",unit:'% de bonnes réponses'},
   dictee:{name:'Dictée sur papier',skill:'Écoute & orthographe',desc:"L'appli dicte à voix haute, tu écris à la main. Correction par photo de ta copie ou par toi-même.",unit:'% de mots justes'},
-  lecture:{name:'Lecture chronométrée',skill:'Lecture & compréhension',desc:"Lis un texte à ton rythme, puis réponds à deux questions. Vitesse et compréhension mesurées.",unit:'mots/min compris'},
+  lecture:{name:'Lecture chronométrée',skill:'Lecture & compréhension',desc:"Lis un texte à ton rythme, puis réponds à trois questions. Vitesse et compréhension mesurées.",unit:'mots/min compris'},
   citations:{name:'Florilège',skill:'Mémoire & culture',desc:"Retiens les citations qui comptent : qui l'a dit, le mot manquant, vraie ou fausse attribution. Répétition espacée.",unit:'% de bonnes réponses'},
   carte:{name:'Sur la carte',skill:'Géographie & repères',desc:"Place une ville, un monument, un pays d'autrefois, une vallée ou un massif, en France ou dans le monde. Plus tu es près, plus tu marques.",unit:'points sur 100'},
   chrono:{name:'Chronologie',skill:'Culture & repères',desc:"Remets les événements dans l'ordre sur une frise, en les faisant glisser. Trois frises, des écarts de plus en plus serrés.",unit:'% de bonnes réponses'},
@@ -6885,6 +6889,17 @@ function logConf(ex,c,ok){
 const betChip=pts=>pts==null?null:el('span',{class:'pari '+(pts>0?'up':pts<0?'down':'flat'),text:'Pari : '+(pts>0?'+':pts<0?'−':'')+Math.abs(pts)});
 function betSummary(){const p=betRun,n=betN;betRun=0;betN=0;if(!n)return'';return ` Pari de la séance : ${p>0?'+':p<0?'−':''}${Math.abs(p)} point${Math.abs(p)>1?'s':''}.`;}
 // « Je conteste » : une réponse douteuse se signale en une phrase ; les signalements sont relus chaque semaine
+// la source d'une lecture, montrée à la fin pour ne pas quitter l'appli en plein chrono :
+// extraits littéraires du domaine public (lien vers la page Wikisource), ou texte écrit pour Néophyte d'après ses sources
+function lectSource(t){
+  if(!t||!t.src)return null;
+  const ws=/\(texte de fr\.wikisource\.org\)/.test(t.src), ref=t.src.replace(/\s*\(texte de fr\.wikisource\.org\)/,'');
+  return el('div',{class:'lect-src'},
+    el('span',{class:'label',text:'Source'}),
+    el('p',{class:'fg2'},ws?el('cite',{text:ref}):`Texte écrit pour Néophyte d'après : ${ref}`),
+    ws?el('p',{class:'note muted',text:'Texte du domaine public, transcrit par les bénévoles de Wikisource.'}):null,
+    t.lien?el('a',{class:'btn ghost small',href:t.lien,target:'_blank',rel:'noopener',text:'Lire la suite sur Wikisource ↗'}):null);
+}
 function contestBtn(ex,id,enonce){
   const box=el('div',{class:'contest'});
   // en un geste : le motif suffit, la précision est facultative
@@ -7992,7 +8007,7 @@ ortho(arena){
   }
 },
 lecture(arena){
-  intro(arena,"Lis le texte une seule fois, à ton rythme normal, en cherchant à comprendre. Clique sur « Terminé » dès la fin. Deux questions suivent, sans retour possible au texte.",null,go);
+  intro(arena,"Lis le texte une seule fois, à ton rythme normal, en cherchant à comprendre. Clique sur « Terminé » dès la fin. Trois questions suivent, sans retour possible au texte : un fait, le sens, un mot. La source s'affiche à la fin.",null,go);
   function go(){
     const used=new Set(state.results.filter(r=>r.ex==='lecture').map(r=>r.src)); const fresh=SOURCES.filter(x=>!used.has(x[0]));
     // parmi les textes pas encore lus, ceux de tes thèmes passent devant
@@ -8008,19 +8023,25 @@ lecture(arena){
       const ask=()=>{
         const [q,opts]=qs[qi]; const sh=opts.map((o,i)=>[o,i]).sort(()=>Math.random()-.5);
         const box=el('div',{class:'options'});
+        // après la réponse, une courte explication tirée du texte, puis on passe à la suite à son rythme
+        const ex=qs[qi][2], fb=el('p',{class:'fg2 lect-expl',hidden:''}), nx=el('div',{class:'row',style:'justify-content:center',hidden:''});
         sh.forEach(([o,i])=>box.append(el('button',{text:o,onclick:e=>{
           [...box.children].forEach(b=>{b.disabled=true;if(sameText(b.textContent,opts[0]))b.classList.add('right');});
           if(i===0)ok++;else e.currentTarget.classList.add('wrong');
           hit(i===0); rep.push((i===0?'✓ ':'✗ ')+q+' → '+opts[0]);
-          setTimeout(()=>{qi++;if(qi<qs.length)ask();else done();},900);
+          const go=()=>{qi++;if(qi<qs.length)ask();else done();};
+          if(!ex){setTimeout(go,900);return;}
+          fb.textContent=ex; fb.hidden=false;
+          nx.append(el('button',{class:'btn primary',text:qi+1<qs.length?'Question suivante':'Voir le résultat',onclick:go})); nx.hidden=false; nx.firstChild.focus();
         }})));
-        arena.replaceChildren(qprog(qi,qs.length),el('p',{class:'prompt',style:'text-align:center',text:q}),box);
+        arena.replaceChildren(qprog(qi,qs.length),el('p',{class:'prompt',style:'text-align:center',text:q}),box,fb,nx);
       };
       const done=()=>{
         const comp=ok/qs.length, eff=Math.round(wpm*comp); const m=recordMsg('lecture',eff);
         logResult('lecture',eff,{src:src[0],wpm,c:Math.round(comp*100)});
+        const tx=NB.textes.find(t=>t.titre===src[0])||{};
         showResult(arena,eff,'mots par minute compris',`Vitesse : ${wpm} mots/min, compréhension : ${Math.round(comp*100)} %. ${m} Un lecteur adulte lit en général entre 200 et 300 mots/min. Viser la compréhension compte plus que la vitesse.`,()=>RUN.lecture(arena),
-          contestBtn('lecture',(NB.textes.find(t=>t.titre===src[0])||{}).id||src[0],src[0]+' — '+rep.join(' · ')));
+          el('div',{class:'lect-fin'},lectSource(tx),contestBtn('lecture',tx.id||src[0],src[0]+' — '+rep.join(' · '))));
       };
       ask();
     }

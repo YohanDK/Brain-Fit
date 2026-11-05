@@ -854,7 +854,7 @@ B.textes=[
    texte:"Pendant un demi-siècle, les bourgeoises de Pont-l'Évêque envièrent à Mme Aubain sa servante Félicité. Pour cent francs par an, elle faisait la cuisine et le ménage, cousait, lavait, repassait, savait brider un cheval, engraisser les volailles, battre le beurre, et resta fidèle à sa maîtresse, — qui cependant n'était pas une personne agréable. […] Elle se levait dès l'aube, pour ne pas manquer la messe, et travaillait jusqu'au soir sans interruption ; puis le dîner étant fini, la vaisselle en ordre et la porte bien close, elle enfouissait la bûche sous les cendres et s'endormait devant l'âtre, son rosaire à la main. Personne, dans les marchandages, ne montrait plus d'entêtement. Quant à la propreté, le poli de ses casseroles faisait le désespoir des autres servantes. Économe, elle mangeait avec lenteur, et recueillait du doigt sur la table les miettes de son pain, — un pain de douze livres, cuit exprès pour elle, et qui durait vingt jours.",
    quiz:[["Combien Félicité gagnait-elle ?",["Cent francs par an","Cent francs par mois","Rien : elle était seulement logée et nourrie"]],["Combien de temps durait son pain ?",["Vingt jours","Une semaine","Deux jours"]]],
    idees:["Pendant cinquante ans, Félicité sert Mme Aubain pour cent francs par an","Elle fait tout et reste fidèle à une maîtresse peu agréable","Une vie pieuse, laborieuse et économe, réglée de l'aube au soir"]},
-  {id:'ws2',th:"lettres nature",vu:'2026-11-02',src:"Chateaubriand, Mémoires d'outre-tombe, première partie, livre III (texte de fr.wikisource.org)",titre:"La grive de Montboissier",
+  {id:'ws2',th:"lettres nature",sem:'bretagne',vu:'2026-11-02',src:"Chateaubriand, Mémoires d'outre-tombe, première partie, livre III (texte de fr.wikisource.org)",titre:"La grive de Montboissier",
    texte:"Je fus tiré de mes réflexions par le gazouillement d'une grive perchée sur la plus haute branche d'un bouleau. À l'instant, ce son magique fit reparaître à mes yeux le domaine paternel ; j'oubliai les catastrophes dont je venais d'être le témoin, et, transporté subitement dans le passé, je revis ces campagnes où j'entendis si souvent siffler la grive. Quand je l'écoutais alors, j'étais triste de même qu'aujourd'hui ; mais cette première tristesse était celle qui naît d'un désir vague de bonheur, lorsqu'on est sans expérience ; la tristesse que j'éprouve actuellement vient de la connaissance des choses appréciées et jugées. Le chant de l'oiseau dans les bois de Combourg m'entretenait d'une félicité que je croyais atteindre ; le même chant dans le parc de Montboissier me rappelait des jours perdus à la poursuite de cette félicité insaisissable.",
    quiz:[["Quel oiseau tire l'auteur de ses réflexions ?",["Une grive","Un rossignol","Une alouette"]],["Où entendait-il ce chant dans sa jeunesse ?",["Dans les bois de Combourg","Dans le parc de Montboissier","Dans les jardins de Paris"]]],
    idees:["Le chant d'une grive fait revivre à l'auteur le domaine de son enfance","La tristesse de la jeunesse naissait d'un désir vague de bonheur","Celle d'aujourd'hui vient de l'expérience : le bonheur poursuivi s'est révélé insaisissable"]},
@@ -1363,6 +1363,17 @@ B.parcours=[
    intro:"Sept jours en Bretagne, du dimanche au samedi : ses ducs, ses marins, ses légendes et ses écrivains. Les dictées, les frises et les citations viennent de là-bas. Cinq jours sur sept, et ton cerf gagne le collier de l'ordre de l'Hermine.",
    origine:"L'hermine, petite belette d'hiver au pelage blanc et au bout de queue noir, est l'emblème des ducs de Bretagne depuis le XIIIe siècle. En 1381, le duc Jean IV crée l'ordre de l'Hermine, l'un des premiers ordres de chevalerie d'Europe, qui admettait aussi des dames. Son collier portait la devise « À ma vie ».",
    badge:['L’Hermine','5 jours sur 7 pendant la semaine de Bretagne'],seuil:5,
+   // un mot breton par jour, du dimanche au samedi
+   motsLabel:'Le mot breton du jour',
+   mots:[
+    ['Demat',"bonjour","On le dit à toute heure de la journée ; le soir, on préfère Noz vat, « bonne nuit »."],
+    ['Mor',"mer","Armor, le pays de la mer, désigne la côte ; Argoat, le pays des bois, l'intérieur des terres."],
+    ['Men',"pierre","Avec hir, « long », il donne menhir : la pierre longue. Dolmen, la table de pierre, vient aussi du breton."],
+    ['Ker',"village, lieu habité","Il ouvre des milliers de noms de lieux et de familles : Kermario, Kerlescan, Kerguelen."],
+    ['Plou',"paroisse","Du latin plebs, « le peuple ». On le retrouve dans Plougastel, Ploërmel ou Ploumanac'h."],
+    ['Penn',"tête, extrémité","Le Finistère se dit Penn-ar-Bed, « le bout du monde » ; Penmarc'h est la tête du cheval."],
+    ['Kenavo',"au revoir","Littéralement « jusqu'à ce que ce soit », sous-entendu : jusqu'à la prochaine fois."]
+   ],
    semaines:[
     {du:'2026-11-15',titre:'Ar mor, la mer',fil:"La Bretagne, duché indépendant jusqu'en 1532, a été faite par la mer : marins, corsaires, pêcheurs d'Islande, et une ville engloutie. Cette semaine, chaque exercice y fait escale."}
    ],

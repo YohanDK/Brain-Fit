@@ -9,6 +9,8 @@ window.BF_CONFIG={
   retours:true,
   // réglage « Rappels » (notifications sur le téléphone) : true une fois rappels.sql lancé ; false pour le cacher et désabonner les appareils à leur prochaine visite
   rappels:true,
+  // vies rachetables (freemium) : 5 vies par jour pour les séances en plus, regagnées en rattrapant ses erreurs ; false pendant le test des testeurs (?vies=1 pour essayer)
+  vies:false,
   // vidéo de présentation sur l'écran d'accueil des visiteurs (adresse d'une vidéo .mp4 ou d'une page à intégrer) ; vide = emplacement caché
   video:''
 };

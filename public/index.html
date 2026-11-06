@@ -1521,6 +1521,26 @@ header.top{position:relative;isolation:isolate}
 :root[data-theme="dark"] .decor.neige i{color:#E8EEF6!important}
 @media (prefers-reduced-motion:reduce){.decor,.etincelle,.xp-vole{display:none}}
 html[data-anim="doux"] :is(.decor,.etincelle,.xp-vole){display:none}
+/* ---------- la fiche du niveau ---------- */
+button.lvl-pill{font:inherit;color:inherit;cursor:pointer;text-align:left;transition:transform .15s,box-shadow .2s}
+button.lvl-pill:hover{box-shadow:0 4px 12px rgba(60,40,10,.12)}
+button.lvl-pill:active{transform:scale(.97)}
+button.lvl-pill:focus-visible,button.xp-lvl:focus-visible{outline:2px solid var(--gold);outline-offset:2px}
+button.xp-lvl{font:inherit;color:inherit;background:none;border:0;padding:6px;margin:-2px -6px 0;border-radius:12px;width:calc(100% + 12px);text-align:left;cursor:pointer}
+button.xp-lvl:hover{background:var(--sunk)}
+.xp-lvl-go{flex:none;font-size:1.5rem;color:var(--muted);line-height:1}
+.niv-stag{width:120px;height:120px;display:block;margin:2px 0 -4px}
+.niv-stag svg{width:100%;height:100%}
+.niv-jauge{align-self:stretch;display:flex;flex-direction:column;gap:5px;margin:2px 0 4px}
+.niv-chemin{display:flex;flex-direction:column;gap:10px;margin:4px 0 6px}
+.niv-era ol{list-style:none;margin:4px 0 0;padding:0;display:flex;flex-wrap:wrap;gap:6px}
+.niv-era li{display:flex;align-items:baseline;gap:5px;padding:3px 9px;border:1px solid var(--line);border-radius:999px;font-size:.86rem;color:var(--muted)}
+.niv-era li b{font-family:var(--f-display);font-size:.78rem;color:var(--gold-deep)}
+.niv-era li.ok{background:var(--gold-soft);border-color:var(--gold);color:var(--fg)}
+.niv-era li.cur{background:var(--gold);border-color:var(--gold);color:var(--on-accent,#fff);font-weight:700;box-shadow:0 0 0 3px var(--gold-soft)}
+.niv-era li.cur b{color:inherit}
+.niv-era li:not(.ok):not(.cur) span{opacity:.85}
+@media (prefers-reduced-motion:no-preference){.niv-era li.cur{animation:pip-rond .5s ease-out .3s both}}
 </style>
 </head>
 <body>
@@ -1556,10 +1576,10 @@ var fin=function(){if(e.parentNode)e.remove();};e.addEventListener('click',fin);
         <svg viewBox="0 0 36 36" width="40" height="40" aria-hidden="true"><circle cx="18" cy="18" r="15" class="rbg"/><circle cx="18" cy="18" r="15" class="rfg" id="ring-fg" stroke-dasharray="0 100" pathLength="100"/></svg>
         <span class="gr-txt"><span class="num" id="xp-today">0</span><span class="note" id="xp-goal">/ 60 XP</span></span>
       </button>
-      <div class="lvl-pill" title="Ton niveau">
+      <button type="button" class="lvl-pill" id="lvl-pill" title="Ton niveau : touche pour voir sa fiche">
         <span class="lvl-badge" id="lvl-badge"><b id="lvl-n">I</b></span>
         <span class="lvl-txt"><span id="lvl-name">Curieux</span><span class="lvlbar"><i id="lvl-bar"></i></span></span>
-      </div>
+      </button>
     </div>
   </header>
   <div class="meander" aria-hidden="true"></div>
@@ -5561,6 +5581,67 @@ function badgeFiche(f){
       el('button',{class:'btn',type:'button',text:'Fermer',onclick:()=>close()})));
   son('clic');
 }
+// ce que veut dire chaque titre : d'Athènes à Rome, Constantinople, puis l'Occident
+const LEVEL_SENS=[
+  'Du latin novicius, « nouveau venu ». Celui qui commence, et c’est déjà beaucoup : la plupart ne commencent jamais.',
+  'Du latin discipulus, « celui qui apprend ». On se met à l’école de plus savant que soi, sans honte.',
+  'À Athènes, le jeune homme de dix-huit à vingt ans qui faisait son apprentissage de citoyen : l’éphébie.',
+  'Celui qui sait lire, écrire et copier, savoir rare et respecté dans l’Antiquité. Penser commence souvent la plume à la main.',
+  'Le maître de la rhétorique, l’art de bien parler et de convaincre. Il apprend aussi à repérer qui cherche à nous convaincre.',
+  'Celui qui raisonne juste. Aristote a fait de la logique un outil : distinguer ce qui découle vraiment de ce qui en a seulement l’air.',
+  'À Athènes, l’un des dix magistrats élus chaque année pour commander l’armée ; Périclès fut stratège. Il voit plus loin que le coup suivant.',
+  '« Ami de la sagesse » : celui qui cherche, plutôt que de croire savoir. Socrate disait ne savoir qu’une chose, qu’il ne savait rien.',
+  'L’un des magistrats qui gouvernaient Athènes ; le premier d’entre eux donnait son nom à l’année.',
+  'Le plus haut titre de la Grèce ancienne : les Sept Sages, dont Solon, le législateur d’Athènes. Ici s’achève le voyage grec.',
+  'À Rome, le grammaticus enseignait aux enfants la langue et les poètes. Le savoir change de ville : te voici à Rome.',
+  'Cicéron fut l’orateur par excellence, plaidant au forum et au Sénat. Parler pour défendre, et savoir pourquoi l’on parle.',
+  'Le savant du droit, que l’on venait consulter. Le droit romain inspire encore le nôtre.',
+  'Magistrat romain qui recensait les citoyens et veillait aux mœurs ; Caton l’Ancien fut le plus redouté.',
+  'L’un des deux magistrats élus chaque année pour diriger la République romaine. Le sommet de la carrière d’un Romain.',
+  'À Constantinople, le didaskalos était le maître qui enseignait. Le savoir grec et romain s’y garde pendant mille ans.',
+  'Haut fonctionnaire de l’Empire byzantin, à la tête d’un grand service de l’État. Il fallait compter juste et écrire clair.',
+  'Titre créé au XIe siècle pour Michel Psellos, chargé de l’enseignement de la philosophie à Constantinople.',
+  'Haute dignité de la cour, à Rome puis à Byzance, accordée aux plus proches serviteurs de l’empereur.',
+  'Ta couronne de bois est pleine. Le voyage byzantin s’achève : le savoir repart vers l’Occident.',
+  'En Gaule, le poète qui gardait la mémoire des héros en la chantant. Retenir, c’est déjà comprendre.',
+  'Poète des cours scandinaves, maître des vers savants et des images (les kenningar : la « baleine des mers » pour le navire).',
+  'À l’école du palais de Charlemagne, dirigée par Alcuin, le clerc savait lire et écrire le latin, et recopiait les textes anciens pour les sauver.',
+  'Le maître chargé de l’école d’une cathédrale ; Fulbert de Chartres fut l’un des plus célèbres.',
+  'Grade de l’université médiévale : on avait étudié les arts libéraux et l’on pouvait enseigner à son tour.',
+  'Le plus haut grade de l’université ; Thomas d’Aquin enseigna à Paris comme maître en théologie.',
+  'Il gardait le sceau du roi de France et scellait ses actes. Rien ne valait sans sa vérification.',
+  'L’un des princes qui élisaient l’empereur du Saint-Empire ; la Bulle d’or de 1356 en fixa le nombre à sept.',
+  'Titre de l’archevêque de Mayence, premier des électeurs et chef de la chancellerie de l’Empire.',
+  'Le dernier titre : tes bois sont d’or. Le voyage revient à la forêt, et l’on continue de compter.'];
+// la fiche de ton niveau : ton cerf, ce que veut dire ton titre, le chemin parcouru et ce qui vient
+function niveauFiche(){
+  const L=gamiCtx.level||1, tot=gamiCtx.total||0, a=needFor(L), b=needFor(L+1), pct=Math.max(0,Math.min(100,Math.round((tot-a)/(b-a)*100)));
+  const sens=LEVEL_SENS[Math.min(L,30)-1];
+  const bois=L<11?['XI','tes bois se couronneront : deux pointes de plus au sommet']:L<20?['XX','ta couronne sera pleine']:L<30?['XXX','tes bois deviendront d’or']:null;
+  // le chemin : les titres déjà gagnés, le tien, les deux suivants ; le reste se découvre en montant
+  const ERAS=[[1,10,'Athènes'],[11,15,'Rome'],[16,20,'Constantinople'],[21,30,'L’Occident']];
+  const chemin=el('div',{class:'niv-chemin'},...ERAS.filter(([d])=>d<=Math.max(L+2,10)).map(([d,f,nom])=>
+    el('div',{class:'niv-era'},el('span',{class:'label',text:nom}),el('ol',{},...Array.from({length:f-d+1},(_,i)=>d+i).map(n=>{
+      const vu=n<=L+2, cls=n<L?'ok':n===L?'cur':'';
+      return el('li',{class:cls,title:vu?`${roman(n)} · ${levelName(n)}`:`Niveau ${roman(n)}`},el('b',{text:roman(n)}),el('span',{text:vu?levelName(n):'?'}));})))));
+  const reste=Math.max(0,30-(L+2));
+  let close;
+  close=ficheOuvrir('Ton niveau : '+levelName(L),
+    el('span',{class:'stag niv-stag','aria-hidden':'true',html:stagSVG(L,'proud',undefined,{sansMue:true})}),
+    el('span',{class:'label',text:`Niveau ${roman(L)}`+(L>10?` · ${levelEra(L)}`:' · Athènes')}),
+    el('h2',{text:levelName(L)}),
+    el('div',{class:'niv-jauge'},el('span',{class:'lvlbar big'},el('i',{style:`width:${pct}%`})),
+      el('span',{class:'note',text:`${fmt(tot)} XP au total · encore ${fmt(b-tot)} XP pour le niveau ${roman(L+1)}, ${levelName(L+1)}`})),
+    el('section',{class:'fiche-s'},el('h3',{text:'Ce que veut dire ton titre'}),el('p',{text:sens}),
+      bois?el('p',{class:'note piece',text:`Au niveau ${bois[0]}, ${bois[1]}.`}):null),
+    el('section',{class:'fiche-s'},el('h3',{text:'Le chemin du savoir'}),
+      el('p',{class:'note',text:'Au Moyen Âge, on appelait translatio studii ce voyage du savoir d’Athènes à Rome, puis à Constantinople et dans les écoles d’Occident. Chaque niveau t’y fait avancer d’un pas.'}),
+      chemin, reste?el('p',{class:'note',text:`Encore ${reste} titre${reste>1?'s':''} à découvrir en montant.`}):null),
+    el('div',{class:'row fiche-acts'},
+      el('button',{class:'btn primary',type:'button',text:'Mes XP et mes badges',onclick:()=>{close();setTimeout(()=>{showTab('progres');bilanTab('niveau');window.scrollTo(0,0);},320);}}),
+      el('button',{class:'btn',type:'button',text:'Fermer',onclick:()=>close()})));
+  son('clic');
+}
 let gamiCtx={xp:{},total:0,level:1,best:0};
 function gami(silent){
   const m=xpByDay(), total=xpTotal(m), level=levelOf(total), st=streaks(), t=todayKey(), goal=state.settings.xpGoal||60;
@@ -6154,11 +6235,12 @@ function renderXpPanel(){
   $('#xp-week-sub').textContent=`${wk} XP cette semaine · semaine passée : ${prev} XP. ${wk>prev?'Tu bats ton toi de la semaine dernière.':prev?'Encore '+(prev-wk+1)+' XP pour battre ton toi de la semaine dernière.':''}`;
   const L=gamiCtx.level, pc=Math.round((gamiCtx.total-needFor(L))/(needFor(L+1)-needFor(L))*100);
   $('#xp-total').replaceChildren(
-    el('div',{class:'xp-lvl'},el('span',{class:'lvl-badge',html:laurel(44)},el('b',{text:roman(L)})),
+    el('button',{class:'xp-lvl',type:'button',title:'Voir la fiche de ton niveau',onclick:()=>niveauFiche()},el('span',{class:'lvl-badge',html:laurel(44)},el('b',{text:roman(L)})),
       el('div',{class:'xp-lvl-t'},el('strong',{text:`Niveau ${roman(L)} · ${levelName(L)}`}),
         L>10?el('span',{class:'note',text:`Un titre venu de ${levelEra(L)}`}):null,
         el('span',{class:'lvlbar big'},el('i',{style:`width:${pc}%`})),
-        el('span',{class:'note',text:`${fmt(gamiCtx.total)} XP au total · encore ${fmt(needFor(L+1)-gamiCtx.total)} XP pour le niveau ${roman(L+1)} (${levelName(L+1)})`}))),
+        el('span',{class:'note',text:`${fmt(gamiCtx.total)} XP au total · encore ${fmt(needFor(L+1)-gamiCtx.total)} XP pour le niveau ${roman(L+1)} (${levelName(L+1)})`})),
+      el('span',{class:'xp-lvl-go','aria-hidden':'true',text:'›'})),
     el('details',{class:'fold xp-gains'},el('summary',{},el('span',{class:'note',text:'Comment gagner des XP'})),
       el('dl',{},...XP_GAINS.flatMap(([q,v])=>[el('dt',{text:q}),el('dd',{text:v})]))));
   const bx=$('#badges'); bx.replaceChildren(); const fams=badgeFams(gamiCtx); let got=0, tot=0;
@@ -7050,6 +7132,7 @@ function placerOnglet(){
 addEventListener('resize',()=>placerOnglet(),{passive:true});
 $('#city-form').addEventListener('submit',e=>{e.preventDefault();state.settings.city=$('#city-in').value.trim().slice(0,60);save();renderReel();toast('<span>Ville enregistrée.</span>');});
 $('#go-biblio').addEventListener('click',()=>{showTab('conseils');window.scrollTo(0,0);});
+$('#lvl-pill').addEventListener('click',()=>niveauFiche());
 $('#go-settings').addEventListener('click',()=>{showTab('reglages');window.scrollTo(0,0);});
 // le bouton « Signaler un problème » reste visible pendant la phase de test (BF_CONFIG.retours dans config.js)
 $('#go-report').hidden=!window.bfRetour||!(window.BF_CONFIG||{}).retours;

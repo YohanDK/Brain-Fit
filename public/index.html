@@ -1132,6 +1132,8 @@ html.boot .view{visibility:hidden}
 .wl-act .linkbtn{margin-top:2px;align-self:center}
 .wl-video{width:100%;aspect-ratio:16/9;border-radius:12px;overflow:hidden;background:var(--sunk);border:1px solid var(--line)}
 .wl-video iframe,.wl-video video{width:100%;height:100%;border:0;display:block}
+.wl-heberge{display:flex;align-items:center;justify-content:center;gap:7px;margin-top:-4px}
+.wl-drapeau{width:18px;height:12px;flex:none;border-radius:2px;box-shadow:0 0 0 1px var(--line)}
 .wl-install{width:100%;border-top:1px solid var(--line);padding-top:16px;margin-top:6px;display:flex;flex-direction:column;align-items:center;gap:10px}
 .wl-install h2{margin:0}
 .wl-qr{display:flex;gap:18px;align-items:center;text-align:left}
@@ -2199,6 +2201,7 @@ var fin=function(){if(e.parentNode)e.remove();};e.addEventListener('click',fin);
       </div>
     </section>
     <p class="note">Gratuit, sans publicité. Sans compte, tes progrès restent sur cet appareil.</p>
+    <p class="note wl-heberge"><svg class="wl-drapeau" viewBox="0 0 3 2" role="img" aria-label="Drapeau français"><rect width="1" height="2" fill="#0055A4"/><rect x="1" width="1" height="2" fill="#fff"/><rect x="2" width="1" height="2" fill="#EF4135"/></svg>Site hébergé en France, données en Europe (Irlande)</p>
   </div>
 </div>
 <div class="tip" id="tip" hidden></div>

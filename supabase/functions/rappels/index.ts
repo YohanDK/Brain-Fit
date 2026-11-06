@@ -6,7 +6,7 @@
 import { createClient, SupabaseClient } from "npm:@supabase/supabase-js@2.117.3";
 import { type Abonnement, type ClesVapid, envoyer, nouvellesCles } from "./webpush.ts";
 
-const SITE = "https://yohandk.github.io/Brain-Fit/";
+const SITE = "https://neo-phyte.fr/";
 const CONTACT = SITE; // les services de notification veulent une adresse de contact : https:// ou mailto:
 const RELANCE = "21:00"; // heure de la relance « série en danger »
 const PUSH_OK =

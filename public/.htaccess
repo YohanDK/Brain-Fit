@@ -1,0 +1,24 @@
+# Réglages du serveur pour l'hébergement web Scaleway (Apache). Ignoré par GitHub Pages.
+
+# une seule adresse : https://neo-phyte.fr (www., néophyte.fr et http y renvoient)
+RewriteEngine On
+RewriteRule ^\.well-known/ - [L]
+RewriteCond %{HTTP_HOST} !^neo-phyte\.fr$ [NC,OR]
+RewriteCond %{HTTPS} off
+RewriteRule ^(.*)$ https://neo-phyte.fr/$1 [R=301,L]
+
+ErrorDocument 404 /404.html
+Options -Indexes
+
+<IfModule mod_headers.c>
+  Header always set Strict-Transport-Security "max-age=31536000"
+  Header always set X-Content-Type-Options "nosniff"
+  Header always set Referrer-Policy "strict-origin-when-cross-origin"
+  Header always set X-Frame-Options "SAMEORIGIN"
+  # la page, le service hors ligne et la config se rechargent à chaque visite : une mise à jour arrive tout de suite
+  <FilesMatch "^(index\.html|sw\.js|config\.js|manifest\.webmanifest)$">
+    Header set Cache-Control "no-cache"
+  </FilesMatch>
+</IfModule>
+
+AddType application/manifest+json .webmanifest

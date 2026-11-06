@@ -1,0 +1,39 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="referrer" content="origin">
+<meta name="robots" content="noindex">
+<title>Néophyte déménage</title>
+<link rel="canonical" href="https://neo-phyte.fr/">
+<style>
+html,body{margin:0;background:#FAF9F6;color:#24211C}
+@media (prefers-color-scheme:dark){html,body{background:#101219;color:#EEE8DA}}
+body{font-family:Garamond,Georgia,serif;font-size:19px;line-height:1.5;display:grid;place-items:center;min-height:100vh;padding:24px;box-sizing:border-box;text-align:center}
+a{color:#3A5DBF;font-weight:600}
+</style>
+<script>
+// Ancienne adresse de Néophyte. On emporte la progression gardée dans ce navigateur (clés brainfit.* et neo.*)
+// vers la nouvelle adresse, qui la reprend si elle n'a encore rien sur cet appareil (voir public/index.html).
+(function(){
+  var NEUF='https://neo-phyte.fr/', dest=NEUF+location.search+location.hash;
+  try{
+    var o={},n=0;
+    for(var i=0;i<localStorage.length;i++){var k=localStorage.key(i);
+      if(/^(brainfit|neo)\./.test(k)&&k!=='brainfit.demenage'&&k!=='brainfit.splash'){o[k]=localStorage.getItem(k);n++;}}
+    if(n&&!localStorage.getItem('brainfit.demenage')){
+      var u=new TextEncoder().encode(JSON.stringify(o)),b='';
+      for(var j=0;j<u.length;j+=8192)b+=String.fromCharCode.apply(null,u.subarray(j,j+8192));
+      dest=NEUF+location.search+'#demenagement='+btoa(b).replace(/\+/g,'-').replace(/\//g,'_').replace(/=+$/,'');
+      localStorage.setItem('brainfit.demenage',new Date().toISOString());
+    }
+  }catch(e){}
+  location.replace(dest);
+})();
+</script>
+</head>
+<body>
+<p>Néophyte a déménagé à <a href="https://neo-phyte.fr/">neo-phyte.fr</a>.<br>Pense à ajouter la nouvelle adresse à ton écran d'accueil.</p>
+</body>
+</html>

@@ -14,6 +14,6 @@ window.BF_CONFIG={
   // avant-première : la création de compte demande une invitation (code ou lien de parrainage), vérifiée par
   // supabase/invitations.sql. Au lancement, passer à false (ou, côté serveur : update public.acces_reglage set sur_invitation=false)
   invitation:true,
-  // adresse de contact affichée aux visiteurs sans invitation (par exemple 'bonjour@neophyte.fr') ; vide = cachée
-  contact:''
+  // adresse de contact affichée sur l'accueil des visiteurs ; vide = cachée
+  contact:'contact@neo-phyte.fr'
 };

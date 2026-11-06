@@ -729,6 +729,17 @@ a{color:var(--accent);text-underline-offset:3px}
 .pa-cases button.sel{box-shadow:0 0 0 3px var(--gold-soft)}
 .pa-cases button.dim{font-style:italic}
 .pa-cases button:disabled{opacity:.35;cursor:default}
+/* Avent : la porte du jour, qui pivote sur ses gonds */
+.pa-porte{position:relative;width:92px;height:108px;padding:0;border:0;background:none;cursor:pointer;perspective:500px;flex:none}
+.pa-porte .derriere{position:absolute;inset:0;border-radius:6px;background:radial-gradient(circle at 50% 40%,#FBE9B8,#E7C770 70%);box-shadow:inset 0 0 0 2px var(--gold-deep)}
+.pa-porte .battant{position:absolute;inset:0;border-radius:6px;background:linear-gradient(160deg,#9E2F2B,#6E1C1A);border:2px solid #C9A440;outline:1px solid rgba(233,199,102,.55);outline-offset:-7px;color:#F6E7C1;display:flex;align-items:center;justify-content:center;transform-origin:left center;transition:transform .7s cubic-bezier(.3,.7,.3,1);box-shadow:0 3px 8px rgba(60,20,10,.25);backface-visibility:hidden}
+.pa-porte .battant b{font-family:'Cinzel',Georgia,serif;font-size:2.3rem;font-weight:700}
+.pa-porte:hover .battant{transform:rotateY(-12deg)}
+.pa-porte.ouvre .battant{transform:rotateY(-108deg)}
+.pa-porte:focus-visible{outline:2px solid var(--gold-deep);outline-offset:3px}
+#parcours.porte-ouverte #pa-title,#parcours.porte-ouverte #pa-mot{animation:porteRevele .6s ease both}
+@keyframes porteRevele{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+@media (prefers-reduced-motion:reduce){.pa-porte .battant{transition:none}#parcours.porte-ouverte #pa-title,#parcours.porte-ouverte #pa-mot{animation:none}}
 /* énigme du dimanche */
 .enq-recit{max-width:60ch;text-align:left;margin:0}
 .enq-ind{margin:0;padding-left:1.4em;text-align:left;width:100%;display:flex;flex-direction:column;gap:6px}
@@ -2683,8 +2694,8 @@ const EVENTS=[
 ['1221',1988,"Attentat contre un Boeing de la Pan Am au-dessus de Lockerbie, en Écosse."],
 ['1222',1639,"Baptême de Jean Racine à La Ferté-Milon."],
 ['1223',1790,"Naissance de Jean-François Champollion à Figeac."],
-['1225',800,"Charlemagne est couronné empereur à Rome."],
-['1225',1991,"Gorbatchev démissionne : l'URSS disparaît le lendemain."],
+['1225',800,"Charlemagne est couronné empereur à Rome par le pape Léon III, le jour de Noël."],
+['1225',1991,"Gorbatchev démissionne ; le soir de Noël, le drapeau soviétique est descendu du Kremlin : l'URSS disparaît le lendemain."],
 ['1226',1825,"Insurrection des décembristes à Saint-Pétersbourg contre le tsar Nicolas Ier."],
 ['1226',2004,"Un séisme au large de Sumatra provoque un tsunami meurtrier dans tout l'océan Indien."],
 ['1227',1822,"Naissance de Louis Pasteur à Dole."],
@@ -2756,7 +2767,24 @@ const EVENTS=[
 ['0326',1351,"Combat des Trente, près de Josselin : trente chevaliers bretons affrontent trente Anglais en champ clos.",'bretagne'],
 ['0130',1793,"Mort du marquis de la Rouërie, héros de l'indépendance américaine et chef de l'Association bretonne, caché au château de la Guyomarais.",'bretagne'],
 ['0625',1804,"Georges Cadoudal, chef chouan né près d'Auray, est guillotiné à Paris.",'bretagne'],
-['0316',1978,"Le pétrolier Amoco Cadiz s'échoue au large de Portsall, dans le Finistère : une des pires marées noires de l'histoire.",'bretagne']
+['0316',1978,"Le pétrolier Amoco Cadiz s'échoue au large de Portsall, dans le Finistère : une des pires marées noires de l'histoire.",'bretagne'],
+// Avent (contenu:'noel') : l'histoire de Noël, pour les frises du calendrier
+['1225',336,"Première mention d'une fête de la Nativité le 25 décembre à Rome (Chronographe de 354).",'noel'],
+['1225',1066,"Guillaume le Conquérant est couronné roi d'Angleterre à Westminster, le jour de Noël.",'noel'],
+['1224',1223,"François d'Assise fait célébrer la messe de Noël devant une crèche vivante, à Greccio : la première crèche.",'noel'],
+['1221',1521,"Les comptes de Sélestat, en Alsace, mentionnent des arbres coupés pour Noël : l'une des plus anciennes traces du sapin.",'noel'],
+['1225',1642,"Naissance d'Isaac Newton, le jour de Noël du calendrier alors en usage en Angleterre.",'noel'],
+['1225',1734,"Première exécution de l'Oratorio de Noël de Bach, à Leipzig.",'noel'],
+['1224',1800,"Le soir de Noël, Bonaparte échappe à l'attentat de la rue Saint-Nicaise en se rendant à l'Opéra.",'noel'],
+['1224',1818,"Première exécution de « Douce nuit » (Stille Nacht) dans l'église d'Oberndorf, en Autriche.",'noel'],
+['1223',1823,"Le poème « La Nuit avant Noël » de Clement Clarke Moore paraît, sans nom d'auteur, à Troy (New York) : il fixe l'image du père Noël.",'noel'],
+['1219',1843,"Charles Dickens publie Un chant de Noël à Londres.",'noel'],
+['1224',1847,"« Minuit, chrétiens », d'Adolphe Adam, est chanté pour la première fois à Roquemaure, dans le Gard.",'noel'],
+['1208',1852,"À Lyon, la statue dorée de la Vierge est inaugurée à Fourvière ; les habitants illuminent leurs fenêtres : la première fête des Lumières.",'noel'],
+['1225',1886,"Paul Claudel se convertit pendant les vêpres de Noël à Notre-Dame de Paris.",'noel'],
+['1218',1892,"Création du ballet Casse-Noisette de Tchaïkovski au théâtre Mariinsky de Saint-Pétersbourg.",'noel'],
+['1224',1914,"Trêve de Noël : sur le front des Flandres, soldats allemands et britanniques chantent et fraternisent entre les tranchées.",'noel'],
+['1224',1968,"Apollo 8 tourne autour de la Lune : le soir de Noël, l'équipage lit le début de la Genèse en direct.",'noel']
 ];
 const fmtY=y=>y<0?(-y)+' av. J.-C.':String(y);
 // dictées : l niveau 1 à 4, a auteur (null : texte écrit pour Néophyte), p pièges [mot tel qu'il apparaît, règle]
@@ -2772,6 +2800,15 @@ const DICTEES=[
    p:[["vins","Passé simple de venir : je vins."],["soulevées","Participe accordé avec « les vagues », féminin pluriel."],["annonçant","Participe présent, invariable ; cédille devant a."],["équinoxe","Nom masculin : l'équinoxe d'automne."],["effacée","Verbe pronominal : accord avec le sujet « leur tristesse »."],["revoie","Subjonctif présent après « il n'y a pas de jour où… ne » : que je revoie."],["infligea","Passé simple ; le e après le g garde le son « j » devant a."],["berça","Passé simple ; cédille devant a."],["traîné","Le COD « que » (un nom) est placé avant avoir : accord au masculin singulier."]]},
   {id:'bzh-ys',th:'lettres',sem:'bretagne',l:4,ti:'La ville d’Ys',a:null,tx:"La légende de la ville d'Ys, que les conteurs bretons se sont transmise de génération en génération, rapporte qu'une cité florissante s'élevait jadis dans la baie de Douarnenez. Protégée de la mer par une digue, elle ne s'ouvrait qu'avec une clé que le roi Gradlon gardait sur lui. Sa fille Dahut, qu'on a souvent dite ensorcelée, la lui aurait dérobée pendant son sommeil. Les flots se sont engouffrés dans la ville ; certains pêcheurs l'ont entendue sonner, les jours de calme, du fond de la mer.",
    p:[["transmise","Verbe pronominal à sens réfléchi indirect (se transmettre quelque chose) : accord avec le COD « que » (la légende), placé avant."],["florissante","Adjectif verbal de fleurir, au sens de prospérer : florissant, avec un o."],["jadis","Adverbe invariable, avec un s final."],["Protégée","Participe employé comme adjectif, accordé avec « elle » (la cité)."],["dite","Accord avec le COD « qu' » (Dahut), placé avant avoir."],["dérobée","Accord avec le COD « la » (la clé), placé avant avoir."],["se sont engouffrés","Verbe essentiellement pronominal : accord avec le sujet « les flots »."],["entendue","« L' » (la ville) fait l'action de sonner : le participe suivi d'un infinitif s'accorde."]]},
+  // Avent (sem:'noel') : choisies en premier pendant le calendrier de l'Avent
+  {id:'noel-creche',th:'',sem:'noel',l:1,ti:'La crèche de grand-père',a:null,tx:"Chaque année, mon grand-père installe la crèche sur le buffet. Il sort les santons de leur boîte, un par un. Il y a le berger, le meunier, la poissonnière et le joueur de tambourin. Nous plaçons la mousse et les cailloux. L'enfant Jésus attend dans un tiroir : il ne sera posé dans la paille que le soir de Noël.",
+   p:[["grand-père","Nom composé avec trait d'union."],["santons","Les noms en -on prennent un s au pluriel."],["poissonnière","Deux s pour le son « s » entre deux voyelles, deux n, un accent grave."],["tambourin","On écrit m devant b : tambour, tambourin."],["plaçons","Cédille devant o pour garder le son « s » : nous plaçons."],["cailloux","Caillou fait partie des sept noms en -ou qui prennent un x au pluriel."],["posé","Futur passif : le participe s'accorde avec « il » (l'enfant Jésus)."]]},
+  {id:'noel-lumieres',th:'histoire',sem:'noel',l:2,ti:'La fête des Lumières',a:null,tx:"Le 8 décembre 1852, Lyon devait inaugurer une statue de la Vierge dorée au sommet de la colline de Fourvière. Le mauvais temps fit annuler les réjouissances prévues. Pourtant, à la tombée de la nuit, le ciel se dégagea, et les Lyonnais posèrent des lumignons sur le rebord de leurs fenêtres : toute la ville s'illumina. Depuis, chaque 8 décembre, ils allument des bougies à leurs fenêtres. C'est l'origine de la fête des Lumières.",
+   p:[["inaugurer","Un seul n après le i, puis -augurer."],["fit annuler","Faire suivi d'un infinitif : annuler reste à l'infinitif ; annuler prend deux n."],["prévues","Participe employé comme adjectif, accordé avec « les réjouissances »."],["dégagea","Passé simple ; le e après le g garde le son « j » devant a."],["posèrent","Passé simple du premier groupe à la troisième personne du pluriel : -èrent."],["lumignons","Nom en -on : pluriel en s."],["s'illumina","Deux l ; passé simple : il s'illumina."],["allument","Allumer prend deux l : ils allument."]]},
+  {id:'noel-treve',th:'histoire',sem:'noel',l:3,ti:'La trêve de Noël',a:null,tx:"Le soir du 24 décembre 1914, sur le front des Flandres, les soldats britanniques virent des lumières s'allumer sur le parapet des tranchées allemandes : c'étaient de petits sapins garnis de bougies. Des chants s'élevèrent, auxquels répondirent d'autres chants. Le lendemain, des hommes qui s'étaient combattus la veille sortirent sans armes, échangèrent du tabac et des biscuits, et enterrèrent ensemble leurs morts. Inquiets, les états-majors interdirent que de telles trêves se reproduisent.",
+   p:[["virent","Passé simple de voir : ils virent."],["garnis","Participe accordé avec « petits sapins », masculin pluriel."],["s'élevèrent","Passé simple ; accent grave devant la syllabe muette."],["auxquels","Pronom relatif accordé avec « chants », masculin pluriel."],["répondirent","Passé simple de répondre : ils répondirent."],["s'étaient combattus","Verbe pronominal réciproque : les hommes se sont combattus les uns les autres, accord avec le sujet."],["enterrèrent","Deux r ; passé simple en -èrent."],["états-majors","Nom composé : les deux mots prennent la marque du pluriel."],["reproduisent","Subjonctif présent après « interdire que »."]]},
+  {id:'noel-messes',th:'lettres',sem:'noel',l:4,ti:'Les trois messes basses',a:null,tx:"Dans l'un des contes des Lettres de mon moulin, Alphonse Daudet raconte la nuit de Noël du révérend dom Balaguère. Le diable, déguisé en petit clerc, lui vanta les dindes truffées que l'on rôtissait pour le réveillon. Tout occupé des délices qu'il s'était promises, le chapelain expédia ses trois messes basses, avalant les mots, sautant les prières. Mort dans la nuit même, il fut condamné à revenir chaque année dans sa chapelle en ruine, pour y dire les trois cents messes qu'il avait escamotées.",
+   p:[["révérend","Deux accents aigus."],["déguisé","Participe accordé avec « le diable »."],["truffées","Deux f ; participe accordé avec « les dindes »."],["rôtissait","Accent circonflexe sur le o de rôtir."],["délices","Au pluriel, délice est féminin : des délices promises."],["promises","Se promettre quelque chose : accord avec le COD « qu' » (les délices), placé avant."],["avalant","Participe présent, invariable."],["condamné","Le m de condamner ne se prononce pas."],["trois cents","Cent prend un s quand il est multiplié et n'est suivi d'aucun nombre."],["escamotées","Accord avec le COD « qu' » (les messes), placé avant avoir."]]},
   {id:'marche',th:'',l:1,ti:'Le marché du samedi',a:null,tx:"Chaque samedi, ma grand-mère part au marché avec son panier. Elle achète des pommes, des poireaux et un gros pain de campagne. Les marchands l'appellent par son prénom et lui gardent les plus beaux fruits. Sur le chemin du retour, elle s'arrête toujours pour bavarder avec ses voisines.",
    p:[["grand-mère","Nom composé avec trait d'union ; « grand » reste invariable devant un nom féminin."],["achète","Acheter prend un accent grave devant une syllabe muette : elle achète, nous achetons."],["poireaux","Les noms en -eau font leur pluriel en -x."],["appellent","Appeler double le l devant un e muet : ils appellent, nous appelons."],["beaux","Beau devient beaux au pluriel."],["s'arrête","Verbe pronominal : elle s'arrête, avec l'apostrophe."]]},
   {id:'chat',th:'',l:1,ti:'Le chat de la voisine',a:null,tx:"Le chat de la voisine est entré par la fenêtre ouverte. Il a sauté sur la table, renversé un verre et mangé les restes du dîner. Quand nous sommes arrivés, il dormait tranquillement sur le canapé. Nous avons ri, puis nous l'avons ramené chez lui.",
@@ -3358,6 +3395,12 @@ const QUOTES=[
 {id:'guesclin',c:'histoire',sem:'bretagne',q:"Il n'est fileuse en France qui ne file pour payer ma rançon.",a:"Bertrand du Guesclin",s:"Mot rapporté après sa capture à Nájera (1367) ; Cuvelier, Chanson de Bertrand du Guesclin, fin du XIVe siècle",n:"Prisonnier du Prince Noir, le Breton fixe lui-même sa rançon à une somme énorme. Le mot a sans doute été embelli par la légende, mais il dit la popularité du futur connétable.",k:"fileuse"},
 {id:'chateaubriand-vie',c:'classique',sem:'bretagne',q:"Il n'y a pas de jour où (…) je ne revoie en pensée le rocher sur lequel je suis né, la chambre où ma mère m'infligea la vie, la tempête dont le bruit berça mon premier sommeil.",a:"Chateaubriand",s:"Mémoires d'outre-tombe, première partie, livre premier (1848)",n:"Né à Saint-Malo en septembre 1768, un soir de tempête. Chateaubriand fait de sa naissance un présage : la mer, l'orage et la mélancolie l'accompagneront toute sa vie.",k:"infligea"},
 {id:'renan-ys',c:'classique',sem:'bretagne',q:"Il me semble souvent que j'ai au fond du cœur une ville d'Is qui sonne encore des cloches obstinées à convoquer aux offices sacrés des fidèles qui n'entendent plus.",a:"Ernest Renan",s:"Souvenirs d'enfance et de jeunesse, préface (1883)",n:"Le Breton de Tréguier a quitté la foi de son enfance, mais pas sa nostalgie. Il reprend la légende de la ville engloutie, dont on entendrait encore les cloches sous la mer.",k:"cloches"},
+{id:'noel-veillez',c:'classique',sem:'noel',q:"Prenez garde, restez éveillés : car vous ne savez pas quand ce sera le moment.",a:"Évangile selon saint Marc",s:"Marc 13, 33, lu au premier dimanche de l'Avent 2026 (traduction liturgique)",n:"Le premier mot de l'Avent n'est pas « attendez » mais « veillez » : l'attente active de celui qui reste lucide quand tout invite à s'assoupir.",k:"éveillés"},
+{id:'noel-isaie',c:'classique',sem:'noel',q:"Le peuple qui marchait dans les ténèbres a vu se lever une grande lumière.",a:"Livre d'Isaïe",s:"Isaïe 9, 1, lu à la messe de la nuit de Noël (traduction liturgique)",n:"Noël tombe au plus noir de l'hiver, quand les jours recommencent à peine à grandir : la lumière promise arrive quand on ne l'attendait plus.",k:"lumière"},
+{id:'noel-gaudete',c:'classique',sem:'noel',q:"Soyez toujours dans la joie du Seigneur ; je le redis : soyez dans la joie.",a:"Saint Paul",s:"Lettre aux Philippiens 4, 4 ; en latin Gaudete in Domino semper, chant d'entrée du troisième dimanche de l'Avent",n:"Paul écrit cela de prison. La joie n'y est pas l'absence d'ennuis, mais une manière de les traverser.",k:"joie"},
+{id:'noel-gautier',c:'classique',sem:'noel',q:"Le ciel est noir, la terre est blanche ; — Cloches, carillonnez gaîment ! — Jésus est né ; — la Vierge penche Sur lui son visage charmant.",a:"Théophile Gautier",s:"« Noël », Émaux et Camées",n:"Quatre vers qui font tout voir : le contraste du ciel et de la neige, le bruit des cloches, puis le silence d'un geste. Gautier voulait une poésie ciselée comme un émail.",k:"carillonnez"},
+{id:'noel-dickens',c:'classique',sem:'noel',q:"J'honorerai Noël dans mon cœur, et je tâcherai de le garder toute l'année.",a:"Charles Dickens",s:"Un chant de Noël (1843), le serment de Scrooge ; en anglais « I will honour Christmas in my heart, and try to keep it all the year »",n:"Après trois visites de fantômes, le vieil avare comprend que la fête ne vaut que si elle change le reste de l'année.",k:"année"},
+{id:'noel-peguy',c:'classique',sem:'noel',q:"La foi que j'aime le mieux, dit Dieu, c'est l'espérance.",a:"Charles Péguy",s:"Le Porche du mystère de la deuxième vertu (1911)",n:"Péguy fait de l'espérance une « petite fille » qui entraîne ses deux grandes sœurs, la foi et la charité. L'Avent est le temps de l'espérance.",k:"espérance"},
 {id:'renan-ame',c:'nation',q:"Une nation est une âme, un principe spirituel.",a:"Ernest Renan",s:"« Qu'est-ce qu'une nation ? », conférence à la Sorbonne, 11 mars 1882",n:"Pour Renan, deux choses font cette âme : un riche legs de souvenirs, et le désir présent de continuer à vivre ensemble.",k:"âme"},
 {id:'renan-pleb',c:'nation',q:"L'existence d'une nation est (…) un plébiscite de tous les jours.",a:"Ernest Renan",s:"« Qu'est-ce qu'une nation ? », conférence à la Sorbonne, 11 mars 1882",n:"Ni la race, ni la langue, ni la religion ne suffisent à faire une nation : il faut un héritage accepté et une volonté renouvelée. Renan répond à l'annexion de l'Alsace-Moselle par l'Allemagne.",k:"plébiscite"},
 {id:'renan-gloires',c:'nation',q:"Avoir des gloires communes dans le passé, une volonté commune dans le présent ; avoir fait de grandes choses ensemble, vouloir en faire encore, voilà les conditions essentielles pour être un peuple.",a:"Ernest Renan",s:"« Qu'est-ce qu'une nation ? », conférence à la Sorbonne, 11 mars 1882",n:"Le passé et le projet vont ensemble : la mémoire seule ne suffit pas, la volonté seule non plus.",k:"gloires"},
@@ -3515,6 +3558,14 @@ const QUOTES=[
 {id:'batonchaise',c:'vivre',q:"Il fallait qu'un bâton de chaise fût bien fait.",a:"Charles Péguy",s:"L'Argent (1913)",n:"Péguy se souvient des artisans de son enfance : le travail bien fait, même invisible, était une affaire d'honneur et non de salaire.",k:"chaise"},
 {id:'agricolas',c:'vivre',q:"Trop heureux les hommes des champs, s'ils connaissaient leur bonheur !",a:"Virgile",s:"Géorgiques, livre II, vers 458 (vers 29 av. J.-C.)",n:"O fortunatos nimium, sua si bona norint, agricolas ! Virgile chante la vie paysanne, loin des guerres civiles qui déchirent Rome.",k:"champs"}
 ];
+// Avent : le contenu de Noël (sem:'noel') reste caché hors de l'Avent et de Noël (jusqu'à l'Épiphanie), sauf avec ?apercu=…
+(()=>{const av=(NB.parcours||[]).find(p=>p.contenu==='noel'); if(!av)return;
+  const fin=new Date(av.au+'T12:00:00'); fin.setDate(fin.getDate()+13); const k=todayKey();
+  let ap=false; try{ap=/^\d{4}-\d{2}-\d{2}$/.test(new URLSearchParams(location.search).get('apercu')||'');}catch(e){}
+  if(ap||(k>=av.du&&k<=iso(fin)))return;
+  for(const A of [DICTEES,QUOTES])for(let i=A.length-1;i>=0;i--)if(A[i].sem==='noel')A.splice(i,1);
+  for(let i=EVENTS.length-1;i>=0;i--)if(EVENTS[i][3]==='noel')EVENTS.splice(i,1);
+})();
 const QBY=Object.fromEntries(QUOTES.map(q=>[q.id,q]));
 const QAUTHORS=[...new Set(QUOTES.filter(q=>q.c!=='fausse').map(q=>q.a))];
 const STROOP=[['rouge','ROUGE'],['bleu','BLEU'],['vert','VERT'],['jaune','JAUNE']];
@@ -4484,7 +4535,7 @@ function speak(text,rate){
 }
 const wordCount=tx=>(tx.match(/\p{L}+/gu)||[]).length;
 // la semaine à thème du jour (B.parcours avec theme), ou rien
-function semTh(){const p=parcOf(pToday());return p&&p.theme||'';}
+function semTh(){const p=parcOf(pToday());return p&&(p.theme||p.contenu)||'';}
 function pickDictee(l){
   const last=new Map(state.results.filter(r=>r.ex==='dictee'&&r.id).map(r=>[r.id,r.t])), th=semTh();
   const due=d=>(last.get(d.id)||0)-(hasTheme(d.th)?7*864e5:0)-(th&&d.sem===th?3650*864e5:0);
@@ -5528,6 +5579,8 @@ function saintDuJour(k=todayKey()){
   for(const o in mob)if(addDays(P,+o)===k)return mob[o];
   // Christ Roi : le dimanche qui précède le premier dimanche de l'Avent
   const n=new Date(y,11,25); const av1=addDays(iso(n),-((n.getDay()||7)+21)); if(addDays(av1,-7)===k)return'Christ Roi de l\'univers';
+  // les quatre dimanches de l'Avent passent devant le saint, qu'on garde à côté (saint Nicolas, sainte Lucie)
+  for(let i=0;i<4;i++)if(addDays(av1,7*i)===k)return['1er','2e','3e','4e'][i]+' dimanche de l\'Avent'+(i===2?', Gaudete':'')+' · '+SAINTS[+k.slice(5,7)-1][+k.slice(8,10)-1];
   // en France, l'Épiphanie se fête le dimanche entre le 2 et le 8 janvier, le Baptême du Seigneur le dimanche suivant (le lundi si l'Épiphanie tombe le 7 ou le 8)
   if(md>='01-02'&&md<='01-08'&&dow===0)return'Épiphanie du Seigneur';
   const ep=[2,3,4,5,6,7,8].map(d=>iso(new Date(y,0,d))).find(x=>new Date(x+'T12:00:00').getDay()===0);
@@ -5598,6 +5651,14 @@ const ATTRS=[
     const[cx,cy]=B(.5);
     o+=`<path d="M${f(cx)} ${f(cy)}v2" stroke="${st}" stroke-width=".7"/><ellipse cx="${f(cx)}" cy="${f(cy+5)}" rx="3.4" ry="3.9" fill="${g>=3?'#E9C766':'#FBF8F2'}" stroke="${st}" stroke-width=".6"/>`+mo(cx,cy+5,.78);
     return o+'</g>';},g=>semNote('bretagne-2026',g),'bretagne-2026'],
+  // Avent : l'écharpe de laine rouge. I dix cases, II vingt cases (rayée de blanc, le badge), III vingt-quatre cases, avec un brin de houx
+  ['echarpe','L’écharpe de l’Avent','cases du calendrier de l’Avent',[1,2,3],()=>aventGrade('avent-2026'),g=>{
+    const r='#A8322B', d='#6E1C1A', w='#F4EEDD', C='M37.5 83Q50 93.5 62.5 83';
+      let o=`<g class="acc"><path d="${C}" fill="none" stroke="${d}" stroke-width="5.4" stroke-linecap="round"/><path d="${C}" fill="none" stroke="${r}" stroke-width="4.4" stroke-linecap="round"/>`+
+        `<path d="M54 86.6L57.4 97.4L61.4 96.2L58.8 85.4Z" fill="${r}" stroke="${d}" stroke-width=".5"/><path d="M57.4 97.4l-.3 1.8M58.8 97l-.2 1.8M60.1 96.6l-.1 1.8M61.4 96.2v1.8" stroke="${r}" stroke-width=".7" stroke-linecap="round"/>`;
+      if(g>=2)o+=`<path d="${C}" fill="none" stroke="${w}" stroke-width=".7" stroke-dasharray="1.6 1.4"/><path d="M55.3 90.6l4-1.1M56.3 93.8l4-1.1" stroke="${w}" stroke-width=".9"/>`;
+      if(g>=3)o+=`<g transform="translate(56 87)"><path d="M0 0c-2.6-1.6-5-.6-5.6 1.2c1.2-.2 1.8.6 1.4 1.4c1.4-.6 2.6.2 2.2 1.2C-.8 3-.2 1.6 0 0z" fill="#3E6B35" stroke="#24401F" stroke-width=".3"/><path d="M0 0c1.4-2.6 4-3 5.4-1.6c-1.2.4-1.4 1.4-.8 2c-1.4 0-2.2 1-1.6 1.8C1.6 2.4.6 1.4 0 0z" fill="#3E6B35" stroke="#24401F" stroke-width=".3"/><circle cx="-.6" cy="-.9" r="1.1" fill="#C3272B"/><circle cx="1" cy="-1.2" r="1.1" fill="#C3272B"/><circle cx=".2" cy=".4" r="1.1" fill="#C3272B"/></g>`;
+      return o+'</g>';},g=>aventNote('avent-2026',g),'avent-2026'],
   // la parure d'Europe, gagnée par le parrainage : I le lierre d'Athènes (premier ami inscrit), II le manteau normand (premier ami actif),
   // III la fraise et le manteau noir de l'Espagne du Siècle d'or (dix amis actifs)
   ['parure','La parure d’Europe','parrainage',[1,2,3],()=>parureGrade(),g=>{
@@ -5638,7 +5699,19 @@ function semNote(id,g){
   if(g===1)return fin?`Premier palier : trois jours de la semaine de ${p.court}`:`Palier suivant : cinq jours sur sept · ${n} sur 5`;
   return `Premier palier : trois jours de la semaine de ${p.court} · ${n} sur 3`;
 }
+// Avent : le palier de l'écharpe (10, 20, 24 cases) et ce qu'il reste à faire
+const AV_PAL=[10,20,24];
+function aventGrade(id){const p=semOf(id); if(!p)return 0; const n=parcDone(p,true).length; return AV_PAL.filter(t=>n>=t).length;}
+function aventNote(id,g){
+  const p=semOf(id); if(!p)return ''; const k=todayKey(), n=parcDone(p,true).length;
+  if(g>=3)return 'Palier d’or : vingt-quatre cases de l’Avent, et un brin de houx';
+  if(k<p.du)return 'À gagner pendant l’Avent, du 29 novembre au 24 décembre : dix cases, puis vingt, puis vingt-quatre';
+  if(k>p.au)return g?`${['','Premier palier','Écharpe rayée'][g]} : ${n} cases de l’Avent`:'';
+  return `${g?'Palier suivant':'Premier palier'} : ${AV_PAL[g]} cases du calendrier de l’Avent · ${n} sur ${AV_PAL[g]}`;
+}
 const semAnnonce=a=>{const p=a[7]&&semOf(a[7]);return !!p&&todayKey()<p.du;};
+// une parure de l'Avent reste cachée jusqu'à l'annonce, une semaine avant (sauf en aperçu)
+const semCachee=a=>{const p=a[7]&&semOf(a[7]);return !!p&&!!p.contenu&&pToday()<addD(p.du,-7);};
 const semPassee=a=>{const p=a[7]&&semOf(a[7]);return !!p&&todayKey()>p.au;};
 // le palier atteint (0 à 3) et la suite
 const attrGrade=a=>{const n=a[4]();return a[3].filter(t=>n>=t).length;};
@@ -5670,7 +5743,7 @@ function renderCerf(){
   $('#mc-icon').setAttribute('aria-pressed',String(!!c.icon)); $('#mc-icon').textContent=c.icon?'Icône : ton cerf':'Faire de mon cerf l’icône';
   $('#mc-pel').replaceChildren(...Object.entries(PELAGES).map(([k,p])=>{const ok=!p[3]||p[3](gamiCtx);
     return el('button',{'aria-pressed':String(c.pel===k),disabled:ok?null:'',title:ok?p[0]:p[2],style:'--sw:'+((p[1]||{})['--stag']||'#B07D4E'),onclick:()=>{c.pel=k;save();stagKey='';renderStag();renderCerf();cerfIcon();}},el('i',{class:'sw'}),document.createTextNode(p[0]+(ok?'':p[4]||' · niveau V')));}));
-  $('#mc-attrs').replaceChildren(...ATTRS.filter(a=>attrGrade(a)||!semPassee(a)).map(a=>{const n=a[4](), g=attrGrade(a), nx=a[3][g], prev=g?a[3][g-1]:0, on=g&&c.port.includes(a[0]);
+  $('#mc-attrs').replaceChildren(...ATTRS.filter(a=>attrGrade(a)||!semPassee(a)&&!semCachee(a)).map(a=>{const n=a[4](), g=attrGrade(a), nx=a[3][g], prev=g?a[3][g-1]:0, on=g&&c.port.includes(a[0]);
     const pips=el('span',{class:'pips3',role:'img','aria-label':`Palier ${g} sur 3`},...[1,2,3].map(i=>el('i',{class:i<=g?'on g'+i:''})));
     return el('li',{class:g?'':semAnnonce(a)?'locked annonce':'locked'},el('button',{type:'button',class:'attr-open','aria-label':`${a[1]} : voir la fiche`,onclick:()=>attrFiche(a)},el('span',{class:'stag mini','aria-hidden':'true',html:attrIcon(a,Math.max(a[7]?3:1,g))}),
       el('div',{},el('b',{},document.createTextNode(a[1]),pips),
@@ -5678,7 +5751,7 @@ function renderCerf(){
         nx&&!a[6]?el('span',{class:'mini-bar'},el('i',{style:`width:${Math.min(100,(n-prev)/(nx-prev)*100)}%`})):null)),
       g?el('button',{class:'btn mini'+(on?' gold':''),'aria-pressed':String(on),text:on?'Porté':'Porter',onclick:()=>{c.port=on?c.port.filter(x=>x!==a[0]):[...c.port,a[0]];save();stagKey='';renderStag();renderCerf();cerfIcon();}}):el('span',{class:'note',text:'À gagner'}));}));
 }
-const attrIcon=(a,g)=>`<svg viewBox="${a[0]==='plume'?'60 20 34 34':a[0]==='lunettes'?'32 40 36 24':a[0]==='lanterne'?'72 66 26 30':a[0]==='livre'?'4 80 30 20':a[0]==='parure'?(g>1?'24 72 52 28':'34 74 32 20'):a[0]==='doge'?'38 26 24 18':a[0]==='hermine'?'35 78 30 22':'34 26 32 18'}">${a[5](g)}</svg>`;
+const attrIcon=(a,g)=>`<svg viewBox="${a[0]==='plume'?'60 20 34 34':a[0]==='lunettes'?'32 40 36 24':a[0]==='lanterne'?'72 66 26 30':a[0]==='livre'?'4 80 30 20':a[0]==='parure'?(g>1?'24 72 52 28':'34 74 32 20'):a[0]==='doge'?'38 26 24 18':a[0]==='hermine'?'35 78 30 22':a[0]==='echarpe'?'34 78 32 22':'34 26 32 18'}">${a[5](g)}</svg>`;
 // ce que raconte chaque attribut du cerf : ses trois paliers, son histoire, et où le gagner
 // p : nom de chaque palier ; c : condition de chaque palier quand elle ne se compte pas
 const ATTR_SENS={
@@ -5692,6 +5765,8 @@ const ATTR_SENS={
     h:'Montaigne avait fait peindre une soixantaine de sentences grecques et latines sur les poutres de sa « librairie », pour les avoir toujours sous les yeux. Ton florilège est ta librairie.'},
   laurier:{p:['Le laurier à cinq feuilles','Le laurier à sept feuilles','Le laurier d’or'],go:['aujourdhui'],
     h:'À Delphes, on couronnait de laurier les vainqueurs des jeux Pythiques, consacrés à Apollon ; à Rome, il ceignait le front du général pendant son triomphe. Toi, tu le gagnes jour après jour.'},
+  echarpe:{p:['L’écharpe de laine rouge','L’écharpe rayée','L’écharpe et son brin de houx'],c:['10 cases du calendrier de l’Avent','20 cases','24 cases'],go:['aujourdhui','parcours'],
+    h:'Le houx reste vert et porte ses baies rouges au cœur de l’hiver : on en décorait les maisons à Noël bien avant le sapin. Ton cerf porte l’écharpe parce que tu as veillé avec lui pendant l’Avent.'},
   hermine:{p:['Le collier blanc','Le collier semé d’hermines','Le collier d’or'],c:['3 jours sur 7 pendant la semaine de Bretagne','5 jours sur 7','5 jours, et l’énigme du dimanche de la semaine résolue'],go:['aujourdhui','parcours']},
   parure:{p:['Le lierre d’Athènes','Le manteau normand','La fraise du Siècle d’or'],c:['Un ami inscrit grâce à toi','Un ami actif (3 jours d’exercices)','Dix amis actifs'],go:['amis','inviter'],
     h:'Un tour d’Europe en trois étapes : la Grèce des poètes, la Normandie de Guillaume le Conquérant, l’Espagne de Vélasquez. Il se gagne en faisant découvrir Néophyte à tes amis.'},
@@ -6920,7 +6995,7 @@ function decorSaison(){
   const t=todayKey(), md=t.slice(5), sem=(NB.parcours||[]).find(p=>p.theme&&p.du<=t&&t<=p.au);
   let k=null,n=0;
   if(sem&&sem.theme==='bretagne'){k='hermine';n=4;}
-  else if(md>='11-29'||md<='01-06'){k='neige';n=14;}
+  else if((NB.parcours||[]).some(p=>/^avent/.test(p.id)&&p.du<=t&&t<=p.au)||md>='12-01'||md<='01-06'){k='neige';n=14;} // dès l'ouverture de l'Avent, quelle que soit sa date
   else if(md>='09-22'&&md<='11-28'){k='feuille';n=5;}
   else if(md<='03-19'){k='neige';n=6;}
   else if(md>='03-20'&&md<='06-20'){k='petale';n=5;}
@@ -7835,16 +7910,39 @@ const paMarks=p=>APERCU?(paApercu[p.id]=paApercu[p.id]||{}):((state.parcours=sta
 // une case est faite si on l'a cochée, ou si l'exercice qu'elle propose a été fait ce jour-là
 function parcDone(p,real){
   const m=real?((state.parcours||{})[p.id]||{}):paMarks(p), days=parcDays(p);
-  return days.filter((k,i)=>m[k]||(()=>{const ex=p.pas[i]&&p.pas[i][1],d=state.days[k];return ex&&d&&d.done&&(d.done[ex]||(d.swap&&d.done[d.swap[ex]]));})());
+  return days.filter((k,i)=>m[k]||(()=>{const ex=p.pas[i]&&p.pas[i][1],d=state.days[k];if(ex==='dimanche'){const e=enqOf(k),r=e&&(state.enquetes||{})[e.id];if(r&&r.c!=null)return true;}return ex&&d&&d.done&&(d.done[ex]||(d.swap&&d.done[d.swap[ex]]));})());
 }
 let paSel=null;
+// l'Avent refermé : son bilan reste affiché de Noël à l'Épiphanie
+const aventFini=k=>(NB.parcours||[]).find(x=>x.contenu==='noel'&&k>x.au&&k<=addD(x.au,13))||null;
+function aventResume(p){
+  const n=parcDone(p,true).length, days=parcDays(p), O=((state.parcours||{})[p.id]||{}).o||{};
+  const mots=days.map((d,j)=>O[d]&&p.mots&&p.mots[j]&&p.mots[j][0]).filter(Boolean), par=ATTRS.find(a=>a[7]===p.id), g=par?attrGrade(par):0;
+  return{n,total:days.length,ok:n>=p.seuil,mots,par,g};
+}
+function aventBilan(p,actions){
+  const r=aventResume(p);
+  $('#pa-ico').style.display=''; $('#pa-sem').toggleAttribute('hidden',true); $('#parcours').classList.remove('sans-ico'); bougies(4);
+  $('#pa-label').textContent=`${p.court} · refermé le ${fd(new Date(p.au+'T12:00:00'),{day:'numeric',month:'long'})}`;
+  $('#pa-title').textContent=(todayKey()===addD(p.au,1)?'Joyeux Noël ! ':'')+`Ton Avent : ${r.n} case${r.n>1?'s':''} sur ${r.total}.`;
+  $('#pa-fil').textContent=(r.ok?`Le badge « ${p.badge[0]} » est à toi`:`Il fallait ${p.seuil} cases pour le badge « ${p.badge[0]} » ; le prochain temps fort sera une nouvelle chance`)
+    +(r.g?`, et ton cerf porte ${r.par[1].charAt(0).toLowerCase()+r.par[1].slice(1)}${r.g>=3?', avec son brin de houx':''}.`:'.');
+  const pm=$('#pa-mot'); pm.hidden=!r.mots.length;
+  if(r.mots.length)pm.replaceChildren(el('span',{class:'label',text:`${r.mots.length} mot${r.mots.length>1?'s':''} de Noël · `}),document.createTextNode(r.mots.join(', ')+'.'));
+  $('#pa-cal').hidden=true; $('#pa-besace').hidden=true;
+  actions.append(el('button',{class:'btn gold',text:'Partager mon Avent',onclick:async()=>{
+    const txt=`Mon Avent sur Néophyte : ${r.n} case${r.n>1?'s':''} sur ${r.total}${r.mots.length?', '+r.mots.length+' mots de Noël ('+r.mots.slice(0,6).join(', ')+(r.mots.length>6?'…':'')+')':''}${r.ok?', et le badge « '+p.badge[0]+' »':''}. Joyeux Noël !`;
+    try{if(navigator.share){await navigator.share({title:'Néophyte',text:txt,url:SITE_URL});return;}}catch(e){if(e&&e.name==='AbortError')return;}
+    try{await navigator.clipboard.writeText(txt+' '+SITE_URL);toast('<span>Copié : colle-le dans un message.</span>');}catch(e){toast('<span>'+txt+'</span>');}}}));
+}
 if(window.bfSupabase)window.bfSupabase.auth.onAuthStateChange(()=>setTimeout(checkApercu,0));
 setTimeout(checkApercu,0);
 function renderParcours(){
   const box=$('#parcours'); if(!box)return;
   // la semaine d'avant, une annonce seulement : ni les cases ni les fils ne se dévoilent avant le premier jour
-  const k=pToday(), p=parcOf(k), soon=p?null:parcSoon(k); box.hidden=!p&&!soon; if(box.hidden)return;
-  const actions=$('#pa-actions'); actions.replaceChildren();
+  const k=pToday(), p=parcOf(k), soon=p?null:parcSoon(k), fini=p||soon?null:aventFini(k); box.hidden=!p&&!soon&&!fini; if(box.hidden)return;
+  const actions=$('#pa-actions'); actions.replaceChildren(); box.classList.remove('porte-ouverte');
+  if(fini){aventBilan(fini,actions);return;}
   const pp=p||soon, avent=/^avent/.test(pp.id), semIco=$('#pa-sem'); box.classList.toggle('sans-ico',!avent&&!pp.emb); $('#pa-ico').style.display=avent?'':'none';
   semIco.toggleAttribute('hidden',avent||!pp.emb); if(pp.emb&&!avent)semIco.innerHTML=`<path d="${EMB[pp.emb]||EMB.etoile}" fill="none" stroke="var(--gold-deep)" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>`;
   if(soon){
@@ -7862,9 +7960,19 @@ function renderParcours(){
   $('#pa-label').textContent=`${p.court} · ${jour<0?'dimanche, hors décompte':'jour '+(jour+1)+' sur '+days.length} · ${sem.titre}`;
   $('#pa-fil').textContent=sem.fil;
   // semaine à thème : un mot de la langue du pays chaque jour (mots : [mot, sens, remarque])
-  const mot=p.mots&&p.mots[Math.max(0,i)], pm=$('#pa-mot'); pm.hidden=!mot;
+  // Avent : chaque matin, la case du jour est une porte à ouvrir ; derrière, la case et le mot de Noël
+  const M0=p.contenu==='noel'?(m.o=m.o||{}):null, porte=!!M0&&sel===k&&i>=0&&!M0[k];
+  const mot=!porte&&p.mots&&p.mots[Math.max(0,i)], pm=$('#pa-mot'); pm.hidden=!mot;
   if(mot)pm.replaceChildren(el('span',{class:'label',text:(p.motsLabel||'Le mot du jour')+' · '}),el('b',{text:mot[0]}),document.createTextNode(frTypo(`\u00a0: «\u00a0${mot[1]}\u00a0». ${mot[2]}`)));
-  if(i<0){ // dimanche de Carême : pas de case, l'énigme tient lieu de rendez-vous
+  if(porte){
+    $('#pa-title').textContent=`La case du ${+k.slice(8)} ${fd(new Date(k+'T12:00:00'),{month:'long'})} est encore fermée.`;
+    const ouvrir=()=>{if(bt.classList.contains('ouvre'))return; bt.classList.add('ouvre'); son('clic');
+      setTimeout(()=>{M0[k]=1; if(!APERCU)save(); renderParcours(); box.classList.add('porte-ouverte');},calme()?0:700);};
+    const bt=el('button',{class:'pa-porte','aria-label':'Ouvrir la case du jour',onclick:ouvrir},
+      el('span',{class:'derriere','aria-hidden':'true'}),
+      el('span',{class:'battant','aria-hidden':'true'},el('b',{text:String(+k.slice(8))})));
+    actions.append(bt,el('p',{class:'note',text:'Touche la porte pour l’ouvrir : une case et un mot de Noël t’attendent derrière.'}));
+  }else if(i<0){ // dimanche de Carême : pas de case, l'énigme tient lieu de rendez-vous
     $('#pa-title').textContent='Dimanche : l’énigme de la semaine t’attend.';
     actions.append(el('button',{class:'btn gold',text:'Ouvrir l’énigme',onclick:()=>{showTab('exercices');openEx('dimanche');}}));
   }else{
@@ -9603,14 +9711,19 @@ function evPopMark(key){
 }
 const minus=t=>t.charAt(0).toLowerCase()+t.slice(1);
 function evPopCandidats(){
-  const k=todayKey(), out=[], p=parcOf(k), soon=p?null:parcSoon(k), ev=evNow(), cv=chasseVille();
+  const k=todayKey(), out=[], p=parcOf(k), soon=p?null:parcSoon(k), fini=p||soon?null:aventFini(k), ev=evNow(), cv=chasseVille();
   const fin=x=>fd(new Date(x.au+'T12:00:00'),{day:'numeric',month:'long'}), jour=x=>fd(new Date(x.du+'T12:00:00'),{weekday:'long',day:'numeric',month:'long'});
   const parure=x=>{const a=ATTRS.find(a=>a[7]===x.id);return a?a[1]:null;};
   const versParcours=()=>goPanel('aujourdhui','parcours');
+  // 0. l'Avent refermé : Joyeux Noël, et le bilan
+  if(fini){const r=aventResume(fini);
+    out.push({key:fini.id+':fin',label:`${fini.court} · Noël`,titre:'Joyeux Noël !',go:'Voir mon Avent',act:versParcours,
+      texte:`Le calendrier de l’Avent est refermé : ${r.n} case${r.n>1?'s':''} ouverte${r.n>1?'s':''} sur ${r.total}${r.mots.length?', et '+r.mots.length+' mots de Noël':''}.`+(r.ok?` Le badge « ${fini.badge[0]} » est à toi.`:''),
+      cerf:r.g?'Joyeux Noël ! Regarde mon écharpe : c’est grâce à toi.':'Joyeux Noël ! Merci d’avoir veillé avec moi.'});}
   // 1. un parcours en cours : l'Avent, le Carême, une semaine à thème
   if(p){const avent=/^avent/.test(p.id), par=parure(p);
     out.push({key:p.id,label:`${p.court} · jusqu’au ${fin(p)}`,titre:p.titre,texte:p.intro,go:avent?'Ouvrir la case du jour':'Voir la semaine',act:versParcours,
-      cerf:avent?(k===p.du?'Le calendrier de l’Avent s’ouvre aujourd’hui. Une case par jour, jusqu’à Noël.':'Le calendrier de l’Avent est ouvert. Il n’est jamais trop tard pour la case du jour.')
+      cerf:avent?(k===p.du?'Le calendrier de l’Avent s’ouvre aujourd’hui. Une porte par jour, jusqu’à Noël.':'Le calendrier de l’Avent est ouvert. Il n’est jamais trop tard pour la case du jour.')+(par?` Et ${minus(par)} à gagner pour moi.`:'')
         :p.theme?(k===p.du?'On part en voyage cette semaine.':'Cette semaine, on voyage.')+(par?` Il y a ${minus(par)} à gagner pour moi.`:'')
         :`${p.titre} : un petit geste par jour, jusqu’au ${fin(p)}.`});}
   // 2. un événement de saison (vrai ou faux, badge)
@@ -9626,7 +9739,7 @@ function evPopCandidats(){
   // 4. l'annonce, une semaine avant : l'Avent dès le 22 novembre, la prochaine semaine à thème
   if(soon){const j=Math.round((new Date(soon.du+'T12:00:00')-new Date(k+'T12:00:00'))/864e5), quand=j>1?`dans ${j} jours`:'demain', par=parure(soon);
     out.push({key:soon.id+':annonce',label:`${soon.court} · ${quand}`,titre:`${soon.titre} s’ouvre ${jour(soon)}.`,texte:soon.intro,go:'Voir l’annonce',act:versParcours,
-      cerf:/^avent/.test(soon.id)?`Dans ${j>1?j+' jours':'un jour'}, on ouvre le calendrier de l’Avent. Je t’attendrai à la première case.`
+      cerf:/^avent/.test(soon.id)?`Dans ${j>1?j+' jours':'un jour'}, on ouvre le calendrier de l’Avent. Je t’attendrai à la première porte.`+(par?` ${par} se gagnera là-bas.`:'')
         :`Bientôt, un voyage : ${minus(soon.titre)}.`+(par?` ${par} se gagnera là-bas.`:'')});}
   return out;
 }

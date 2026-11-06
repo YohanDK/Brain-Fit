@@ -859,6 +859,17 @@ a{color:var(--accent);text-underline-offset:3px}
 .pp-ic{width:44px;height:44px;display:grid;place-items:center;color:var(--gold-deep, var(--accent))}
 .pp-ic svg{width:100%;height:100%}
 .wl-invite{margin:0 auto;max-width:34ch;padding:8px 12px;border-radius:var(--r);background:var(--accent-soft);color:var(--fg)}
+.wl-gate{width:100%;max-width:360px;display:flex;flex-direction:column;align-items:center;gap:8px;margin-top:4px}
+.wl-badge{margin:0;font-family:var(--f-display);font-size:.8rem;letter-spacing:.14em;text-transform:uppercase;color:var(--gold-deep);border:1px solid var(--gold-hi);border-radius:999px;padding:5px 14px;background:var(--gold-soft)}
+.wl-gate>p{margin:0}
+.wl-gate .fg2{max-width:34ch;line-height:1.4}
+.wl-form{display:flex;gap:6px;width:100%}
+.wl-form input{flex:1;min-width:0;font:inherit;font-size:1rem;padding:10px 12px;border:1px solid var(--line);border-radius:var(--r);background:var(--surface);color:var(--fg)}
+.wl-form .btn{flex:none}
+.wl-gate label{font-size:.95rem;color:var(--fg2);line-height:1.4;margin-top:8px}
+.wl-gate .note:empty{display:none}
+#wl-code{text-transform:uppercase;letter-spacing:.08em}
+#wl-code:placeholder-shown{text-transform:none;letter-spacing:0}
 .nudges{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:6px}
 .nudge{display:grid;grid-template-columns:40px 1fr;gap:4px 12px;align-items:center;padding:8px 10px;border-radius:var(--r);background:var(--sunk)}
 .nudge.k-defi{background:var(--gold-soft)}
@@ -1594,6 +1605,7 @@ var fin=function(){if(e.parentNode)e.remove();};e.addEventListener('click',fin);
         <p class="note">Sans compte, tout reste sur cet appareil.</p>
         <input type="email" id="login-email" autocomplete="username" placeholder="Ton e-mail" aria-label="E-mail" required>
         <input type="password" id="login-pw" autocomplete="current-password" placeholder="Mot de passe" aria-label="Mot de passe" minlength="8" required>
+        <input type="text" id="login-invit" autocomplete="off" autocapitalize="characters" spellcheck="false" maxlength="24" placeholder="Code d'invitation (pour créer un compte)" aria-label="Code d'invitation" hidden>
         <label class="note age15"><input type="checkbox" id="login-age"> J'ai 15 ans ou plus <span class="muted">(pour créer un compte)</span></label>
         <div class="row"><button class="btn primary" id="login-in">Se connecter</button><button class="btn ghost" id="login-new">Créer mon compte</button></div>
         <button class="linkbtn note" type="button" id="login-forgot" style="align-self:flex-start">Mot de passe oublié ?</button>
@@ -2124,6 +2136,16 @@ var fin=function(){if(e.parentNode)e.remove();};e.addEventListener('click',fin);
     <p class="wl-lead">Aiguise ton esprit, reste libre.</p>
     <p class="wl-sub">Dix minutes par jour d'écriture et de raisonnement pour reprendre le contrôle du réel.</p>
     <p class="wl-invite" id="wl-invite" hidden>Un ami t'invite. Crée ton compte : son cerf gagne un cadeau tout de suite, et le tien après tes 3 premiers jours.</p>
+    <div class="wl-gate" id="wl-gate" hidden>
+      <p class="wl-badge">Avant-première · sur invitation</p>
+      <p class="fg2">Néophyte ouvrira ses portes à tous en février 2027. D'ici là, on y entre sur invitation.</p>
+      <form class="wl-form" id="wl-code-f"><input id="wl-code" autocomplete="off" autocapitalize="characters" spellcheck="false" maxlength="24" placeholder="Code d'invitation" aria-label="Code d'invitation" required><button class="btn primary">Entrer</button></form>
+      <p class="note" id="wl-code-msg" role="status"></p>
+      <label for="wl-wait">Pas encore d'invitation ? Laisse ton e-mail : on te prévient à l'ouverture, et seulement pour ça.</label>
+      <form class="wl-form" id="wl-wait-f"><input type="email" id="wl-wait" autocomplete="email" placeholder="Ton e-mail" required><button class="btn">Me prévenir</button></form>
+      <p class="note" id="wl-wait-msg" role="status"></p>
+      <p class="note" id="wl-contact" hidden></p>
+    </div>
     <div class="wl-act">
       <button class="btn primary" id="wl-signup">Créer mon compte</button>
       <button class="btn ghost" id="wl-login">J'ai déjà un compte</button>
@@ -5153,7 +5175,13 @@ $('#login').addEventListener('submit',async e=>{
   if(isNew&&!$('#login-age').checked){msg.textContent="Un compte demande d'avoir 15 ans ou plus. Plus jeune, tu peux utiliser Néophyte sans compte : tout reste sur cet appareil.";$('#login-age').focus();return;}
   const email=$('#login-email').value.trim(), password=$('#login-pw').value;
   msg.textContent=isNew?'Création du compte…':'Connexion…';
-  const {data,error}=isNew?await sb.auth.signUp({email,password,options:parrainPending()?{data:{parrain:parrainPending()}}:undefined}):await sb.auth.signInWithPassword({email,password});
+  const lic=$('#login-invit'); if(isNew&&!lic.hidden&&lic.value.trim())setInvit(lic.value);
+  const meta={}; if(parrainPending())meta.parrain=parrainPending(); if(invitPending())meta.invitation=invitPending();
+  const {data,error}=isNew?await sb.auth.signUp({email,password,options:Object.keys(meta).length?{data:meta}:undefined}):await sb.auth.signInWithPassword({email,password});
+  if(error&&isNew&&/NEOPHYTE_INVITATION|database error saving new user/i.test(error.message)){
+    setInvit(''); lic.hidden=false; lic.value=''; lic.focus();
+    msg.textContent="Pendant l’avant-première, il faut une invitation pour créer un compte : écris ton code ci-dessus (ou ouvre le lien qu’on t’a envoyé), puis « Créer mon compte ».";return;}
+  if(isNew&&!error)setInvit('');
   if(error){msg.textContent=/invalid login/i.test(error.message)?'E-mail ou mot de passe incorrect.':/not confirmed/i.test(error.message)?"Confirme d'abord ton compte avec le lien reçu par e-mail.":'Connexion impossible : '+error.message;return;}
   if(isNew&&!data.session){msg.textContent="Compte créé. Ouvre le lien reçu par e-mail pour le confirmer, puis reviens ici et clique sur « Se connecter ».";return;}
   msg.textContent=''; $('#login-pw').value=''; initStore();
@@ -9640,8 +9668,60 @@ function welcomeNeeded(){
   if(/access_token|type=signup|[?&]code=/.test(location.hash+location.search)||hasSession())return false;
   return !state.results.length&&!Object.keys(state.days).length;
 }
+/* avant-première : sans invitation, l'accueil propose un code, la liste d'attente et le contact (le vrai verrou est côté serveur) */
+const LS_INVIT='brainfit.invit';
+function invitPending(){try{return localStorage.getItem(LS_INVIT)||'';}catch(e){return '';}}
+function setInvit(c){try{c=String(c||'').trim().toUpperCase();if(c)localStorage.setItem(LS_INVIT,c);else localStorage.removeItem(LS_INVIT);}catch(e){}}
+(()=>{try{const v=new URLSearchParams(location.search).get('invit');if(v&&/^[A-Z0-9-]{6,24}$/i.test(v.trim())){setInvit(v);
+  const u=new URL(location.href);u.searchParams.delete('invit');history.replaceState(history.state,'',u.pathname+u.search+u.hash);}}catch(e){}})();
+let accesOuvert=false; // le serveur a dit que l'avant-première est finie (ou n'a pas encore le script)
+const inviteOn=()=>!!((window.BF_CONFIG||{}).invitation&&window.bfSupabase)&&!accesOuvert;
+const forceGate=/[?&]accueil=visiteur\b/.test(location.search);
+function gateNeeded(){
+  if(!inviteOn()||invitPending()||parrainPending())return false;
+  if(forceGate)return true;
+  let vu=false;try{vu=!!localStorage.getItem(LS_WELCOME);}catch(e){}
+  return !vu&&!hasSession()&&!state.results.length&&!Object.keys(state.days).length;
+}
+function renderGate(){
+  const g=gateNeeded(), sb=!!window.bfSupabase;
+  $('#wl-gate').hidden=!g; $('#wl-signup').hidden=g||!sb; $('#wl-start').hidden=g;
+  $('#login-invit').hidden=!inviteOn()||!!invitPending()||!!parrainPending();
+  const c=(window.BF_CONFIG||{}).contact, box=$('#wl-contact');
+  if(c&&!box.childElementCount)box.append(document.createTextNode('Une question ? Écris-nous : '),el('a',{href:'mailto:'+c,text:c}));
+  box.hidden=!c;
+  const w=$('#wl-invite'); w.hidden=!sb||!(parrainPending()||invitPending());
+  w.textContent=parrainPending()?'Un ami t’invite. Crée ton compte : son cerf gagne un cadeau tout de suite, et le tien après tes 3 premiers jours.'
+    :'Tu es invité à l’avant-première de Néophyte. Crée ton compte, ou essaie d’abord sans compte.';
+}
+// le serveur a le dernier mot : s'il dit « ouvert » (ou n'a pas encore le script), plus de porte
+let accesVu=false;
+async function accesCheck(){
+  const sb=window.bfSupabase; if(accesVu||!sb||!(window.BF_CONFIG||{}).invitation)return; accesVu=true;
+  try{const r=await sb.rpc('verifier_invitation',{p_code:''});
+    if((r.error&&/function|schema cache|not exist/i.test(r.error.message||''))||r.data==='ouvert'){accesOuvert=true;renderGate();}}catch(e){}
+}
+$('#wl-code-f').addEventListener('submit',async e=>{
+  e.preventDefault(); const sb=window.bfSupabase, msg=$('#wl-code-msg'), code=$('#wl-code').value.trim().toUpperCase();
+  if(!sb)return; msg.textContent='Vérification…';
+  let r; try{r=await sb.rpc('verifier_invitation',{p_code:code});}catch(err){r={error:err};}
+  if(r.error){msg.textContent='Vérification impossible pour l’instant. Réessaie dans un instant.';return;}
+  if(r.data==='ok'||r.data==='ouvert'){setInvit(code);}
+  else if(r.data==='parrain'){try{localStorage.setItem(LS_PARR,code);}catch(err){}}
+  else{msg.textContent=r.data==='complet'?'Ce code n’a plus de place libre. Demande une nouvelle invitation à la personne qui te l’a donné.':'Ce code n’existe pas. Vérifie-le auprès de la personne qui te l’a donné.';return;}
+  msg.textContent=''; $('#wl-code').value=''; renderGate(); son('clic');
+  setTimeout(()=>$('#wl-signup').focus(),0);
+});
+$('#wl-wait-f').addEventListener('submit',async e=>{
+  e.preventDefault(); const sb=window.bfSupabase, msg=$('#wl-wait-msg'), email=$('#wl-wait').value.trim();
+  if(!sb)return; msg.textContent='Envoi…';
+  let r; try{r=await sb.rpc('rejoindre_liste_attente',{p_email:email});}catch(err){r={error:err};}
+  msg.textContent=r.error?'Envoi impossible pour l’instant. Réessaie dans un instant.':r.data==='ok'?'C’est noté : on t’écrira à l’ouverture.':r.data==='invalide'?'Cette adresse ne semble pas valide.':'Trop de demandes en ce moment : réessaie un peu plus tard.';
+  if(!r.error&&r.data==='ok')$('#wl-wait').value='';
+});
 function closeWelcome(mode){
-  try{localStorage.setItem(LS_WELCOME,'1');}catch(e){}
+  // pendant l'avant-première, un visiteur sans invitation qui va se connecter revoit la porte tant qu'il n'est pas connecté
+  if(!gateNeeded())try{localStorage.setItem(LS_WELCOME,'1');}catch(e){}
   $('#welcome').hidden=true; document.body.style.overflow='';
   if(mode){
     try{sessionStorage.removeItem('brainfit.later');}catch(e){}
@@ -9670,12 +9750,12 @@ function showWelcome(){
   const v=(window.BF_CONFIG||{}).video, box=$('#wl-video');
   if(v&&!box.childElementCount){box.append(/\.(mp4|webm)(\?|$)/.test(v)?el('video',{src:v,controls:'',playsinline:'',preload:'metadata'}):el('iframe',{src:v,title:'Présentation de Néophyte',allow:'fullscreen; picture-in-picture',loading:'lazy'}));}
   box.hidden=!v;
-  setupInstall(); $('#wl-invite').hidden=!parrainPending()||!sb;
+  setupInstall(); renderGate(); accesCheck();
   $('#welcome').hidden=false; document.body.style.overflow='hidden'; $('#welcome').scrollTop=0;
   setTimeout(()=>$('#welcome').focus({preventScroll:true}),0);
 }
 // ?accueil dans l'adresse (ou « Présentation » en pied de page) montre l'accueil même connecté
-if(welcomeNeeded()||/[?&]accueil\b/.test(location.search))showWelcome();
+if(welcomeNeeded()||/[?&]accueil\b/.test(location.search))showWelcome(); else{renderGate();accesCheck();}
 $('#foot-welcome').addEventListener('click',showWelcome);
 $('#wl-start').addEventListener('click',()=>closeWelcome(false));
 $('#wl-login').addEventListener('click',()=>closeWelcome('login'));

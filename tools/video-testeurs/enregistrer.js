@@ -6,6 +6,8 @@ const {chromium}=require('playwright');
 const T='/tmp/claude-0/-home-user-brain-fit/ed503eff-f1f1-56a2-af1f-4ac0874a9a5a/scratchpad/t/';
 const OUT=__dirname+'/';
 const W=390,H=844;
+// PDF1, PDF2 : premières pages de fiche-du-jour-cerf.pdf et cahier-sophismes.pdf (pdftoppm -r 70), en data URL
+const PDF1='data:image/png;base64,'+require('fs').readFileSync(__dirname+'/pdf1.png').toString('base64'), PDF2='data:image/png;base64,'+require('fs').readFileSync(__dirname+'/pdf2.png').toString('base64');
 const day=i=>new Date(Date.now()-864e5*i).toISOString().slice(0,10);
 const exs=['calc','erreuria','write','ortho','sophisme','chrono'];
 const results=[],days={};
@@ -49,6 +51,16 @@ const ST={v:1,bilans:[{t:Date.now()-864e5*13,s:50},{t:Date.now()-864e5*6,s:58}],
  mark('intro');
  await card('<div style="font:600 13px/1 Cinzel,serif;letter-spacing:.2em;color:#9A7420;border:1px solid #D9B44A;border-radius:99px;padding:7px 16px;background:#F3E6C4">AVANT-PREMIÈRE</div><div style="font:700 34px/1.15 Cinzel,serif;letter-spacing:.04em">Bienvenue<br>parmi les testeurs</div><div style="font-style:italic;font-size:22px;color:#5C5547">Aiguise ton esprit, reste libre.</div>',4200);
  await uncard();
+ // 0 bis. l'objectif, en trois temps
+ mark('objectif');
+ await p.evaluate(()=>{const c=document.createElement('div');c.id='obj';
+  c.style.cssText='position:fixed;inset:0;z-index:9997;background:#F6EFE0;display:flex;flex-direction:column;justify-content:center;padding:34px;gap:26px;color:#24211C;font-family:"EB Garamond",Georgia,serif;opacity:0;transition:opacity .6s';
+  const L=[['I','L’IA écrit, résume, répond à ta place.'],['II','Garde la main : écris, raisonne, vérifie par toi-même.'],['III','Puis lève les yeux de l’écran : un livre, une feuille, une conversation.']];
+  c.innerHTML='<div style="font:600 13px/1 Cinzel,serif;letter-spacing:.2em;color:#9A7420;text-align:center">NOTRE ESPRIT</div>'+L.map((l,i)=>'<div class="ol" style="display:flex;gap:16px;align-items:baseline;opacity:0;transform:translateY(10px);transition:opacity .7s,transform .7s"><span style="font:700 22px/1 Cinzel,serif;color:#B08A2E;min-width:42px">'+l[0]+'</span><span style="font-size:25px;line-height:1.3">'+l[1]+'</span></div>').join('')+'<div class="ol" style="text-align:center;font:600 17px/1.3 Cinzel,serif;letter-spacing:.06em;color:#3A5DBF;opacity:0;transition:opacity .8s;margin-top:6px">Aiguise ton esprit, reste libre.</div>';
+  document.body.append(c);requestAnimationFrame(()=>c.style.opacity=1);
+  [...c.querySelectorAll('.ol')].forEach((e,i)=>setTimeout(()=>{e.style.opacity=1;e.style.transform='none';},700+i*2300));});
+ await p.waitForTimeout(700+3*2300+2600);
+ await p.evaluate(()=>{const c=document.getElementById('obj');c.style.opacity=0;setTimeout(()=>c.remove(),650);});await p.waitForTimeout(700);
  // 1. aujourd'hui
  mark('aujourdhui');
  await cap('Chaque jour, ta séance :<br>dix minutes pour écrire et raisonner',3000);
@@ -57,7 +69,30 @@ const ST={v:1,bilans:[{t:Date.now()-864e5*13,s:50},{t:Date.now()-864e5*6,s:58}],
  mark('exercice');
  await tab('exercices');
  await cap('Des exercices courts et exigeants,<br>rangés en cinq familles',2800);
- await scroll(700,2600);await scroll(700,2200);await uncap();await top();
+ await scroll(700,2400);await uncap();await top();
+ // géographie
+ mark('carte');
+ await p.evaluate(()=>[...document.querySelectorAll('.excard')].find(c=>c.querySelector('h3').textContent==='Sur la carte').click());await p.waitForTimeout(900);
+ await tap(p.locator('#arena button:text-is("Commencer")'));await p.waitForTimeout(1000);
+ await p.evaluate(()=>document.querySelector('#arena .carte-svg').scrollIntoView({block:'center',behavior:'smooth'}));await p.waitForTimeout(700);
+ await cap('Géographie : place villes, fleuves<br>et pays disparus sur la carte',2600);
+ {const pts=await p.$$eval('#arena .carte-svg circle, #arena .carte-svg [role=button], #arena .carte-svg .pt',xs=>xs.map(e=>{const r=e.getBoundingClientRect();return{x:r.x+r.width/2,y:r.y+r.height/2,w:r.width,c:e.getAttribute('class')||e.tagName};}).filter(o=>o.w>8));
+  console.log('points',JSON.stringify(pts.slice(0,6)));
+  const q=pts[1]||pts[0];if(q){await p.mouse.move(q.x,q.y,{steps:12});await p.waitForTimeout(150);await p.mouse.down();await p.waitForTimeout(80);await p.mouse.up();await p.waitForTimeout(900);}}
+ const val=p.locator('#arena button:text-is("Valider")');if(await val.count()&&await val.isEnabled()){await tap(val);await p.waitForTimeout(2600);}else{console.log('pas de valider');await p.waitForTimeout(1500);}
+ await uncap();
+ // fiches papier
+ mark('pdf');
+ await p.evaluate(()=>location.hash='exercices');await p.waitForTimeout(700);
+ await p.evaluate(()=>[...document.querySelectorAll('.excard')].find(c=>c.querySelector('h3').textContent==='Fiche papier').click());await p.waitForTimeout(900);await p.evaluate(()=>scrollTo(0,0));
+ await cap('Des fiches et des cahiers en PDF<br>à imprimer : stylo, papier, corrigé à la fin',2600);
+ await p.evaluate(([a,b])=>{const c=document.createElement('div');c.id='pdfs';c.style.cssText='position:fixed;inset:0;z-index:9990;background:rgba(36,33,28,.55);opacity:0;transition:opacity .5s';
+   const im=(src,r,x,y,d)=>'<img src="'+src+'" style="position:absolute;width:265px;left:'+x+'px;top:'+y+'px;box-shadow:0 12px 30px rgba(0,0,0,.35);border-radius:3px;transform:rotate('+r+'deg) translateY(40px);opacity:0;transition:transform .8s '+d+'s,opacity .8s '+d+'s">';
+   c.innerHTML=im(b,6,100,170,.5)+im(a,-4,24,120,0);document.body.append(c);
+   requestAnimationFrame(()=>{c.style.opacity=1;c.querySelectorAll('img').forEach(i=>{i.style.opacity=1;i.style.transform=i.style.transform.replace('translateY(40px)','translateY(0)');});});},[PDF1,PDF2]);
+ await p.waitForTimeout(4200);await uncap();
+ await p.evaluate(()=>{const c=document.getElementById('pdfs');c.style.opacity=0;setTimeout(()=>c.remove(),600);});await p.waitForTimeout(600);
+ await p.evaluate(()=>location.hash='exercices');await p.waitForTimeout(700);
  await p.evaluate(()=>{const c=[...document.querySelectorAll('.excard')].find(c=>/Énigme du jour/.test(c.querySelector('h3').textContent));c.scrollIntoView({block:'center'});});await p.waitForTimeout(500);
  await p.evaluate(()=>[...document.querySelectorAll('.excard')].find(c=>c.querySelector('h3').textContent==='Énigme du jour').click());await p.waitForTimeout(900);
   await tap(p.locator('#arena button:text-is("Commencer")'));await p.waitForTimeout(800);

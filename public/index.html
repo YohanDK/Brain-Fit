@@ -8611,10 +8611,10 @@ carte(arena){
           }
           map.vrai(vrai);
           scores.push(sc); seen.push([it,sc]); hit(sc>=60);
-          fb.replaceChildren(el('span',{class:'label',text:`${txt} ${sc} point${sc>1?'s':''} sur 100`}),
+          fb.replaceChildren(...[el('span',{class:'label',text:`${txt} ${sc} point${sc>1?'s':''} sur 100`}),
             el('span',{},el('b',{text:it.nom}),document.createTextNode(' · '+it.dit)),
             (im=>im?el('span',{class:'c-armes'},el('img',{src:im.src,alt:'',class:im.ecu?'ecu':null,width:im.ecu?40:48,height:im.ecu?48:32}),el('small',{class:'muted',text:im.txt})):null)(imageLieu(it)),
-            contestBtn('carte',it.id,`Où se trouve ${it.nom} ?`));
+            contestBtn('carte',it.id,`Où se trouve ${it.nom} ?`)].filter(Boolean));
           fb.hidden=false; next.hidden=false; next.focus({preventScroll:true});
         });
         next.addEventListener('click',()=>{qi++;if(qi<items.length)ask();else fin();});

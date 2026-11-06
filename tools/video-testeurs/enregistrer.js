@@ -6,13 +6,12 @@ const {chromium}=require('playwright');
 const T='/tmp/claude-0/-home-user-brain-fit/ed503eff-f1f1-56a2-af1f-4ac0874a9a5a/scratchpad/t/';
 const OUT=__dirname+'/';
 const W=390,H=844;
-// PDF1, PDF2 : premières pages de fiche-du-jour-cerf.pdf et cahier-sophismes.pdf (pdftoppm -r 70), en data URL
 const PDF1='data:image/png;base64,'+require('fs').readFileSync(__dirname+'/pdf1.png').toString('base64'), PDF2='data:image/png;base64,'+require('fs').readFileSync(__dirname+'/pdf2.png').toString('base64');
 const day=i=>new Date(Date.now()-864e5*i).toISOString().slice(0,10);
 const exs=['calc','erreuria','write','ortho','sophisme','chrono'];
 const results=[],days={};
 for(let i=12;i>=1;i--){const d=day(i);days[d]={done:{},habits:{}};for(let k=0;k<3;k++){const ex=exs[(i+k)%exs.length];results.push({t:Date.now()-864e5*i+k*6e5,d,ex,s:60+((i*7+k*13)%40)});days[d].done[ex]=true;}}
-const ST={v:1,bilans:[{t:Date.now()-864e5*13,s:50},{t:Date.now()-864e5*6,s:58}],settings:{minutes:10,stagName:'Aristote'},days,results,sas:[],weeks:{},lastLevel:3};
+const ST={v:1,bilans:[{t:Date.now()-864e5*13,s:50},{t:Date.now()-864e5*6,s:58}],settings:{minutes:10,stagName:'Aristote'},days,results,sas:[],weeks:{},lastLevel:3,lvl:{carte:3},carteZone:'fr'};
 (async()=>{
  const b=await chromium.launch();
  const ctx=await b.newContext({viewport:{width:W,height:H},deviceScaleFactor:2,recordVideo:{dir:OUT+'raw',size:{width:W*2,height:H*2}}});
@@ -23,6 +22,7 @@ const ST={v:1,bilans:[{t:Date.now()-864e5*13,s:50},{t:Date.now()-864e5*6,s:58}],
  await p.route('**/*.supabase.co/**',r=>r.fulfill({status:200,contentType:'application/json',body:'null'}));
  await p.addInitScript(st=>{
   if(!sessionStorage.getItem('rec')){sessionStorage.setItem('rec','1');localStorage.clear();localStorage.setItem('brainfit.v1',st);}
+  let rs=12345;window.__seed=n=>{rs=n>>>0||1;};Math.random=()=>{rs^=rs<<13;rs>>>=0;rs^=rs>>>17;rs^=rs<<5;rs>>>=0;return rs/4294967296;};
   localStorage.setItem('brainfit.welcome','1');localStorage.setItem('brainfit.testeur','1');sessionStorage.setItem('brainfit.splash','1');sessionStorage.setItem('brainfit.later','1');
   addEventListener('DOMContentLoaded',()=>{
    const css=document.createElement('style');css.textContent='.evpop,.toast,#syncwarn,#themes-ask{display:none!important}';document.head.append(css);
@@ -31,7 +31,7 @@ const ST={v:1,bilans:[{t:Date.now()-864e5*13,s:50},{t:Date.now()-864e5*6,s:58}],
    addEventListener('pointerdown',e=>{mv(e);f.style.opacity=1;f.style.transform='scale(.8)';},true);addEventListener('pointerup',()=>{f.style.transform='';setTimeout(()=>f.style.opacity=0,350);},true);});
  },JSON.stringify(ST));
  await p.goto('http://localhost:8765/index.html');await p.waitForTimeout(1500);
- const cap=async(t,ms=2600)=>{await p.evaluate(t=>{let c=document.getElementById('cap');if(!c){c=document.createElement('div');c.id='cap';c.style.cssText='position:fixed;z-index:9998;left:14px;right:14px;bottom:88px;padding:12px 16px;border-radius:14px;background:rgba(36,33,28,.9);color:#FAF2DE;font:600 19px/1.3 "EB Garamond",Georgia,serif;text-align:center;box-shadow:0 6px 20px rgba(0,0,0,.25);transition:opacity .35s,transform .35s;opacity:0;transform:translateY(8px)';document.body.append(c);}
+ const cap=async(t,ms=2600)=>{await p.evaluate(t=>{let c=document.getElementById('cap');if(!c){c=document.createElement('div');c.id='cap';c.style.cssText='position:fixed;z-index:9998;left:14px;pointer-events:none;right:14px;bottom:88px;padding:12px 16px;border-radius:14px;background:rgba(36,33,28,.9);color:#FAF2DE;font:600 19px/1.3 "EB Garamond",Georgia,serif;text-align:center;box-shadow:0 6px 20px rgba(0,0,0,.25);transition:opacity .35s,transform .35s;opacity:0;transform:translateY(8px)';document.body.append(c);}
    c.innerHTML=t;requestAnimationFrame(()=>{c.style.opacity=1;c.style.transform='none';});},t);await p.waitForTimeout(ms);};
  const uncap=async()=>{await p.evaluate(()=>{const c=document.getElementById('cap');if(c){c.style.opacity=0;}});await p.waitForTimeout(300);};
  const card=async(html,ms)=>{await p.evaluate(h=>{let c=document.getElementById('card');if(!c){c=document.createElement('div');c.id='card';document.body.append(c);}
@@ -70,17 +70,6 @@ const ST={v:1,bilans:[{t:Date.now()-864e5*13,s:50},{t:Date.now()-864e5*6,s:58}],
  await tab('exercices');
  await cap('Des exercices courts et exigeants,<br>rangés en cinq familles',2800);
  await scroll(700,2400);await uncap();await top();
- // géographie
- mark('carte');
- await p.evaluate(()=>[...document.querySelectorAll('.excard')].find(c=>c.querySelector('h3').textContent==='Sur la carte').click());await p.waitForTimeout(900);
- await tap(p.locator('#arena button:text-is("Commencer")'));await p.waitForTimeout(1000);
- await p.evaluate(()=>document.querySelector('#arena .carte-svg').scrollIntoView({block:'center',behavior:'smooth'}));await p.waitForTimeout(700);
- await cap('Géographie : place villes, fleuves<br>et pays disparus sur la carte',2600);
- {const pts=await p.$$eval('#arena .carte-svg circle, #arena .carte-svg [role=button], #arena .carte-svg .pt',xs=>xs.map(e=>{const r=e.getBoundingClientRect();return{x:r.x+r.width/2,y:r.y+r.height/2,w:r.width,c:e.getAttribute('class')||e.tagName};}).filter(o=>o.w>8));
-  console.log('points',JSON.stringify(pts.slice(0,6)));
-  const q=pts[1]||pts[0];if(q){await p.mouse.move(q.x,q.y,{steps:12});await p.waitForTimeout(150);await p.mouse.down();await p.waitForTimeout(80);await p.mouse.up();await p.waitForTimeout(900);}}
- const val=p.locator('#arena button:text-is("Valider")');if(await val.count()&&await val.isEnabled()){await tap(val);await p.waitForTimeout(2600);}else{console.log('pas de valider');await p.waitForTimeout(1500);}
- await uncap();
  // fiches papier
  mark('pdf');
  await p.evaluate(()=>location.hash='exercices');await p.waitForTimeout(700);
@@ -93,6 +82,14 @@ const ST={v:1,bilans:[{t:Date.now()-864e5*13,s:50},{t:Date.now()-864e5*6,s:58}],
  await p.waitForTimeout(4200);await uncap();
  await p.evaluate(()=>{const c=document.getElementById('pdfs');c.style.opacity=0;setTimeout(()=>c.remove(),600);});await p.waitForTimeout(600);
  await p.evaluate(()=>location.hash='exercices');await p.waitForTimeout(700);
+
+ // chasse au trésor
+ mark('chasse');
+ await tab('progres');await p.evaluate(()=>{const d=document.getElementById('chasse');d.open=true;document.getElementById('reel').scrollIntoView({block:'start',behavior:'smooth'});});await p.waitForTimeout(1000);
+ await cap('Le défi du réel : une chasse au trésor<br>dans ta ville, cinq indices par semaine',3400);
+ await scroll(260,1600);await p.waitForTimeout(1200);await uncap();await top();
+ mark('enigme');
+ await p.evaluate(()=>location.hash='exercices');await p.waitForTimeout(700);
  await p.evaluate(()=>{const c=[...document.querySelectorAll('.excard')].find(c=>/Énigme du jour/.test(c.querySelector('h3').textContent));c.scrollIntoView({block:'center'});});await p.waitForTimeout(500);
  await p.evaluate(()=>[...document.querySelectorAll('.excard')].find(c=>c.querySelector('h3').textContent==='Énigme du jour').click());await p.waitForTimeout(900);
   await tap(p.locator('#arena button:text-is("Commencer")'));await p.waitForTimeout(800);
@@ -103,9 +100,26 @@ const ST={v:1,bilans:[{t:Date.now()-864e5*13,s:50},{t:Date.now()-864e5*6,s:58}],
   if(q===1&&await c.count()){await c.first().evaluate(e=>e.scrollIntoView({block:'center',behavior:'smooth'}));await p.waitForTimeout(600);
      await cap('Une réponse te semble fausse ?<br>Touche « ⚑ Une erreur dans la réponse ? »',3400);await tap(c.first());await p.waitForTimeout(1800);await uncap();}
   else{if(q===1)console.log('pas de contest');await tap(p.locator('#arena .btn.primary:visible'));}}
+ // géographie
+ mark('carte');
+ await p.evaluate(()=>location.hash='exercices');await p.waitForTimeout(700);
+ await p.evaluate(()=>{window.__seed(5*7919);[...document.querySelectorAll('.excard')].find(c=>c.querySelector('h3').textContent==='Sur la carte').click();});await p.waitForTimeout(900);
+ await tap(p.locator('#arena button:text-is("Commencer")'));await p.waitForTimeout(1000);
+ await p.evaluate(()=>document.querySelector('#arena .carte-svg').scrollIntoView({block:'center',behavior:'smooth'}));await p.waitForTimeout(700);
+ await cap('Géographie, en mode difficile :<br>où était le Bourbonnais ?',2800);
+ {const svg=p.locator('#arena .carte-svg');const bb=await svg.boundingBox();const x=bb.x+bb.width*.56,y=bb.y+bb.height*.55;
+  await p.mouse.move(x,y,{steps:14});await p.waitForTimeout(150);await p.mouse.down();await p.waitForTimeout(80);await p.mouse.up();await p.waitForTimeout(900);}
+ const val=p.locator('#arena button:text-is("Valider")');if(await val.count()&&await val.isEnabled()){await tap(val);await p.waitForTimeout(800);await p.evaluate(()=>{const a=document.querySelector('#arena .answer:not([hidden])');if(a)a.scrollIntoView({block:'center',behavior:'smooth'});});await p.waitForTimeout(3200);}else{console.log('pas de valider');await p.waitForTimeout(1500);}
+ await uncap();
  // 3. amis
  mark('amis');
  await tab('amis');await toView('v-amis');await cap('Ton cercle : classement, défis et duels<br>entre amis',3200);await scroll(450,1800);await uncap();await top();
+
+ // coach
+ mark('coach');
+ await tab('coach');await toView('v-coach');
+ await cap('Le cerf sage, ton coach : il ne fait pas<br>à ta place, il t’aide à réfléchir',3400);
+ await scroll(380,1800);await p.waitForTimeout(800);await uncap();await top();
  // 4. bilan
  mark('bilan');
  await tab('progres');await toView('v-progres');await cap('Ton bilan : niveaux, badges<br>en pièces d’époque',3200);await scroll(600,2200);await uncap();await top();

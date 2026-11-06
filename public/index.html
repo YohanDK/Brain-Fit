@@ -791,10 +791,38 @@ a{color:var(--accent);text-underline-offset:3px}
 .qrow{display:flex;flex-direction:column;gap:6px;padding:10px 0;border-top:1px solid var(--line)}
 .qrow .seg{display:grid;grid-template-columns:repeat(5,1fr)}
 .qrow .seg button{padding:6px 2px;font-size:.86rem}
-.etapes{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;list-style:none;padding:0;margin:0}
-.etapes li{border-top:4px solid var(--line);padding-top:6px;font-size:.88rem;color:var(--muted)}
-.etapes li.done{border-color:var(--gold);color:var(--fg2)}
-.etapes li.cur{border-color:var(--accent);color:var(--fg);font-weight:700}
+.sentier{list-style:none;margin:0;padding:0;display:flex;flex-direction:column}
+.st{display:flex;gap:14px;position:relative;padding-bottom:18px}
+.st:last-child{padding-bottom:0}
+.st:not(:last-child)::before{content:"";position:absolute;left:21px;top:46px;bottom:2px;border-left:3px dashed var(--line)}
+.st.done::before{border-left-style:solid;border-color:var(--good)}
+.borne{width:44px;height:44px;border-radius:50%;flex:none;display:grid;place-items:center;font-family:var(--f-display);font-weight:700;background:var(--sunk);color:var(--muted);border:2px solid var(--line)}
+.st.done .borne{background:var(--good);border-color:var(--good);color:var(--surface)}
+.st.cur .borne{background:var(--surface);border:3px solid var(--accent);overflow:hidden}
+.st.cur .borne .stag.rk-stag{width:38px;height:38px;margin-top:4px}
+.st-body{flex:1;min-width:0;display:flex;flex-direction:column;gap:2px;padding-top:2px}
+.st-body h3{font-size:.98rem;margin:6px 0 0}
+.st-body>.note{color:var(--fg2);line-height:1.35;margin:0}
+.st.far h3,.st.far .st-body>.note{color:var(--muted)}
+.st-todo{background:var(--accent-soft);border-radius:10px;padding:10px 12px;margin-top:8px;display:flex;flex-direction:column;gap:8px}
+.st-todo .label{color:var(--accent-deep)}
+.st-c{display:flex;gap:8px;align-items:flex-start;line-height:1.3}
+.st-c>i{width:20px;height:20px;border-radius:50%;flex:none;border:2px solid var(--accent);display:grid;place-items:center;font-style:normal;font-size:.72rem;margin-top:1px}
+.st-c.ok{color:var(--good)}.st-c.ok>i{background:var(--good);border-color:var(--good);color:var(--surface)}
+.st-c>span{flex:1;min-width:0}
+.st-n{color:var(--muted)}
+.st-pb{display:block;height:5px;border-radius:3px;background:var(--surface);margin-top:4px;overflow:hidden}
+.st-pb b{display:block;height:100%;background:var(--accent);border-radius:3px}
+.st-cond{font-size:.85rem;color:var(--muted)!important;margin-top:2px!important}
+.sk{margin:4px 0 8px}
+.sk-top{display:flex;justify-content:space-between;gap:10px;align-items:baseline}
+.sk-top span{min-width:0}.sk-top b{white-space:nowrap;font-size:.92rem}
+.sk.up .sk-top b{color:var(--good)}.sk.down .sk-top b{color:var(--bad)}.sk.flat .sk-top b{color:var(--muted)}
+.sk-trk{position:relative;height:10px;border-radius:5px;background:var(--sunk);margin-top:4px}
+.sk-trk>i{position:absolute;left:0;top:0;bottom:0;border-radius:5px;background:var(--heat2)}
+.sk.up .sk-trk>i{background:var(--good)}.sk.down .sk-trk>i{background:var(--bad)}
+.sk-trk>b{position:absolute;top:-3px;width:3px;height:16px;margin-left:-1px;border-radius:2px;background:var(--fg2)}
+.sk-flat summary{cursor:pointer;color:var(--accent);font-weight:600;font-size:.92rem;margin:4px 0}
 .crit{display:flex;flex-direction:column;gap:4px}
 .crit .ok{color:var(--good)}
 .bl-head{align-items:flex-start}
@@ -1495,6 +1523,41 @@ html[data-anim=doux] .piece-flip{animation:none}
 .defis{display:grid!important;grid-template-columns:1fr 1fr;gap:18px}
 .defi{display:flex;flex-direction:column;gap:8px;min-width:0}
 @media (max-width:620px){.defis{grid-template-columns:1fr}.groupe{padding:16px 16px 4px}}
+/* Ma semaine en tableau de bord : les sept jours, trois chiffres, deux cartes, trois anneaux */
+.wb-days{display:grid;grid-template-columns:repeat(7,1fr);gap:4px;justify-items:center}
+.wb-d{display:flex;flex-direction:column;align-items:center;gap:3px;color:var(--muted);font-size:.8rem}
+.wb-d i{width:36px;height:36px;border-radius:50%;display:grid;place-items:center;font-style:normal;font-weight:700;background:var(--sunk);border:2px solid var(--line);color:var(--surface)}
+.wb-d.on i{background:var(--good);border-color:var(--good)}
+.wb-d.fut i{border-style:dashed;background:none}
+.wb-kp{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}
+.wb-kp>div{background:var(--sunk);border-radius:10px;padding:10px 6px;text-align:center;display:flex;flex-direction:column}
+.wb-kp b{font-family:var(--f-display);font-size:1.5rem;line-height:1.15}
+.wb-kp span{font-size:.82rem;color:var(--fg2)}
+.wb .wb-avant{margin-top:-4px;text-align:center}
+.wb-duo{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.wb-c{border-radius:10px;padding:10px 12px;display:flex;flex-direction:column;gap:3px;min-width:0}
+.wb-c.up{background:var(--good-soft)}.wb-c.up .label{color:var(--good-deep)}
+.wb-c.wk{background:var(--gold-soft)}.wb-c.wk .label{color:var(--gold-deep)}
+.wb-c b{line-height:1.25}.wb-c .note{color:var(--fg2);line-height:1.3}
+.wb-bar{height:6px;border-radius:3px;background:var(--surface);margin-top:5px;overflow:hidden}
+.wb-bar i{display:block;height:100%;border-radius:3px;background:var(--good)}
+.wb-c.wk .wb-bar i{background:var(--gold)}
+.wb-rel{border-top:1px solid var(--line);padding-top:10px}
+.wb-rel summary{cursor:pointer;color:var(--accent);font-weight:600}
+.wb-rel p{margin-top:8px}
+.prog{display:grid!important;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}
+.ring{display:flex;flex-direction:column;align-items:center;text-align:center;gap:2px;padding:6px 2px;border-radius:12px;background:none;border:0;font:inherit;color:inherit;min-width:0}
+button.ring{cursor:pointer}button.ring:hover{background:var(--sunk)}
+.ring b{font-size:.95rem;line-height:1.2;margin-top:4px}.ring .note{line-height:1.25;color:var(--muted)}
+.rg-svg svg{display:block}
+.rg-bg{fill:none;stroke:var(--sunk);stroke-width:8}
+.rg-on{fill:none;stroke:var(--good);stroke-width:8;stroke-linecap:round;transition:stroke-dasharray .4s}
+.ring text{font-family:var(--f-body);font-size:15px;font-weight:700;fill:var(--fg)}
+.ring.full text{fill:var(--good)}
+.prog-aide{text-align:center;margin:0}
+html[data-senior] .ring b{font-size:1.05rem}
+.defis .defi{background:var(--sunk);border-radius:12px;padding:12px 14px}
+@media (max-width:380px){.wb-d i{width:32px;height:32px}.wb-duo{grid-template-columns:1fr}}
 /* ---------- vie de l'interface (cascade, chiffres, onglet, séance faite) ---------- */
 .monte{display:inline-block;animation:bump .5s ease-out}
 @media (min-width:641px){.tabs.a-ind{position:relative}}
@@ -1879,9 +1942,10 @@ var fin=function(){if(e.parentNode)e.remove();};e.addEventListener('click',fin);
       <div class="sous">
         <div>
           <h2>Programme de la semaine</h2>
-          <p class="muted">Comme à la salle : des séances longues, régulières, qui font transpirer.</p>
+          <p class="muted note">Comme à la salle : long, régulier, qui fait transpirer.</p>
         </div>
         <div class="prog" id="prog"></div>
+        <p class="note muted prog-aide">Touche un anneau quand une lecture ou ton écriture longue est faite.</p>
       </div>
       <div class="sous defis">
         <div class="defi">
@@ -1927,16 +1991,17 @@ var fin=function(){if(e.parentNode)e.remove();};e.addEventListener('click',fin);
     </div>
     <div class="panel groupe" id="g-chemin">
       <h2 class="g-titre">Mon chemin</h2>
+      <div class="sous" id="etapes">
+        <div><h2>Ton chemin</h2><p class="muted note" id="pc-sub">Quatre étapes, de l'éveil à la maîtrise. Tu avances à ton rythme.</p></div>
+        <ol class="sentier" id="pc-steps"></ol>
+      </div>
       <div class="sous" id="bilan-pt">
         <div class="row spread bl-head"><div><h2>Point d'étape</h2><p class="muted note" id="bl-sub"></p></div><button class="btn" id="pc-bilan">Faire le point</button></div>
         <div id="bl-body"></div>
       </div>
-      <div class="sous" id="etapes">
-        <div><h2>Mon parcours</h2><p class="muted note" id="pc-sub"></p></div>
-        <ol class="etapes" id="pc-steps"></ol>
-        <p class="fg2" id="pc-desc"></p>
-        <div class="crit" id="pc-next"></div>
-        <div class="tablewrap" id="pc-skills"></div>
+      <div class="sous" id="competences">
+        <div><h2>Tes compétences</h2><p class="muted note" id="pc-skills-sub"></p></div>
+        <div id="pc-skills"></div>
       </div>
       <div class="sous" id="passeport" hidden>
         <div><h2>Mon passeport d'Europe</h2><p class="muted note" id="pp-sub"></p></div>
@@ -4813,21 +4878,47 @@ function stageCrit(){
     [['90 jours actifs',a,90],['30 séances hors écran',off,30],["3 points d'étape",b,3],['Autonomie en actes à 70 ou plus',deeds(todayKey()),70]]];
 }
 function stageOf(){const c=stageCrit();let s=1;while(s<4&&c[s].every(([,v,n])=>v>=n))s++;return s;}
-function renderEtapes(){ // « Mon parcours » du Bilan (à ne pas confondre avec le parcours de saison)
-  const B=state.bilans||[], s=gamiCtx.stage||1, t=todayKey(), c=stageCrit();
-  $('#pc-sub').textContent=`Étape ${s} sur 4 · ${STAGES[s-1][0]}`;
+function renderEtapes(){ // « Mon chemin » du Bilan (à ne pas confondre avec le parcours de saison)
+  const B=state.bilans||[], s=gamiCtx.stage||1, c=stageCrit();
   renderBilanPt();
-  $('#pc-steps').replaceChildren(...STAGES.map(([n],i)=>el('li',{class:i+1<s?'done':i+1===s?'cur':'',text:`${i+1}. ${n}`})));
-  $('#pc-desc').textContent=STAGES[s-1][1];
-  $('#pc-next').replaceChildren(...(s<4?[el('span',{class:'label',text:`Pour passer à l'étape ${s+1}`}),...c[s].map(([lab,v,n])=>el('span',{class:v>=n?'ok':'fg2',text:(v>=n?'✓ ':'○ ')+lab+(v>=n?'':` · ${fmt(Math.min(v,n))} / ${n}`)}))]:[el('span',{class:'fg2',text:'Dernière étape atteinte. Garde le rythme : refais le point chaque mois.'})]));
-  // compétences : moyenne des deux premières séances, puis des trois dernières
+  const goBilan=()=>{showTab('exercices');openEx('bilan');};
+  // le sentier : une borne par étape, le cerf sur celle où l'on est, ce qui manque juste à côté
+  $('#pc-steps').replaceChildren(...STAGES.map(([n,d],i)=>{
+    const k=i+1, cur=k===s, done=k<s, crit=c[k]||null; // crit[k] : ce qu'il faut pour quitter l'étape k
+    const borne=el('span',{class:'borne','aria-hidden':'true'});
+    if(cur)borne.append(el('span',{class:'stag rk-stag',html:stagSVG(gamiCtx.level||1,'idle')}));else borne.textContent=done?'✓':String(k);
+    const body=el('div',{class:'st-body'},el('h3',{text:`${k}. ${n}`+(cur?' · tu es ici':done?' · franchie':'')}),el('p',{class:'note',text:d}));
+    if(cur&&crit){
+      const reste=crit.filter(([,v,m])=>v<m).length;
+      const todo=el('div',{class:'st-todo'},el('span',{class:'label',text:reste===1?'Plus qu’une chose pour avancer':`Pour passer à l’étape ${k+1}`}));
+      let needBilan=false;
+      for(const[lab,v,m] of crit){const ok=v>=m; if(!ok&&/point/.test(lab))needBilan=true;
+        todo.append(el('div',{class:'st-c'+(ok?' ok':'')},el('i',{'aria-hidden':'true',text:ok?'✓':''}),
+          el('span',{},document.createTextNode(lab),...(ok||m===1?[]:[el('span',{class:'st-n',text:` · ${fmt(Math.min(v,m))} / ${m}`}),el('span',{class:'st-pb'},el('b',{style:`width:${Math.round(Math.min(1,v/m)*100)}%`}))]))));}
+      if(needBilan)todo.append(el('div',{class:'row'},el('button',{class:'btn primary',text:B.length?'Refaire le point':'Faire mon point de départ',onclick:goBilan}),el('span',{class:'note',text:'une dizaine de minutes'})));
+      body.append(todo);
+    }else if(cur)body.append(el('p',{class:'st-todo note',text:'Dernière étape atteinte. Garde le rythme : refais le point chaque mois.'}));
+    else if(!done&&k>s+1&&c[k-1])body.append(el('p',{class:'note st-cond',text:'Pour y arriver : '+c[k-1].map(([lab,,m])=>lab).join(', ')+'.'}));
+    return el('li',{class:'st'+(cur?' cur':done?' done':' far')},borne,body);}));
+  // compétences : moyenne des deux premières séances (le trait), puis des trois dernières (la barre)
   const avg=a=>a.reduce((x,y)=>x+y,0)/a.length, rows=[];
   for(const[key,e] of Object.entries(EX)){if(e.manual||e.hidden)continue;const rs=state.results.filter(r=>r.ex===key).map(r=>r.s);if(rs.length<3)continue;
     const a=avg(rs.slice(0,2)), b=avg(rs.slice(-3)), pct=a?Math.round((b-a)/Math.abs(a)*100):0, cls=Math.abs(pct)<3?'flat':pct>0?'up':'down';
-    rows.push(el('tr',{},el('td',{text:e.name}),el('td',{class:'num',text:fmt(Math.round(a))}),el('td',{class:'num',text:fmt(Math.round(b))}),el('td',{},el('span',{class:'delta '+cls,text:cls==='flat'?'= stable':(pct>0?'↑ +':'↓ ')+pct+' %'}))));}
+    rows.push({e,a,b,pct,cls});}
+  rows.sort((x,y)=>Math.abs(y.pct)-Math.abs(x.pct));
+  const line=({e,a,b,pct,cls})=>{
+    const max=/%|100/.test(e.unit||'')?100:Math.max(a,b)*1.15||1, w=v=>Math.max(0,Math.min(100,v/max*100)).toFixed(1)+'%';
+    return el('div',{class:'sk '+cls},el('div',{class:'sk-top'},el('span',{text:e.name}),el('b',{text:`${fmt(Math.round(a))} → ${fmt(Math.round(b))}`+(cls==='flat'?'':` (${pct>0?'+':'−'}${Math.abs(pct)} %)`)})),
+      el('div',{class:'sk-trk',role:'img','aria-label':`${e.name} : ${fmt(Math.round(a))} au départ, ${fmt(Math.round(b))} aujourd’hui`},el('i',{style:`width:${w(b)}`}),el('b',{style:`left:${w(a)}`})));};
+  const moved=rows.filter(r=>r.cls!=='flat'), flat=rows.filter(r=>r.cls==='flat');
   const tw=$('#pc-skills'); tw.replaceChildren();
-  if(rows.length){const tbl=el('table',{class:'week'}),hd=el('tr');['Compétence','Au départ','Aujourd’hui','Évolution'].forEach(x=>hd.append(el('th',{text:x})));tbl.append(el('thead',{},hd),el('tbody',{},...rows));tw.append(tbl);}
-  else tw.append(el('p',{class:'note',text:'Après trois séances d’un même exercice, tu verras ici ton point de départ et ton niveau actuel.'}));
+  $('#pc-skills-sub').textContent=rows.length?'Le trait : tes deux premières séances. La barre : tes trois dernières.':'';
+  if(rows.length){
+    tw.append(...moved.map(line));
+    if(flat.length){const lst=flat.map(r=>r.e.name).join(', ');
+      if(moved.length)tw.append(el('details',{class:'sk-flat'},el('summary',{text:`${flat.length} compétence${flat.length>1?'s':''} stable${flat.length>1?'s':''} (${lst})`}),...flat.map(line)));
+      else tw.append(el('p',{class:'note muted',text:'Rien n’a encore bougé : c’est normal au début. Continue, la différence se voit après quelques semaines.'}),...flat.map(line));}
+  }else tw.append(el('p',{class:'note',text:'Après trois séances d’un même exercice, tu verras ici ton point de départ et ton niveau actuel.'}));
 }
 $('#pc-bilan').addEventListener('click',()=>{showTab('exercices');openEx('bilan');});
 // la carte du point d'étape, en haut de l'onglet Bilan : trois chiffres, quatre axes, l'historique, deux priorités
@@ -4838,13 +4929,15 @@ function renderBilanPt(){
   btn.textContent=B.length?'Refaire le point':'Faire mon point de départ'; btn.className='btn'+(due?' primary':'');
   if(!last){
     $('#bl-sub').textContent='Une dizaine de minutes, une fois par mois.';
-    body.replaceChildren(stagTalk('idle','Avant de progresser, il faut savoir d’où l’on part. Fais ton point de départ : il servira de repère à tous les autres.'),
-      el('ol',{class:'bl-parts'},
+    btn.hidden=true;
+    body.replaceChildren(el('p',{class:'fg2',style:'margin:0',text:'Avant de progresser, il faut savoir d’où l’on part. Ton premier point d’étape sert de repère à tous les autres, et il t’ouvre l’étape 2 du chemin.'}),
+      el('details',{class:'sk-flat'},el('summary',{text:'Ce qu’il contient'}),el('ol',{class:'bl-parts'},
         el('li',{},el('b',{text:'Tes habitudes'}),el('span',{text:'Seize affirmations en quatre axes : penser d’abord, écrire soi-même, vérifier, revenir au réel.'})),
         el('li',{},el('b',{text:'Mise à l’épreuve'}),el('span',{text:'Six questions notées, pour mesurer ce que tu sais faire, pas seulement ce que tu en dis.'})),
-        el('li',{},el('b',{text:'Ton estimation'}),el('span',{text:'Devine ton score avant la correction : te connaître est une compétence.'}))));
+        el('li',{},el('b',{text:'Ton estimation'}),el('span',{text:'Devine ton score avant la correction : te connaître est une compétence.'})))));
     return;
   }
+  btn.hidden=false;
   const next=last.t+30*864e5;
   $('#bl-sub').textContent=`Dernier le ${dm(last.t)} · `+(due?'c’est le moment de refaire le point':`prochain le ${dm(next)}`);
   const ax=bilanAxes(last), ax0=bilanAxes(first), eLast=([...B].reverse().find(b=>b.e)||{}).e, eFirst=(B.find(b=>b.e)||{}).e;
@@ -6605,6 +6698,7 @@ function bilanWeek(){
   const t=todayKey(), ws=weekStart(t), now=new Date();
   return now.getDay()===0&&now.getHours()>=18?ws:addDays(ws,-7);
 }
+const jA=n=>`${n} jour${n>1?'s':''} actif${n>1?'s':''} sur 7`;
 function weekBilan(ws){
   const inW=k=>k>=ws&&k<addDays(ws,7), prev=addDays(ws,-7), inP=k=>k>=prev&&k<ws;
   const R=state.results.filter(r=>inW(r.d)), P=state.results.filter(r=>inP(r.d));
@@ -6626,22 +6720,24 @@ function weekBilan(ws){
   const hab=HABITS.map(h=>{let n=0;for(let i=0;i<7;i++){const d=state.days[addDays(ws,i)];if(d&&d.habits&&d.habits[h[0]])n++;}return {h,n};}).sort((x,y)=>x.n-y.n);
   const short=h=>HAB_SHORT[h[0]]||h[1];
   // ce qui progresse
-  const good=up?`${up.name} : ${n1(up.b)} → ${n1(up.a)} de moyenne (+${up.pct} %).`
-    :act>actP&&actP?`Ta régularité : ${act} jours actifs, contre ${actP} la semaine d'avant.`
-    :fav?`${EX[fav[0]].name}, ton exercice le plus pratiqué : ${fav[1]} séance${fav[1]>1?'s':''}.`
-    :`${act} jour${act>1?'s':''} actif${act>1?'s':''} sur 7.`;
+  // chaque carte : un titre, un détail, et une barre quand elle a un sens (sur 7 jours)
+  const good=up?{t:up.name,v:`${n1(up.b)} → ${n1(up.a)} de moyenne (+${up.pct} %)`}
+    :act>actP&&actP?{t:'Ta régularité',v:`${act} jours actifs, contre ${actP} la semaine d'avant`,p:act/7}
+    :fav?{t:EX[fav[0]].name,v:`ton exercice le plus pratiqué : ${fav[1]} séance${fav[1]>1?'s':''}`}
+    :{t:'Ta présence',v:jA(act),p:act/7};
   // le point à travailler, puis une action concrète pour la semaine suivante ; l'écriture et le raisonnement passent en premier
   let weak, next;
-  if(act<=2){weak=`La régularité : ${act} jour${act>1?'s':''} actif${act>1?'s':''} sur 7.`;next="Vise 5 jours actifs. Un seul exercice de 5 minutes compte pour la journée.";}
-  else if(!wrote){weak="L'écriture : aucune séance cette semaine.";next="Fais 2 séances d'Écriture sans IA, dont une longue de 30 minutes.";}
-  else if(!reasoned){weak="Le raisonnement : aucun problème, sophisme, estimation ni hypothèse cette semaine.";next="Fais 3 fois le Problème du jour ou le Détecteur de sophismes.";}
-  else if(down){weak=`${down.name} recule : ${n1(down.b)} → ${n1(down.a)} de moyenne (−${-down.pct} %).`;next=`Refais ${down.name} 3 fois, sans te presser.`;}
-  else if(hab[0].n<4){weak=`L'habitude « ${short(hab[0].h)} » : ${hab[0].n} jour${hab[0].n>1?'s':''} sur 7.`;next=`Vise « ${short(hab[0].h)} » au moins 4 jours.`;}
-  else{weak="Rien ne recule : bonne semaine.";next=`Monte d'un cran : passe ta routine à ${Math.min(30,(state.settings.minutes||10)+10)} minutes, ou tente un exercice que tu fais peu.`;}
+  if(act<=2){weak={t:'La régularité',v:jA(act),p:act/7};next="Vise 5 jours actifs. Un seul exercice de 5 minutes compte pour la journée.";}
+  else if(!wrote){weak={t:"L'écriture",v:'aucune séance cette semaine',p:0};next="Fais 2 séances d'Écriture sans IA, dont une longue de 30 minutes.";}
+  else if(!reasoned){weak={t:'Le raisonnement',v:'aucun problème, sophisme, estimation ni hypothèse cette semaine',p:0};next="Fais 3 fois le Problème du jour ou le Détecteur de sophismes.";}
+  else if(down){weak={t:down.name,v:`recule : ${n1(down.b)} → ${n1(down.a)} de moyenne (−${-down.pct} %)`};next=`Refais ${down.name} 3 fois, sans te presser.`;}
+  else if(hab[0].n<4){const h=short(hab[0].h);weak={t:h.charAt(0).toUpperCase()+h.slice(1),v:`${hab[0].n} jour${hab[0].n>1?'s':''} sur 7`,p:hab[0].n/7};next=`Vise « ${h} » au moins 4 jours.`;}
+  else{weak={t:'Rien ne recule',v:'bonne semaine'};next=`Monte d'un cran : passe ta routine à ${Math.min(30,(state.settings.minutes||10)+10)} minutes, ou tente un exercice que tu fais peu.`;}
   const defis=[`défi de la semaine ${state.weeks[ws]?'relevé':'non relevé'}`,`défi du réel ${((state.reel||{})[ws]||{}).d?'fait':'pas fait'}`,`lectures intensives ${Math.min(2,pw.lect||0)}/2`,`écriture longue ${Math.min(1,pw.ecrit||0)}/1`];
   let rank=null;
   if(circleData&&ws===weekStart(todayKey())&&circleData.rows.length>1){const i=circleData.rows.findIndex(r=>r.me);if(i>=0)rank=`${i?(i+1)+'e':'1er'} sur ${circleData.rows.length} dans ton cercle « ${circleData.name} ».`;}
-  return {act,actP,xp,n:R.length,good,weak,next,defis,rank};
+  const t=todayKey(), days=[0,1,2,3,4,5,6].map(i=>{const k=addDays(ws,i);return{k,on:isActive(k),fut:k>t};});
+  return {act,actP,xp,n:R.length,good,weak,next,defis,rank,days};
 }
 function renderWeekBilan(){
   const ws=bilanWeek(), b=weekBilan(ws), end=addDays(ws,6);
@@ -6649,18 +6745,23 @@ function renderWeekBilan(){
   if(!circleData&&ref&&state.settings.circle&&ws===weekStart(todayKey()))circleLoad().then(()=>{if(circleData)renderWeekBilan();}).catch(()=>{});
   const dm=k=>fd(new Date(k+'T12:00:00'),{day:'numeric',month:'long'}).replace(/^1 /,'1er ');
   const from=ws.slice(5,7)===end.slice(5,7)?dm(ws).split(' ')[0]:dm(ws);
-  $('#wb-week').textContent=`Semaine du ${from} au ${dm(end)}. Le suivant arrive dimanche à 18 h.`;
+  $('#wb-week').textContent=`Du ${from} au ${dm(end)} · le suivant arrive dimanche à 18 h`;
   if(!b){$('#wb-body').replaceChildren(stagTalk('sleepy','Rien d’enregistré cette semaine-là. Fais quelques exercices : ton bilan t’attendra dimanche soir.'));return;}
-  const P=(t,x)=>el('p',{},el('b',{text:t}),document.createTextNode(x));
+  const J=['lundi','mardi','mercredi','jeudi','vendredi','samedi','dimanche'];
+  const days=el('div',{class:'wb-days',role:'img','aria-label':`${b.act} jours actifs sur 7`},...b.days.map((x,i)=>el('span',{class:'wb-d'+(x.on?' on':'')+(x.fut?' fut':''),title:J[i]+(x.on?' : actif':'')},el('i',{text:x.on?'✓':''}),el('small',{text:J[i][0].toUpperCase()}))));
+  const kp=(v,l)=>el('div',{},el('b',{class:'num',text:v}),el('span',{text:l}));
+  const card=(cls,lab,o)=>el('div',{class:'wb-c '+cls},el('span',{class:'label',text:lab}),el('b',{text:o.t}),el('span',{class:'note',text:o.v}),
+    ...(o.p!=null?[el('div',{class:'wb-bar'},el('i',{style:`width:${Math.round(Math.min(1,o.p)*100)}%`}))]:[]));
+  const defis=b.defis.join(', ').replace(/^./,c=>c.toUpperCase())+'.';
   $('#wb-body').replaceChildren(
-    b.act>=5?stagTalk('proud',`Belle semaine : ${b.act} jours actifs sur 7. Un cerf ne recule pas.`):b.act>=3?stagTalk('idle','Une semaine honnête. Voici où gagner du terrain.'):stagTalk('worried','Semaine en pointillé. On repart ensemble, une étape par jour.'),
-    P('En chiffres',`${b.act} jour${b.act>1?'s':''} actif${b.act>1?'s':''} sur 7 (semaine d'avant : ${b.actP}), ${b.n} séance${b.n>1?'s':''}, ${fmt(b.xp)} XP.`),
-    P('Ce qui progresse',b.good),
-    P('À travailler',b.weak),
-    P('Défis',b.defis.join(', ').replace(/^./,c=>c.toUpperCase())+'.'),
-    ...(b.rank?[P('Classement',b.rank)]:[]),
-    el('p',{class:'next'},el('b',{text:'Pour la semaine prochaine'}),document.createTextNode(b.next)),
-    P('Relecture',TUTORS[tutorKey()].rel.replace(/ ([:;!?»])/g,'\u00a0$1')),
+    days,
+    el('div',{class:'wb-kp'},kp(`${b.act}/7`,'jours actifs'),kp(fmt(b.n),`séance${b.n>1?'s':''}`),kp(fmt(b.xp),'XP')),
+    el('p',{class:'note muted wb-avant',text:`Semaine d'avant : ${jA(b.actP)}.`+(b.rank?' '+b.rank:'')}),
+    b.act>=5?stagTalk('proud',`Belle semaine : ${b.act} jours sur 7. Un cerf ne recule pas.`):b.act>=3?stagTalk('idle','Une semaine honnête. Voici où gagner du terrain.'):stagTalk('worried','Semaine en pointillé. On repart ensemble, une étape par jour.'),
+    el('div',{class:'wb-duo'},card('up','↑ Ça progresse',b.good),card('wk','⚑ À travailler',b.weak)),
+    el('p',{class:'next'},el('b',{text:'Ton cap pour la semaine prochaine'}),document.createTextNode(b.next)),
+    el('p',{class:'note muted'},el('b',{text:'Défis de la semaine'}),document.createTextNode(defis)),
+    el('details',{class:'wb-rel'},el('summary',{text:'Deux minutes de relecture'}),el('p',{text:TUTORS[tutorKey()].rel.replace(/ ([:;!?»])/g,'\u00a0$1')})),
     ...(coachOn?[el('div',{class:'row'},el('button',{class:'btn',text:'Préparer ma semaine avec mon coach',onclick:()=>{showTab('coach');window.scrollTo(0,0);$('#coach-panel').scrollIntoView({block:'start'});}}))]:[]));
 }
 // une fois par semaine, à la première ouverture après dimanche 18 h (le coach, s'il est branché, prévient lui-même)
@@ -6750,14 +6851,18 @@ $('#goal-edit').addEventListener('click',()=>{$('#goal-in').value=state.goal?sta
 function renderProgram(){
   const t=todayKey(), wk=weekStart(t), pr=(state.prog||{})[wk]||{};
   const active=(()=>{let n=0;for(let i=0;i<7;i++){const k=addDays(wk,i);if(k<=t&&isActive(k))n++;}return n;})();
-  const dots=(n,max,key)=>{const d=el('div',{class:'dots',role:key?'group':null,'aria-label':key?'Séances faites':null});
-    for(let i=0;i<max;i++){if(key){const b=el('button',{class:'btn',style:'padding:0;border:0;background:none','aria-label':`${i+1} séance${i?'s':''} faite${i?'s':''}`,onclick:()=>{state.prog=state.prog||{};const cur=(state.prog[wk]||{})[key]||0;state.prog[wk]=Object.assign({},state.prog[wk],{[key]:cur===i+1?i:i+1});save();renderProgram();}},el('i',{class:i<n?'on':''}));d.append(b);}else d.append(el('i',{class:i<n?'on':''}));}
-    d.append(el('span',{class:'num note',text:` ${Math.min(n,max)}/${max}`}));return d;};
-  const row=(title,sub,right)=>el('div',{class:'prog-row'},el('div',{},el('span',{class:'step-title',text:title}),el('br'),el('span',{class:'note',text:sub})),right);
+  // trois anneaux : la routine se remplit seule, les deux autres se touchent quand c'est fait
+  const ring=(n,max,title,sub,key)=>{
+    const v=Math.min(n,max), r=26, C=2*Math.PI*r, full=v>=max;
+    const svg=`<svg viewBox="0 0 64 64" width="64" height="64" aria-hidden="true"><circle cx="32" cy="32" r="${r}" class="rg-bg"/>${v?`<circle cx="32" cy="32" r="${r}" class="rg-on" stroke-dasharray="${(C*v/max).toFixed(1)} ${C.toFixed(1)}" transform="rotate(-90 32 32)"/>`:''}<text x="32" y="37" text-anchor="middle">${full?'✓':v+'/'+max}</text></svg>`;
+    const kids=[el('span',{class:'rg-svg',html:svg}),el('b',{text:title}),el('span',{class:'note',text:sub})];
+    if(!key)return el('div',{class:'ring'+(full?' full':''),role:'img','aria-label':`${title} : ${v} sur ${max}`},...kids);
+    return el('button',{type:'button',class:'ring'+(full?' full':''),'aria-label':`${title} : ${v} sur ${max}. Touche pour compter une séance de plus${v?', ou pour remettre à zéro une fois au bout':''}.`,
+      onclick:()=>{state.prog=state.prog||{};const cur=Math.min((state.prog[wk]||{})[key]||0,max);state.prog[wk]=Object.assign({},state.prog[wk],{[key]:cur>=max?0:cur+1});save();renderProgram();}},...kids);};
   $('#prog').replaceChildren(
-    row('Routine quotidienne','Un exercice chaque jour, sans exception.',dots(active,7)),
-    row('2 lectures intensives','30 minutes ou plus, livre ou article long, téléphone ailleurs. Clique un rond quand c’est fait.',dots(pr.lect||0,2,'lect')),
-    row('1 séance d’écriture longue','30 minutes sur un sujet qui te tient à cœur, sans aucune aide. Ensuite, avis du coach.',dots(pr.ecrit||0,1,'ecrit')));
+    ring(active,7,'Un exercice par jour','sans exception'),
+    ring(pr.lect||0,2,'2 lectures','de 30 min, téléphone ailleurs','lect'),
+    ring(pr.ecrit||0,1,'1 écriture longue','30 min, sans aucune aide','ecrit'));
   const n=day().talks||0; $('#talk-n').textContent=n+'/3'; $('#talk-n').style.color=n>=3?'var(--good)':'';
   habitsCount();
 }

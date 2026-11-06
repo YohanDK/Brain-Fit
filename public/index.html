@@ -493,6 +493,8 @@ table.week td.num{font-family:var(--f-mono)}
 .toast .xp{color:var(--xp);font-family:var(--f-mono)}
 .toast.big{background:var(--good);color:var(--on-accent);font-size:1.05rem;padding:14px 20px}
 .toast small{display:block;font-weight:400;opacity:.85}
+.toast.reprise{pointer-events:auto;flex-wrap:wrap;justify-content:center}
+.toast.reprise .btn{min-height:0}
 @keyframes pop{from{transform:translateY(20px) scale(.95);opacity:0}to{transform:none;opacity:1}}
 #confetti{position:fixed;inset:0;pointer-events:none;z-index:29;width:100%;height:100%}
 .badges{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:10px}
@@ -3522,6 +3524,7 @@ function mergeStates(a,b){ // fusionne données distantes (a) et locales (b)
   return out;
 }
 function logResult(ex,s,extra){
+  if(ex===curEx)oublierEnCours();
   const b=bestOf(ex), r=Object.assign({t:Date.now(),d:todayKey(),ex,s:Math.round(s)},extra||{});
   if(b!==null&&r.s>b&&ex!=='focus')r.rec=1;
   // exercice à l'écran qui remplace une étape hors écran : il compte pour la séance et la série, à XP réduits
@@ -5449,7 +5452,7 @@ const attrIcon=(a,g)=>`<svg viewBox="${a[0]==='plume'?'60 20 34 34':a[0]==='lune
 // le code d'un lien ?parrain=XXXXXXXX est gardé jusqu'à l'inscription, puis remis au serveur
 const LS_PARR='brainfit.parrain', SITE_URL='https://yohandk.github.io/Brain-Fit/';
 (()=>{try{const v=new URLSearchParams(location.search).get('parrain');if(v&&/^[A-Z0-9]{8}$/i.test(v.trim())){localStorage.setItem(LS_PARR,v.trim().toUpperCase());
-  const u=new URL(location.href);u.searchParams.delete('parrain');history.replaceState(null,'',u.pathname+u.search+u.hash);}}catch(e){}})();
+  const u=new URL(location.href);u.searchParams.delete('parrain');history.replaceState(history.state,'',u.pathname+u.search+u.hash);}}catch(e){}})();
 function parrainPending(){try{return localStorage.getItem(LS_PARR)||'';}catch(e){return '';}}
 // ce que le serveur a dit la dernière fois (gardé dans les progrès, pour dessiner le cerf même hors ligne)
 const parrN=()=>{const p=state.parr||{};return{inscrits:+p.inscrits||0,actifs:+p.actifs||0,filleul:!!p.filleul,code:p.code||''};};
@@ -6617,7 +6620,7 @@ function showTab(t){
   if(t==='amis'){renderCircle();renderParrain();}
   if(t==='reglages'){$('#city-in').value=city();renderRetours();renderCerf();}
   if(t==='coach'){renderSas();renderCoach();renderTutor();}
-  if(location.hash!=='#'+t)try{history.replaceState(null,'','#'+t);}catch(e){}
+  if(location.hash!=='#'+t)try{history.replaceState(history.state,'','#'+t);}catch(e){}
   placerOnglet();
   if(t!==avant&&!document.documentElement.classList.contains('boot'))animerVue($('#v-'+t));
 }
@@ -6638,7 +6641,70 @@ $('#go-report').hidden=!window.bfRetour||!(window.BF_CONFIG||{}).retours;
 $('#go-report').addEventListener('click',openReport);
 $('#login-open').addEventListener('click',()=>{try{sessionStorage.removeItem('brainfit.later');}catch(e){}$('#syncwarn').hidden=false;openLogin();showTab('aujourdhui');window.scrollTo(0,0);$('#login-email').focus();});
 $$('.tabs button').forEach(b=>b.addEventListener('click',()=>{const same=b.getAttribute('aria-selected')==='true';showTab(b.dataset.tab);if(!same)window.scrollTo(0,0);}));
-window.addEventListener('hashchange',()=>showTab(location.hash.slice(1)));
+let retourT=0;
+window.addEventListener('hashchange',()=>{if(Date.now()-retourT<600)return;showTab(location.hash.slice(1));});
+/* ---------- bouton ou geste « retour » du téléphone ----------
+   Sans cela, le retour quittait la page d'un coup et la partie en cours était perdue.
+   On garde une marche « garde » au-dessus de la page : le retour la consomme, et l'appli
+   recule d'un cran à la place (fenêtre, exercice, onglet). Depuis « Aujourd'hui », on
+   prévient, et le retour suivant quitte vraiment. La marche est posée au premier geste de l'utilisateur,
+   car Chrome saute les marches ajoutées sans geste. */
+let garde=false, retourEx=0;
+function poserGarde(){
+  if(garde)return; garde=true;
+  try{history.replaceState({bf:'base'},'',location.href);history.pushState({bf:'garde'},'',location.href);}catch(e){garde=false;}
+}
+['click','keydown'].forEach(t=>addEventListener(t,poserGarde,{capture:true,passive:true}));
+const ongletActif=()=>TABS.find(x=>$('#v-'+x)&&!$('#v-'+x).hidden)||'aujourdhui';
+// une partie est en cours : l'exercice est ouvert, commencé, et pas encore à l'écran du résultat
+function partieEnCours(){
+  const st=$('#stage'), a=$('#arena'); if(!st||st.hidden||!a||a.querySelector('.result'))return false;
+  if(cleanup||!$('#st-timer').hidden||a.querySelector('.qbar'))return true;
+  return [...a.querySelectorAll('textarea,input[type=text],input:not([type])')].some(x=>x.value.trim().length>2);
+}
+function toastRetour(txt){toast('<span>'+txt+'</span>');}
+addEventListener('popstate',e=>{
+  if(!e.state||e.state.bf!=='base')return;
+  retourT=Date.now(); garde=false;
+  try{history.replaceState({bf:'base'},'','#'+ongletActif());}catch(err){}
+  const rearmer=()=>{if(!garde){garde=true;try{history.pushState({bf:'garde'},'',location.href);}catch(err){garde=false;}}};
+  // 1. une fenêtre par-dessus (badge, niveau, événement, signalement…) : on la ferme
+  const cer=[...document.querySelectorAll('.ceremony')].filter(b=>!b.classList.contains('out')).pop();
+  if(cer){cer.dispatchEvent(new MouseEvent('click',{bubbles:true}));if(cer.isConnected&&!cer.classList.contains('out'))cer.remove();rearmer();return;}
+  // 2. la présentation : fermée si on l'a ouverte soi-même, sinon on laisse partir le visiteur
+  const wl=$('#welcome');
+  if(wl&&!wl.hidden){
+    let vu=false;try{vu=!!localStorage.getItem('brainfit.welcome');}catch(err){}
+    if(vu){wl.hidden=true;document.body.style.overflow='';rearmer();}else history.back();
+    return;
+  }
+  // 3. un exercice ouvert : s'il est commencé, on demande confirmation par un second retour
+  if(!$('#stage').hidden){
+    if(partieEnCours()&&Date.now()-retourEx>4000){retourEx=Date.now();toastRetour('Partie en cours. <small>Appuie encore sur retour pour quitter l’exercice.</small>');rearmer();return;}
+    retourEx=0; $('#st-close').click(); window.scrollTo(0,0); rearmer(); return;
+  }
+  // 4. une conversation avec le cerf sage ouverte : on revient à son menu
+  const sr=$('#sage-run'); if(sr&&!sr.hidden&&ongletActif()==='coach'){sageClose();rearmer();return;}
+  // 5. un autre onglet : retour à « Aujourd'hui »
+  if(ongletActif()!=='aujourdhui'){showTab('aujourdhui');window.scrollTo(0,0);rearmer();return;}
+  // 6. déjà sur « Aujourd'hui » : on prévient, et le retour suivant quitte vraiment (la garde revient au prochain geste)
+  toastRetour('Appuie encore sur retour pour quitter Néophyte.');
+});
+/* ---------- mini sauvegarde : l'exercice ouvert est noté, et proposé à la reprise ---------- */
+const LS_ENCOURS='brainfit.encours';
+function noterEnCours(key){try{if(key&&key!=='duel')localStorage.setItem(LS_ENCOURS,JSON.stringify({ex:key,t:Date.now()}));else localStorage.removeItem(LS_ENCOURS);}catch(e){}}
+function oublierEnCours(){try{localStorage.removeItem(LS_ENCOURS);}catch(e){}}
+function proposerReprise(){
+  let r=null;try{r=JSON.parse(localStorage.getItem(LS_ENCOURS)||'null');}catch(e){}
+  oublierEnCours();
+  if(!r||!EX[r.ex]||Date.now()-r.t>6*3600e3||r.t<new Date(new Date().setHours(0,0,0,0)).getTime())return;
+  if(!$('#stage').hidden||($('#welcome')&&!$('#welcome').hidden))return;
+  const t=el('div',{class:'toast reprise',role:'status'},el('span',{},'Tu étais sur « '+EX[r.ex].name+' ».',el('small',{text:'L’appli s’est fermée avant la fin. Tu le rouvres ?'})));
+  const fermer=()=>{t.style.transition='opacity .3s';t.style.opacity='0';setTimeout(()=>t.remove(),320);};
+  t.append(el('button',{class:'btn mini gold',text:'Rouvrir',onclick:()=>{fermer();showTab('exercices');openEx(r.ex);}}),
+    el('button',{class:'btn ghost mini',text:'Non',onclick:fermer}));
+  $('#toasts').append(t); setTimeout(()=>{if(t.isConnected)fermer();},12000);
+}
 
 /* ---------- exercices ---------- */
 // les familles d'exercices, de la plus importante à la plus légère
@@ -7197,11 +7263,12 @@ function missAgain(bank,arr,item){const i=arr.indexOf(item), m=META.get(arr);if(
 let cleanup=null;
 // un défi reçu par lien : ?defi=graine.score.pseudo
 let DEFI=(()=>{try{const v=new URLSearchParams(location.search).get('defi');if(!v)return null;const m=v.match(/^([a-z0-9]{4,12})\.(\d{1,3})\.(.{1,24})$/i);return m?{seed:m[1],score:+m[2],from:m[3].trim()||'Un ami'}:null;}catch(e){return null;}})();
-function launchDefi(){if(!DEFI)return;try{history.replaceState(null,'',location.pathname+location.hash);}catch(e){}showTab('exercices');openEx(/^k[a-z0-9]{10}$/.test(DEFI.seed)?'carte':'eclair');}
+function launchDefi(){if(!DEFI)return;try{history.replaceState(history.state,'',location.pathname+location.hash);}catch(e){}showTab('exercices');openEx(/^k[a-z0-9]{10}$/.test(DEFI.seed)?'carte':'eclair');}
 function stopRun(){if(cleanup){cleanup();cleanup=null;}$('#st-timer').hidden=true;$('#st-bar').hidden=true;}
 function openEx(key){
   stopRun();
   if(key!=='eclair')defiCible=null;
+  noterEnCours(key);
   curEx=key; qmarks=[]; betRun=0; betN=0; $('#stage').classList.toggle('saison',key==='evenement'||key==='chasse');
   const e=EX[key]; $('#exgrid').hidden=true; $('#stage').hidden=false; $('#st-skill').textContent=e.skill; $('#st-name').textContent=e.name;
   const o=$('#st-orig'); o.open=false; o.hidden=!ORIG[key]; o.querySelector('p').textContent=ORIG[key]||'';
@@ -7211,7 +7278,7 @@ function openEx(key){
     $('#arena').append(el('p',{class:'note',style:'text-align:center;margin-top:10px'},swapLink(key,true)));
   $('#stage').scrollIntoView({behavior:'smooth',block:'start'});
 }
-$('#st-close').addEventListener('click',()=>{stopRun();defiCible=null;$('#stage').hidden=true;$('#exgrid').hidden=false;});
+$('#st-close').addEventListener('click',()=>{stopRun();oublierEnCours();defiCible=null;$('#stage').hidden=true;$('#exgrid').hidden=false;});
 function countdown(sec,onTick,onEnd){
   const t=$('#st-timer'), bar=$('#st-bar'); t.hidden=false; bar.hidden=false; const end=Date.now()+sec*1000;
   const f=()=>{const ms=Math.max(0,end-Date.now()), left=Math.ceil(ms/1000);t.textContent=Math.floor(left/60)+':'+String(left%60).padStart(2,'0');
@@ -9254,6 +9321,7 @@ Promise.race([initStore(),new Promise(r=>setTimeout(r,800))]).finally(()=>{docum
   const sp=$('#splash'), spv=sp&&sp.isConnected&&getComputedStyle(sp).display!=='none'&&getComputedStyle(sp).opacity!=='0';
   setTimeout(()=>{placerOnglet();if(!calme())['#streak','#xp-today'].forEach(q=>{const e=$(q);if(e)compter(e,e.textContent,0);});animerVue(TABS.map(x=>$('#v-'+x)).find(v=>v&&!v.hidden));},spv?1700:0);
   // la fenêtre d'événement, une fois l'écran d'ouverture passé
+  setTimeout(proposerReprise,spv?1900:500);
   setTimeout(evPopup,2200);});
 if('serviceWorker' in navigator)navigator.serviceWorker.register('sw.js').catch(()=>{});
 })();

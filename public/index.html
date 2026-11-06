@@ -5319,6 +5319,8 @@ function saintDuJour(k=todayKey()){
   for(const o in mob)if(addDays(P,+o)===k)return mob[o];
   // Christ Roi : le dimanche qui précède le premier dimanche de l'Avent
   const n=new Date(y,11,25); const av1=addDays(iso(n),-((n.getDay()||7)+21)); if(addDays(av1,-7)===k)return'Christ Roi de l\'univers';
+  // les quatre dimanches de l'Avent passent devant le saint, qu'on garde à côté (saint Nicolas, sainte Lucie)
+  for(let i=0;i<4;i++)if(addDays(av1,7*i)===k)return['1er','2e','3e','4e'][i]+' dimanche de l\'Avent'+(i===2?', Gaudete':'')+' · '+SAINTS[+k.slice(5,7)-1][+k.slice(8,10)-1];
   // en France, l'Épiphanie se fête le dimanche entre le 2 et le 8 janvier, le Baptême du Seigneur le dimanche suivant (le lundi si l'Épiphanie tombe le 7 ou le 8)
   if(md>='01-02'&&md<='01-08'&&dow===0)return'Épiphanie du Seigneur';
   const ep=[2,3,4,5,6,7,8].map(d=>iso(new Date(y,0,d))).find(x=>new Date(x+'T12:00:00').getDay()===0);
@@ -6654,7 +6656,7 @@ function decorSaison(){
   const t=todayKey(), md=t.slice(5), sem=(NB.parcours||[]).find(p=>p.theme&&p.du<=t&&t<=p.au);
   let k=null,n=0;
   if(sem&&sem.theme==='bretagne'){k='hermine';n=4;}
-  else if(md>='11-29'||md<='01-06'){k='neige';n=14;}
+  else if((NB.parcours||[]).some(p=>/^avent/.test(p.id)&&p.du<=t&&t<=p.au)||md>='12-01'||md<='01-06'){k='neige';n=14;} // dès l'ouverture de l'Avent, quelle que soit sa date
   else if(md>='09-22'&&md<='11-28'){k='feuille';n=5;}
   else if(md<='03-19'){k='neige';n=6;}
   else if(md>='03-20'&&md<='06-20'){k='petale';n=5;}
@@ -7569,7 +7571,7 @@ const paMarks=p=>APERCU?(paApercu[p.id]=paApercu[p.id]||{}):((state.parcours=sta
 // une case est faite si on l'a cochée, ou si l'exercice qu'elle propose a été fait ce jour-là
 function parcDone(p,real){
   const m=real?((state.parcours||{})[p.id]||{}):paMarks(p), days=parcDays(p);
-  return days.filter((k,i)=>m[k]||(()=>{const ex=p.pas[i]&&p.pas[i][1],d=state.days[k];return ex&&d&&d.done&&(d.done[ex]||(d.swap&&d.done[d.swap[ex]]));})());
+  return days.filter((k,i)=>m[k]||(()=>{const ex=p.pas[i]&&p.pas[i][1],d=state.days[k];if(ex==='dimanche'){const e=enqOf(k),r=e&&(state.enquetes||{})[e.id];if(r&&r.c!=null)return true;}return ex&&d&&d.done&&(d.done[ex]||(d.swap&&d.done[d.swap[ex]]));})());
 }
 let paSel=null;
 if(window.bfSupabase)window.bfSupabase.auth.onAuthStateChange(()=>setTimeout(checkApercu,0));

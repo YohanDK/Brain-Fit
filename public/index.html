@@ -5355,7 +5355,7 @@ const BADGE_SENS={
     nom:'La disputatio : dans les universités du Moyen Âge, on traitait une question en exposant d’abord les objections, puis on répondait à chacune. Saint Thomas d’Aquin en a fait la forme de sa Somme théologique.',
     emb:'La balance : peser le pour et le contre avant de trancher.'},
   sas10:{u:['passage par le sas','passages par le sas'],go:['coach','sas-panel'],
-    nom:'Penser d’abord, demander ensuite. Plutarque raconte qu’on reprochait à Démosthène des discours qui « sentaient la mèche de lampe » : il les avait travaillés seul, la nuit.',
+    nom:'Penser d’abord, demander ensuite. Plutarque raconte qu’on reprochait à Démosthène des arguments qui « sentaient la mèche de lampe » : il les avait préparés seul, la nuit.',
     emb:'La lampe à huile : la lumière qu’on allume soi-même avant d’emprunter celle d’un autre.'},
   err:{u:['sans-faute','sans-faute'],go:'erreuria',
     nom:'On prêtait au lynx une vue perçante. Les Grecs avaient Lyncée, l’Argonaute qui voyait, disait-on, jusque sous la terre.',
@@ -5367,10 +5367,10 @@ const BADGE_SENS={
     nom:'Les frères Bescherelle, grammairiens du XIXe siècle, ont laissé leur nom aux livres de conjugaison que des générations d’élèves ont tenus en main.',
     emb:'Le livre ouvert : la langue s’apprend dans les livres, et se garde en les lisant.'},
   chrono:{u:['sans-faute','sans-faute'],go:'chrono',
-    nom:'À Rome, le grand pontife notait chaque année les événements sur une tablette blanchie exposée devant sa maison : les annales. Tacite en a repris le nom.',
+    nom:'À Rome, le grand pontife notait chaque année les événements sur une tablette blanchie exposée devant sa maison : les annales. Le nom est resté aux Annales de Tacite.',
     emb:'L’horloge : remettre chaque chose à son heure, et chaque siècle à sa place.'},
   hyp:{u:['sans-faute','sans-faute'],go:'hypotheses',
-    nom:'L’enquêteur garde plusieurs explications ouvertes avant d’en retenir une. Le Zadig de Voltaire (1747) décrit la chienne de la reine sans l’avoir jamais vue, rien qu’aux traces.',
+    nom:'L’enquêteur garde plusieurs explications ouvertes avant d’en retenir une. Le Zadig de Voltaire décrit la chienne de la reine sans l’avoir jamais vue, rien qu’aux traces.',
     emb:'La loupe : regarder de plus près avant de conclure.'},
   dictee5:{u:['dictée sur papier','dictées sur papier'],go:'dictee',
     nom:'Dans le scriptorium des monastères, les moines copistes recopiaient les livres à la main : c’est grâce à eux que Virgile et Cicéron nous sont parvenus.',
@@ -5394,7 +5394,7 @@ const BADGE_SENS={
     nom:'Au XVIIIe siècle, les salons de Mme Geoffrin ou de Mme du Deffand ont fait de la conversation un art : écouter, répondre, relancer.',
     emb:'La bulle : une parole échangée, pas un message envoyé.'},
   chal4:{u:['défi relevé','défis relevés'],go:['aujourdhui'],
-    nom:'En 1336, Pétrarque gravit le mont Ventoux, simplement pour voir le monde d’en haut, et en fit le récit. On y voit souvent le premier alpiniste.',
+    nom:'Pétrarque raconte avoir gravi le mont Ventoux en 1336, simplement pour voir le monde d’en haut. On en a fait le premier alpiniste.',
     emb:'La montagne : un défi qu’on relève pour soi.'},
   flori10:{u:['citation au florilège','citations au florilège'],go:['conseils','flori-panel'],
     nom:'Florilège vient du latin flores legere, « cueillir des fleurs » : au Moyen Âge, on rassemblait ainsi les plus beaux passages des auteurs. Le mémorialiste, comme Saint-Simon, garde la mémoire de ce qu’il a vu.',
@@ -5413,7 +5413,7 @@ const BADGE_SENS={
 const PIECE_HIST={
   bronze:'Ton badge est frappé comme un statère gaulois : les Gaulois imitaient la monnaie d’or de Philippe II de Macédoine, sur un flan épais et irrégulier.',
   argent:'Ton badge est frappé comme un denier d’argent : réformé par Charlemagne vers 794, il a servi de monnaie à presque toute l’Europe pendant des siècles.',
-  or:'Ton badge est frappé comme un solidus : créé par Constantin vers 309, il est resté la monnaie d’or de Constantinople pendant sept siècles. On l’a appelé le « dollar du Moyen Âge ».'
+  or:'Ton badge est frappé comme un solidus : créé par Constantin vers 310, il est resté la monnaie d’or de Constantinople pendant plus de sept siècles, sans changer de poids. Un historien l’a appelé le « dollar du Moyen Âge ».'
 };
 const dateRomaine=t=>{const d=new Date(t);return `${roman(d.getDate())} · ${roman(d.getMonth()+1)} · ${roman(d.getFullYear())}`;};
 // le revers de la pièce : le nom du badge, la date où il a été frappé
@@ -5685,18 +5685,18 @@ const ATTR_SENS={
   plume:{p:['La plume blanche','La plume encrée','La plume d’or'],go:'write',
     h:'La plume d’oie se taillait au canif, et il fallait la retailler souvent : écrire demandait de la patience. Ton cerf la porte parce que tu écris toi-même, sans IA.'},
   lunettes:{p:['Les lunettes de corne','La monture dorée','La chaînette d’or'],go:'lecture',
-    h:'Les lunettes sont nées en Italie à la fin du XIIIe siècle : en 1306, un prédicateur de Florence en parle comme d’une invention de moins de vingt ans. Elles ont rendu des années de lecture à ceux dont la vue baissait.'},
+    h:'Les lunettes sont nées en Italie à la fin du XIIIe siècle : en 1306, le prédicateur dominicain Giordano da Pisa dit qu’il n’y a « pas encore vingt ans » qu’on a trouvé l’art de les faire. Elles ont rendu des années de lecture à ceux dont la vue baissait.'},
   lanterne:{p:['La lanterne','La lanterne à montants','La lanterne qui rayonne'],go:['aujourdhui'],
     h:'Diogène, raconte-t-on, se promenait en plein jour une lanterne à la main : « Je cherche un homme. » La tienne s’allume à chaque séance passée loin de l’écran.'},
   livre:{p:['Le livre ouvert','La reliure rouge et son signet','La reliure d’or'],go:['conseils','flori-panel'],
-    h:'Montaigne avait fait peindre cinquante-sept sentences grecques et latines sur les poutres de sa « librairie », pour les avoir toujours sous les yeux. Ton florilège est ta librairie.'},
+    h:'Montaigne avait fait peindre une soixantaine de sentences grecques et latines sur les poutres de sa « librairie », pour les avoir toujours sous les yeux. Ton florilège est ta librairie.'},
   laurier:{p:['Le laurier à cinq feuilles','Le laurier à sept feuilles','Le laurier d’or'],go:['aujourdhui'],
     h:'À Delphes, on couronnait de laurier les vainqueurs des jeux Pythiques, consacrés à Apollon ; à Rome, il ceignait le front du général pendant son triomphe. Toi, tu le gagnes jour après jour.'},
   hermine:{p:['Le collier blanc','Le collier semé d’hermines','Le collier d’or'],c:['3 jours sur 7 pendant la semaine de Bretagne','5 jours sur 7','5 jours, et l’énigme du dimanche de la semaine résolue'],go:['aujourdhui','parcours']},
   parure:{p:['Le lierre d’Athènes','Le manteau normand','La fraise du Siècle d’or'],c:['Un ami inscrit grâce à toi','Un ami actif (3 jours d’exercices)','Dix amis actifs'],go:['amis','inviter'],
     h:'Un tour d’Europe en trois étapes : la Grèce des poètes, la Normandie de Guillaume le Conquérant, l’Espagne de Vélasquez. Il se gagne en faisant découvrir Néophyte à tes amis.'},
   doge:{p:['Le bonnet du Doge'],c:['Vingt-cinq amis actifs'],go:['amis','inviter'],
-    h:'Le corno ducale, bonnet d’or en forme de corne, se portait par-dessus une coiffe de lin blanc. Pendant mille ans, il a couronné les doges élus de la république de Venise.'},
+    h:'Le corno ducale, bonnet d’or en forme de corne, se portait par-dessus une coiffe de lin blanc. Il a coiffé les doges élus de la république de Venise jusqu’à sa fin, en 1797.'},
   ruban:{p:['Le ruban bleu','Le ruban rouge et sa médaille','Le ruban d’or'],go:['amis'],
     h:'Aux tournois du Moyen Âge, le chevalier portait le ruban ou la manche d’une dame, signe d’un lien. Le tien dit que ton cercle avance ensemble.'}
 };

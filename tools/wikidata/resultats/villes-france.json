@@ -1,4 +1,4 @@
-{"requete":"villes-france.rq","source":"Wikidata (CC0), query.wikidata.org","recupere":"2026-11-05","lignes":[{"e":"Q23482","libelle":"Marseille","population":886040,"date":"2023-01-01T00:00:00Z"},
+{"requete":"villes-france.rq","source":"Wikidata (CC0), query.wikidata.org","recupere":"2026-11-06","lignes":[{"e":"Q23482","libelle":"Marseille","population":886040,"date":"2023-01-01T00:00:00Z"},
 {"e":"Q456","libelle":"Lyon","population":519127,"date":"2023-01-01T00:00:00Z"},
 {"e":"Q7880","libelle":"Toulouse","population":514819,"date":"2023-01-01T00:00:00Z"},
 {"e":"Q33959","libelle":"Nice","population":357737,"date":"2023-01-01T00:00:00Z"},

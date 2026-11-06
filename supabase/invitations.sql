@@ -2,7 +2,7 @@
 -- À coller une seule fois dans Supabase › SQL Editor, puis « Run » (après setup.sql et parrainage.sql).
 --
 -- Tant que l'avant-première est en cours, un compte ne se crée qu'avec :
---   • un code d'invitation que tu distribues (« École Saint-Jo : 30 places »), lien …/Brain-Fit/?invit=CODE ;
+--   • un code d'invitation que tu distribues (« École Saint-Jo : 30 places »), lien https://neo-phyte.fr/?invit=CODE ;
 --   • ou le lien de parrainage d'un membre (…/?parrain=CODE), 3 places par membre.
 -- Les comptes déjà créés ne sont pas touchés : seule la CRÉATION d'un nouveau compte est vérifiée.
 -- Les visiteurs sans invitation peuvent laisser leur e-mail : ils seront prévenus de l'ouverture.

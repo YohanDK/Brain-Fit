@@ -1,0 +1,55 @@
+# Publie le site (dossier public/) sur l'hébergement web Scaleway (neo-phyte.fr) à chaque changement.
+# Secrets du dépôt à créer (Settings › Secrets and variables › Actions), donnés par Scaleway dans l'espace de l'hébergement :
+#   SCALEWAY_FTP_HOTE, SCALEWAY_FTP_UTILISATEUR, SCALEWAY_FTP_MOT_DE_PASSE
+# Le miroir efface sur le serveur ce qui n'est plus dans public/ (sauf .well-known/ et cgi-bin/, gérés par l'hébergeur).
+# Variable facultative SCALEWAY_FTP_DOSSIER : le dossier du site sur le serveur (par défaut public_html).
+name: Publier sur neo-phyte.fr
+
+on:
+  push:
+    branches: [main]
+    paths: ["public/**", "tools/**", ".github/workflows/scaleway.yml"]
+  workflow_dispatch:
+
+concurrency:
+  group: scaleway
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    env:
+      HOTE: ${{ secrets.SCALEWAY_FTP_HOTE }}
+      UTILISATEUR: ${{ secrets.SCALEWAY_FTP_UTILISATEUR }}
+      MOT_DE_PASSE: ${{ secrets.SCALEWAY_FTP_MOT_DE_PASSE }}
+      DOSSIER: ${{ vars.SCALEWAY_FTP_DOSSIER || 'public_html' }}
+    steps:
+      - name: Hébergement prêt ?
+        id: pret
+        run: |
+          if [ -z "$HOTE" ] || [ -z "$UTILISATEUR" ] || [ -z "$MOT_DE_PASSE" ]; then
+            echo "::notice::Secrets Scaleway absents : rien n'est publié sur neo-phyte.fr (le site reste sur GitHub Pages)."
+            echo "ok=non" >> "$GITHUB_OUTPUT"
+          else
+            echo "ok=oui" >> "$GITHUB_OUTPUT"
+          fi
+      - uses: actions/checkout@v4
+        if: steps.pret.outputs.ok == 'oui'
+      # une question mal formée ou un calcul faux bloque la publication
+      - name: Vérifier les banques d'exercices
+        if: steps.pret.outputs.ok == 'oui'
+        run: node tools/verifier-banques.js
+      - name: Envoyer les fichiers (FTP chiffré)
+        if: steps.pret.outputs.ok == 'oui'
+        run: |
+          sudo apt-get install -y -qq lftp > /dev/null
+          # le mot de passe passe par l'environnement, jamais par la ligne de commande
+          export LFTP_PASSWORD="$MOT_DE_PASSE"
+          lftp -c "set ftp:ssl-force true; set ftp:ssl-protect-data true; set ssl:verify-certificate yes; set net:max-retries 3;
+            open --env-password -u \"$UTILISATEUR\" \"$HOTE\";
+            mirror --reverse --delete --verbose --parallel=4 --exclude-glob .DS_Store -x '^\.well-known/' -x '^cgi-bin/' public/ \"$DOSSIER/\""
+      - name: Vérifier en ligne
+        if: steps.pret.outputs.ok == 'oui'
+        run: |
+          sleep 5
+          curl -fsS https://neo-phyte.fr/ | grep -q "<title>Néophyte" && echo "neo-phyte.fr répond."

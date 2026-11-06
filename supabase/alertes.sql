@@ -38,7 +38,7 @@ begin
       'title', 'Néophyte',
       'message', quoi || '. Touche pour le lire.',
       'tags', jsonb_build_array('triangular_flag_on_post'),
-      'click', 'https://yohandk.github.io/Brain-Fit/#retours',
+      'click', 'https://neo-phyte.fr/#retours',
       'email', c.email
     ))
   );

@@ -63,11 +63,16 @@ Pour ouvrir le coach aux testeurs, lance d'abord [`supabase/coach.sql`](supabase
 
 Pour changer de modèle (par exemple un modèle moins cher), ajoute dans l'onglet **Variables** une variable `COACH_MODEL` avec l'identifiant du modèle, puis relance le workflow. Par défaut : `claude-opus-5-5`.
 
-### 4. GitHub Pages : l'adresse du site
+### 4. L'adresse du site : neo-phyte.fr (hébergement web Scaleway)
 
-1. Dans ce dépôt, **Settings › Pages**, à la ligne **Source**, choisis **GitHub Actions**. C'est tout : pas d'autre compte à créer.
-2. Puis **Actions › Publier le site › Run workflow**. Après une minute, le site est en ligne à l'adresse **https://yohandk.github.io/Brain-Fit/**. Chaque changement du dépôt le met à jour tout seul.
-3. Dans Supabase, **Authentication › URL Configuration**, mets cette adresse comme **Site URL** : c'est là que mène le lien de confirmation du compte.
+Le site est publié sur l'hébergement web Scaleway à chaque changement (workflow **Publier sur neo-phyte.fr**, fichier `.github/workflows/scaleway.yml`). Les réglages du serveur sont dans `public/.htaccess` : tout renvoie vers **https://neo-phyte.fr** (www, néophyte.fr, http).
+
+1. Chez Scaleway, commande l'hébergement web pour **neo-phyte.fr**, puis ajoute **néophyte.fr** comme domaine supplémentaire (alias) qui pointe vers le même dossier. Active le certificat HTTPS gratuit (Let's Encrypt) pour les deux.
+2. Dans l'espace de l'hébergement, relève l'accès FTP (serveur, identifiant, mot de passe) et crée dans ce dépôt, **Settings › Secrets and variables › Actions**, les secrets `SCALEWAY_FTP_HOTE`, `SCALEWAY_FTP_UTILISATEUR`, `SCALEWAY_FTP_MOT_DE_PASSE`. Si le dossier du site n'est pas `public_html`, ajoute la variable `SCALEWAY_FTP_DOSSIER`.
+3. **Actions › Publier sur neo-phyte.fr › Run workflow**, puis vérifie https://neo-phyte.fr.
+4. Dans Supabase, **Authentication › URL Configuration** : **Site URL** = `https://neo-phyte.fr`, et dans **Redirect URLs** ajoute `https://neo-phyte.fr/**` (garde l'ancienne adresse quelques semaines).
+5. Relance [`supabase/alertes.sql`](supabase/alertes.sql) dans le SQL Editor : le lien des alertes ntfy mène à la nouvelle adresse.
+6. Quand tout marche, ajoute la variable du dépôt `DEMENAGEMENT` = `oui` et relance **Actions › Publier le site** : l'ancienne adresse (GitHub Pages) ne fait plus que rediriger vers neo-phyte.fr, en emportant la progression gardée dans le navigateur de chacun (dossier `demenagement/`). Le jeton de connexion ne suit pas : chacun se reconnecte une fois. Garde GitHub Pages actif au moins jusqu'à l'été 2027.
 
 ### 5. Sur ton téléphone
 

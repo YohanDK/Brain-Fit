@@ -15,5 +15,7 @@ window.BF_CONFIG={
   // supabase/invitations.sql. Au lancement, passer à false (ou, côté serveur : update public.acces_reglage set sur_invitation=false)
   invitation:true,
   // adresse de contact affichée aux visiteurs sans invitation (par exemple 'bonjour@neophyte.fr') ; vide = cachée
-  contact:''
+  contact:'',
+  // vidéo de l'accueil des testeurs (avant-première) ; vide = cachée
+  videoTesteurs:'videos/testeurs.mp4'
 };

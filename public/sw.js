@@ -6,7 +6,7 @@ self.addEventListener('activate',e=>e.waitUntil(caches.keys().then(ks=>Promise.a
 self.addEventListener('fetch',e=>{
   const r=e.request, u=new URL(r.url);
   // les données et le coach ne passent jamais par le cache
-  if(r.method!=='GET'||u.hostname.endsWith('.supabase.co'))return;
+  if(r.method!=='GET'||u.hostname.endsWith('.supabase.co')||/\.mp4$/.test(u.pathname))return;
   const keep=u.origin===location.origin||/^(cdn\.jsdelivr\.net|cdnjs\.cloudflare\.com)$/.test(u.hostname);
   if(!keep)return;
   e.respondWith(fetch(r).then(res=>{

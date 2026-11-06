@@ -870,6 +870,13 @@ a{color:var(--accent);text-underline-offset:3px}
 .wl-gate .note:empty{display:none}
 #wl-code{text-transform:uppercase;letter-spacing:.08em}
 #wl-code:placeholder-shown{text-transform:none;letter-spacing:0}
+.welcome.testeurs{z-index:61}
+.ts-video{width:min(100%,300px);aspect-ratio:390/844;border-radius:14px;overflow:hidden;background:var(--sunk);border:1px solid var(--line);box-shadow:0 0 0 6px var(--gold-soft)}
+.ts-video video{width:100%;height:100%;display:block;object-fit:contain;background:#1f1c18}
+.ts-h{margin:8px 0 0;font-family:var(--f-display);font-size:.85rem;letter-spacing:.14em;text-transform:uppercase;color:var(--gold-deep)}
+.ts-flag{display:inline-grid;place-items:center;width:1.6em;height:1.6em;border-radius:50%;background:var(--accent-soft);color:var(--accent-deep);vertical-align:-.35em;margin:0 2px}
+.ts-flag svg{width:1em;height:1em}
+.ts-ask{width:100%;text-align:left;background:var(--gold-soft);border-radius:10px;padding:12px 16px;margin:0;line-height:1.45}
 .nudges{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:6px}
 .nudge{display:grid;grid-template-columns:40px 1fr;gap:4px 12px;align-items:center;padding:8px 10px;border-radius:var(--r);background:var(--sunk)}
 .nudge.k-defi{background:var(--gold-soft)}
@@ -2108,6 +2115,10 @@ var fin=function(){if(e.parentNode)e.remove();};e.addEventListener('click',fin);
       <p class="note" id="rt-msg" role="status"></p>
       <div id="rt-list" class="rt-list"></div>
     </div>
+    <div class="panel" id="ts-panel" hidden>
+      <div><h2>Tu es testeur</h2><p class="muted note">Merci ! La vidéo de présentation et les gestes pour nous aider sont toujours là.</p></div>
+      <div class="row"><button class="btn" type="button" id="ts-revoir">Revoir l'accueil des testeurs</button></div>
+    </div>
     <div class="panel" id="privacy">
       <div><h2>Tes données</h2>
         <p class="fg2" style="max-width:65ch">Avec un compte, Néophyte garde ton e-mail, tes progrès et tes textes chez Supabase, qui héberge sa base de données. Les autres utilisateurs ne peuvent pas les lire ; techniquement, la personne qui gère ce Néophyte y a accès, et elle voit, sans ton e-mail ni ton nom, combien de jours tu es venu. Si tu rejoins un cercle, ses membres voient seulement ton pseudo, ton cerf, ton niveau, tes XP, ta série, tes scores à l'énigme et à l'Éclair, et les encouragements ou défis que tu leur envoies. Si tu parraines des amis, tu vois seulement combien se sont inscrits par ton lien et combien sont venus au moins 3 jours, jamais qui ils sont ni leurs progrès ; ton parrain voit la même chose de toi. Quand tu contestes une réponse ou signales un problème, ton message, la question ou l'écran concernés (avec la capture si tu la laisses) et le type d'appareil sont envoyés pour être relus ; ils sont effacés avec ton compte. Quand tu parles au coach, ta demande et le résumé de tes progrès (et la photo de ta feuille, si tu lui en confies une) sont envoyés à Claude (Anthropic) pour qu'il réponde. Rien n'est vendu, et il n'y a ni publicité ni mesure d'audience.</p></div>
@@ -2127,6 +2138,25 @@ var fin=function(){if(e.parentNode)e.remove();};e.addEventListener('click',fin);
     <p><button class="linkbtn" id="foot-welcome">Présentation</button> · <button class="linkbtn" id="foot-about">À propos</button> · <button class="linkbtn" id="foot-privacy">Tes données</button> · <button class="linkbtn" id="foot-biblio">Bibliothèque</button> · <button class="linkbtn" id="foot-share">Partager</button></p>
     <p class="note">Gratuit, sans publicité ni mesure d'audience.</p>
   </footer>
+</div>
+<div class="welcome testeurs" id="testeurs" tabindex="-1" role="dialog" aria-modal="true" aria-labelledby="ts-title" hidden>
+  <div class="wl-in">
+    <div class="wl-em" id="ts-em" aria-hidden="true"></div>
+    <p class="wl-badge">Avant-première</p>
+    <h1 id="ts-title" style="font-size:2rem">Bienvenue parmi les testeurs</h1>
+    <p class="wl-lead">Tu fais partie des premiers à entrer.</p>
+    <p class="wl-sub">Néophyte n'est pas fini, et c'est justement là que ton regard compte : chaque remarque façonne ce que découvriront ceux qui viendront après toi.</p>
+    <div class="ts-video" id="ts-video" hidden></div>
+    <p class="ts-h">Trois gestes pour nous aider</p>
+    <ul class="wl-pts">
+      <li><i>I</i><div><b>Un souci ? Le drapeau <span class="ts-flag" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 21V4M5 4h11l-2 4 2 4H5"/></svg></span></b><span>En haut de l'écran, « Signaler un problème » : une capture de l'écran part avec ton mot. Un bug, une page lente, un texte qui coince.</span></div></li>
+      <li><i>II</i><div><b>Une réponse douteuse ?</b><span>Après chaque correction, touche « ⚑ Une erreur dans la réponse ? ». On vérifie et on corrige.</span></div></li>
+      <li><i>III</i><div><b>Une idée, une envie, un ennui ?</b><span>Le même drapeau sert aussi à ça. Dis-nous franchement ce qui te plaît et ce qui t'ennuie : c'est le plus précieux.</span></div></li>
+    </ul>
+    <p class="ts-ask">Ce qu'on te demande : une séance par jour pendant deux semaines, à ton rythme et sans pression. Ton cerf grandira avec toi.</p>
+    <p class="note" id="ts-contact" hidden></p>
+    <div class="wl-act"><button class="btn primary" id="ts-go">C'est parti</button></div>
+  </div>
 </div>
 <div class="welcome" id="welcome" tabindex="-1" role="dialog" aria-modal="true" aria-labelledby="wl-title" hidden>
   <div class="wl-in">
@@ -9731,6 +9761,7 @@ function closeWelcome(mode){
   }
   else{try{sessionStorage.setItem('brainfit.later','1');}catch(e){}$('#syncwarn').hidden=true;showTab('aujourdhui');window.scrollTo(0,0);}
   if(DEFI)setTimeout(launchDefi,200);
+  else if(!mode&&testeursNeeded())setTimeout(showTesteurs,300);
 }
 // installer l'application : QR code sur ordinateur, marche à suivre sur téléphone, rien si elle est déjà installée
 let installEvt=null;
@@ -9760,6 +9791,37 @@ $('#foot-welcome').addEventListener('click',showWelcome);
 $('#wl-start').addEventListener('click',()=>closeWelcome(false));
 $('#wl-login').addEventListener('click',()=>closeWelcome('login'));
 $('#wl-signup').addEventListener('click',()=>closeWelcome('signup'));
+
+/* ---------- accueil des testeurs : une fois pendant l'avant-première, puis dans Réglages ---------- */
+const LS_TESTEUR='brainfit.testeur';
+const testeursOn=()=>!!((window.BF_CONFIG||{}).invitation&&(window.BF_CONFIG||{}).retours);
+function showTesteurs(){
+  const t=$('#testeurs'); if(!t)return;
+  $('#ts-em').innerHTML=stagSVG(Math.max(1,state.lastLevel||1),'proud');
+  const v=(window.BF_CONFIG||{}).videoTesteurs, box=$('#ts-video');
+  if(v&&!box.childElementCount)box.append(el('video',{src:v,controls:'',playsinline:'',preload:'metadata',poster:v.replace(/\.mp4$/,'.jpg')}));
+  box.hidden=!v;
+  const c=(window.BF_CONFIG||{}).contact, ct=$('#ts-contact');
+  if(c&&!ct.childElementCount)ct.append(document.createTextNode('Tu préfères écrire ? '),el('a',{href:'mailto:'+c,text:c}));
+  ct.hidden=!c;
+  t.hidden=false; document.body.style.overflow='hidden'; t.scrollTop=0;
+  setTimeout(()=>t.focus({preventScroll:true}),0);
+}
+function closeTesteurs(){
+  try{localStorage.setItem(LS_TESTEUR,'1');}catch(e){}
+  const t=$('#testeurs'); t.hidden=true; document.body.style.overflow='';
+  const vid=t.querySelector('video'); if(vid)vid.pause();
+}
+function testeursNeeded(){
+  if(!testeursOn()||!$('#welcome').hidden||gateNeeded())return false;
+  try{return !localStorage.getItem(LS_TESTEUR);}catch(e){return false;}
+}
+$('#ts-go').addEventListener('click',closeTesteurs);
+$('#testeurs').addEventListener('keydown',e=>{if(e.key==='Escape')closeTesteurs();});
+$('#ts-revoir').addEventListener('click',showTesteurs);
+$('#ts-panel').hidden=!testeursOn();
+if(/[?&]testeurs\b/.test(location.search))showTesteurs();
+else if(testeursNeeded())setTimeout(()=>{if(testeursNeeded())showTesteurs();},400);
 
 /* ---------- pied de page et sommaire de la bibliothèque ---------- */
 const goPanel=(tab,id)=>{showTab(tab);setTimeout(()=>{const p=document.getElementById(id);if(p)p.scrollIntoView({behavior:'smooth',block:'start'});},30);};
@@ -9831,7 +9893,7 @@ function evPopNext(){
 let evPopFait=false;
 function evPopup(){
   if(evPopFait)return; evPopFait=true;
-  const w=$('#welcome'); if((w&&!w.hidden)||document.querySelector('.ceremony')||document.visibilityState==='hidden')return;
+  const w=$('#welcome'); if((w&&!w.hidden)||!$('#testeurs').hidden||document.querySelector('.ceremony')||document.visibilityState==='hidden')return;
   if(!$('#v-aujourdhui')||$('#v-aujourdhui').hidden)return; // déjà parti ailleurs : on ne l'interrompt pas
   const c=evPopNext(); if(!c)return;
   evPopMark(c.key);

@@ -2634,8 +2634,8 @@ const EVENTS=[
 ['1221',1988,"Attentat contre un Boeing de la Pan Am au-dessus de Lockerbie, en Écosse."],
 ['1222',1639,"Baptême de Jean Racine à La Ferté-Milon."],
 ['1223',1790,"Naissance de Jean-François Champollion à Figeac."],
-['1225',800,"Charlemagne est couronné empereur à Rome par le pape Léon III, le jour de Noël.",'noel'],
-['1225',1991,"Gorbatchev démissionne ; le soir de Noël, le drapeau soviétique est descendu du Kremlin : l'URSS disparaît le lendemain.",'noel'],
+['1225',800,"Charlemagne est couronné empereur à Rome par le pape Léon III, le jour de Noël."],
+['1225',1991,"Gorbatchev démissionne ; le soir de Noël, le drapeau soviétique est descendu du Kremlin : l'URSS disparaît le lendemain."],
 ['1226',1825,"Insurrection des décembristes à Saint-Pétersbourg contre le tsar Nicolas Ier."],
 ['1226',2004,"Un séisme au large de Sumatra provoque un tsunami meurtrier dans tout l'océan Indien."],
 ['1227',1822,"Naissance de Louis Pasteur à Dole."],
@@ -3498,6 +3498,14 @@ const QUOTES=[
 {id:'batonchaise',c:'vivre',q:"Il fallait qu'un bâton de chaise fût bien fait.",a:"Charles Péguy",s:"L'Argent (1913)",n:"Péguy se souvient des artisans de son enfance : le travail bien fait, même invisible, était une affaire d'honneur et non de salaire.",k:"chaise"},
 {id:'agricolas',c:'vivre',q:"Trop heureux les hommes des champs, s'ils connaissaient leur bonheur !",a:"Virgile",s:"Géorgiques, livre II, vers 458 (vers 29 av. J.-C.)",n:"O fortunatos nimium, sua si bona norint, agricolas ! Virgile chante la vie paysanne, loin des guerres civiles qui déchirent Rome.",k:"champs"}
 ];
+// Avent : le contenu de Noël (sem:'noel') reste caché hors de l'Avent et de Noël (jusqu'à l'Épiphanie), sauf avec ?apercu=…
+(()=>{const av=(NB.parcours||[]).find(p=>p.contenu==='noel'); if(!av)return;
+  const fin=new Date(av.au+'T12:00:00'); fin.setDate(fin.getDate()+13); const k=todayKey();
+  let ap=false; try{ap=/^\d{4}-\d{2}-\d{2}$/.test(new URLSearchParams(location.search).get('apercu')||'');}catch(e){}
+  if(ap||(k>=av.du&&k<=iso(fin)))return;
+  for(const A of [DICTEES,QUOTES])for(let i=A.length-1;i>=0;i--)if(A[i].sem==='noel')A.splice(i,1);
+  for(let i=EVENTS.length-1;i>=0;i--)if(EVENTS[i][3]==='noel')EVENTS.splice(i,1);
+})();
 const QBY=Object.fromEntries(QUOTES.map(q=>[q.id,q]));
 const QAUTHORS=[...new Set(QUOTES.filter(q=>q.c!=='fausse').map(q=>q.a))];
 const STROOP=[['rouge','ROUGE'],['bleu','BLEU'],['vert','VERT'],['jaune','JAUNE']];
@@ -5493,6 +5501,8 @@ function aventNote(id,g){
   return `${g?'Palier suivant':'Premier palier'} : ${AV_PAL[g]} cases du calendrier de l’Avent · ${n} sur ${AV_PAL[g]}`;
 }
 const semAnnonce=a=>{const p=a[7]&&semOf(a[7]);return !!p&&todayKey()<p.du;};
+// une parure de l'Avent reste cachée jusqu'à l'annonce, une semaine avant (sauf en aperçu)
+const semCachee=a=>{const p=a[7]&&semOf(a[7]);return !!p&&!!p.contenu&&pToday()<addD(p.du,-7);};
 const semPassee=a=>{const p=a[7]&&semOf(a[7]);return !!p&&todayKey()>p.au;};
 // le palier atteint (0 à 3) et la suite
 const attrGrade=a=>{const n=a[4]();return a[3].filter(t=>n>=t).length;};
@@ -5524,7 +5534,7 @@ function renderCerf(){
   $('#mc-icon').setAttribute('aria-pressed',String(!!c.icon)); $('#mc-icon').textContent=c.icon?'Icône : ton cerf':'Faire de mon cerf l’icône';
   $('#mc-pel').replaceChildren(...Object.entries(PELAGES).map(([k,p])=>{const ok=!p[3]||p[3](gamiCtx);
     return el('button',{'aria-pressed':String(c.pel===k),disabled:ok?null:'',title:ok?p[0]:p[2],style:'--sw:'+((p[1]||{})['--stag']||'#B07D4E'),onclick:()=>{c.pel=k;save();stagKey='';renderStag();renderCerf();cerfIcon();}},el('i',{class:'sw'}),document.createTextNode(p[0]+(ok?'':p[4]||' · niveau V')));}));
-  $('#mc-attrs').replaceChildren(...ATTRS.filter(a=>attrGrade(a)||!semPassee(a)).map(a=>{const n=a[4](), g=attrGrade(a), nx=a[3][g], prev=g?a[3][g-1]:0, on=g&&c.port.includes(a[0]);
+  $('#mc-attrs').replaceChildren(...ATTRS.filter(a=>attrGrade(a)||!semPassee(a)&&!semCachee(a)).map(a=>{const n=a[4](), g=attrGrade(a), nx=a[3][g], prev=g?a[3][g-1]:0, on=g&&c.port.includes(a[0]);
     const pips=el('span',{class:'pips3',role:'img','aria-label':`Palier ${g} sur 3`},...[1,2,3].map(i=>el('i',{class:i<=g?'on g'+i:''})));
     return el('li',{class:g?'':semAnnonce(a)?'locked annonce':'locked'},el('span',{class:'stag mini','aria-hidden':'true',html:attrIcon(a,Math.max(a[7]?3:1,g))}),
       el('div',{},el('b',{},document.createTextNode(a[1]),pips),

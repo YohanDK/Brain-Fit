@@ -36,7 +36,10 @@
 // encore vierge ici, et pour les seules clés de Néophyte ; le jeton de connexion ne voyage pas (on se reconnecte).
 (function(){try{var h=location.hash,m=h.match(/^#demenagement=([A-Za-z0-9_-]+)$/);if(!m)return;
 history.replaceState(null,'',location.pathname+location.search);
-if(document.referrer.indexOf('https://yohandk.github.io/')!==0||localStorage.getItem('brainfit.v1'))return;
+if(document.referrer.indexOf('https://yohandk.github.io/')!==0)return;
+// « vierge » : rien ici, ou seulement l'état vide d'une première visite (aucune séance, aucun résultat)
+var ici=JSON.parse(localStorage.getItem('brainfit.v1')||'null');
+if(ici&&((ici.results&&ici.results.length)||(ici.days&&Object.keys(ici.days).length)))return;
 var b=atob(m[1].replace(/-/g,'+').replace(/_/g,'/')),u=new Uint8Array(b.length);for(var i=0;i<b.length;i++)u[i]=b.charCodeAt(i);
 var o=JSON.parse(new TextDecoder().decode(u));if(!o||typeof o!=='object')return;
 Object.keys(o).forEach(function(k){if(/^(brainfit|neo)\.[\w.-]{1,40}$/.test(k)&&typeof o[k]==='string'&&k!=='brainfit.splash')localStorage.setItem(k,o[k]);});

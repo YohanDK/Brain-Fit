@@ -146,6 +146,21 @@ begin
 end $$;
 revoke all on function public.creer_invitation(text, int, text, date) from public, anon, authenticated;
 
+-- 8. un compte effacé ne laisse pas son e-mail derrière lui (politique de confidentialité : « tout part immédiatement »)
+create or replace function public.oublier_email_invitation() returns trigger
+language plpgsql security definer set search_path = '' as $$
+begin
+  delete from public.invitation_usages where email = lower(old.email);
+  delete from public.liste_attente where email = lower(old.email);
+  return old;
+end $$;
+revoke all on function public.oublier_email_invitation() from public, anon, authenticated;
+drop trigger if exists neophyte_oublier_email on auth.users;
+create trigger neophyte_oublier_email after delete on auth.users
+  for each row execute function public.oublier_email_invitation();
+-- les comptes déjà effacés avant ce script
+delete from public.invitation_usages u where not exists (select 1 from auth.users a where lower(a.email) = u.email);
+
 -- Requêtes utiles (SQL Editor) :
 --   select code, groupe, utilisees || ' / ' || places as places, expire from public.invitations order by created_at;
 --   select count(*) from public.liste_attente;            -- combien attendent

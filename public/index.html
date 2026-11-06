@@ -1132,6 +1132,7 @@ html.boot .view{visibility:hidden}
 .wl-act .linkbtn{margin-top:2px;align-self:center}
 .wl-video{width:100%;aspect-ratio:16/9;border-radius:12px;overflow:hidden;background:var(--sunk);border:1px solid var(--line)}
 .wl-video iframe,.wl-video video{width:100%;height:100%;border:0;display:block}
+.wl-legal{margin-top:-4px;text-align:center}.wl-legal a{color:inherit}
 .wl-heberge{display:flex;align-items:center;justify-content:center;gap:7px;margin-top:-4px}
 .wl-drapeau{width:18px;height:12px;flex:none;border-radius:2px;box-shadow:0 0 0 1px var(--line)}
 .wl-install{width:100%;border-top:1px solid var(--line);padding-top:16px;margin-top:6px;display:flex;flex-direction:column;align-items:center;gap:10px}
@@ -1624,6 +1625,7 @@ var fin=function(){if(e.parentNode)e.remove();};e.addEventListener('click',fin);
         <input type="password" id="login-pw" autocomplete="current-password" placeholder="Mot de passe" aria-label="Mot de passe" minlength="8" required>
         <input type="text" id="login-invit" autocomplete="off" autocapitalize="characters" spellcheck="false" maxlength="24" placeholder="Code d'invitation (pour créer un compte)" aria-label="Code d'invitation" hidden>
         <label class="note age15"><input type="checkbox" id="login-age"> J'ai 15 ans ou plus <span class="muted">(pour créer un compte)</span></label>
+        <p class="note muted">Ce que Néophyte garde de toi : <a href="confidentialite.html" target="_blank" rel="noopener">politique de confidentialité</a>.</p>
         <div class="row"><button class="btn primary" id="login-in">Se connecter</button><button class="btn ghost" id="login-new">Créer mon compte</button></div>
         <button class="linkbtn note" type="button" id="login-forgot" style="align-self:flex-start">Mot de passe oublié ?</button>
         <p class="note" id="login-msg" role="status"></p>
@@ -2128,6 +2130,7 @@ var fin=function(){if(e.parentNode)e.remove();};e.addEventListener('click',fin);
     <div class="panel" id="privacy">
       <div><h2>Tes données</h2>
         <p class="fg2" style="max-width:65ch">Avec un compte, Néophyte garde ton e-mail, tes progrès et tes textes chez Supabase, qui héberge sa base de données. Les autres utilisateurs ne peuvent pas les lire ; techniquement, la personne qui gère ce Néophyte y a accès, et elle voit, sans ton e-mail ni ton nom, combien de jours tu es venu. Si tu rejoins un cercle, ses membres voient seulement ton pseudo, ton cerf, ton niveau, tes XP, ta série, tes scores à l'énigme et à l'Éclair, et les encouragements ou défis que tu leur envoies. Si tu parraines des amis, tu vois seulement combien se sont inscrits par ton lien et combien sont venus au moins 3 jours, jamais qui ils sont ni leurs progrès ; ton parrain voit la même chose de toi. Quand tu contestes une réponse ou signales un problème, ton message, la question ou l'écran concernés (avec la capture si tu la laisses) et le type d'appareil sont envoyés pour être relus ; ils sont effacés avec ton compte. Quand tu parles au coach, ta demande et le résumé de tes progrès (et la photo de ta feuille, si tu lui en confies une) sont envoyés à Claude (Anthropic) pour qu'il réponde. Rien n'est vendu, et il n'y a ni publicité ni mesure d'audience.</p></div>
+      <p class="note"><a href="confidentialite.html" target="_blank" rel="noopener">Politique de confidentialité</a> · <a href="mentions-legales.html" target="_blank" rel="noopener">Mentions légales</a> · <a href="mailto:contact@neo-phyte.fr">contact@neo-phyte.fr</a></p>
       <div class="row"><button class="btn ghost" id="erase" hidden>Effacer mon compte</button></div>
       <div id="erase-confirm" class="row" hidden>
         <span class="fg2">Effacer ton compte, tes progrès, tes textes et ta place dans ton cercle ? Ce n'est pas réversible.</span>
@@ -2202,6 +2205,7 @@ var fin=function(){if(e.parentNode)e.remove();};e.addEventListener('click',fin);
     </section>
     <p class="note">Gratuit, sans publicité. Sans compte, tes progrès restent sur cet appareil.</p>
     <p class="note wl-heberge"><svg class="wl-drapeau" viewBox="0 0 3 2" role="img" aria-label="Drapeau français"><rect width="1" height="2" fill="#0055A4"/><rect x="1" width="1" height="2" fill="#fff"/><rect x="2" width="1" height="2" fill="#EF4135"/></svg>Site hébergé en France, données en Europe (Irlande)</p>
+    <p class="note wl-legal"><a href="mentions-legales.html" target="_blank" rel="noopener">Mentions légales</a> · <a href="confidentialite.html" target="_blank" rel="noopener">Confidentialité</a></p>
   </div>
 </div>
 <div class="tip" id="tip" hidden></div>

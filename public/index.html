@@ -948,26 +948,40 @@ a{color:var(--accent);text-underline-offset:3px}
 /* frise à remettre dans l'ordre */
 .sortwrap{display:flex;flex-direction:column;align-items:stretch;gap:6px;width:min(520px,100%)}
 .sortwrap .send{font-size:.78rem;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);text-align:center}
-/* Sur la carte */
-.carte{position:relative;width:min(560px,100%);border:1px solid var(--line);border-radius:10px;overflow:hidden;background:var(--c-mer);--c-mer:#D5E3EA;--c-terre:#E9E3D2;--c-france:#FBF7EC;--c-trait:#8C8170;--c-fleuve:#7FA9C4}
-:root[data-theme="dark"] .carte{--c-mer:#1A2433;--c-terre:#2A2C33;--c-france:#3A3A3E;--c-trait:#8E8676;--c-fleuve:#4F7896}
-@media (prefers-color-scheme: dark){:root:not([data-theme="light"]) .carte{--c-mer:#1A2433;--c-terre:#2A2C33;--c-france:#3A3A3E;--c-trait:#8E8676;--c-fleuve:#4F7896}}
-.carte-svg{display:block;width:100%;height:auto;aspect-ratio:var(--ar,1);max-height:62vh;touch-action:none;cursor:crosshair;user-select:none;-webkit-user-select:none}
+/* Sur la carte : une carte gravée, parchemin et lignes d'eau */
+.carte{position:relative;width:min(560px,100%);--c-mer:#D6E2DD;--c-terre:#EFE2C2;--c-france:#F8EED5;--c-trait:#8A6A3C;--c-fleuve:#5F8DAA;--c-papier:#F6EEDC;--c-or:#A9832F}
+:root[data-theme="dark"] .carte{--c-mer:#1B2630;--c-terre:#3A3223;--c-france:#4A402C;--c-trait:#B89C6A;--c-fleuve:#5B88A6;--c-papier:#2A2418;--c-or:#C9A75A}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]) .carte{--c-mer:#1B2630;--c-terre:#3A3223;--c-france:#4A402C;--c-trait:#B89C6A;--c-fleuve:#5B88A6;--c-papier:#2A2418;--c-or:#C9A75A}}
+.c-cadre{position:relative;padding:5px;background:var(--c-papier);border:1.5px solid var(--c-or);border-radius:4px;box-shadow:0 1px 0 var(--c-or) inset,0 2px 10px rgba(80,55,20,.15)}
+.c-cadre::after{content:"";position:absolute;inset:5px;pointer-events:none;border:1px solid var(--c-trait);box-shadow:inset 0 0 28px rgba(110,75,25,.28);border-radius:1px}
+.carte-svg{display:block;width:100%;height:auto;aspect-ratio:var(--ar,1);max-height:62vh;touch-action:none;cursor:crosshair;user-select:none;-webkit-user-select:none;background:var(--c-mer)}
 .carte-fr .carte-svg{--ar:798/747} .carte-monde .carte-svg{--ar:2/1} @media (max-width:600px){.carte-monde .carte-svg{--ar:4/3}}
 .carte.fige .carte-svg{cursor:default}
-.c-mer{fill:var(--c-mer)} .c-terre{fill:var(--c-terre);stroke:var(--c-trait);stroke-width:.5;vector-effect:non-scaling-stroke}
-.c-france{fill:var(--c-france);stroke:var(--c-trait);stroke-width:1;vector-effect:non-scaling-stroke}
-.c-lac{fill:var(--c-mer)} .c-front{fill:none;stroke:var(--c-trait);stroke-width:.7;stroke-dasharray:3 2;vector-effect:non-scaling-stroke;opacity:.7}
+.c-mer{fill:var(--c-mer)} .c-grat{fill:none;stroke:var(--c-trait);stroke-width:.6;stroke-dasharray:1 3;opacity:.45;vector-effect:non-scaling-stroke}
+.c-onde{fill:none;vector-effect:non-scaling-stroke;stroke-linejoin:round} .c-o1{stroke:var(--c-trait);stroke-width:11;opacity:.22} .c-o1b{stroke:var(--c-mer);stroke-width:9.4} .c-o2{stroke:var(--c-trait);stroke-width:5.5;opacity:.38} .c-o2b{stroke:var(--c-mer);stroke-width:4}
+.c-terre{fill:var(--c-terre);stroke:var(--c-trait);stroke-width:.8;vector-effect:non-scaling-stroke}
+.c-france{fill:var(--c-france);stroke:var(--c-trait);stroke-width:1.2;vector-effect:non-scaling-stroke}
+.c-lac{fill:var(--c-mer)} .c-front{fill:none;stroke:var(--c-trait);stroke-width:.8;stroke-dasharray:4 2 1 2;vector-effect:non-scaling-stroke;opacity:.75}
 .c-fleuve{fill:none;stroke:var(--c-fleuve);stroke-width:1.1;vector-effect:non-scaling-stroke}
-.c-pin path{fill:var(--accent);stroke:var(--surface);stroke-width:1.5;vector-effect:non-scaling-stroke} .c-pin-oeil{fill:var(--surface)}
+.c-cartouche{position:absolute;left:14px;top:14px;pointer-events:none;font-family:var(--f-display);font-size:.78rem;letter-spacing:.14em;text-transform:uppercase;color:var(--c-trait);background:var(--c-papier);border:1px solid var(--c-trait);outline:1px solid var(--c-trait);outline-offset:2px;padding:2px 9px;opacity:.92}
+.c-rose{position:absolute;left:12px;bottom:12px;width:52px;height:52px;pointer-events:none;color:var(--c-trait);opacity:.8} .c-rose svg{width:100%;height:100%} .c-rose-n{fill:var(--c-or)}
+.c-pin path{fill:var(--accent);stroke:var(--surface);stroke-width:1.5;vector-effect:non-scaling-stroke} .c-pin-oeil{fill:var(--surface)} .c-pin-ombre{fill:#000;opacity:.25}
+.c-pin-t.tombe{animation:ctombe .42s cubic-bezier(.3,0,.4,1)} @keyframes ctombe{0%{transform:translateY(-34px);opacity:0}60%{transform:translateY(0);opacity:1}78%{transform:translateY(-6px)}100%{transform:translateY(0)}}
+.c-impact circle{fill:none;stroke:var(--accent);stroke-width:2;vector-effect:non-scaling-stroke;animation:cimpact .85s ease-out forwards} .c-impact.or circle{stroke:var(--c-or);stroke-width:3}
+@keyframes cimpact{from{transform:scale(.1);opacity:.9}to{transform:scale(1.6);opacity:0}}
 .c-cand{fill:var(--surface);stroke:var(--accent);stroke-width:2.5;vector-effect:non-scaling-stroke;cursor:pointer}
 .c-cand.on{fill:var(--accent)} .c-cand.bon,.c-vrai{fill:var(--gold);stroke:var(--surface);stroke-width:2;vector-effect:non-scaling-stroke} .c-cand.faux{fill:var(--bad);stroke:var(--surface)}
-.c-vrai{animation:cvrai 1.2s ease-out 2} @keyframes cvrai{0%{stroke-width:2}50%{stroke-width:8}100%{stroke-width:2}}
-.c-zone{fill:var(--gold);fill-opacity:.18;stroke:var(--gold);stroke-width:1.5;stroke-dasharray:4 3;vector-effect:non-scaling-stroke}
-.c-trait{stroke:var(--fg2);stroke-width:1.5;vector-effect:non-scaling-stroke}
-.c-barre{display:flex;gap:6px;align-items:center;justify-content:center;padding:6px;border-top:1px solid var(--line);background:var(--surface)}
+.c-zone{fill:var(--gold);fill-opacity:.18;stroke:var(--gold);stroke-width:1.5;stroke-dasharray:4 3;vector-effect:non-scaling-stroke;animation:czone .6s ease-out}
+@keyframes czone{from{fill-opacity:0;stroke-opacity:0}}
+.c-trait{stroke:var(--c-trait);stroke-width:1.6;vector-effect:non-scaling-stroke}
+.c-hampe{stroke:var(--c-trait);stroke-width:1.6;vector-effect:non-scaling-stroke}
+.c-fanion{animation:cfanion .5s .25s ease-out backwards} @keyframes cfanion{from{opacity:0}}
+.c-fanion image{filter:drop-shadow(0 1px 1.5px rgba(0,0,0,.35))}
+.c-barre{display:flex;gap:6px;align-items:center;justify-content:center;padding:8px 6px 2px}
 .c-btn{min-width:44px;height:38px;border-radius:8px;border:1px solid var(--line);background:var(--surface);color:var(--fg);font-size:1.15rem;line-height:1;box-shadow:0 1px 3px rgba(0,0,0,.12)}
 .c-eur{font-size:.85rem;padding:0 10px}
+.c-armes{display:flex;align-items:center;gap:10px;margin-top:4px} .c-armes img{flex:none;width:48px;height:32px;object-fit:contain;border-radius:2px;box-shadow:0 1px 3px rgba(0,0,0,.25)} .c-armes img.ecu{width:40px;height:48px;box-shadow:none;filter:drop-shadow(0 1px 2px rgba(0,0,0,.3))}
+@media (prefers-reduced-motion:reduce){.c-pin-t.tombe,.c-impact circle,.c-zone,.c-fanion{animation:none}}
 .carte-q{text-align:center;margin:4px 0 8px;display:flex;flex-direction:column;gap:2px}
 .carte-nom{font-family:var(--f-display);font-size:1.35rem}
 .carte-aide{text-align:center;margin:6px 0}
@@ -7542,6 +7556,21 @@ function lieuxDuDefi(seed){
   const L=seed.slice(1).match(/../g).map(x=>NB.lieux[parseInt(x,36)]);
   return L.every(l=>l&&!l.retire)?L:null;
 }
+// drapeaux actuels (flag-icons, licence MIT, public/drapeaux) et armoiries dessinées pour Néophyte (public/armoiries)
+const PAYS_FR={ar:'l’Argentine',at:'l’Autriche',au:'l’Australie',ba:'la Bosnie-Herzégovine',be:'la Belgique',bg:'la Bulgarie',br:'le Brésil',ca:'le Canada',cd:'la république démocratique du Congo',cl:'le Chili',cn:'la Chine',co:'la Colombie',cu:'Cuba',cz:'la Tchéquie',de:'l’Allemagne',dk:'le Danemark',dz:'l’Algérie',eg:'l’Égypte',es:'l’Espagne',et:'l’Éthiopie',fi:'la Finlande',fr:'la France',gb:'le Royaume-Uni','gb-sct':'l’Écosse',gi:'Gibraltar',gl:'le Groenland',gr:'la Grèce',hk:'Hong Kong',hr:'la Croatie',hu:'la Hongrie',id:'l’Indonésie',ie:'l’Irlande',in:'l’Inde',iq:'l’Irak',ir:'l’Iran',is:'l’Islande',it:'l’Italie',jo:'la Jordanie',jp:'le Japon',ke:'le Kenya',kh:'le Cambodge',kr:'la Corée du Sud',ma:'le Maroc',mg:'Madagascar',ml:'le Mali',mt:'Malte',mx:'le Mexique',ng:'le Nigeria',no:'la Norvège',nz:'la Nouvelle-Zélande',pe:'le Pérou',pl:'la Pologne',pt:'le Portugal',ro:'la Roumanie',rs:'la Serbie',ru:'la Russie',sa:'l’Arabie saoudite',se:'la Suède',sg:'Singapour',sn:'le Sénégal',sy:'la Syrie',th:'la Thaïlande',tn:'la Tunisie',tr:'la Turquie',tz:'la Tanzanie',ua:'l’Ukraine',us:'les États-Unis',uz:'l’Ouzbékistan',vn:'le Viêt Nam',za:'l’Afrique du Sud'};
+const ARMES={bretagne:'D’hermine plain.',limousin:'D’hermine à la bordure de gueules.',provence:'D’or à quatre pals de gueules.',roussillon:'D’or à quatre pals de gueules, comme la Catalogne.',
+  bourgogne:'Bandé d’or et d’azur à la bordure de gueules : Bourgogne ancien.',anjou:'D’azur semé de fleurs de lys d’or, à la bordure de gueules.',touraine:'D’azur semé de fleurs de lys d’or, à la bordure componée d’argent et de gueules.',
+  berry:'D’azur à trois fleurs de lys d’or, à la bordure engrêlée de gueules.',bourbonnais:'D’azur à trois fleurs de lys d’or, au bâton de gueules péri en bande.',savoie:'De gueules à la croix d’argent.',
+  languedoc:'De gueules à la croix vidée, cléchée et pommetée d’or : la croix occitane.',auvergne:'D’or au gonfanon de gueules frangé de sinople.',champagne:'D’azur à la bande d’argent côtoyée de deux cotices potencées et contre-potencées d’or.',
+  rome:'Le vexillum, aux lettres SPQR : le Sénat et le peuple romain.',byzance:'La bannière des Paléologues : croix d’or cantonnée de quatre briquets.',ottoman:'Le drapeau ottoman de 1844 : croissant et étoile sur fond rouge.',
+  prusse:'Les couleurs de la Prusse, noir et blanc.',habsbourg:'Les couleurs des Habsbourg, noir et or.',boheme:'Les couleurs de la Bohême, blanc et rouge.',jerusalem:'Les armes du royaume : croix potencée d’or cantonnée de quatre croisettes.',
+  croixbourgogne:'La croix de Bourgogne : sautoir écoté de gueules.',france:'La bannière de France : d’azur à trois fleurs de lys d’or.'};
+const ECUS=new Set(['bretagne','limousin','provence','roussillon','bourgogne','anjou','touraine','berry','bourbonnais','savoie','languedoc','auvergne','champagne']);
+function imageLieu(l){
+  if(l.arm&&ARMES[l.arm])return{src:'armoiries/'+l.arm+'.svg',ecu:ECUS.has(l.arm),txt:ARMES[l.arm]};
+  if(l.drap&&PAYS_FR[l.drap])return{src:'drapeaux/'+l.drap+'.svg',ecu:false,txt:'Drapeau de '+PAYS_FR[l.drap]+'.'};
+  return null;
+}
 const svgEl=(tag,attrs={})=>{const e=document.createElementNS('http://www.w3.org/2000/svg',tag);for(const[k,v] of Object.entries(attrs))if(v!=null)e.setAttribute(k,v);return e;};
 // la carte : zoom aux deux doigts, à la molette ou aux boutons ; un doigt fait glisser la carte zoomée ; un toucher pose l'épingle
 function carteSVG(carte){
@@ -7550,7 +7579,12 @@ function carteSVG(carte){
   const ll=(x,y)=>({lat:P.lat1-y/P.k,lon:P.lon0+x/(P.c*P.k)});
   const svg=svgEl('svg',{class:'carte-svg',role:'img','aria-label':carte==='fr'?'Carte de France':'Carte du monde',preserveAspectRatio:'xMidYMid meet'});
   const fond=svgEl('g'), marques=svgEl('g');
-  fond.append(svgEl('rect',{x:-W,y:-H,width:3*W,height:3*H,class:'c-mer'}),svgEl('path',{d:C.terre,class:'c-terre'}));
+  // méridiens et parallèles, puis deux lignes d'eau le long des rivages, comme sur les cartes gravées
+  const pas=carte==='fr'?2:30, lat0=carte==='fr'?42:-60, lat1=carte==='fr'?52:90, lon0=carte==='fr'?-6:-180, lon1=carte==='fr'?10:180; let g='';
+  for(let lo=Math.ceil(lon0/pas)*pas;lo<=lon1;lo+=pas){const [a,b]=xy(lat1,lo),[,d]=xy(lat0,lo);g+=`M${a} ${b}V${d}`;}
+  for(let la=Math.ceil(lat0/pas)*pas;la<=lat1;la+=pas){const [a,b]=xy(la,lon0),[c]=xy(la,lon1);g+=`M${a} ${b}H${c}`;}
+  fond.append(svgEl('rect',{x:-W,y:-H,width:3*W,height:3*H,class:'c-mer'}),svgEl('path',{d:g,class:'c-grat'}),
+    ...['c-onde c-o1','c-onde c-o1b','c-onde c-o2','c-onde c-o2b'].map(c=>svgEl('path',{d:C.terre,class:c})),svgEl('path',{d:C.terre,class:'c-terre'}));
   if(C.france)fond.append(svgEl('path',{d:C.france,class:'c-france'}));
   fond.append(svgEl('path',{d:C.lacs,class:'c-lac'}),svgEl('path',{d:C.frontieres,class:'c-front'}));
   if(C.fleuves)fond.append(svgEl('path',{d:C.fleuves,class:'c-fleuve'}));
@@ -7569,11 +7603,21 @@ function carteSVG(carte){
   const tenir=(e,f)=>{ronds.push([e,f]);f(e,unit());return e;};
   const zoomA=(f,cx,cy)=>{const nw=Math.min(toutW(),Math.max(W/MAXZ,vb.w/f)), k=nw/vb.w;vb.x=cx-(cx-vb.x)*k;vb.y=cy-(cy-vb.y)*k;vb.w=nw;vb.h=nw/asp();peindre();};
   const versCarte=(cx,cy)=>{const r=svg.getBoundingClientRect(), s=Math.max(vb.w/r.width,vb.h/r.height), ox=(r.width*s-vb.w)/2, oy=(r.height*s-vb.h)/2;return[vb.x+(cx-r.left)*s-ox,vb.y+(cy-r.top)*s-oy];};
-  const voir=(x0,y0,x1,y1)=>{const A=asp(), m=Math.max(x1-x0,(y1-y0)*A)*1.5||W/MAXZ;vb.w=Math.max(m,W/MAXZ);vb.h=vb.w/A;vb.x=(x0+x1)/2-vb.w/2;vb.y=(y0+y1)/2-vb.h/2;peindre();};
+  // recadrage : la carte glisse et zoome doucement vers la nouvelle vue
+  const voir=(x0,y0,x1,y1)=>{
+    const A=asp(), m=Math.max(x1-x0,(y1-y0)*A)*1.5||W/MAXZ, de={...vb};
+    vb.w=Math.max(m,W/MAXZ);vb.h=vb.w/A;vb.x=(x0+x1)/2-vb.w/2;vb.y=(y0+y1)/2-vb.h/2;borne(); const vers={...vb};
+    if(reduceMotion()){peindre();return;}
+    const t0=performance.now(), f=t=>{const k=Math.min(1,(t-t0)/650), e=k<.5?2*k*k:1-(-2*k+2)**2/2;
+      for(const c of ['x','y','w','h'])vb[c]=de[c]+(vers[c]-de[c])*e; peindre(); if(k<1)requestAnimationFrame(f);};
+    vb={...de}; requestAnimationFrame(f);
+  };
+  // une onde à l'endroit touché
+  const onde=(x,y,cls)=>{if(reduceMotion())return;const o=tenir(svgEl('g',{class:'c-impact '+(cls||'')}),(e,u)=>e.setAttribute('transform',`translate(${x} ${y}) scale(${u})`));o.append(svgEl('circle',{r:22}));marques.append(o);setTimeout(()=>{o.remove();const i=ronds.findIndex(r=>r[0]===o);if(i>=0)ronds.splice(i,1);},900);};
   // l'épingle
   const poser=(x,y)=>{
     pinPos=[x,y];
-    if(!pinEl){pinEl=tenir(svgEl('g',{class:'c-pin'}),(e,u)=>e.setAttribute('transform',`translate(${pinPos[0]} ${pinPos[1]}) scale(${u})`));pinEl.append(svgEl('path',{d:'M0 0C-3-6-9-10-9-16a9 9 0 0 1 18 0c0 6-6 10-9 16z'}),svgEl('circle',{cx:0,cy:-16,r:3.2,class:'c-pin-oeil'}));marques.append(pinEl);}
+    if(!pinEl){pinEl=tenir(svgEl('g',{class:'c-pin'}),(e,u)=>e.setAttribute('transform',`translate(${pinPos[0]} ${pinPos[1]}) scale(${u})`));const t=svgEl('g',{class:'c-pin-t'});t.append(svgEl('ellipse',{cx:0,cy:0,rx:5,ry:1.8,class:'c-pin-ombre'}),svgEl('path',{d:'M0 0C-3-6-9-10-9-16a9 9 0 0 1 18 0c0 6-6 10-9 16z'}),svgEl('circle',{cx:0,cy:-16,r:3.2,class:'c-pin-oeil'}));pinEl.append(t);marques.append(pinEl);}
     pinEl.setAttribute('transform',`translate(${x} ${y}) scale(${unit()})`);
     tapCb&&tapCb(...Object.values(ll(x,y)));
   };
@@ -7600,7 +7644,7 @@ function carteSVG(carte){
   });
   const fin=e=>{
     if(!pts.has(e.pointerId))return; pts.delete(e.pointerId);
-    if(geste&&geste.type==='tap'&&e.type==='pointerup'&&!locked){const [x,y]=versCarte(e.clientX,e.clientY);if(x>=0&&x<=W&&y>=0&&y<=H){if(cands.length){const u=unit(), c=cands.map(k=>[k,Math.hypot(k.x-x,k.y-y)]).sort((a,b)=>a[1]-b[1])[0];if(c&&c[1]<28*u)choisir(c[0]);}else if(tapCb){poser(x,y);son('clic');}}}
+    if(geste&&geste.type==='tap'&&e.type==='pointerup'&&!locked){const [x,y]=versCarte(e.clientX,e.clientY);if(x>=0&&x<=W&&y>=0&&y<=H){if(cands.length){const u=unit(), c=cands.map(k=>[k,Math.hypot(k.x-x,k.y-y)]).sort((a,b)=>a[1]-b[1])[0];if(c&&c[1]<28*u)choisir(c[0]);}else if(tapCb){poser(x,y);son('clic');const t=pinEl.firstChild;t.classList.remove('tombe');void t.getBBox();t.classList.add('tombe');onde(x,y);}}}
     if(!pts.size)geste=null; else if(geste&&geste.type==='pince')geste=null;
   };
   svg.addEventListener('pointerup',fin); svg.addEventListener('pointercancel',fin);
@@ -7611,7 +7655,9 @@ function carteSVG(carte){
   const barre=el('div',{class:'c-barre'},bz('+','Zoomer',()=>zoomA(1.6,...ctr())),bz('−','Dézoomer',()=>zoomA(1/1.6,...ctr())),
     bz('⤢','Toute la carte',()=>{vb.w=toutW();peindre();}),
     carte==='monde'?el('button',{type:'button',class:'c-btn c-eur',text:'Europe',onclick:()=>{const [a,b]=xy(71,-11),[c,d]=xy(34,42);voir(a,b,c,d);}}):null);
-  const node=el('div',{class:'carte carte-'+carte},svg,barre);
+  const rose=el('span',{class:'c-rose','aria-hidden':'true',html:'<svg viewBox="-50 -50 100 100"><circle r="30" fill="none" stroke="currentColor" stroke-width="1"/><circle r="24" fill="none" stroke="currentColor" stroke-width=".6"/><g fill="currentColor" opacity=".55"><path d="M0-34L5 0 0 34-5 0Z" transform="rotate(45)"/><path d="M0-34L5 0 0 34-5 0Z" transform="rotate(-45)"/></g><path d="M0-46L7 0H-7Z" class="c-rose-n"/><path d="M0 46L7 0H-7Z" fill="currentColor"/><path d="M-46 0L0 7V-7ZM46 0L0 7V-7Z" fill="currentColor"/><text y="-37" x="12" font-size="13" font-family="var(--f-display)" fill="currentColor">N</text></svg>'});
+  const cartouche=el('span',{class:'c-cartouche','aria-hidden':'true',text:carte==='fr'?'France':'Mappemonde'});
+  const node=el('div',{class:'carte carte-'+carte},el('div',{class:'c-cadre'},svg,cartouche,rose),barre);
   // niveau I : quatre points au choix
   const cands=[];
   const choisir=k=>{cands.forEach(c=>c.e.classList.toggle('on',c===k));son('clic');k.cb();};
@@ -7624,11 +7670,16 @@ function carteSVG(carte){
       const k={p,x,y,e,cb};e.addEventListener('keydown',ev=>{if(ev.key==='Enter'||ev.key===' '){ev.preventDefault();choisir(k);}});cands.push(k);marques.append(e);},
     lock:()=>{locked=true;node.classList.add('fige');},
     marque:(p,bon)=>{const k=cands.find(c=>c.p===p);if(k)k.e.classList.add(bon?'bon':'faux');},
-    trait:(a,b)=>{const [x0,y0]=xy(a.lat,a.lon),[x1,y1]=xy(b.lat,b.lon);marques.prepend(tenir(svgEl('line',{x1:x0,y1:y0,x2:x1,y2:y1,class:'c-trait'}),(e,u)=>e.setAttribute('stroke-dasharray',`${5*u} ${4*u}`)));},
+    trait:(a,b)=>{const [x0,y0]=xy(a.lat,a.lon),[x1,y1]=xy(b.lat,b.lon), l=tenir(svgEl('line',{x1:x0,y1:y0,x2:x0,y2:y0,class:'c-trait'}),(e,u)=>e.setAttribute('stroke-dasharray',`${5*u} ${4*u}`));marques.prepend(l);
+      if(reduceMotion()){l.setAttribute('x2',x1);l.setAttribute('y2',y1);return;}
+      const t0=performance.now(), f=t=>{const k=Math.min(1,(t-t0)/700), e=1-(1-k)**3;l.setAttribute('x2',x0+(x1-x0)*e);l.setAttribute('y2',y0+(y1-y0)*e);if(k<1)requestAnimationFrame(f);};requestAnimationFrame(f);},
     vrai:p=>{
       const [x,y]=xy(p.lat,p.lon);
       if(p.r){marques.prepend(svgEl('circle',{cx:x,cy:y,r:p.r/111.2*P.k,class:'c-zone'}));}
-      marques.append(rond(x,y,'c-vrai',7));
+      marques.append(rond(x,y,'c-vrai',7)); onde(x,y,'or');
+      const im=imageLieu(p);
+      if(im){const g=tenir(svgEl('g',{class:'c-fanion'}),(e,u)=>e.setAttribute('transform',`translate(${x} ${y}) scale(${u})`)), w=im.ecu?22:30, h=im.ecu?27:20;
+        g.append(svgEl('line',{x1:0,y1:0,x2:0,y2:-34,class:'c-hampe'}),svgEl('image',{href:im.src,x:1,y:-34,width:w,height:h,preserveAspectRatio:'xMidYMid meet'}));marques.append(g);}
       // on recadre pour voir à la fois la réponse et l'épingle
       const ps=[[x,y]]; if(pinPos)ps.push(pinPos); cands.forEach(c=>ps.push([c.x,c.y]));
       const rr=p.r?p.r/111.2*P.k:0, xs=ps.map(q=>q[0]), ys=ps.map(q=>q[1]);
@@ -8562,6 +8613,7 @@ carte(arena){
           scores.push(sc); seen.push([it,sc]); hit(sc>=60);
           fb.replaceChildren(el('span',{class:'label',text:`${txt} ${sc} point${sc>1?'s':''} sur 100`}),
             el('span',{},el('b',{text:it.nom}),document.createTextNode(' · '+it.dit)),
+            (im=>im?el('span',{class:'c-armes'},el('img',{src:im.src,alt:'',class:im.ecu?'ecu':null,width:im.ecu?40:48,height:im.ecu?48:32}),el('small',{class:'muted',text:im.txt})):null)(imageLieu(it)),
             contestBtn('carte',it.id,`Où se trouve ${it.nom} ?`));
           fb.hidden=false; next.hidden=false; next.focus({preventScroll:true});
         });

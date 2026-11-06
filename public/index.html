@@ -906,8 +906,8 @@ a{color:var(--accent);text-underline-offset:3px}
 .amis-seg{align-self:stretch;display:flex}
 .amis-seg button{flex:1;white-space:nowrap;display:inline-flex;align-items:center;justify-content:center}
 .amis-n:not(:empty){display:inline-block;margin-left:6px;min-width:1.4em;padding:0 5px;border-radius:999px;background:var(--gold);color:var(--surface);font-size:.75rem;line-height:1.4em}
-.obj-in{padding:10px 12px;border-radius:var(--r);background:var(--sunk);margin-bottom:4px}
-.obj-bar{height:10px;border-radius:5px;background:var(--sunk);overflow:hidden}
+.obj-in{align-self:stretch;padding:10px 12px;border-radius:var(--r);background:var(--sunk);margin-bottom:4px}
+.obj-bar{width:100%;height:10px;border-radius:5px;background:var(--line);overflow:hidden}
 .obj-bar i{display:block;height:100%;background:linear-gradient(90deg,var(--accent),var(--gold));transition:width .6s ease-out}
 .obj-bar.full i{background:var(--gold)}
 .fil{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:6px}
@@ -1685,9 +1685,6 @@ var fin=function(){if(e.parentNode)e.remove();};e.addEventListener('click',fin);
   <section class="view" id="v-amis" data-sec="jouer" hidden>
     <div class="panel" id="circle-panel">
       <div><h2>Mon cercle</h2><p class="muted note">Entre proches, sous un pseudo : seuls ton cerf, tes XP, ta série et tes scores sont partagés, et seulement dans ton cercle.</p></div>
-      <div class="obj-in" id="amis-obj" hidden>
-        <div id="amis-obj-body" style="display:flex;flex-direction:column;gap:6px"></div>
-      </div>
       <div id="circle-body" style="display:flex;flex-direction:column;gap:10px"></div>
     </div>
     <div class="panel amis-inbox" id="amis-inbox" hidden>
@@ -1718,6 +1715,9 @@ var fin=function(){if(e.parentNode)e.remove();};e.addEventListener('click',fin);
     <div data-sec="fil" class="panel" id="amis-fil" hidden>
       <div class="row spread" style="align-items:baseline"><h2>Le fil du cercle</h2><label class="note" style="display:flex;gap:6px;align-items:center;cursor:pointer"><input type="checkbox" id="fil-part"> Partager mes exploits</label></div>
       <p class="muted note">Les exploits de la semaine : niveaux, badges, records, séries, duels gagnés. Un geste suffit pour saluer.</p>
+      <div class="obj-in" id="amis-obj" hidden>
+        <div id="amis-obj-body" style="display:flex;flex-direction:column;gap:6px"></div>
+      </div>
       <ul class="fil" id="amis-fil-list"></ul>
     </div>
     <div data-sec="inviter" class="panel parrain" id="parrain-panel" hidden>

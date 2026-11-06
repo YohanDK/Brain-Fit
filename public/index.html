@@ -437,7 +437,7 @@ table.week td.num{font-family:var(--f-mono)}
 .btn.small{padding:4px 8px;font-size:.85rem;font-weight:600}
 .lvnote{margin:0}
 /* animations */
-#arena.qin>*:not(.qhead){animation:rise .38s cubic-bezier(.2,.7,.3,1) both}
+#arena.qin>*:not(.qhead){animation:tourne .5s cubic-bezier(.2,.7,.3,1) both;transform-origin:left center}
 #arena.qin>*:nth-child(3){animation-delay:.04s} #arena.qin>*:nth-child(4){animation-delay:.08s} #arena.qin>*:nth-child(5){animation-delay:.12s}
 .options button,.aibubble .sent,.btn{transition:transform .12s ease,background .2s,border-color .2s}
 .options button:active:not([disabled]),.btn:active:not([disabled]){transform:scale(.97)}
@@ -1418,6 +1418,28 @@ section.view.entre>*,.groupe.entre>*{animation:rise .42s cubic-bezier(.2,.7,.3,1
 .play.vient-de-finir .play-title{animation:glow .9s ease-out both}
 @keyframes fete{0%{box-shadow:0 0 0 0 color-mix(in srgb,var(--gold) 55%,transparent)}100%{box-shadow:0 0 0 18px transparent}}
 @media (prefers-reduced-motion:reduce){.tab-ind{transition:none}}
+/* ---------- vie, 2e série : page qui tourne, gerbe dorée, résultat qui se compose, décor des saisons ---------- */
+@keyframes tourne{from{opacity:0;transform:perspective(900px) rotateY(-16deg) translateX(18px)}60%{opacity:1}to{opacity:1;transform:none}}
+.etincelle{position:fixed;width:0;height:0;pointer-events:none;z-index:60}
+.etincelle i{position:absolute;left:-3px;top:-3px;width:6px;height:6px;border-radius:50%;background:var(--gold);box-shadow:0 0 6px var(--gold);animation:gerbe .7s cubic-bezier(.2,.7,.3,1) var(--d,0s) both}
+@keyframes gerbe{from{transform:none;opacity:1}to{transform:translate(var(--x),var(--y)) scale(.2);opacity:0}}
+#arena>.compose{animation:rise .45s cubic-bezier(.2,.7,.3,1) both;animation-delay:calc(var(--i,0)*130ms)}
+#arena>.compose .qbar i{animation:pip-rond .35s ease-out both;animation-delay:calc(.5s + var(--k,0)*90ms)}
+.xp-vole{position:fixed;z-index:60;pointer-events:none;background:var(--gold-soft);color:var(--gold-deep);border-radius:999px;padding:3px 12px;font-weight:700;font-size:.9rem;white-space:nowrap}
+.goalring.monte{animation:bump .5s ease-out}
+header.top{position:relative;isolation:isolate}
+.decor{position:absolute;left:-16px;right:-16px;top:-12px;height:250px;z-index:-1;pointer-events:none;overflow:hidden;-webkit-mask:linear-gradient(#000 70%,transparent);mask:linear-gradient(#000 70%,transparent)}
+.decor i{position:absolute;top:-30px;width:var(--s);height:var(--s);opacity:0;animation:tombe var(--t) linear var(--d) infinite}
+.decor i svg{width:100%;height:100%;display:block}
+.decor.neige i{border-radius:50%;background:currentColor;box-shadow:0 0 4px currentColor}
+.decor.hermine i{color:var(--fg);opacity:0}
+@keyframes tombe{0%{transform:translate(0,0) rotate(0);opacity:0}8%{opacity:.75}50%{transform:translate(var(--x),150px) rotate(calc(var(--r)*.5))}88%{opacity:.6}100%{transform:translate(calc(var(--x)*-.4),290px) rotate(var(--r));opacity:0}}
+.decor.feuille i,.decor.petale i,.decor.hermine i{animation-name:tombe-rare}
+@keyframes tombe-rare{0%{transform:translate(0,0) rotate(0);opacity:0}4%{opacity:.7}25%{transform:translate(var(--x),150px) rotate(calc(var(--r)*.5))}44%{opacity:.55}50%,100%{transform:translate(calc(var(--x)*-.4),290px) rotate(var(--r));opacity:0}}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]) .decor.neige i{color:#E8EEF6!important}}
+:root[data-theme="dark"] .decor.neige i{color:#E8EEF6!important}
+@media (prefers-reduced-motion:reduce){.decor,.etincelle,.xp-vole{display:none}}
+html[data-anim="doux"] :is(.decor,.etincelle,.xp-vole){display:none}
 </style>
 </head>
 <body>
@@ -6625,6 +6647,30 @@ function showTab(t){
   if(t!==avant&&!document.documentElement.classList.contains('boot'))animerVue($('#v-'+t));
 }
 // le trait doré sous l'onglet actif glisse d'un onglet à l'autre
+// décor des saisons et des fêtes, derrière l'en-tête : rare, léger, jamais devant le texte
+function decorSaison(){
+  const h=$('header.top'); if(!h)return; const old=h.querySelector('.decor'); if(old)old.remove();
+  if(calme())return;
+  const t=todayKey(), md=t.slice(5), sem=(NB.parcours||[]).find(p=>p.theme&&p.du<=t&&t<=p.au);
+  let k=null,n=0;
+  if(sem&&sem.theme==='bretagne'){k='hermine';n=4;}
+  else if(md>='11-29'||md<='01-06'){k='neige';n=14;}
+  else if(md>='09-22'&&md<='11-28'){k='feuille';n=5;}
+  else if(md<='03-19'){k='neige';n=6;}
+  else if(md>='03-20'&&md<='06-20'){k='petale';n=5;}
+  if(!k)return;
+  const forme={feuille:'<svg viewBox="0 0 20 20"><path d="M10 1C5 5 3 10 6 15c1 1.5 2.6 2.4 4 2.6 1.4-.2 3-1.1 4-2.6 3-5 1-10-4-14zM10 5v14" fill="currentColor" stroke="rgba(0,0,0,.18)" stroke-width=".8"/></svg>',
+    petale:'<svg viewBox="0 0 20 20"><path d="M10 2c4 3 5 8 0 16C5 10 6 5 10 2z" fill="currentColor"/></svg>',
+    hermine:`<svg viewBox="0 0 24 24"><path d="${'M12 3.5a1.2 1.2 0 1 0 0 .01M8.3 5.3a1.2 1.2 0 1 0 0 .01M15.7 5.3a1.2 1.2 0 1 0 0 .01M12 8v12.5M12 8c0 5-2 8.5-5.5 12.5M12 8c0 5 2 8.5 5.5 12.5'}" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/></svg>`,
+    neige:''}[k];
+  const couleurs={feuille:['#C27A3A','#A8552B','#D2A24A','#8E6A2E'],petale:['#E8B4C0','#F1CFD6','#DFA0B0'],hermine:['currentColor'],neige:['#BFD0E2','#D3DEEA','#A9BED6']}[k];
+  const box=el('div',{class:'decor '+k,'aria-hidden':'true'});
+  for(let i=0;i<n;i++){
+    const r=Math.random, dur=k==='neige'?9+r()*7:14+r()*10;
+    box.append(el('i',{html:forme,style:`left:${Math.round(4+r()*92)}%;--t:${dur.toFixed(1)}s;--d:${(-r()*dur).toFixed(1)}s;--s:${(k==="neige"?3+r()*4:15+r()*9).toFixed(1)}px;--x:${Math.round(r()*60-30)}px;--r:${Math.round(r()*360)}deg;color:${couleurs[i%couleurs.length]}`}));
+  }
+  h.prepend(box);
+}
 function placerOnglet(){
   const nav=$('.tabs'), b=nav&&nav.querySelector('button[aria-selected="true"]'); if(!nav)return;
   let ind=nav.querySelector('.tab-ind'); if(!ind){ind=el('span',{class:'tab-ind','aria-hidden':'true'});nav.append(ind);nav.classList.add('a-ind');}
@@ -7352,8 +7398,22 @@ function hit(right){
   const seg=a.querySelector('.qbar i.cur'); if(seg)seg.className=right?'ok':'ko';
   const c=a.querySelector('.combo');
   if(c){c.hidden=combo<2; if(combo>=2){c.innerHTML=FLAME+combo+' d’affilée'; c.classList.remove('bump'); void c.offsetWidth; c.classList.add('bump');}}
-  stagReact(right); revealNext();
+  stagReact(right); revealNext(); if(right)etincelle();
   try{if(navigator.vibrate)navigator.vibrate(right?12:[25,40,25]);}catch(e){}
+}
+// une bonne réponse laisse une petite gerbe dorée là où l'on a touché
+let dernierToucher=null;
+addEventListener('pointerdown',e=>{const c=e.target&&e.target.closest?e.target.closest('button')||e.target:null, r=c&&c.getBoundingClientRect?c.getBoundingClientRect():null;
+  dernierToucher={c,ox:r?e.clientX-r.left:0,oy:r?e.clientY-r.top:0,x:e.clientX,y:e.clientY,t:Date.now()};},{passive:true,capture:true});
+function etincelle(){
+  if(calme())return;
+  let x,y; const t=dernierToucher;
+  if(t&&Date.now()-t.t<4000&&t.c&&t.c.isConnected&&t.c.offsetParent){const r=t.c.getBoundingClientRect();x=r.left+Math.min(t.ox,r.width);y=r.top+Math.min(t.oy,r.height);}
+  else{const c=$('#arena button.right')||$('#arena .qbar i.ok:last-of-type')||$('#arena .qbar'); if(!c)return; const r=c.getBoundingClientRect(); x=r.left+r.width/2; y=r.top+r.height/2;}
+  const box=el('div',{class:'etincelle','aria-hidden':'true',style:`left:${x}px;top:${y}px`});
+  for(let i=0;i<10;i++){const a=i/10*Math.PI*2+Math.random()*.4, d=24+Math.random()*22;
+    box.append(el('i',{style:`--x:${Math.round(Math.cos(a)*d)}px;--y:${Math.round(Math.sin(a)*d)}px;--d:${(Math.random()*.08).toFixed(2)}s`}));}
+  document.body.append(box); setTimeout(()=>box.remove(),900);
 }
 function revealNext(){
   setTimeout(()=>{
@@ -7382,8 +7442,25 @@ function showResult(arena,score,unit,msg,again,extra){
     msg?el('p',{class:'fg2',text:msg,style:'max-width:50ch'}):null,
     nextButtons(again)].filter(Boolean));
   countUp(sc,score);
+  if(!calme()){
+    // le résultat se compose : chaque bloc arrive à son tour, les réponses se rangent une à une
+    [...arena.children].forEach((c,i)=>{c.classList.add('compose');c.style.setProperty('--i',i);});
+    if(recap)recap.querySelectorAll('.qbar i').forEach((m,k)=>m.style.setProperty('--k',k));
+    // les XP gagnés s'envolent vers l'anneau de l'en-tête
+    const plus=arena.querySelector('.xpg-plus'); if(plus)setTimeout(()=>xpVole(plus),1300);
+  }
   const rec=fresh&&last.rec, perfect=marks.length>1&&marks.every(Boolean);
   if(rec||perfect){son('record');laurels();}else son('fin');
+}
+function xpVole(src){
+  const ring=$('#goalring'); if(!src.isConnected||!ring||!document.body.animate)return;
+  const a=src.getBoundingClientRect(), b=ring.getBoundingClientRect(); if(!a.width)return;
+  const bx=b.width?b.left+b.width/2:innerWidth-40, by=b.width&&b.bottom>0?b.top+b.height/2:-20;
+  const f=el('span',{class:'xp-vole','aria-hidden':'true',text:src.textContent,style:`left:${a.left}px;top:${a.top}px`});
+  document.body.append(f);
+  const dx=bx-(a.left+a.width/2), dy=by-(a.top+a.height/2);
+  const an=f.animate([{transform:'translate(0,0) scale(1)',opacity:1},{transform:`translate(${dx*.45}px,${dy*.45-40}px) scale(.9)`,opacity:1,offset:.45},{transform:`translate(${dx}px,${dy}px) scale(.35)`,opacity:.2}],{duration:900,easing:'cubic-bezier(.45,0,.4,1)'});
+  an.onfinish=()=>{f.remove(); if(b.bottom>0){ring.classList.remove('monte');void ring.offsetWidth;ring.classList.add('monte');}};
 }
 // fin d'exercice : les XP gagnés font avancer la barre de niveau, et le prochain badge se rapproche
 function xpGainBox(r){
@@ -9319,6 +9396,7 @@ if(DEFI&&$('#welcome').hidden)setTimeout(launchDefi,300);
 Promise.race([initStore(),new Promise(r=>setTimeout(r,800))]).finally(()=>{document.documentElement.classList.remove('boot');
   // la page du moment entre en scène, après l'écran d'ouverture s'il y en a un
   const sp=$('#splash'), spv=sp&&sp.isConnected&&getComputedStyle(sp).display!=='none'&&getComputedStyle(sp).opacity!=='0';
+  decorSaison();
   setTimeout(()=>{placerOnglet();if(!calme())['#streak','#xp-today'].forEach(q=>{const e=$(q);if(e)compter(e,e.textContent,0);});animerVue(TABS.map(x=>$('#v-'+x)).find(v=>v&&!v.hidden));},spv?1700:0);
   // la fenêtre d'événement, une fois l'écran d'ouverture passé
   setTimeout(proposerReprise,spv?1900:500);

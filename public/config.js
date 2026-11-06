@@ -10,5 +10,10 @@ window.BF_CONFIG={
   // réglage « Rappels » (notifications sur le téléphone) : true une fois rappels.sql lancé ; false pour le cacher et désabonner les appareils à leur prochaine visite
   rappels:true,
   // vidéo de présentation sur l'écran d'accueil des visiteurs (adresse d'une vidéo .mp4 ou d'une page à intégrer) ; vide = emplacement caché
-  video:''
+  video:'',
+  // avant-première : la création de compte demande une invitation (code ou lien de parrainage), vérifiée par
+  // supabase/invitations.sql. Au lancement, passer à false (ou, côté serveur : update public.acces_reglage set sur_invitation=false)
+  invitation:true,
+  // adresse de contact affichée aux visiteurs sans invitation (par exemple 'bonjour@neophyte.fr') ; vide = cachée
+  contact:''
 };

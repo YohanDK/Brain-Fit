@@ -1173,6 +1173,12 @@ html.boot .view{visibility:hidden}
 .wl-drapeau{width:18px;height:12px;flex:none;border-radius:2px;box-shadow:0 0 0 1px var(--line)}
 .wl-install{width:100%;border-top:1px solid var(--line);padding-top:16px;margin-top:6px;display:flex;flex-direction:column;align-items:center;gap:10px}
 .wl-install h2{margin:0}
+.wl-install.wl-top{margin-top:0;padding:14px 16px;background:var(--surface);border:1px solid var(--line);border-left:3px solid var(--gold);border-radius:10px}
+.wl-code-rappel{margin-top:8px!important}.wl-code-rappel b{font-family:var(--f-mono,monospace);letter-spacing:.08em;color:var(--fg)}
+.wl-ordre{margin:4px 0 0;text-align:left}
+.ts-install{width:100%;text-align:left;background:var(--surface);border:1px solid var(--line);border-left:3px solid var(--gold);border-radius:10px;padding:12px 16px}
+.ts-install summary{cursor:pointer;font-weight:600}
+.ts-install[open] summary{margin-bottom:10px}
 .wl-qr{display:flex;gap:18px;align-items:center;text-align:left}
 .wl-qr svg{width:132px;height:132px;flex:none;border-radius:8px;box-shadow:0 0 0 1px var(--line),0 0 0 6px var(--gold-soft)}
 .share-qr{display:flex;justify-content:center;padding:6px 0}
@@ -2260,6 +2266,7 @@ var fin=function(){if(e.parentNode)e.remove();};e.addEventListener('click',fin);
       <li><i>III</i><div><b>Une idée, une envie, un ennui ?</b><span>Le même drapeau sert aussi à ça. Dis-nous franchement ce qui te plaît et ce qui t'ennuie : c'est le plus précieux.</span></div></li>
     </ul>
     <p class="ts-ask">Ce qu'on te demande : une séance par jour pendant deux semaines, à ton rythme et sans pression. Ton cerf grandira avec toi.</p>
+    <details class="ts-install" id="ts-install" hidden><summary>Installe Néophyte sur ton téléphone</summary></details>
     <p class="note" id="ts-contact" hidden></p>
     <div class="wl-act"><button class="btn primary" id="ts-go">C'est parti</button></div>
   </div>
@@ -2270,7 +2277,7 @@ var fin=function(){if(e.parentNode)e.remove();};e.addEventListener('click',fin);
     <h1 id="wl-title">Néo<span>phyte</span></h1>
     <p class="wl-motto" title="Les belles choses sont difficiles (proverbe grec cité par Platon, République IV, 435c)">ΧΑΛΕΠΑ ΤΑ ΚΑΛΑ</p>
     <p class="wl-lead">Aiguise ton esprit, reste libre.</p>
-    <p class="wl-sub">Dix minutes par jour d'écriture et de raisonnement pour reprendre le contrôle du réel.</p>
+    <p class="wl-sub">Quelques minutes par jour d'écriture et de raisonnement pour reprendre le contrôle du réel.</p>
     <p class="wl-invite" id="wl-invite" hidden>Un ami t'invite. Crée ton compte : son cerf gagne un cadeau tout de suite, et le tien après tes 3 premiers jours.</p>
     <div class="wl-gate" id="wl-gate" hidden>
       <p class="wl-badge">Avant-première · sur invitation</p>
@@ -2303,16 +2310,18 @@ var fin=function(){if(e.parentNode)e.remove();};e.addEventListener('click',fin);
       <h2 class="label" id="wl-install-h">Néophyte sur ton téléphone</h2>
       <div class="wl-qr" id="wl-qr">
         <svg viewBox="0 0 29 29" role="img" aria-label="QR code vers neo-phyte.fr" shape-rendering="crispEdges"><rect width="29" height="29" fill="#fff"/><path stroke="#24211C" d="M2 2.5h7m5 0h2m4 0h7M2 3.5h1m5 0h1m2 0h8m1 0h1m5 0h1M2 4.5h1m1 0h3m1 0h1m1 0h2m1 0h2m2 0h2m1 0h1m1 0h3m1 0h1M2 5.5h1m1 0h3m1 0h1m1 0h1m1 0h1m1 0h4m2 0h1m1 0h3m1 0h1M2 6.5h1m1 0h3m1 0h1m1 0h1m1 0h1m5 0h1m1 0h1m1 0h3m1 0h1M2 7.5h1m5 0h1m1 0h1m2 0h1m1 0h3m2 0h1m5 0h1M2 8.5h7m1 0h1m1 0h1m1 0h1m1 0h1m1 0h1m1 0h7M10 9.5h1m6 0h2M2 10.5h1m1 0h5m3 0h1m2 0h4m1 0h5M3 11.5h4m4 0h4m1 0h1m1 0h1m2 0h1m3 0h1M3 12.5h1m1 0h1m1 0h2m4 0h1m1 0h1m1 0h4m1 0h2m1 0h2M2 13.5h2m2 0h2m2 0h1m1 0h3m2 0h1m1 0h4m3 0h1M2 14.5h2m3 0h4m3 0h2m2 0h3m1 0h1m1 0h3M2 15.5h1m1 0h2m1 0h1m1 0h1m2 0h1m2 0h1m2 0h1m2 0h1m1 0h1m1 0h1M2 16.5h1m1 0h6m2 0h6m1 0h1m1 0h3m1 0h2M2 17.5h1m6 0h1m1 0h3m2 0h2m1 0h1m1 0h2m3 0h1M2 18.5h1m2 0h1m1 0h3m1 0h3m4 0h5m1 0h1M10 19.5h2m2 0h2m1 0h2m3 0h2M2 20.5h7m6 0h2m1 0h1m1 0h1m1 0h1m1 0h3M2 21.5h1m5 0h1m1 0h1m3 0h2m2 0h1m3 0h2m1 0h2M2 22.5h1m1 0h3m1 0h1m1 0h1m1 0h1m1 0h1m1 0h7m1 0h3M2 23.5h1m1 0h3m1 0h1m1 0h1m6 0h1m2 0h1m1 0h5M2 24.5h1m1 0h3m1 0h1m1 0h5m2 0h1m5 0h2m1 0h1M2 25.5h1m5 0h1m2 0h1m1 0h1m2 0h1m1 0h2m1 0h3m2 0h1M2 26.5h7m1 0h1m2 0h1m5 0h8"/></svg>
-        <p>Scanne ce code avec l'appareil photo de ton téléphone, puis ajoute Néophyte à ton écran d'accueil : il s'ouvrira comme une application.</p>
+        <div><p>Scanne ce code avec l'appareil photo de ton téléphone, puis ajoute Néophyte à ton écran d'accueil : il s'ouvrira comme une application.</p>
+        <p class="wl-code-rappel" id="wl-code-rappel" hidden></p></div>
       </div>
       <div class="wl-os" id="wl-os">
-        <div class="wl-steps" id="wl-ios">
+        <div class="wl-steps wl-ios" id="wl-ios">
           <p><b>Sur iPhone</b>, dans Safari :</p>
           <ol><li>touche le bouton <b>Partager</b> <svg class="wl-ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3v12M8 7l4-4 4 4M6 11H5v10h14V11h-1" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg> en bas de l'écran ;</li><li>choisis <b>« Sur l'écran d'accueil »</b> ;</li><li>touche <b>Ajouter</b> : le cerf rejoint tes applications.</li></ol>
+          <p class="note wl-ordre" hidden>Commence par créer ton compte ici : sur iPhone, l'application installée repart de zéro. Il te suffira d'y toucher « J'ai déjà un compte ».</p>
         </div>
-        <div class="wl-steps" id="wl-android">
-          <button class="btn" id="wl-install-btn" hidden>Installer l'application</button>
-          <div id="wl-android-txt">
+        <div class="wl-steps wl-android" id="wl-android">
+          <button class="btn primary wl-ibtn" type="button" hidden>Installer l'application</button>
+          <div class="wl-atxt">
             <p><b>Sur Android</b>, dans Chrome :</p>
             <ol><li>touche le menu <b>⋮</b> en haut à droite ;</li><li>choisis <b>« Installer l'application »</b> ou <b>« Ajouter à l'écran d'accueil »</b> ;</li><li>confirme : le cerf rejoint tes applications.</li></ol>
           </div>
@@ -9927,10 +9936,11 @@ const frTypo=t=>t.replace(/(\S) ([;:!?»])/g,'$1\u00a0$2').replace(/« /g,'«\u0
 // pour comparer un texte affiché à sa donnée d'origine
 const sameText=(a,b)=>String(a).replace(/\u00a0/g,' ').replace(/’/g,"'")===String(b).replace(/\u00a0/g,' ').replace(/’/g,"'");
 function nbText(root){
-  if(root.nodeType===3){if(!NB_SKIP.has(root.parentNode&&root.parentNode.nodeName)&&NB_TEST.test(root.data))root.data=frTypo(root.data);return;}
+  if(root.nodeType===3){if(!NB_SKIP.has(root.parentNode&&root.parentNode.nodeName)&&NB_TEST.test(root.data)){const v=frTypo(root.data);if(v!==root.data)root.data=v;}return;}
   const w=document.createTreeWalker(root,NodeFilter.SHOW_TEXT,{acceptNode:n=>NB_SKIP.has(n.parentNode&&n.parentNode.nodeName)||!NB_TEST.test(n.data)?NodeFilter.FILTER_REJECT:NodeFilter.FILTER_ACCEPT});
   const todo=[]; for(let n;(n=w.nextNode());)todo.push(n);
-  for(const n of todo)n.data=frTypo(n.data);
+  // n'écrire que si le texte change : sinon l'observateur se relancerait sans fin (« Ajouter</b> : … » ne change pas)
+  for(const n of todo){const v=frTypo(n.data);if(v!==n.data)n.data=v;}
 }
 nbText(document.body);
 new MutationObserver(ms=>{for(const m of ms){if(m.type==='characterData')nbText(m.target);else for(const n of m.addedNodes)if(n.nodeType===3||(n.nodeType===1&&!NB_SKIP.has(n.nodeName)))nbText(n);}})
@@ -9986,7 +9996,7 @@ $('#wl-code-f').addEventListener('submit',async e=>{
   if(r.data==='ok'||r.data==='ouvert'){setInvit(code);}
   else if(r.data==='parrain'){try{localStorage.setItem(LS_PARR,code);}catch(err){}}
   else{msg.textContent=r.data==='complet'?'Ce code n’a plus de place libre. Demande une nouvelle invitation à la personne qui te l’a donné.':'Ce code n’existe pas. Vérifie-le auprès de la personne qui te l’a donné.';return;}
-  msg.textContent=''; $('#wl-code').value=''; renderGate(); son('clic');
+  msg.textContent=''; $('#wl-code').value=''; renderGate(); setupInstall(); son('clic');
   setTimeout(()=>$('#wl-signup').focus(),0);
 });
 $('#wl-wait-f').addEventListener('submit',async e=>{
@@ -10011,16 +10021,37 @@ function closeWelcome(mode){
   else if(!mode&&testeursNeeded())setTimeout(showTesteurs,300);
 }
 // installer l'application : QR code sur ordinateur, marche à suivre sur téléphone, rien si elle est déjà installée
+// un invité qui ouvre son lien sur téléphone voit la marche à suivre tout de suite, sous les boutons
 let installEvt=null;
-window.addEventListener('beforeinstallprompt',e=>{e.preventDefault();installEvt=e;$('#wl-install-btn').hidden=false;$('#wl-android-txt').hidden=true;});
+const appareil=()=>{const ua=navigator.userAgent;return{ios:/iPhone|iPad|iPod/.test(ua)||(/Macintosh/.test(ua)&&navigator.maxTouchPoints>1),
+  android:/Android/.test(ua),installed:matchMedia('(display-mode: standalone)').matches||navigator.standalone===true};};
+function installBtns(){document.querySelectorAll('.wl-ibtn').forEach(b=>b.hidden=!installEvt);document.querySelectorAll('.wl-atxt').forEach(t=>t.hidden=!!installEvt);}
+window.addEventListener('beforeinstallprompt',e=>{e.preventDefault();installEvt=e;installBtns();});
+window.addEventListener('appinstalled',()=>{installEvt=null;$('#wl-install').hidden=true;$('#ts-install').hidden=true;});
+document.addEventListener('click',async e=>{if(!e.target.closest('.wl-ibtn')||!installEvt)return;const ev=installEvt;ev.prompt();
+  try{await ev.userChoice;}catch(err){}installEvt=null;installBtns();});
+const wlInstallHome=$('#wl-install').nextElementSibling;
 function setupInstall(){
-  const ua=navigator.userAgent, ios=/iPhone|iPad|iPod/.test(ua)||(/Macintosh/.test(ua)&&navigator.maxTouchPoints>1),
-    android=/Android/.test(ua), installed=matchMedia('(display-mode: standalone)').matches||navigator.standalone===true;
-  $('#wl-install').hidden=installed;
+  const a=appareil(), tel=a.ios||a.android, code=invitPending()||parrainPending(), sec=$('#wl-install');
+  sec.hidden=a.installed;
   // sur ordinateur : QR code et les deux marches à suivre ; sur téléphone : seulement la sienne
-  $('#wl-qr').hidden=ios||android; $('#wl-ios').hidden=android; $('#wl-android').hidden=ios;
+  $('#wl-qr').hidden=tel; $('#wl-ios').hidden=a.android; $('#wl-android').hidden=a.ios;
+  const haut=!!code&&tel&&!a.installed;
+  if(haut){if(sec.previousElementSibling!==$('#welcome .wl-act'))$('#welcome .wl-act').after(sec);}else if(sec.nextElementSibling!==wlInstallHome)wlInstallHome.before(sec);
+  sec.classList.toggle('wl-top',haut);
+  sec.querySelector('.wl-ordre').hidden=!(haut&&a.ios&&!hasSession());
+  const r=$('#wl-code-rappel'); r.hidden=!code||tel;
+  if(code&&!tel)r.replaceChildren(document.createTextNode('Sur le téléphone, entre ton code d’invitation : '),el('b',{text:code}));
+  installBtns();
 }
-$('#wl-install-btn').addEventListener('click',async()=>{if(!installEvt)return;installEvt.prompt();try{await installEvt.userChoice;}catch(e){}installEvt=null;$('#wl-install-btn').hidden=true;});
+// accueil des testeurs : le rappel, replié sous la vidéo, pour qui ne l'a pas encore installée
+function setupTsInstall(){
+  const a=appareil(), d=$('#ts-install'); d.hidden=a.installed||!(a.ios||a.android); if(d.hidden)return;
+  if(!d.querySelector('.wl-os')){const c=$('#wl-os').cloneNode(true);c.querySelectorAll('[id]').forEach(n=>n.removeAttribute('id'));c.removeAttribute('id');
+    c.querySelectorAll('.wl-ordre').forEach(n=>n.remove());d.append(c);}
+  d.querySelectorAll('.wl-ios').forEach(n=>n.hidden=a.android); d.querySelectorAll('.wl-android').forEach(n=>n.hidden=a.ios);
+  installBtns();
+}
 function showWelcome(){
   $('#wl-em').innerHTML=stagSVG(1,'proud');
   const sb=!!window.bfSupabase; $('#wl-signup').hidden=!sb; $('#wl-login').hidden=!sb;
@@ -10050,7 +10081,7 @@ function showTesteurs(){
   box.hidden=!v;
   const c=(window.BF_CONFIG||{}).contact, ct=$('#ts-contact');
   if(c&&!ct.childElementCount)ct.append(document.createTextNode('Tu préfères écrire ? '),el('a',{href:'mailto:'+c,text:c}));
-  ct.hidden=!c;
+  ct.hidden=!c; setupTsInstall();
   t.hidden=false; document.body.style.overflow='hidden'; t.scrollTop=0;
   setTimeout(()=>t.focus({preventScroll:true}),0);
 }

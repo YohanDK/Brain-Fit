@@ -50,6 +50,12 @@ M.eq07=(()=>{const P=['Élise','Fabien','Gabrielle','Henri'], fille=x=>x==='Éli
   indices:[w=>P.every(x=>w[w[x]]!==x), w=>w.Fabien!=='Henri', w=>!fille(w.Gabrielle), w=>w.Fabien!=='Élise', w=>w.Henri==='Élise'],
   reponse:w=>w.Élise};})();
 
+// Les santonniers du marché : une ville et un santon par personne
+M.eq08=(()=>{const P=['Margaux','Noé','Rose'];
+  return{espace:()=>assign(P,['Aubagne','Aix','Marseille']).flatMap(v=>assign(P,['berger','meunier','ravi']).map(s=>({v,s}))),
+  indices:[w=>w.v.Noé==='Marseille', w=>w.v.Rose!=='Aix'&&w.s.Rose!=='meunier', w=>w.v[qui(w.s,'meunier')]==='Aix', w=>w.s[qui(w.v,'Aubagne')]!=='berger', w=>w.s.Margaux!=='berger'],
+  reponse:w=>qui(w.s,'ravi')};})();
+
 module.exports=M;
 if(require.main===module){
   for(const[id,m] of Object.entries(M)){const sp=m.espace();

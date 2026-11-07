@@ -1,10 +1,12 @@
 # Publie le site (dossier public/) sur GitHub Pages à chaque changement.
+# Une fois Néophyte en ligne à neo-phyte.fr, mettre la variable du dépôt DEMENAGEMENT à « oui » :
+# l'ancienne adresse ne publie plus que la redirection (dossier demenagement/), qui emporte la progression des testeurs.
 name: Publier le site
 
 on:
   push:
     branches: [main]
-    paths: ["public/**", "tools/**", ".github/workflows/pages.yml"]
+    paths: ["public/**", "tools/**", "demenagement/**", ".github/workflows/pages.yml"]
   workflow_dispatch:
 
 permissions:
@@ -29,6 +31,6 @@ jobs:
         run: node tools/verifier-banques.js
       - uses: actions/upload-pages-artifact@v3
         with:
-          path: public
+          path: ${{ vars.DEMENAGEMENT == 'oui' && 'demenagement' || 'public' }}
       - id: deployment
         uses: actions/deploy-pages@v4

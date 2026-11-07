@@ -1,6 +1,7 @@
 // Le coach de Brain Fit : reçoit la conversation depuis la page, appelle Claude et renvoie la réponse au fil de l'eau.
-// Les comptes listés dans ALLOWED_EMAIL s'en servent toujours. Avec la variable COACH_OUVERT=oui, tout compte à l'e-mail
-// confirmé y a droit aussi, avec son propre plafond (COACH_MAX_TESTEUR, 8 par jour par défaut) : c'est le test des testeurs.
+// Les comptes listés dans ALLOWED_EMAIL s'en servent toujours. Les testeurs choisis (table coach_testeurs, supabase/coach.sql)
+// y ont droit aussi, avec leur propre plafond (COACH_MAX_TESTEUR, 8 par jour par défaut). Avec la variable COACH_OUVERT=oui,
+// tout compte à l'e-mail confirmé y a droit, avec ce même plafond.
 import Anthropic from "npm:@anthropic-ai/sdk@0.137.0";
 import { createClient } from "npm:@supabase/supabase-js@2.117.3";
 
@@ -44,7 +45,18 @@ Deno.serve(async (req) => {
   const token = (req.headers.get("Authorization") ?? "").replace(/^Bearer\s+/i, "");
   const { data: { user } } = token ? await supabase.auth.getUser(token) : { data: { user: null } };
   const proprio = !!user && ALLOWED.includes((user.email ?? "").toLowerCase());
-  if (!user || (!proprio && !(OUVERT && user.email_confirmed_at))) return fail("not_granted", 403);
+  if (!user) return fail("not_granted", 403);
+  const admin = createClient(Deno.env.get("SUPABASE_URL")!, Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!, {
+    auth: { persistSession: false },
+  });
+  if (!proprio && !(OUVERT && user.email_confirmed_at)) {
+    // testeur choisi : son e-mail confirmé figure dans coach_testeurs (table absente = personne)
+    const email = (user.email ?? "").toLowerCase();
+    const { data: t } = user.email_confirmed_at && email
+      ? await admin.from("coach_testeurs").select("email").eq("email", email).maybeSingle()
+      : { data: null };
+    if (!t) return fail("not_granted", 403);
+  }
 
   let body: { messages?: Turn[]; images?: Img[]; json?: boolean; tier?: string; ping?: boolean };
   try {
@@ -62,9 +74,6 @@ Deno.serve(async (req) => {
   if (turns.reduce((n, t) => n + t.content.length, 0) > MAX_TEXTE) return fail("too_long", 413);
 
   // plafond quotidien : protège la clé API si un compte s'emballe ou est détourné
-  const admin = createClient(Deno.env.get("SUPABASE_URL")!, Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!, {
-    auth: { persistSession: false },
-  });
   if (!proprio) {
     const jour = new Intl.DateTimeFormat("en-CA", { timeZone: "Europe/Paris" }).format(new Date());
     const { data: lignes, error: et } = await admin.from("coach_usage").select("n").eq("jour", jour).limit(5000);

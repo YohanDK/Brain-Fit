@@ -3,8 +3,8 @@
 window.BF_CONFIG={
   supabaseUrl:'https://kmcelzkxnxeqwwpvyycm.supabase.co',
   supabaseKey:'sb_publishable_y7Bnt_xi7saCiOzqZJwUww_2Otq4jGP',
-  // passe à true une fois la fonction « coach » déployée avec la clé Claude
-  coach:false,
+  // coach allumé : la fonction « coach » vérifie elle-même qui y a droit (ALLOWED_EMAIL, testeurs de la table coach_testeurs, ou tous avec COACH_OUVERT) ; false pour le cacher à tous
+  coach:true,
   // bouton « Signaler un problème » (capture d'écran + commentaire) pendant la phase de test ; false pour le cacher
   retours:true,
   // réglage « Rappels » (notifications sur le téléphone) : true une fois rappels.sql lancé ; false pour le cacher et désabonner les appareils à leur prochaine visite
@@ -14,8 +14,8 @@ window.BF_CONFIG={
   // avant-première : la création de compte demande une invitation (code ou lien de parrainage), vérifiée par
   // supabase/invitations.sql. Au lancement, passer à false (ou, côté serveur : update public.acces_reglage set sur_invitation=false)
   invitation:true,
-  // adresse de contact affichée aux visiteurs sans invitation (par exemple 'bonjour@neophyte.fr') ; vide = cachée
-  contact:'',
+  // adresse de contact affichée sur l'accueil des visiteurs ; vide = cachée
+  contact:'contact@neo-phyte.fr',
   // vidéo de l'accueil des testeurs (avant-première) ; vide = cachée
   videoTesteurs:'videos/testeurs.mp4'
 };

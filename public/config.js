@@ -3,7 +3,7 @@
 window.BF_CONFIG={
   supabaseUrl:'https://kmcelzkxnxeqwwpvyycm.supabase.co',
   supabaseKey:'sb_publishable_y7Bnt_xi7saCiOzqZJwUww_2Otq4jGP',
-  // coach allumé : la fonction « coach » vérifie elle-même qui y a droit (ALLOWED_EMAIL, puis COACH_OUVERT pour les testeurs) ; false pour le cacher à tous
+  // coach allumé : la fonction « coach » vérifie elle-même qui y a droit (ALLOWED_EMAIL, testeurs de la table coach_testeurs, ou tous avec COACH_OUVERT) ; false pour le cacher à tous
   coach:true,
   // bouton « Signaler un problème » (capture d'écran + commentaire) pendant la phase de test ; false pour le cacher
   retours:true,

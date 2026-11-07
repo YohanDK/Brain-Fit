@@ -4,19 +4,20 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Néophyte · Aiguise ton esprit, reste libre</title>
-<meta name="description" content="Dix minutes par jour d'écriture et de raisonnement pour reprendre le contrôle du réel. Gratuit, sans publicité.">
+<meta name="description" content="Quelques minutes par jour pour écrire et raisonner par soi-même, à l'heure de l'IA. Gratuit, sans publicité.">
 <link rel="canonical" href="https://neo-phyte.fr/">
 <meta property="og:type" content="website">
 <meta property="og:locale" content="fr_FR">
 <meta property="og:site_name" content="Néophyte">
 <meta property="og:title" content="Néophyte · Aiguise ton esprit, reste libre">
-<meta property="og:description" content="Dix minutes par jour d'écriture et de raisonnement pour reprendre le contrôle du réel. Gratuit, sans publicité.">
+<meta property="og:description" content="Quelques minutes par jour pour écrire et raisonner par soi-même, à l'heure de l'IA. Gratuit, sans publicité.">
 <meta property="og:url" content="https://neo-phyte.fr/">
-<meta property="og:image" content="https://neo-phyte.fr/og.png">
+<meta property="og:image" content="https://neo-phyte.fr/og.png?v=2">
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
-<meta property="og:image:alt" content="Le cerf de Néophyte et la devise « Garder l'esprit vif à l'heure de l'IA »">
+<meta property="og:image:alt" content="Le cerf de Néophyte, la devise ΧΑΛΕΠΑ ΤΑ ΚΑΛΑ et la promesse « Aiguise ton esprit, reste libre »">
 <meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://neo-phyte.fr/og.png?v=2">
 <meta name="theme-color" content="#FAF9F6" media="(prefers-color-scheme: light)">
 <meta name="theme-color" content="#101219" media="(prefers-color-scheme: dark)">
 <meta name="apple-mobile-web-app-capable" content="yes">
@@ -4814,7 +4815,7 @@ async function pdfKit(){
   return {doc,text,lines,h,head,finish,need,page:()=>{doc.addPage();y=M;},room:()=>Math.floor((BOT-y-3)/8.5)};
 }
 // couleurs de Néophyte pour l'imprimé (thème clair), et le cerf du niveau atteint, dessiné en image
-const PDF_LAPIS=[58,93,191], PDF_GOLD=[176,138,48], PDF_MOTTO="Garder l'esprit vif à l'heure de l'IA";
+const PDF_LAPIS=[58,93,191], PDF_GOLD=[176,138,48], PDF_MOTTO="Aiguise ton esprit, reste libre";
 const STAG_PRINT={'--stag':'#B07D4E','--stag-deep':'#94653C','--stag-dark':'#4A3018','--stag-light':'#F3E6D2','--antler':'#7E6040','--gold':'#B08A30','--muted':'#736D63','--f-body':'Georgia, serif'};
 async function stagPng(){
   const PEL=(PELAGES[cerf().pel]||[])[1]||{};
@@ -6183,7 +6184,7 @@ function renderParrain(){
   const p=parrN();
   if(!p.code){body.replaceChildren(el('p',{class:'muted',text:'Préparation de ton lien…'}));return;}
   const link=SITE_URL+'?parrain='+p.code;
-  const share=async()=>{const data={title:'Néophyte',text:'Je m’entraîne avec Néophyte, dix minutes par jour pour garder l’esprit vif. Viens avec moi : nos deux cerfs y gagnent un cadeau.',url:link};
+  const share=async()=>{const data={title:'Néophyte',text:'Je m’entraîne avec Néophyte, quelques minutes par jour pour garder l’esprit vif. Viens avec moi : nos deux cerfs y gagnent un cadeau.',url:link};
     try{if(navigator.share){await navigator.share(data);return;}}catch(e){if(e&&e.name==='AbortError')return;}
     try{await navigator.clipboard.writeText(data.text+' '+link);toast('<span>Invitation copiée : colle-la dans un message.</span>');}catch(e){toast('<span>'+link+'</span>');}};
   const next=PARR_PALIERS.find(x=>!x[3](p));
@@ -10077,7 +10078,7 @@ $('#foot-privacy').addEventListener('click',()=>goPanel('reglages','privacy'));
 {const SITE='https://neo-phyte.fr/';
  const q=$('#wl-qr svg'); if(q)$('#share-qr').append(q.cloneNode(true));
  $('#share-btn').addEventListener('click',async()=>{
-   const data={title:'Néophyte',text:"Néophyte : un exercice par jour pour garder l'esprit vif à l'heure de l'IA.",url:SITE};
+   const data={title:'Néophyte',text:"Néophyte : aiguise ton esprit, reste libre. Un exercice par jour.",url:SITE};
    try{if(navigator.share){await navigator.share(data);return;}}catch(e){if(e&&e.name==='AbortError')return;}
    try{await navigator.clipboard.writeText(SITE);toast('<span>Lien copié : colle-le dans un message.</span>');}catch(e){toast('<span>'+SITE+'</span>');}
  });

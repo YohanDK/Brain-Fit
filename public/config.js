@@ -15,5 +15,7 @@ window.BF_CONFIG={
   // supabase/invitations.sql. Au lancement, passer à false (ou, côté serveur : update public.acces_reglage set sur_invitation=false)
   invitation:true,
   // adresse de contact affichée sur l'accueil des visiteurs ; vide = cachée
-  contact:'contact@neo-phyte.fr'
+  contact:'contact@neo-phyte.fr',
+  // vidéo de l'accueil des testeurs (avant-première) ; vide = cachée
+  videoTesteurs:'videos/testeurs.mp4'
 };
